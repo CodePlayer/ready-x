@@ -2,6 +2,8 @@ package me.ready.util;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -144,8 +146,8 @@ public class FileUtil {
 	 * @param filePath 文件路径(包含文件名)
 	 * @return
 	 */
-	public static int delete(String filePath) {
-		return delete(new File(filePath));
+	public static int deleteFile(String filePath) {
+		return deleteFile(new File(filePath));
 	}
 
 	/**
@@ -157,8 +159,8 @@ public class FileUtil {
 	 * @param fileName 文件名
 	 * @return
 	 */
-	public static int delete(String directoryPath, String fileName) {
-		return delete(new File(directoryPath, fileName));
+	public static int deleteFile(String directoryPath, String fileName) {
+		return deleteFile(new File(directoryPath, fileName));
 	}
 
 	/**
@@ -169,7 +171,7 @@ public class FileUtil {
 	 * @param file
 	 * @return
 	 */
-	private static int delete(File file) {
+	private static int deleteFile(File file) {
 		int result = -1;
 		if (file.exists()) {
 			if (file.delete()) {
@@ -183,12 +185,33 @@ public class FileUtil {
 
 	/**
 	 * 通过文件流复制文件到指定路径
-	 * @param is
-	 * @param target
+	 * @param is 指定的输入文件流
+	 * @param target 指定的目标文件对象
+	 * @param override 如果目标文件已存在，是否允许覆盖
 	 * @return
 	 */
-	public final static int copy(InputStream is, File target) {
-		int result = -1;
+	public final static void copyFile(InputStream is, File target, boolean override) {
+		if (target.exists()) {
+			// 如果目标文件是一个目录
+			if (target.isDirectory()) {
+				throw new LogicException("目标文件是一个目录：" + target);
+			}
+			// 如果目标文件不可写入数据
+			if (!target.canWrite()) {
+				throw new LogicException("目标文件不可写入：" + target);
+			}
+			// 如果目标文件不允许被覆盖
+			if (!override) {
+				throw new LogicException("目标文件已存在：" + target);
+			}
+		} else {
+			// 如果目标文件所在的目录不存在，则创建
+			File parent = target.getParentFile();
+			if (!parent.exists()) {
+				parent.mkdirs();
+			}
+		}
+
 		FileOutputStream fos = null;
 		BufferedOutputStream bos = null;
 		try {
@@ -219,17 +242,109 @@ public class FileUtil {
 				}
 			}
 		}
-		return result;
 	}
 
 	/**
-	 * 通过文件流复制文件到指定路径
-	 * @param is
-	 * @param target
+	 * 将指定的文件复制到指定文件对象所表示的位置
+	 * @param src 源文件对象
+	 * @param target 目标文件对象
+	 * @param override 如果目标文件已存在，是否允许覆盖
 	 * @return
 	 */
-	public final static int copy(InputStream is, String filePath) {
-		return copy(is, new File(filePath));
+	public final static void copyFile(File src, File target, boolean override) {
+		try {
+			copyFile(new FileInputStream(src), target, override);
+		} catch (FileNotFoundException e) {
+			throw new LogicException(e);
+		}
+	}
+
+	/**
+	 * 将指定的文件复制到指定文件对象所表示的位置<br>如果目标文件已存在，将引发异常
+	 * @param src 源文件对象
+	 * @param target 目标文件对象
+	 * @return
+	 */
+	public final static void copyFile(File src, File target) {
+		copyFile(src, target, false);
+	}
+
+	/**
+	 * 将指定的文件复制到指定的目标路径
+	 * @param src 源文件对象
+	 * @param target 目标文件对象
+	 * @return
+	 */
+	public final static void copyFile(String src, String target, boolean override) {
+		try {
+			copyFile(new FileInputStream(src), new File(target), override);
+		} catch (FileNotFoundException e) {
+			throw new LogicException(e);
+		}
+	}
+
+	/**
+	 * 将指定的文件复制到指定的目标路径
+	 * @param src 源文件路径
+	 * @param target 目标文件路径
+	 * @return
+	 */
+	public final static void copyFile(String src, String target) {
+		copyFile(src, target, false);
+	}
+
+	public final static void copyFileToDiretory(InputStream is, File diretory, boolean override) {
+		if (diretory.exists()) {
+			// 如果目标文件是一个目录
+			if (!diretory.isDirectory()) {
+				throw new LogicException("目标文件是一个目录：" + diretory);
+			}
+			// 如果目标文件不可写入数据
+			if (!diretory.canWrite()) {
+				throw new LogicException("目标文件不可写入：" + diretory);
+			}
+			// 如果目标文件不允许被覆盖
+			if (!override) {
+				throw new LogicException("目标文件已存在：" + diretory);
+			}
+		} else {
+			// 如果目标文件所在的目录不存在，则创建
+			File parent = diretory.getParentFile();
+			if (!parent.exists()) {
+				parent.mkdirs();
+			}
+		}
+
+		FileOutputStream fos = null;
+		BufferedOutputStream bos = null;
+		try {
+			fos = new FileOutputStream(diretory);
+			bos = new BufferedOutputStream(fos);
+			int length = 0;
+			byte[] buffer = new byte[4096];
+			while ((length = is.read(buffer)) != -1) {
+				bos.write(buffer, 0, length);
+			}
+			bos.flush();
+		} catch (Exception e) {
+			throw new LogicException(e);
+		} finally {
+			try {
+				if (bos != null) {
+					bos.close();
+				}
+			} catch (IOException e) {
+				throw new LogicException(e);
+			} finally {
+				if (is != null) {
+					try {
+						is.close();
+					} catch (IOException e) {
+						throw new LogicException(e);
+					}
+				}
+			}
+		}
 	}
 
 }
