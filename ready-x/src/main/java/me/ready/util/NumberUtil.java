@@ -6,17 +6,18 @@ import me.ready.e.LogicException;
 
 /**
  * 对数值类型的数据(包含字节)进行相应处理的工具类
+ * 
  * @author Ready
  * @date 2012-10-29
  */
 public class NumberUtil {
 
 	// 禁止实例创建
-	private NumberUtil() {
-	}
+	private NumberUtil() {}
 
 	/**
 	 * 将int类型的变量转为二进制字符串
+	 * 
 	 * @param i
 	 * @return
 	 */
@@ -33,6 +34,7 @@ public class NumberUtil {
 	/**
 	 * 以byte形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为byte形式，将报错
+	 * 
 	 * @param value 指定的对象
 	 * @return
 	 */
@@ -44,6 +46,7 @@ public class NumberUtil {
 	/**
 	 * 以byte形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为byte形式，将返回指定的<code>defaultValue</code>
+	 * 
 	 * @param value 指定的对象
 	 * @param defaultValue 指定的默认值
 	 * @return
@@ -66,6 +69,7 @@ public class NumberUtil {
 	/**
 	 * 以short形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为short形式，将报错
+	 * 
 	 * @param value 指定的对象
 	 * @return
 	 */
@@ -77,6 +81,7 @@ public class NumberUtil {
 	/**
 	 * 以short形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为short形式，将返回指定的<code>defaultValue</code>
+	 * 
 	 * @param value 指定的对象
 	 * @param defaultValue 指定的默认值
 	 * @return
@@ -99,6 +104,7 @@ public class NumberUtil {
 	/**
 	 * 以int形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为int形式，将报错
+	 * 
 	 * @param value 指定的对象
 	 * @return
 	 */
@@ -110,6 +116,7 @@ public class NumberUtil {
 	/**
 	 * 以int形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为int形式，将返回指定的<code>defaultValue</code>
+	 * 
 	 * @param value 指定的对象
 	 * @param defaultValue 指定的默认值
 	 * @return
@@ -132,6 +139,7 @@ public class NumberUtil {
 	/**
 	 * 以long形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为long形式，将报错
+	 * 
 	 * @param value 指定的对象
 	 * @return
 	 */
@@ -143,6 +151,7 @@ public class NumberUtil {
 	/**
 	 * 以long形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为long形式，将返回指定的<code>defaultValue</code>
+	 * 
 	 * @param value 指定的对象
 	 * @param defaultValue 指定的默认值
 	 * @return
@@ -165,6 +174,7 @@ public class NumberUtil {
 	/**
 	 * 以float形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为float形式，将报错
+	 * 
 	 * @param value 指定的对象
 	 * @return
 	 */
@@ -176,6 +186,7 @@ public class NumberUtil {
 	/**
 	 * 以float形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为float形式，将返回指定的<code>defaultValue</code>
+	 * 
 	 * @param value 指定的对象
 	 * @param defaultValue 指定的默认值
 	 * @return
@@ -198,6 +209,7 @@ public class NumberUtil {
 	/**
 	 * 以double形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为double形式，将报错
+	 * 
 	 * @param value 指定的对象
 	 * @return
 	 */
@@ -209,6 +221,7 @@ public class NumberUtil {
 	/**
 	 * 以double形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为double形式，将返回指定的<code>defaultValue</code>
+	 * 
 	 * @param value 指定的对象
 	 * @param defaultValue 指定的默认值
 	 * @return
@@ -231,6 +244,7 @@ public class NumberUtil {
 	/**
 	 * 以BigDecimal形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为BigDecimal形式，将报错
+	 * 
 	 * @param value 指定的对象
 	 * @return
 	 */
@@ -248,6 +262,7 @@ public class NumberUtil {
 	/**
 	 * 以BigDecimal形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为BigDecimal形式，将返回指定的<code>defaultValue</code>
+	 * 
 	 * @param value 指定的对象
 	 * @param defaultValue 指定的默认值
 	 * @return
@@ -276,6 +291,7 @@ public class NumberUtil {
 	/**
 	 * 以BigDecimal形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为BigDecimal形式，将返回指定的<code>defaultValue</code>
+	 * 
 	 * @param value 指定的对象
 	 * @param defaultValue 指定的可封装成BigDecimal字符串形式默认值(应当返回默认值时，如果无法有效的转为BigDecimal，将引发异常)
 	 * @return
@@ -306,7 +322,7 @@ public class NumberUtil {
 	 * 前面带0，例如"0012"仍为整数，返回true<br>
 	 * 如果字符串为null，返回false<br>
 	 * 如果字符串前后有空格，请先去除空格后再调用此方法，否则返回false<br>
-	 * 此方法性能是使用正则表达式验证性能的12-18倍左右
+	 * 
 	 * @param str 指定的字符串
 	 * @return
 	 */
@@ -331,6 +347,7 @@ public class NumberUtil {
 	 * 前面带0，例如"0012"属于4位整数<br>
 	 * 如果字符串为null，返回false<br>
 	 * 如果字符串前后有空格，请先去除空格后再调用此方法，否则返回false
+	 * 
 	 * @param str
 	 * @param length 指定位数大小
 	 * @return
@@ -344,6 +361,7 @@ public class NumberUtil {
 
 	/**
 	 * 判断指定对象是否为整数类型或能够转为整数形式
+	 * 
 	 * @param obj
 	 * @return
 	 */
@@ -352,12 +370,13 @@ public class NumberUtil {
 			Number num = (Number) obj;
 			return num.longValue() == num.doubleValue();
 		} else {
-			return obj != null && X.isNumber(obj.toString());
+			return obj != null && isNumber(obj.toString());
 		}
 	}
 
 	/**
 	 * 以尽可能快的速度判断指定字符串是否为整数形式(仅限十进制)
+	 * 
 	 * @param str 指定的字符串
 	 * @return
 	 */
@@ -378,6 +397,7 @@ public class NumberUtil {
 
 	/**
 	 * 判断指定对象的字符串形式是否为整数形式
+	 * 
 	 * @param value
 	 * @return
 	 */
@@ -391,6 +411,7 @@ public class NumberUtil {
 	 * 如果字符串为null，返回false<br>
 	 * 如果字符串前后有空格，请先去除空格后再调用此方法，否则返回false<br>
 	 * 此方法性能是使用正则表达式验证性能的4-9倍
+	 * 
 	 * @param str 需要判断的字符串
 	 * @return
 	 */
@@ -413,7 +434,7 @@ public class NumberUtil {
 	 * 前面带0，例如"0012"仍为整数，返回true<br>
 	 * 如果字符串为null，返回false<br>
 	 * 如果字符串前后有空格，请先去除空格后再调用此方法，否则返回false<br>
-	 * 此方法性能是使用正则表达式验证性能的4-9倍
+	 * 
 	 * @param str 需要判断的字符串
 	 * @return
 	 */

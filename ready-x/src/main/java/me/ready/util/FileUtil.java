@@ -16,6 +16,7 @@ import me.ready.e.LogicException;
 
 /**
  * 用于文件操作的公共工具类
+ * 
  * @author Ready
  * @date 2013-4-9
  */
@@ -24,11 +25,41 @@ public class FileUtil {
 	private static final SimpleDateFormat FILENAME_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd-HHmmssSSS");
 
 	// 禁止实例构建
-	private FileUtil() {
+	private FileUtil() {}
+
+	/**
+	 * 根据文件路径获取对应的文件扩展名<br>
+	 * 如果没有指定的后缀，则返回空字符串""
+	 * 
+	 * @param path 指定的文件路径
+	 * @param removeDot 是否移除点号
+	 * @return
+	 */
+	public static final String getExtension(String path, boolean removeDot) {
+		int pos = path.lastIndexOf('.');
+		if (pos == -1) {
+			return "";
+		} else if (removeDot) {
+			return path.substring(pos + 1);
+		} else {
+			return path.substring(pos);
+		}
+	}
+
+	/**
+	 * 根据文件路径获取对应的文件扩展名(例如：".jpg"、".gif"等)<br>
+	 * 如果没有指定的后缀，则返回空字符串""
+	 * 
+	 * @param path 指定的文件路径
+	 * @return
+	 */
+	public static final String getExtension(String path) {
+		return getExtension(path, false);
 	}
 
 	/**
 	 * 获取随机文件名，根据当前时间采用随机算法自动生成，并且内部保证本地没有重复文件名的文件
+	 * 
 	 * @param path
 	 * @param suffix
 	 * @return
@@ -53,6 +84,7 @@ public class FileUtil {
 
 	/**
 	 * 获取随机4位字符串
+	 * 
 	 * @return
 	 */
 	public static final String getRandomString() {
@@ -73,6 +105,7 @@ public class FileUtil {
 	/**
 	 * 根据指定的带后缀的文件名，返回文件后缀(不含"."号)<br>
 	 * 有些文件可能没有后缀，则返回""
+	 * 
 	 * @param fileName
 	 * @return
 	 */
@@ -90,6 +123,7 @@ public class FileUtil {
 	 * 根据文件的字节数量计算出改文件为多少"Byte"/"KB"/"MB"/"GB"<br>
 	 * 如果unit为null，则根据文件大小自动选择单位，如果存在小数均保留两位小数<br>
 	 * 返回的单位均为注释中所备注的大小写格式
+	 * 
 	 * @param fileSize
 	 * @return
 	 */
@@ -130,6 +164,7 @@ public class FileUtil {
 
 	/**
 	 * 文件大小除以指定度量，返回保留2位小数的值
+	 * 
 	 * @param fileSize
 	 * @param divisor
 	 * @return
@@ -143,6 +178,7 @@ public class FileUtil {
 	 * 如果该文件不存在则返回0<br>
 	 * 如果该文件存在并成功删除则返回1<br>
 	 * 其他情况返回-1
+	 * 
 	 * @param filePath 文件路径(包含文件名)
 	 * @return
 	 */
@@ -155,6 +191,7 @@ public class FileUtil {
 	 * 如果该文件不存在则返回0<br>
 	 * 如果该文件存在并成功删除则返回1<br>
 	 * 其他情况返回-1
+	 * 
 	 * @param directoryPath 文件所在的文件夹路径
 	 * @param fileName 文件名
 	 * @return
@@ -168,6 +205,7 @@ public class FileUtil {
 	 * 如果该文件不存在则返回0<br>
 	 * 如果该文件存在并成功删除则返回1<br>
 	 * 其他情况返回-1
+	 * 
 	 * @param file
 	 * @return
 	 */
@@ -185,6 +223,7 @@ public class FileUtil {
 
 	/**
 	 * 通过文件流复制文件到指定路径
+	 * 
 	 * @param is 指定的输入文件流
 	 * @param target 指定的目标文件对象
 	 * @param override 如果目标文件已存在，是否允许覆盖
@@ -211,7 +250,6 @@ public class FileUtil {
 				parent.mkdirs();
 			}
 		}
-
 		FileOutputStream fos = null;
 		BufferedOutputStream bos = null;
 		try {
@@ -246,6 +284,7 @@ public class FileUtil {
 
 	/**
 	 * 将指定的文件复制到指定文件对象所表示的位置
+	 * 
 	 * @param src 源文件对象
 	 * @param target 目标文件对象
 	 * @param override 如果目标文件已存在，是否允许覆盖
@@ -260,7 +299,9 @@ public class FileUtil {
 	}
 
 	/**
-	 * 将指定的文件复制到指定文件对象所表示的位置<br>如果目标文件已存在，将引发异常
+	 * 将指定的文件复制到指定文件对象所表示的位置<br>
+	 * 如果目标文件已存在，将引发异常
+	 * 
 	 * @param src 源文件对象
 	 * @param target 目标文件对象
 	 * @return
@@ -271,6 +312,7 @@ public class FileUtil {
 
 	/**
 	 * 将指定的文件复制到指定的目标路径
+	 * 
 	 * @param src 源文件对象
 	 * @param target 目标文件对象
 	 * @return
@@ -285,6 +327,7 @@ public class FileUtil {
 
 	/**
 	 * 将指定的文件复制到指定的目标路径
+	 * 
 	 * @param src 源文件路径
 	 * @param target 目标文件路径
 	 * @return
@@ -314,7 +357,6 @@ public class FileUtil {
 				parent.mkdirs();
 			}
 		}
-
 		FileOutputStream fos = null;
 		BufferedOutputStream bos = null;
 		try {
@@ -346,5 +388,4 @@ public class FileUtil {
 			}
 		}
 	}
-
 }
