@@ -1,6 +1,7 @@
 package me.ready.util;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 
 import me.ready.e.LogicException;
 
@@ -29,7 +30,7 @@ public class StringUtil {
 		try {
 			bytes = src.getBytes("UTF-16");// 转为UTF-16字节数组
 		} catch (UnsupportedEncodingException e) {
-			throw new LogicException(e);
+			throw new IllegalArgumentException(e);
 		}
 		int length = bytes.length;
 		if (length > 2) {// 由于转换出来的字节数组前两位属于UNICODE固定标记，因此要过滤掉
@@ -61,7 +62,7 @@ public class StringUtil {
 		try {
 			bytes = str.getBytes("UTF-16");// 转为UTF-16字节数组
 		} catch (UnsupportedEncodingException e) {
-			throw new LogicException(e);
+			throw new IllegalArgumentException(e);
 		}
 		int length = bytes.length;
 		if (length > 2) {
@@ -262,7 +263,44 @@ public class StringUtil {
 	 * @return
 	 */
 	public static final String zeroFill(String str, int maxLength) {
-		return fill(str, '0', maxLength);
+		return pad(str, '0', maxLength, true);
+	}
+
+	/**
+	 * 如果字符串不足指定位数，则在其左侧或右侧补充指定的字符，直到指定位数<br>
+	 * 如果字符串=null，则返回空字符串""<br>
+	 * 如果字符串位数大于指定位数，则返回原字符串
+	 * 
+	 * @param str 指定的字符串
+	 * @param ch 指定的字符
+	 * @param maxLength 指定位数，不能小于1
+	 * @param left 是在字符串左侧添加，还是右侧添加。true=左侧，false=右侧
+	 * @return
+	 */
+	private static final String pad(String str, char ch, int maxLength, boolean left) {
+		if (str == null)
+			return "";
+		if (maxLength < 1)
+			throw new IllegalArgumentException("指定位数不能小于1!");
+		int length = str.length();
+		if (maxLength > length) {
+			int diffSize = maxLength - length;
+			char[] chars = new char[maxLength]; // 直接采用高效的char数组形式构建字符串
+			// Arrays.fill(chars, '0'); //内部也是循环赋值，直接循环赋值效率更高
+			if (left) {
+				for (int i = 0; i < diffSize; i++) {
+					chars[i] = ch;
+				}
+				System.arraycopy(str.toCharArray(), 0, chars, diffSize, length); // 此方法由JVM底层实现，因此效率相对较高				
+			} else {
+				for (int i = diffSize; i < maxLength; i++) {
+					chars[i] = ch;
+				}
+				System.arraycopy(str.toCharArray(), 0, chars, 0, length);
+			}
+			str = new String(chars);
+		}
+		return str;
 	}
 
 	/**
@@ -271,26 +309,26 @@ public class StringUtil {
 	 * 如果字符串位数大于指定位数，则返回原字符串
 	 * 
 	 * @param str 字符串
+	 * @param ch 指定的字符
 	 * @param maxLength 指定位数，不能小于1
 	 * @return
 	 */
-	public static final String fill(String str, char ch, int maxLength) {
-		if (str == null)
-			return "";
-		if (maxLength < 1)
-			throw new LogicException("指定位数不能小于1!");
-		int length = str.length();
-		if (maxLength > length) {
-			int diffSize = maxLength - length;
-			char[] chars = new char[maxLength]; // 直接采用高效的char数组形式构建字符串
-			for (int i = 0; i < diffSize; i++) {
-				chars[i] = ch;
-			}
-			// Arrays.fill(chars, '0'); //内部也是循环赋值，直接循环赋值效率更高
-			System.arraycopy(str.toCharArray(), 0, chars, diffSize, length); // 此方法由JVM底层实现，因此效率相对较高
-			str = new String(chars);
-		}
-		return str;
+	public static final String leftPad(String str, char ch, int maxLength) {
+		return pad(str, ch, maxLength, true);
+	}
+
+	/**
+	 * 如果字符串不足指定位数，则在后面补充指定的字符，直到指定位数<br>
+	 * 如果字符串=null，则返回空字符串""<br>
+	 * 如果字符串位数大于指定位数，则返回原字符串
+	 * 
+	 * @param str 字符串
+	 * @param ch 指定的字符
+	 * @param maxLength 指定位数，不能小于1
+	 * @return
+	 */
+	public static final String rightPad(String str, char ch, int maxLength) {
+		return pad(str, ch, maxLength, false);
 	}
 
 	/**
@@ -302,5 +340,45 @@ public class StringUtil {
 	 */
 	public static final String trim(String str) {
 		return str == null ? "" : str.trim();
+	}
+
+	/**
+	 * 将指定字符串的 <code>beginIndex</code> 到 <code>endIndex</code> (不包括 <code>endIndex</code> ) 之间的字符全部替换为字符 <code>ch</code>
+	 * @param str 指定的字符串
+	 * @param ch 指定的字符
+	 * @param beginIndex 指定的字符串起始索引(可以为负数，表示 <code>beginIndex + str.length()</code> )
+	 * @param endIndex 指定的字符串结束索引(可以为负数，表示 <code>endIndex + str.length()</code> )
+	 * @return
+	 */
+	public static final String replaceChars(String str, char ch, int beginIndex, int endIndex) {
+		int length = str.length();
+		if (beginIndex < 0) {
+			beginIndex += length;
+		}
+		if (endIndex < 0) {
+			endIndex += length;
+		}
+		StringBuilder sb = new StringBuilder(length);
+		if (beginIndex > 0) {
+			sb.append(str.substring(0, beginIndex));
+		}
+		char[] chars = new char[endIndex - beginIndex];
+		Arrays.fill(chars, ch);
+		sb.append(chars);
+		if (endIndex < length) {
+			sb.append(str.substring(endIndex));
+		}
+		return sb.toString();
+	}
+
+	/**
+	 * 将指定字符串的 <code>beginIndex</code> 到末尾之间的字符全部替换为字符 <code>ch</code>
+	 * @param str 指定的字符串
+	 * @param ch 指定的字符
+	 * @param beginIndex 指定的字符串起始索引(可以为负数，表示 <code>beginIndex + str.length()</code> )
+	 * @return
+	 */
+	public static final String replaceChars(String str, char ch, int beginIndex) {
+		return replaceChars(str, ch, beginIndex, str.length());
 	}
 }

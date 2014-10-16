@@ -2,8 +2,6 @@ package me.ready.util;
 
 import java.math.BigDecimal;
 
-import me.ready.e.LogicException;
-
 /**
  * 对数值类型的数据(包含字节)进行相应处理的工具类
  * 
@@ -354,7 +352,7 @@ public class NumberUtil {
 	 */
 	public static boolean isNumber(String str, int length) {
 		if (length < 0) {
-			throw new LogicException("指定长度不能小于0!");
+			throw new IllegalArgumentException("指定长度不能小于0!");
 		}
 		return str != null && str.length() == length && isNumber(str);
 	}

@@ -7,12 +7,12 @@ import static org.junit.Assert.*;
 
 public class FileUtilTest {
 
-	@Test
+	//	@Test
 	public void testCopyFile() {
-		//		FileUtil.copyFile("D:\\BaiduYunDownload\\API\\Apache2.2_zh_CN.chm", "E:/notfound/xxxxx/apache-maven-3.2.3-bin-23.zip", true);
+		FileUtil.copyFile("D:\\BaiduYunDownload\\API\\Apache2.2_zh_CN.chm", "E:/notfound/xxxxx/apache-maven-3.2.3-bin-23.zip", true);
 	}
 
-	@Test
+	//	@Test
 	public void testGetExtension() {
 		String path = "D:\\BaiduYunDownload\\API\\Apache2.2_zh_CN.chm";
 		String ext = FileUtil.getExtension(path);
@@ -24,10 +24,21 @@ public class FileUtilTest {
 		assertEquals(FileUtil.getExtension(path), "");
 	}
 
-	@Test
+	//	@Test
 	public void testFile() {
 		String path = "D:\\BaiduYunDownload\\API\\xxxx";
 		System.out.println(new File(path).isDirectory());
+	}
 
+	@Test
+	public void testGetFileName() {
+		String path = "hhkjhjkhk/xxx\\yyy.name";
+		System.out.println(FileUtil.getFileName(path));
+	}
+
+	//	@Test
+	public void testMoveFile() {
+		String path = "D:\\BaiduYunDownload\\Books\\hello.zip";
+		FileUtil.moveFileToDirectory(path, "D:/BaiduYunDownload", true);
 	}
 }

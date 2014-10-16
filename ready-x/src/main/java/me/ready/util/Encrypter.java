@@ -17,21 +17,21 @@ import me.ready.e.LogicException;
  */
 public class Encrypter {
 
-	// TODO MessageDigest 不是线程安全的，需要处理
-	private static MessageDigest md5Encrypter;// MD5加密器
-	private static MessageDigest sha1Encrypter;// SHA-1加密器
 	/**
 	 * 字符串解析编码
 	 */
 	public static final String encoding = "UTF-8";
-	static {
-		String name = "MD5";
+
+	/**
+	 * 获取对应的摘要算法
+	 * @param algorithm
+	 * @return
+	 */
+	public static final MessageDigest getMessageDigest(String algorithm) {
 		try {
-			md5Encrypter = MessageDigest.getInstance("MD5");
-			name = "SHA";
-			sha1Encrypter = MessageDigest.getInstance("SHA");
+			return MessageDigest.getInstance(algorithm);
 		} catch (NoSuchAlgorithmException e) {
-			throw new LogicException("无法获取" + name + "加密器!", e);
+			throw new IllegalArgumentException("不支持算法[" + algorithm + "]：", e);
 		}
 	}
 
@@ -71,7 +71,7 @@ public class Encrypter {
 	 * @return
 	 */
 	public static final String md5(byte[] buf) {
-		byte[] buffer = md5Encrypter.digest(buf);
+		byte[] buffer = getMessageDigest("MD5").digest(buf);
 		return bytes2Hex(buffer);
 	}
 
@@ -82,7 +82,7 @@ public class Encrypter {
 	 * @return
 	 */
 	public static final String md5For16(byte[] buf) {
-		byte[] buffer = md5Encrypter.digest(buf);
+		byte[] buffer = getMessageDigest("MD5").digest(buf);
 		return bytes2Hex(buffer, 4, 12);
 	}
 
@@ -108,7 +108,7 @@ public class Encrypter {
 	 * @return
 	 */
 	public static final String sha1(byte[] buf) {
-		byte[] buffer = sha1Encrypter.digest(buf);
+		byte[] buffer = getMessageDigest("SHA").digest(buf);
 		return bytes2Hex(buffer);
 	}
 
@@ -184,11 +184,11 @@ public class Encrypter {
 	 * @return
 	 */
 	public static final String encode(String input, String algorithm) {
+		MessageDigest digest = getMessageDigest(algorithm);
 		try {
-			MessageDigest digest = MessageDigest.getInstance(algorithm);
 			return bytes2Hex(digest.digest(input.getBytes(encoding)));
-		} catch (Exception e) {
-			throw new LogicException(e);
+		} catch (UnsupportedEncodingException e) {
+			throw new IllegalArgumentException("不支持的字符编码", e);
 		}
 	}
 

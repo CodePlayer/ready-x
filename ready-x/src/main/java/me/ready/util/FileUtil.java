@@ -23,8 +23,6 @@ import me.ready.e.LogicException;
  */
 public class FileUtil {
 
-	private static final SimpleDateFormat FILENAME_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd-HHmmssSSS");
-
 	// 禁止实例构建
 	private FileUtil() {
 	}
@@ -60,6 +58,32 @@ public class FileUtil {
 	}
 
 	/**
+	 * 获取指定文件路径中的文件名称部分
+	 * @param path 指定的文件路径
+	 * @return
+	 */
+	public static final String getFileName(String path) {
+		return getFileName(path, false);
+	}
+
+	/**
+	 * 获取指定文件路径中的文件名称部分
+	 * @param path 指定的文件路径
+	 * @param withoutExt 是否需要去除文件扩展名
+	 * @return
+	 */
+	public static final String getFileName(String path, boolean withoutExt) {
+		String str = new File(path).getName();
+		if (withoutExt) {
+			int pos = str.lastIndexOf(',');
+			if (pos > -1) {
+				str = str.substring(0, pos);
+			}
+		}
+		return str;
+	}
+
+	/**
 	 * 获取随机文件名，根据当前时间采用随机算法自动生成，并且内部保证本地没有重复文件名的文件
 	 * 
 	 * @param path
@@ -67,7 +91,7 @@ public class FileUtil {
 	 * @return
 	 */
 	public static String getRandomFileName(String path, String suffix) {
-		String fileName = FILENAME_DATE_FORMAT.format(new Date());
+		String fileName = new SimpleDateFormat("yyyyMMdd-HHmmssSSS").format(new Date());
 		if (suffix == null) {
 			suffix = "";
 		} else if (suffix.length() > 0) { // 如果有后缀就+"."
@@ -77,31 +101,11 @@ public class FileUtil {
 		File file = new File(path, destFileName);
 		if (file.exists()) {
 			do {
-				destFileName = fileName + '-' + getRandomString() + suffix;
+				destFileName = fileName + '-' + RandomUtil.getIntString(4) + suffix;
 				file = new File(path, destFileName);
 			} while (file.exists());
 		}
 		return destFileName;
-	}
-
-	/**
-	 * 获取随机4位字符串
-	 * 
-	 * @return
-	 */
-	public static final String getRandomString() {
-		String str = new Double(Math.random()).toString();
-		int index = str.indexOf('.');// 0.123456
-		index++;
-		int lastIndex = index + 4;
-		int length = str.length();
-		if (length >= lastIndex) { // 如果小数部分有4位
-			str = str.substring(index, lastIndex);
-		} else {
-			str = str.substring(index);
-			str = X.zeroFill(str, 4);
-		}
-		return str;
 	}
 
 	/**
@@ -131,7 +135,7 @@ public class FileUtil {
 	 */
 	public static String calcFileSize(String unit, int fileSize) {
 		if (fileSize < 0) {
-			throw new LogicException("需要计算的文件大小不能为负数！");
+			throw new IllegalArgumentException("需要计算的文件大小不能为负数！");
 		}
 		if (!X.isEmpty(unit)) {
 			if ("Byte".equalsIgnoreCase(unit)) {
@@ -254,21 +258,21 @@ public class FileUtil {
 		if (target.exists()) {
 			// 如果目标文件是一个目录
 			if (target.isDirectory()) {
-				throw new LogicException("目标文件是一个目录：" + target);
+				throw new IllegalStateException("目标文件是一个目录：" + target);
 			}
 			// 如果目标文件不可写入数据
 			if (!target.canWrite()) {
-				throw new LogicException("目标文件不可写入：" + target);
+				throw new IllegalStateException("目标文件不可写：" + target);
 			}
 			// 如果目标文件不允许被覆盖
 			if (!override) {
-				throw new LogicException("目标文件已存在：" + target);
+				throw new IllegalStateException("目标文件已存在：" + target);
 			}
 		} else {
 			// 如果目标文件所在的目录不存在，则创建
 			File parent = target.getParentFile();
 			if (!parent.exists() && !parent.mkdirs()) {
-				throw new LogicException("无法创建目标文件的所在目录：" + parent);
+				throw new IllegalStateException("无法创建目标文件的所在目录：" + parent);
 			}
 		}
 		copy(is, target);
@@ -284,15 +288,15 @@ public class FileUtil {
 	 */
 	public final static void copyFile(File src, File target, boolean override) {
 		if (!src.exists()) {
-			throw new LogicException("指定的文件不存在：" + src);
+			throw new IllegalStateException("指定的文件不存在：" + src);
 		}
 		if (!src.canRead()) {
-			throw new LogicException("指定的文件不可读：" + src);
+			throw new IllegalStateException("无法读取指定的文件：" + src);
 		}
 		try {
 			copyFile(new FileInputStream(src), target, override);
 		} catch (FileNotFoundException e) {
-			throw new LogicException(e);
+			throw new IllegalStateException(e);
 		}
 	}
 
@@ -319,7 +323,7 @@ public class FileUtil {
 		try {
 			copyFile(new FileInputStream(src), new File(target), override);
 		} catch (FileNotFoundException e) {
-			throw new LogicException(e);
+			throw new IllegalStateException(e);
 		}
 	}
 
@@ -345,16 +349,16 @@ public class FileUtil {
 		if (directory.exists()) {
 			// 如果目标文件是一个目录
 			if (!directory.isDirectory()) {
-				throw new LogicException("目标文件夹不是一个目录：" + directory);
+				throw new IllegalStateException("目标文件夹不是一个目录：" + directory);
 			}
 			// 如果目标文件不可写入数据
 			if (!directory.canWrite()) {
-				throw new LogicException("目标文件夹不可写入：" + directory);
+				throw new IllegalStateException("目标文件夹不可写入：" + directory);
 			}
 			// 如果目标文件不允许被覆盖
 			target = new File(directory, file.getName());
 			if (target.exists() && !override) {
-				throw new LogicException("目标文件夹已存在同名的文件：" + target);
+				throw new IllegalStateException("目标文件夹已存在同名的文件：" + target);
 			}
 		} else {
 			// 如果目标文件所在的目录不存在，则创建之
@@ -406,10 +410,20 @@ public class FileUtil {
 	 */
 	public static final void moveFile(File file, File target, boolean override) {
 		if (!file.canWrite()) {
-			throw new LogicException("指定的文件不可删除：" + file);
+			throw new IllegalStateException("指定的文件不存在或无法删除：" + file);
 		}
 		copyFile(file, target, override);
 		file.delete();
+	}
+
+	/**
+	 * 移动指定的文件到目标文件路径<br>
+	 * 如果目标文件夹已存在同名的文件，则引发异常
+	 * @param file 指定的文件
+	 * @param target 目标文件
+	 */
+	public static final void moveFile(File file, File target) {
+		moveFile(file, target, false);
 	}
 
 	/**
@@ -423,6 +437,16 @@ public class FileUtil {
 	}
 
 	/**
+	 * 移动指定的文件到目标文件路径<br>
+	 * 如果目标文件夹已存在同名的文件，则引发异常
+	 * @param path 指定的文件
+	 * @param target 目标文件
+	 */
+	public static final void moveFile(String path, String target) {
+		moveFile(new File(path), new File(target), false);
+	}
+
+	/**
 	 * 移动指定的文件到目标文件夹
 	 * @param file 指定的文件
 	 * @param directory 目标文件夹
@@ -430,7 +454,7 @@ public class FileUtil {
 	 */
 	public static final void moveFileToDirectory(File file, File directory, boolean override) {
 		if (!file.canWrite()) {
-			throw new LogicException("指定的文件不可删除：" + file);
+			throw new IllegalStateException("无法删除指定的文件：" + file);
 		}
 		copyFileToDirectory(file, directory, override);
 		file.delete();
