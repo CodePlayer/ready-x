@@ -15,7 +15,7 @@ public class StringUtil {
 	/**
 	 * 用于在2-16进制之间进行转换的映射字符数组
 	 */
-	public static final char[] digits = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+	protected static final char[] digits = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
 	/**
 	 * 获取指定字符串的Unicode编码，例如：“中国”将返回“\u4e2d\u56fd”<br>
@@ -275,8 +275,10 @@ public class StringUtil {
 	 * @return
 	 */
 	public static final String fill(String str, char ch, int maxLength) {
-		if (str == null) return "";
-		if (maxLength < 1) throw new LogicException("指定位数不能小于1!");
+		if (str == null)
+			return "";
+		if (maxLength < 1)
+			throw new LogicException("指定位数不能小于1!");
 		int length = str.length();
 		if (maxLength > length) {
 			int diffSize = maxLength - length;

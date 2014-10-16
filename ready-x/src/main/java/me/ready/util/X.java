@@ -212,6 +212,7 @@ public class X {
 	 * @param obj
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public static final boolean isInvalid(Object obj) {
 		if (obj == null) {
 			return true;
@@ -282,7 +283,7 @@ public class X {
 	public static final String field2MethodName(String prefix, String fieldName) {
 		int length;
 		if (fieldName == null || (length = fieldName.length()) == 0) {
-			throw new LogicException("无效的字段名！");
+			throw new LogicException("无效的字段名!");
 		}
 		if (length == 1) {
 			return prefix + fieldName.toUpperCase();
@@ -309,7 +310,7 @@ public class X {
 	 * </code><br>
 	 *            本方法接收的表达式参数个数可以为奇数，例如：<code>6, "星期六", 7, "星期天", "工作日"</code><br>
 	 *            相当于：<br>
-	 *            if(value 等于 6){<br>
+	 *           if(value 等于 6){<br>
 	 *            return "星期六";<br>
 	 *            }else if(value 等于 7){<br>
 	 *            return "星期天";<br>
@@ -320,13 +321,14 @@ public class X {
 	 */
 	@SuppressWarnings("unchecked")
 	public static final Object decode(Object bean, String property, Object... expressions) {
-		if (bean == null) return null;
+		if (bean == null)
+			return null;
 		Object value = null;
 		if (bean instanceof Map) {
 			Map map = (Map) bean;
 			value = map.get(property);
 			if (value == null && !map.containsKey(property)) {
-				throw new LogicException("Map中没有指定的键：" + property + "！");
+				throw new LogicException("Map中没有指定的键：" + property + "!");
 			}
 		} else {
 			Class clazz = bean.getClass();
@@ -334,7 +336,7 @@ public class X {
 				Method method = clazz.getMethod(field2GetterName(property));
 				value = method.invoke(bean);
 			} catch (Exception e) {
-				throw new LogicException("指定的属性名或对应的getter方法不存在！", e);
+				throw new LogicException("指定的属性名或对应的getter方法不存在!", e);
 			}
 		}
 		return decodeValue(value, expressions);
@@ -369,12 +371,13 @@ public class X {
 	 */
 	@SuppressWarnings("unchecked")
 	public static final Object decode(Object collection, int index, Object... expressions) {
-		if (collection == null) return null;
+		if (collection == null)
+			return null;
 		Object array = null;
 		if (collection instanceof Collection) {
 			array = ((Collection) collection).toArray();
 		} else if (!collection.getClass().isArray()) {
-			throw new LogicException("指定的collection不是集合类型或数组类型！");
+			throw new LogicException("指定的collection不是集合类型或数组类型!");
 		}
 		return Array.getLength(array) == 0 ? null : decodeValue(Array.get(array, index), expressions);
 	}
@@ -408,7 +411,7 @@ public class X {
 	public static final <T> T decodeValue(T value, T... expressions) {
 		int length;
 		if (expressions == null || (length = expressions.length) == 0) {
-			throw new LogicException("decode的表达式参数个数不能小于1！");
+			throw new LogicException("decode的表达式参数个数不能小于1!");
 		}
 		int i = 0;
 		if ((length & 1) == 1) {// 如果是奇数

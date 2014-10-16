@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
@@ -25,7 +26,8 @@ public class FileUtil {
 	private static final SimpleDateFormat FILENAME_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd-HHmmssSSS");
 
 	// 禁止实例构建
-	private FileUtil() {}
+	private FileUtil() {
+	}
 
 	/**
 	 * 根据文件路径获取对应的文件扩展名<br>
@@ -222,6 +224,25 @@ public class FileUtil {
 	}
 
 	/**
+	 * 将指定的文件输入流写入到目标文件中
+	 * @param is 指定的文件输入流
+	 * @param target 目标文件
+	 */
+	private static final void copy(InputStream is, File target) {
+		FileOutputStream fos = null;
+		BufferedOutputStream bos = null;
+		try {
+			fos = new FileOutputStream(target);
+			bos = new BufferedOutputStream(fos);
+			writeStream(is, bos);
+		} catch (Exception e) {
+			throw new LogicException(e);
+		} finally {
+			closeResource(is, bos);
+		}
+	}
+
+	/**
 	 * 通过文件流复制文件到指定路径
 	 * 
 	 * @param is 指定的输入文件流
@@ -229,7 +250,7 @@ public class FileUtil {
 	 * @param override 如果目标文件已存在，是否允许覆盖
 	 * @return
 	 */
-	public final static void copyFile(InputStream is, File target, boolean override) {
+	public static final void copyFile(InputStream is, File target, boolean override) {
 		if (target.exists()) {
 			// 如果目标文件是一个目录
 			if (target.isDirectory()) {
@@ -246,40 +267,11 @@ public class FileUtil {
 		} else {
 			// 如果目标文件所在的目录不存在，则创建
 			File parent = target.getParentFile();
-			if (!parent.exists()) {
-				parent.mkdirs();
+			if (!parent.exists() && !parent.mkdirs()) {
+				throw new LogicException("无法创建目标文件的所在目录：" + parent);
 			}
 		}
-		FileOutputStream fos = null;
-		BufferedOutputStream bos = null;
-		try {
-			fos = new FileOutputStream(target);
-			bos = new BufferedOutputStream(fos);
-			int length = 0;
-			byte[] buffer = new byte[4096];
-			while ((length = is.read(buffer)) != -1) {
-				bos.write(buffer, 0, length);
-			}
-			bos.flush();
-		} catch (Exception e) {
-			throw new LogicException(e);
-		} finally {
-			try {
-				if (bos != null) {
-					bos.close();
-				}
-			} catch (IOException e) {
-				throw new LogicException(e);
-			} finally {
-				if (is != null) {
-					try {
-						is.close();
-					} catch (IOException e) {
-						throw new LogicException(e);
-					}
-				}
-			}
-		}
+		copy(is, target);
 	}
 
 	/**
@@ -291,6 +283,12 @@ public class FileUtil {
 	 * @return
 	 */
 	public final static void copyFile(File src, File target, boolean override) {
+		if (!src.exists()) {
+			throw new LogicException("指定的文件不存在：" + src);
+		}
+		if (!src.canRead()) {
+			throw new LogicException("指定的文件不可读：" + src);
+		}
 		try {
 			copyFile(new FileInputStream(src), target, override);
 		} catch (FileNotFoundException e) {
@@ -336,54 +334,173 @@ public class FileUtil {
 		copyFile(src, target, false);
 	}
 
-	public final static void copyFileToDiretory(InputStream is, File diretory, boolean override) {
-		if (diretory.exists()) {
+	/**
+	 * 将指定的文件复制到指定的目录，保持其原文件名
+	 * @param file 指定的文件
+	 * @param directory 指定的目录
+	 * @param override 如果已存在同名的文件，是否允许覆盖
+	 */
+	public final static void copyFileToDirectory(File file, File directory, boolean override) {
+		File target = null;
+		if (directory.exists()) {
 			// 如果目标文件是一个目录
-			if (!diretory.isDirectory()) {
-				throw new LogicException("目标文件是一个目录：" + diretory);
+			if (!directory.isDirectory()) {
+				throw new LogicException("目标文件夹不是一个目录：" + directory);
 			}
 			// 如果目标文件不可写入数据
-			if (!diretory.canWrite()) {
-				throw new LogicException("目标文件不可写入：" + diretory);
+			if (!directory.canWrite()) {
+				throw new LogicException("目标文件夹不可写入：" + directory);
 			}
 			// 如果目标文件不允许被覆盖
-			if (!override) {
-				throw new LogicException("目标文件已存在：" + diretory);
+			target = new File(directory, file.getName());
+			if (target.exists() && !override) {
+				throw new LogicException("目标文件夹已存在同名的文件：" + target);
 			}
 		} else {
-			// 如果目标文件所在的目录不存在，则创建
-			File parent = diretory.getParentFile();
-			if (!parent.exists()) {
-				parent.mkdirs();
-			}
+			// 如果目标文件所在的目录不存在，则创建之
+			//			if (!diretory.mkdirs()) {
+			//				throw new LogicException("");
+			//			}
+			target = new File(directory, file.getName());
 		}
-		FileOutputStream fos = null;
-		BufferedOutputStream bos = null;
+		copyFile(file, target, true);
+	}
+
+	/**
+	 * 将指定的文件复制到指定的目录，保持其原文件名<br>
+	 * 如果目标文件夹已存在同名的文件，则引发异常
+	 * @param file 指定的文件
+	 * @param diretory 指定的目录
+	 */
+	public final static void copyFileToDirectory(File file, File diretory) {
+		copyFileToDirectory(file, diretory, false);
+	}
+
+	/**
+	 * 将指定的文件复制到指定的目录，保持其原文件名
+	 * 
+	 * @param file 指定的文件
+	 * @param diretory 指定的目录
+	 * @param override 如果已存在同名的文件，是否允许覆盖
+	 */
+	public final static void copyFileToDirectory(String file, String diretory, boolean override) {
+		copyFileToDirectory(new File(file), new File(diretory), override);
+	}
+
+	/**
+	 * 将指定的文件复制到指定的目录，保持其原文件名<br>
+	 * 如果目标文件夹已存在同名的文件，则引发异常
+	 * 
+	 * @param file 指定的文件
+	 * @param diretory 指定的目录
+	 */
+	public final static void copyFileToDirectory(String file, String diretory) {
+		copyFileToDirectory(file, diretory, false);
+	}
+
+	/**
+	 * 移动指定的文件到目标文件路径
+	 * @param file 指定的文件
+	 * @param target 目标文件
+	 * @param override 如果已存在同名的文件，是否允许覆盖
+	 */
+	public static final void moveFile(File file, File target, boolean override) {
+		if (!file.canWrite()) {
+			throw new LogicException("指定的文件不可删除：" + file);
+		}
+		copyFile(file, target, override);
+		file.delete();
+	}
+
+	/**
+	 * 移动指定的文件到目标文件路径
+	 * @param path 指定的文件
+	 * @param target 目标文件
+	 * @param override 如果已存在同名的文件，是否允许覆盖
+	 */
+	public static final void moveFile(String path, String target, boolean override) {
+		moveFile(new File(path), new File(target), override);
+	}
+
+	/**
+	 * 移动指定的文件到目标文件夹
+	 * @param file 指定的文件
+	 * @param directory 目标文件夹
+	 * @param override 如果已存在同名的文件，是否允许覆盖
+	 */
+	public static final void moveFileToDirectory(File file, File directory, boolean override) {
+		if (!file.canWrite()) {
+			throw new LogicException("指定的文件不可删除：" + file);
+		}
+		copyFileToDirectory(file, directory, override);
+		file.delete();
+	}
+
+	/**
+	 * 移动指定的文件到目标文件夹<br>
+	 * 如果目标文件夹已存在同名的文件，则引发异常
+	 * @param file 指定的文件
+	 * @param directory 目标文件夹
+	 */
+	public static final void moveFileToDirectory(File file, File directory) {
+		moveFileToDirectory(file, directory, false);
+	}
+
+	/**
+	 * 移动指定的文件到目标文件夹
+	 * @param file 指定的文件
+	 * @param directory 目标文件夹
+	 * @param override 如果已存在同名的文件，是否允许覆盖
+	 */
+	public static final void moveFileToDirectory(String path, String directory, boolean override) {
+		moveFileToDirectory(new File(path), new File(directory), override);
+	}
+
+	/**
+	 * 移动指定的文件到目标文件夹<br>
+	 * 如果目标文件夹已存在同名的文件，则引发异常
+	 * @param file 指定的文件
+	 * @param directory 目标文件夹
+	 */
+	public static final void moveFileToDirectory(String path, String directory) {
+		moveFileToDirectory(path, directory, false);
+	}
+
+	/**
+	 * 将指定的输入流写入到指定的输出流中<br>
+	 * 注意该方法内部只负责写入，不负责关闭相关流资源
+	 * @param in 指定的输入流
+	 * @param out 指定的输出流
+	 * @throws IOException
+	 */
+	public static final void writeStream(InputStream in, OutputStream out) throws IOException {
+		int length = 0;
+		byte[] buffer = new byte[4096];
+		while ((length = in.read(buffer)) != -1) {
+			out.write(buffer, 0, length);
+		}
+		out.flush();
+	}
+
+	/**
+	 * 关闭一组指定的文件流资源<br>
+	 * 内部会先关闭输出流，再关闭输入流
+	 * @param in 输入流
+	 * @param out 输出流
+	 */
+	public static final void closeResource(InputStream in, OutputStream out) {
 		try {
-			fos = new FileOutputStream(diretory);
-			bos = new BufferedOutputStream(fos);
-			int length = 0;
-			byte[] buffer = new byte[4096];
-			while ((length = is.read(buffer)) != -1) {
-				bos.write(buffer, 0, length);
+			if (out != null) {
+				out.close();
 			}
-			bos.flush();
-		} catch (Exception e) {
+		} catch (IOException e) {
 			throw new LogicException(e);
 		} finally {
-			try {
-				if (bos != null) {
-					bos.close();
-				}
-			} catch (IOException e) {
-				throw new LogicException(e);
-			} finally {
-				if (is != null) {
-					try {
-						is.close();
-					} catch (IOException e) {
-						throw new LogicException(e);
-					}
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException e) {
+					throw new LogicException(e);
 				}
 			}
 		}

@@ -1,12 +1,15 @@
 package me.ready.util;
 
+import java.io.File;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
+
 public class FileUtilTest {
 
 	@Test
 	public void testCopyFile() {
-//		FileUtil.copyFile("D:\\BaiduYunDownload\\API\\Apache2.2_zh_CN.chm", "E:/notfound/xxxxx/apache-maven-3.2.3-bin-23.zip", true);
+		//		FileUtil.copyFile("D:\\BaiduYunDownload\\API\\Apache2.2_zh_CN.chm", "E:/notfound/xxxxx/apache-maven-3.2.3-bin-23.zip", true);
 	}
 
 	@Test
@@ -16,8 +19,15 @@ public class FileUtilTest {
 		assertEquals(ext, ".chm");
 		ext = FileUtil.getExtension(path, true);
 		assertEquals(ext, "chm");
-		
+
 		path = "HelloWorld";
 		assertEquals(FileUtil.getExtension(path), "");
+	}
+
+	@Test
+	public void testFile() {
+		String path = "D:\\BaiduYunDownload\\API\\xxxx";
+		System.out.println(new File(path).isDirectory());
+
 	}
 }

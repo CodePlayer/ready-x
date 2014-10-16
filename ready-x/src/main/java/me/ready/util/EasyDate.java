@@ -1,6 +1,8 @@
 package me.ready.util;
 
 import java.io.Serializable;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -117,7 +119,8 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	}
 
 	/**
-	 * 获取指定日期对象的毫秒值
+	 * 返回自 1970 年 1 月 1 日 00:00:00 GMT 以来指定日期对象表示的毫秒数。<br>
+	 * 如果为null，则默认为当前时间
 	 * @param date
 	 * @return
 	 */
@@ -132,7 +135,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 		} else if (date instanceof Calendar) {
 			theTime = ((Calendar) date).getTimeInMillis();
 		} else {
-			throw new LogicException("指定的对象不是日期类型的对象：" + date);
+			throw new LogicException("指定的对象不是日期类型：" + date);
 		}
 		return theTime;
 	}
@@ -465,6 +468,22 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 */
 	public java.sql.Date toSqlDate() {
 		return new java.sql.Date(calendar.getTimeInMillis());
+	}
+
+	/**
+	 * 转为java.sql.Timestamp
+	 * @return
+	 */
+	public Timestamp toTimestamp() {
+		return new Timestamp(calendar.getTimeInMillis());
+	}
+
+	/**
+	 * 转为java.sql.Time
+	 * @return
+	 */
+	public Time toTime() {
+		return new Time(calendar.getTimeInMillis());
 	}
 
 	/**

@@ -17,6 +17,7 @@ import me.ready.e.LogicException;
  */
 public class Encrypter {
 
+	// TODO MessageDigest 不是线程安全的，需要处理
 	private static MessageDigest md5Encrypter;// MD5加密器
 	private static MessageDigest sha1Encrypter;// SHA-1加密器
 	/**
