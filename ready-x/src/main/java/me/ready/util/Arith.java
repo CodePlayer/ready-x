@@ -1,6 +1,7 @@
 package me.ready.util;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 
@@ -11,14 +12,166 @@ import java.math.RoundingMode;
  */
 public class Arith {
 
-	// 禁止创建实例
-	private Arith() {
+	protected BigDecimal value;
+
+	/**
+	 * 构造一个为指定值的商业计算数
+	 * @param d
+	 */
+	public Arith(double d) {
+		value = new BigDecimal(Double.toString(d));
+	}
+
+	/**
+	 * 构造一个为指定值的商业计算数
+	 * @param d
+	 */
+	public Arith(BigDecimal d) {
+		if (d == null) {
+			throw new NullPointerException("BigDecimal对象不能为null");
+		}
+		value = d;
+	}
+
+	/**
+	 * 构造一个默认值为0的商业计算数
+	 */
+	public Arith() {
+		value = BigDecimal.ZERO;
+	}
+
+	//	public Arith(long d) {
+	//		value = new BigDecimal(Long.toString(d));
+	//	}
+
+	/**
+	 * 商业加法运算
+	 * @param d 指定的加数
+	 * @return
+	 */
+	public Arith add(double d) {
+		value = value.add(new BigDecimal(Double.toString(d)));
+		return this;
+	}
+
+	/**
+	 * 商业减法运算
+	 * @param d 指定的减数
+	 * @return
+	 */
+	public Arith minus(double d) {
+		return add(-d);
+	}
+
+	/**
+	 * 商业乘法运算
+	 * @param d 指定的乘数
+	 * @return
+	 */
+	public Arith multiply(double d) {
+		value = value.multiply(new BigDecimal(Double.toString(d)));
+		return this;
+	}
+
+	/**
+	 * 商业除法运算
+	 * @param d 指定的除数
+	 * @return
+	 */
+	public Arith divide(double d) {
+		value = value.divide(new BigDecimal(Double.toString(d)));
+		return this;
+	}
+
+	/**
+	 * 设置精度(即精确到的小数位数)
+	 * @param newScale 指定的精确位数
+	 * @param roundingMode 设置应用的舍入模式(四舍五入、向上舍入、向下舍去等)
+	 * @return
+	 */
+	public Arith setScale(int newScale, RoundingMode roundingMode) {
+		value.setScale(newScale, roundingMode);
+		return this;
+	}
+
+	/**
+	 * 设置四舍五入的精度(即精确到的小数位数)
+	 * @param newScale 指定的精确位数
+	 * @return
+	 */
+	public Arith round(int newScale) {
+		return setScale(newScale, RoundingMode.HALF_UP);
+	}
+
+	/**
+	 * 转换为BigDecimal
+	 * @return
+	 */
+	public BigDecimal toBigDecimal() {
+		return value;
+	}
+
+	/**
+	 * 转换为BigInteger
+	 * @return
+	 */
+	public BigInteger toBigInteger() {
+		return value.toBigInteger();
+	}
+
+	/**
+	 * 转换为double值
+	 * @return
+	 */
+	public double doubleValue() {
+		return value.doubleValue();
+	}
+
+	/**
+	 * 转换为int值
+	 * @return
+	 */
+	public double intValue() {
+		return value.intValue();
+	}
+
+	/**
+	 * 转换为long值
+	 * @return
+	 */
+	public double longValue() {
+		return value.longValue();
+	}
+
+	/**
+	 * 转换为float值
+	 * @return
+	 */
+	public double floatValue() {
+		return value.floatValue();
+	}
+
+	/**
+	 * 转换为byte值
+	 * @return
+	 */
+	public byte byteValue() {
+		return value.byteValue();
+	}
+
+	/**
+	 * 转换为short值
+	 * @return
+	 */
+	public short shortValue() {
+		return value.shortValue();
 	}
 
 	/**
 	 * 商业加法运算
 	 * @param a 加数1
 	 * @param b 加数2
+	 * @param more 更多的其他加数
 	 * @return
 	 */
 	public static final double add(double a, double b) {
@@ -32,7 +185,7 @@ public class Arith {
 	 * @return
 	 */
 	public static final double minus(double a, double b) {
-		return add(a, -b);
+		return new BigDecimal(Double.toString(a)).add(new BigDecimal(Double.toString(-b))).doubleValue();
 	}
 
 	/**
@@ -46,6 +199,18 @@ public class Arith {
 	}
 
 	/**
+	 * 商业乘法运算
+	 * @param a 乘数1
+	 * @param b 乘数2
+	 * @param scale 小数部分的精确位数
+	 * @param 舍入模式
+	 * @return
+	 */
+	public static final double multiply(double a, double b, int scale, RoundingMode roundingMode) {
+		return new BigDecimal(Double.toString(a)).divide(new BigDecimal(Double.toString(b))).setScale(scale, roundingMode).doubleValue();
+	}
+
+	/**
 	 * 商业乘法运算(四舍五入)
 	 * @param a 乘数1
 	 * @param b 乘数2
@@ -53,7 +218,7 @@ public class Arith {
 	 * @return
 	 */
 	public static final double multiply(double a, double b, int scale) {
-		return new BigDecimal(Double.toString(a)).multiply(new BigDecimal(Double.toString(b))).divide(new BigDecimal(1), scale, RoundingMode.HALF_UP).doubleValue();
+		return multiply(a, b, scale, RoundingMode.HALF_UP);
 	}
 
 	/**
