@@ -7,6 +7,7 @@ import java.math.RoundingMode;
 
 /**
  * 用于商业运算的常用计算工具类
+ * 
  * @author Ready
  * @date 2012-9-27
  */
@@ -16,6 +17,7 @@ public class Arith {
 
 	/**
 	 * 构造一个为指定值的商业计算数
+	 * 
 	 * @param d
 	 */
 	public Arith(double d) {
@@ -23,7 +25,8 @@ public class Arith {
 	}
 
 	/**
-	 * 构造一个为指定值的商业计算数
+	 * 构造一个为指定double值的商业计算数
+	 * 
 	 * @param d
 	 */
 	public Arith(BigDecimal d) {
@@ -34,18 +37,24 @@ public class Arith {
 	}
 
 	/**
+	 * 构造一个指定long值的商业计算数
+	 * 
+	 * @param d
+	 */
+	public Arith(long d) {
+		value = new BigDecimal(d);
+	}
+
+	/**
 	 * 构造一个默认值为0的商业计算数
 	 */
 	public Arith() {
 		value = BigDecimal.ZERO;
 	}
 
-	//	public Arith(long d) {
-	//		value = new BigDecimal(Long.toString(d));
-	//	}
-
 	/**
 	 * 商业加法运算
+	 * 
 	 * @param d 指定的加数
 	 * @return
 	 */
@@ -56,6 +65,7 @@ public class Arith {
 
 	/**
 	 * 商业减法运算
+	 * 
 	 * @param d 指定的减数
 	 * @return
 	 */
@@ -65,6 +75,7 @@ public class Arith {
 
 	/**
 	 * 商业乘法运算
+	 * 
 	 * @param d 指定的乘数
 	 * @return
 	 */
@@ -75,6 +86,7 @@ public class Arith {
 
 	/**
 	 * 商业除法运算
+	 * 
 	 * @param d 指定的除数
 	 * @return
 	 */
@@ -85,6 +97,7 @@ public class Arith {
 
 	/**
 	 * 设置精度(即精确到的小数位数)
+	 * 
 	 * @param newScale 指定的精确位数
 	 * @param roundingMode 设置应用的舍入模式(四舍五入、向上舍入、向下舍去等)
 	 * @return
@@ -96,6 +109,7 @@ public class Arith {
 
 	/**
 	 * 设置四舍五入的精度(即精确到的小数位数)
+	 * 
 	 * @param newScale 指定的精确位数
 	 * @return
 	 */
@@ -105,6 +119,7 @@ public class Arith {
 
 	/**
 	 * 转换为BigDecimal
+	 * 
 	 * @return
 	 */
 	public BigDecimal toBigDecimal() {
@@ -113,6 +128,7 @@ public class Arith {
 
 	/**
 	 * 转换为BigInteger
+	 * 
 	 * @return
 	 */
 	public BigInteger toBigInteger() {
@@ -121,6 +137,7 @@ public class Arith {
 
 	/**
 	 * 转换为double值
+	 * 
 	 * @return
 	 */
 	public double doubleValue() {
@@ -129,6 +146,7 @@ public class Arith {
 
 	/**
 	 * 转换为int值
+	 * 
 	 * @return
 	 */
 	public double intValue() {
@@ -137,6 +155,7 @@ public class Arith {
 
 	/**
 	 * 转换为long值
+	 * 
 	 * @return
 	 */
 	public double longValue() {
@@ -145,6 +164,7 @@ public class Arith {
 
 	/**
 	 * 转换为float值
+	 * 
 	 * @return
 	 */
 	public double floatValue() {
@@ -153,6 +173,7 @@ public class Arith {
 
 	/**
 	 * 转换为byte值
+	 * 
 	 * @return
 	 */
 	public byte byteValue() {
@@ -161,6 +182,7 @@ public class Arith {
 
 	/**
 	 * 转换为short值
+	 * 
 	 * @return
 	 */
 	public short shortValue() {
@@ -169,6 +191,7 @@ public class Arith {
 
 	/**
 	 * 商业加法运算
+	 * 
 	 * @param a 加数1
 	 * @param b 加数2
 	 * @param more 更多的其他加数
@@ -180,6 +203,7 @@ public class Arith {
 
 	/**
 	 * 商业减法运算
+	 * 
 	 * @param a 被减数
 	 * @param b 减数
 	 * @return
@@ -190,6 +214,7 @@ public class Arith {
 
 	/**
 	 * 商业乘法运算
+	 * 
 	 * @param a 乘数1
 	 * @param b 乘数2
 	 * @return
@@ -200,6 +225,7 @@ public class Arith {
 
 	/**
 	 * 商业乘法运算
+	 * 
 	 * @param a 乘数1
 	 * @param b 乘数2
 	 * @param scale 小数部分的精确位数
@@ -212,6 +238,7 @@ public class Arith {
 
 	/**
 	 * 商业乘法运算(四舍五入)
+	 * 
 	 * @param a 乘数1
 	 * @param b 乘数2
 	 * @param scale 小数部分的精确位数
@@ -225,6 +252,7 @@ public class Arith {
 	 * 商业乘法运算(四舍五入)<br>
 	 * <strong>注意：</strong>此方法的有效位数包含整数部分在内<br>
 	 * 将precision设为long类型只是为了重载的需要
+	 * 
 	 * @param a 乘数1
 	 * @param b 乘数2
 	 * @param precision 包含整数部分的有效位数
@@ -237,6 +265,7 @@ public class Arith {
 
 	/**
 	 * 商业除法运算(四舍五入)
+	 * 
 	 * @param a 被除数
 	 * @param b 除数
 	 * @param scale 小数精确度位数
@@ -249,6 +278,7 @@ public class Arith {
 
 	/**
 	 * 以四舍五入的方式使指定小数精确到指定的小数位数
+	 * 
 	 * @param d 指定的小数
 	 * @param scale 指定的小数精确位数
 	 * @return
@@ -260,6 +290,7 @@ public class Arith {
 
 	/**
 	 * 向上取整，返回大于或等于指定数值的最小整数
+	 * 
 	 * @param d 指定的数值
 	 * @return
 	 */
@@ -269,6 +300,7 @@ public class Arith {
 
 	/**
 	 * 向下取整，返回小于或等于指定数值的最大整数
+	 * 
 	 * @param d 指定的数值
 	 * @return
 	 */
@@ -278,6 +310,7 @@ public class Arith {
 
 	/**
 	 * 以指定舍入方式使指定小数精确到指定的小数位数
+	 * 
 	 * @param d 指定的小数
 	 * @param scale 指定的小数精确位数
 	 * @param mode 指定的舍入模式

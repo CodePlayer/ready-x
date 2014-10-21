@@ -3,8 +3,6 @@ package me.ready.util;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
-import me.ready.e.LogicException;
-
 /**
  * 用于对字符串类型的数据进行常用处理操作的工具类
  * 

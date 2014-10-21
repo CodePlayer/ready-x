@@ -310,7 +310,7 @@ public class X {
 	 * </code><br>
 	 *            本方法接收的表达式参数个数可以为奇数，例如：<code>6, "星期六", 7, "星期天", "工作日"</code><br>
 	 *            相当于：<br>
-	 *           if(value 等于 6){<br>
+	 *            if(value 等于 6){<br>
 	 *            return "星期六";<br>
 	 *            }else if(value 等于 7){<br>
 	 *            return "星期天";<br>
@@ -321,8 +321,7 @@ public class X {
 	 */
 	@SuppressWarnings("unchecked")
 	public static final Object decode(Object bean, String property, Object... expressions) {
-		if (bean == null)
-			return null;
+		if (bean == null) return null;
 		Object value = null;
 		if (bean instanceof Map) {
 			Map map = (Map) bean;
@@ -369,10 +368,8 @@ public class X {
 	 *            }
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public static final Object decode(Object collection, int index, Object... expressions) {
-		if (collection == null)
-			return null;
+		if (collection == null) return null;
 		Object array = null;
 		if (collection instanceof Collection) {
 			array = ((Collection) collection).toArray();
