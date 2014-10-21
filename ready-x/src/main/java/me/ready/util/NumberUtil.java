@@ -11,7 +11,8 @@ import java.math.BigDecimal;
 public class NumberUtil {
 
 	// 禁止实例创建
-	private NumberUtil() {}
+	private NumberUtil() {
+	}
 
 	/**
 	 * 将int类型的变量转为二进制字符串
@@ -125,6 +126,8 @@ public class NumberUtil {
 		}
 		if (value instanceof Number) {
 			return ((Number) value).intValue();
+		} else if ("".equals(value)) {
+			return defaultValue;
 		} else {
 			try {
 				return Integer.parseInt(value.toString());

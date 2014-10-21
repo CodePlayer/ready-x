@@ -349,24 +349,26 @@ public class X {
 	 * @param index 指定的索引，如果不存在，将会抛出异常
 	 * @param expressions 指定的表达式，例如：<code>"1", "男", "0", "女"</code><br>
 	 *            方法将会将指定属性的值(value)，与表达式进行匹配，形如：<br>
-	 *            <code>
-	 * if(value 等于 "1"){<br>
-	 * 		return "男";<br>
-	 * }else if(value 等于 "0"){<br>
-	 * 		return "女";<br>
-	 * }else{<br>
-	 * 		return value;<br>
+	 * <pre>
+	 * if(value 等于 "1"){
+	 * 		return "男";
+	 * }else if(value 等于 "0"){
+	 * 		return "女";
+	 * }else{
+	 * 		return value;
 	 * }
-	 * </code><br>
+	 * </pre>
 	 *            本方法接收的表达式参数个数可以为奇数，例如：<code>6, "星期六", 7, "星期天", "工作日"</code><br>
-	 *            相当于：<br>
-	 *            if(value 等于 6){<br>
-	 *            return "星期六";<br>
-	 *            }else if(value 等于 7){<br>
-	 *            return "星期天";<br>
-	 *            }else{<br>
-	 *            return "工作日";<br>
+	 *            相当于：
+	 *            <pre>
+	 *            if(value 等于 6){
+	 *            	return "星期六";
+	 *            }else if(value 等于 7){
+	 *            	return "星期天";
+	 *            }else{
+	 *            	return "工作日";
 	 *            }
+	 *            </pre>
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
