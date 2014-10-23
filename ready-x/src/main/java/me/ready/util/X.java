@@ -15,6 +15,7 @@ import me.ready.e.LogicException;
  * 
  * @author Ready
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class X {
 
 	/**
@@ -212,7 +213,6 @@ public class X {
 	 * @param obj
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public static final boolean isInvalid(Object obj) {
 		if (obj == null) {
 			return true;
@@ -319,7 +319,6 @@ public class X {
 	 *            }
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public static final Object decode(Object bean, String property, Object... expressions) {
 		if (bean == null) return null;
 		Object value = null;
@@ -348,7 +347,8 @@ public class X {
 	 * @param index 指定的索引，如果不存在，将会抛出异常
 	 * @param expressions 指定的表达式，例如：<code>"1", "男", "0", "女"</code><br>
 	 *            方法将会将指定属性的值(value)，与表达式进行匹配，形如：<br>
-	 * <pre>
+	 * 
+	 *            <pre>
 	 * if(value 等于 "1"){
 	 * 		return "男";
 	 * }else if(value 等于 "0"){
@@ -357,8 +357,10 @@ public class X {
 	 * 		return value;
 	 * }
 	 * </pre>
+	 * 
 	 *            本方法接收的表达式参数个数可以为奇数，例如：<code>6, "星期六", 7, "星期天", "工作日"</code><br>
 	 *            相当于：
+	 * 
 	 *            <pre>
 	 *            if(value 等于 6){
 	 *            	return "星期六";
@@ -367,7 +369,7 @@ public class X {
 	 *            }else{
 	 *            	return "工作日";
 	 *            }
-	 *            </pre>
+	 * </pre>
 	 * @return
 	 */
 	public static final Object decode(Object collection, int index, Object... expressions) {
