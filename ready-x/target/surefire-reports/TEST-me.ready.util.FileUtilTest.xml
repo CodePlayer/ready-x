@@ -1,64 +1,63 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="0.133" errors="0" skipped="0" tests="1" name="me.ready.util.FileUtilTest">
+<testsuite failures="0" time="0.003" errors="0" skipped="0" tests="1" name="me.ready.util.FileUtilTest">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
-    <property name="sun.boot.library.path" value="F:\Program\JDK7\jre\bin"/>
-    <property name="java.vm.version" value="24.65-b04"/>
-    <property name="java.vm.vendor" value="Oracle Corporation"/>
-    <property name="java.vendor.url" value="http://java.oracle.com/"/>
+    <property name="sun.boot.library.path" value="F:\Program\MyEclipse2013\binary\com.sun.java.jdk.win32.x86_1.6.0.u43\jre\bin"/>
+    <property name="java.vm.version" value="20.14-b01"/>
+    <property name="java.vm.vendor" value="Sun Microsystems Inc."/>
+    <property name="java.vendor.url" value="http://java.sun.com/"/>
     <property name="path.separator" value=";"/>
     <property name="guice.disable.misplaced.annotation.check" value="true"/>
     <property name="java.vm.name" value="Java HotSpot(TM) Client VM"/>
     <property name="file.encoding.pkg" value="sun.io"/>
-    <property name="user.script" value=""/>
     <property name="user.country" value="CN"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="sun.os.patch.level" value="Service Pack 1"/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
-    <property name="user.dir" value="F:\Program\egit_repos\git\ready-x\ready-x"/>
-    <property name="java.runtime.version" value="1.7.0_67-b01"/>
+    <property name="user.dir" value="F:\Program\egit_repos\ready-x\ready-x"/>
+    <property name="java.runtime.version" value="1.6.0_43-b01"/>
     <property name="java.awt.graphicsenv" value="sun.awt.Win32GraphicsEnvironment"/>
-    <property name="java.endorsed.dirs" value="F:\Program\JDK7\jre\lib\endorsed"/>
+    <property name="java.endorsed.dirs" value="F:\Program\MyEclipse2013\binary\com.sun.java.jdk.win32.x86_1.6.0.u43\jre\lib\endorsed"/>
     <property name="os.arch" value="x86"/>
     <property name="java.io.tmpdir" value="C:\Users\ADMINI~1\AppData\Local\Temp\"/>
     <property name="line.separator" value="
 "/>
-    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.vm.specification.vendor" value="Sun Microsystems Inc."/>
     <property name="user.variant" value=""/>
     <property name="os.name" value="Windows 7"/>
-    <property name="classworlds.conf" value="D:\Java\.metadata\.plugins\org.maven.ide.eclipse\launches\m2conf2319569461355116447.tmp"/>
+    <property name="classworlds.conf" value="D:\MyEclipse2013\.metadata\.plugins\org.eclipse.m2e.core\launches\m2conf7414231684347745254.tmp"/>
     <property name="sun.jnu.encoding" value="GBK"/>
-    <property name="java.library.path" value="F:\Program\JDK7\bin;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;F:/Program/MyEclipse/Common/binary/com.sun.java.jdk.win32.x86_1.6.0.013/jre/bin/client;F:/Program/MyEclipse/Common/binary/com.sun.java.jdk.win32.x86_1.6.0.013/jre/bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;F:\Program\JDK7\bin;F:\wamp\bin\mysql\mysql5.5.28\bin;F:\Program\apache-maven-3.2.3\bin;."/>
+    <property name="java.library.path" value="F:\Program\MyEclipse2013\binary\com.sun.java.jdk.win32.x86_1.6.0.u43\bin;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;F:/Program/MyEclipse2013/binary/com.sun.java.jdk.win32.x86_1.6.0.u43/jre/bin/client;F:/Program/MyEclipse2013/binary/com.sun.java.jdk.win32.x86_1.6.0.u43/jre/bin;F:/Program/MyEclipse2013/binary/com.sun.java.jdk.win32.x86_1.6.0.u43/jre/lib/i386;.;C:\Windows\system32;C:\Windows;C:\Windows\system32\wbem;F:\Program\MySQL\bin;C:\Program Files (x86)\ATI Technologies\ATI.ACE\Core-Static;F:\Program\JDK1.7\bin;F:\Program\JDK1.7\jre\bin;F:\Program\apache-maven-3.2.3\bin;F:\Program\EmEditor;D:\OpenVPN\bin;F:\Program\nodejs\;C:\Users\Administrator\AppData\Roaming\npm;."/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="java.class.version" value="51.0"/>
+    <property name="java.class.version" value="50.0"/>
     <property name="sun.management.compiler" value="HotSpot Client Compiler"/>
     <property name="os.version" value="6.1"/>
     <property name="user.home" value="C:\Users\Administrator"/>
     <property name="user.timezone" value="Asia/Shanghai"/>
     <property name="java.awt.printerjob" value="sun.awt.windows.WPrinterJob"/>
-    <property name="java.specification.version" value="1.7"/>
-    <property name="file.encoding" value="GBK"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.specification.version" value="1.6"/>
     <property name="user.name" value="Administrator"/>
     <property name="java.class.path" value="F:\Program\apache-maven-3.2.3\boot\plexus-classworlds-2.5.1.jar"/>
-    <property name="java.vm.specification.version" value="1.7"/>
+    <property name="java.vm.specification.version" value="1.0"/>
     <property name="sun.arch.data.model" value="32"/>
-    <property name="java.home" value="F:\Program\JDK7\jre"/>
+    <property name="java.home" value="F:\Program\MyEclipse2013\binary\com.sun.java.jdk.win32.x86_1.6.0.u43\jre"/>
     <property name="sun.java.command" value="org.codehaus.classworlds.Launcher -B -s F:\Program\apache-maven-3.2.3\conf\settings.xml test"/>
-    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.vendor" value="Sun Microsystems Inc."/>
     <property name="user.language" value="zh"/>
     <property name="awt.toolkit" value="sun.awt.windows.WToolkit"/>
-    <property name="java.vm.info" value="mixed mode, sharing"/>
-    <property name="java.version" value="1.7.0_67"/>
-    <property name="java.ext.dirs" value="F:\Program\JDK7\jre\lib\ext;C:\Windows\Sun\Java\lib\ext"/>
-    <property name="sun.boot.class.path" value="F:\Program\JDK7\jre\lib\resources.jar;F:\Program\JDK7\jre\lib\rt.jar;F:\Program\JDK7\jre\lib\sunrsasign.jar;F:\Program\JDK7\jre\lib\jsse.jar;F:\Program\JDK7\jre\lib\jce.jar;F:\Program\JDK7\jre\lib\charsets.jar;F:\Program\JDK7\jre\lib\jfr.jar;F:\Program\JDK7\jre\classes"/>
-    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="java.vm.info" value="mixed mode"/>
+    <property name="java.version" value="1.6.0_43"/>
+    <property name="java.ext.dirs" value="F:\Program\MyEclipse2013\binary\com.sun.java.jdk.win32.x86_1.6.0.u43\jre\lib\ext;C:\Windows\Sun\Java\lib\ext"/>
+    <property name="sun.boot.class.path" value="F:\Program\MyEclipse2013\binary\com.sun.java.jdk.win32.x86_1.6.0.u43\jre\lib\resources.jar;F:\Program\MyEclipse2013\binary\com.sun.java.jdk.win32.x86_1.6.0.u43\jre\lib\rt.jar;F:\Program\MyEclipse2013\binary\com.sun.java.jdk.win32.x86_1.6.0.u43\jre\lib\sunrsasign.jar;F:\Program\MyEclipse2013\binary\com.sun.java.jdk.win32.x86_1.6.0.u43\jre\lib\jsse.jar;F:\Program\MyEclipse2013\binary\com.sun.java.jdk.win32.x86_1.6.0.u43\jre\lib\jce.jar;F:\Program\MyEclipse2013\binary\com.sun.java.jdk.win32.x86_1.6.0.u43\jre\lib\charsets.jar;F:\Program\MyEclipse2013\binary\com.sun.java.jdk.win32.x86_1.6.0.u43\jre\lib\modules\jdk.boot.jar;F:\Program\MyEclipse2013\binary\com.sun.java.jdk.win32.x86_1.6.0.u43\jre\classes"/>
+    <property name="java.vendor" value="Sun Microsystems Inc."/>
     <property name="maven.home" value="F:\Program\apache-maven-3.2.3"/>
     <property name="file.separator" value="\"/>
-    <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/"/>
+    <property name="java.vendor.url.bug" value="http://java.sun.com/cgi-bin/bugreport.cgi"/>
     <property name="sun.cpu.endian" value="little"/>
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="pentium_pro+mmx pentium_pro pentium+mmx pentium i486 i386 i86"/>
   </properties>
-  <testcase time="0.133" classname="me.ready.util.FileUtilTest" name="testCopy"/>
+  <testcase time="0.003" classname="me.ready.util.FileUtilTest" name="testGetFileName"/>
 </testsuite>

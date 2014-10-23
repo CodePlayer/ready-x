@@ -276,10 +276,8 @@ public class StringUtil {
 	 * @return
 	 */
 	private static final String pad(String str, char ch, int maxLength, boolean left) {
-		if (str == null)
-			return "";
-		if (maxLength < 1)
-			throw new IllegalArgumentException("指定位数不能小于1!");
+		if (str == null) return "";
+		if (maxLength < 1) throw new IllegalArgumentException("指定位数不能小于1!");
 		int length = str.length();
 		if (maxLength > length) {
 			int diffSize = maxLength - length;
@@ -289,7 +287,7 @@ public class StringUtil {
 				for (int i = 0; i < diffSize; i++) {
 					chars[i] = ch;
 				}
-				System.arraycopy(str.toCharArray(), 0, chars, diffSize, length); // 此方法由JVM底层实现，因此效率相对较高				
+				System.arraycopy(str.toCharArray(), 0, chars, diffSize, length); // 此方法由JVM底层实现，因此效率相对较高
 			} else {
 				for (int i = diffSize; i < maxLength; i++) {
 					chars[i] = ch;
@@ -342,6 +340,7 @@ public class StringUtil {
 
 	/**
 	 * 将指定字符串的 <code>beginIndex</code> 到 <code>endIndex</code> (不包括 <code>endIndex</code> ) 之间的字符全部替换为字符 <code>ch</code>
+	 * 
 	 * @param str 指定的字符串
 	 * @param ch 指定的字符
 	 * @param beginIndex 指定的字符串起始索引(可以为负数，表示 <code>beginIndex + str.length()</code> )
@@ -371,6 +370,7 @@ public class StringUtil {
 
 	/**
 	 * 将指定字符串的 <code>beginIndex</code> 到末尾之间的字符全部替换为字符 <code>ch</code>
+	 * 
 	 * @param str 指定的字符串
 	 * @param ch 指定的字符
 	 * @param beginIndex 指定的字符串起始索引(可以为负数，表示 <code>beginIndex + str.length()</code> )
@@ -378,5 +378,33 @@ public class StringUtil {
 	 */
 	public static final String replaceChars(String str, char ch, int beginIndex) {
 		return replaceChars(str, ch, beginIndex, str.length());
+	}
+
+	/**
+	 * 将字符串从指定字符集编码转换为目标字符集编码
+	 * 
+	 * @param str 指定的字符串
+	 * @param originalCharset 原始字符集编码
+	 * @param targetCharset 目标字符集编码
+	 * @return
+	 */
+	public static final String transEncoding(String str, String originalCharset, String targetCharset) {
+		try {
+			return new String(str.getBytes(originalCharset), targetCharset);
+		} catch (UnsupportedEncodingException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	/**
+	 * 将指定的URI参数字符串转换为目标字符集编码<br>
+	 * 本方法实际上是将字符串从ISO-8859-1编码转换为指定的目标编码
+	 * 
+	 * @param str 指定的URI参数字符串
+	 * @param targetCharset 目标字符集编码
+	 * @return
+	 */
+	public static final String transEncodingForURI(String str, String targetCharset) {
+		return transEncoding(str, "ISO-8859-1", targetCharset);
 	}
 }

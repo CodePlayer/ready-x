@@ -14,16 +14,18 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * List、Set、Map等常见集合数据操作的工具类
+ * 
  * @package me.ready.util
  * @author Ready
  * @date 2014-10-21
- *
+ * 
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class CollectionUtil {
 
 	/**
 	 * 根据可变参数形式的键值数组构造一个HashMap集合<br>
+	 * 
 	 * @param KeysAndValues 可变参数形式的键值数组，必须是K1, V1, K2, V2, K3, V3...这种形式
 	 * @return
 	 */
@@ -37,6 +39,7 @@ public class CollectionUtil {
 
 	/**
 	 * 根据可变参数形式的键值数组构造一个Hashtable集合<br>
+	 * 
 	 * @param KeysAndValues 可变参数形式的键值数组，必须是K1, V1, K2, V2, K3, V3...这种形式
 	 * @return
 	 */
@@ -50,6 +53,7 @@ public class CollectionUtil {
 
 	/**
 	 * 根据可变参数形式的键值数组构造一个LinkedHashMap集合<br>
+	 * 
 	 * @param KeysAndValues 可变参数形式的键值数组，必须是K1, V1, K2, V2, K3, V3...这种形式
 	 * @return
 	 */
@@ -63,6 +67,7 @@ public class CollectionUtil {
 
 	/**
 	 * 根据可变参数形式的键值数组构造一个ConcurrentHashMap集合<br>
+	 * 
 	 * @param KeysAndValues 可变参数形式的键值数组，必须是K1, V1, K2, V2, K3, V3...这种形式
 	 * @return
 	 */
@@ -76,6 +81,7 @@ public class CollectionUtil {
 
 	/**
 	 * 根据可变参数形式的键值数组构造一个ArrayList集合<br>
+	 * 
 	 * @param elements 可变参数形式的元素数组
 	 * @return
 	 */
@@ -87,6 +93,7 @@ public class CollectionUtil {
 
 	/**
 	 * 根据可变参数形式的键值数组构造一个LinkedList集合<br>
+	 * 
 	 * @param elements 可变参数形式的元素数组
 	 * @return
 	 */
@@ -98,6 +105,7 @@ public class CollectionUtil {
 
 	/**
 	 * 根据可变参数形式的键值数组构造一个Vector集合<br>
+	 * 
 	 * @param elements 可变参数形式的元素数组
 	 * @return
 	 */
@@ -109,6 +117,7 @@ public class CollectionUtil {
 
 	/**
 	 * 根据可变参数形式的键值数组构造一个HashSet集合<br>
+	 * 
 	 * @param elements 可变参数形式的元素数组
 	 * @return
 	 */
@@ -120,6 +129,7 @@ public class CollectionUtil {
 
 	/**
 	 * 根据可变参数形式的键值数组构造一个LinkedHashSet集合<br>
+	 * 
 	 * @param elements 可变参数形式的元素数组
 	 * @return
 	 */
@@ -131,6 +141,7 @@ public class CollectionUtil {
 
 	/**
 	 * 将可变参数形式的键值数组添加到一个Map集合中
+	 * 
 	 * @param map 指定的Map集合
 	 * @param KeysAndValues 可变参数形式的键值数组，必须是K1, V1, K2, V2, K3, V3...这种形式
 	 */
@@ -143,6 +154,7 @@ public class CollectionUtil {
 
 	/**
 	 * 将可变参数形式的键值数组添加到一个Map集合中
+	 * 
 	 * @param collection 指定的Collection集合
 	 * @param elements 可变参数形式的元素数组
 	 */
@@ -151,5 +163,4 @@ public class CollectionUtil {
 			collection.add(e);
 		}
 	}
-
 }
