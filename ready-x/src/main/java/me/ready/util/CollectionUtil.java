@@ -13,7 +13,7 @@ import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * List、Set、Map等常见集合数据操作的工具类
+ * List、Set、Map等常见集合数据操作的工具类 <<<<<<< HEAD
  * 
  * @package me.ready.util
  * @author Ready
