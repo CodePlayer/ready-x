@@ -407,4 +407,18 @@ public class StringUtil {
 	public static final String transEncodingForURI(String str, String targetCharset) {
 		return transEncoding(str, "ISO-8859-1", targetCharset);
 	}
+
+	/**
+	 * 颠倒(反转)字符串的字符顺序，并返回新的字符串<br>
+	 * 如果字符串为null，则返回空字符串""
+	 * 
+	 * @param str 指定的字符串
+	 * @return
+	 */
+	public static final String reverse(String str) {
+		if (str == null) {
+			return "";
+		}
+		return new StringBuilder(str).reverse().toString();
+	}
 }
