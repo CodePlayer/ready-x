@@ -101,20 +101,20 @@ public class ArrayUtil {
 				sb.append('!');
 			}
 			if (isString) {
-				sb.append('=').append(Array.get(array, 0));
-			} else {
 				sb.append("='").append(Array.get(array, 0)).append('\'');
+			} else {
+				sb.append('=').append(Array.get(array, 0));
 			}
 			break;
 		default:
 			sb.append(isInclude ? " IN (" : " NOT IN (");
-			if (isString) {// 如果是数字格式
-				join(sb, array, ", ");
-				sb.append(')');
-			} else {// 如果是字符串格式
+			if (isString) {// 如果是字符串格式
 				sb.append('\'');
 				join(sb, array, "', '");
 				sb.append("')");
+			} else {// 如果是数字格式
+				join(sb, array, ", ");
+				sb.append(')');
 			}
 			break;
 		}

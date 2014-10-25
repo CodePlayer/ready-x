@@ -59,6 +59,7 @@ public class FileUtil {
 
 	/**
 	 * 获取指定文件路径中的文件名称部分
+	 * 
 	 * @param path 指定的文件路径
 	 * @return
 	 */
@@ -68,6 +69,7 @@ public class FileUtil {
 
 	/**
 	 * 获取指定文件路径中的文件名称部分
+	 * 
 	 * @param path 指定的文件路径
 	 * @param withoutExt 是否需要去除文件扩展名
 	 * @return
@@ -90,39 +92,22 @@ public class FileUtil {
 	 * @param suffix
 	 * @return
 	 */
-	public static String getRandomFileName(String path, String suffix) {
+	public static final File getRandomFile(String path, String suffix) {
 		String fileName = new SimpleDateFormat("yyyyMMdd-HHmmssSSS").format(new Date());
 		if (suffix == null) {
 			suffix = "";
 		} else if (suffix.length() > 0) { // 如果有后缀就+"."
-			suffix = '.' + suffix;
+			if (suffix.charAt(0) != '.') {
+				suffix = '.' + suffix;
+			}
 		}
 		String destFileName = fileName + suffix;
 		File file = new File(path, destFileName);
-		if (file.exists()) {
-			do {
-				destFileName = fileName + '-' + RandomUtil.getIntString(4) + suffix;
-				file = new File(path, destFileName);
-			} while (file.exists());
+		while (file.exists()) {
+			destFileName = fileName + '-' + RandomUtil.getIntString(4) + suffix;
+			file = new File(path, destFileName);
 		}
-		return destFileName;
-	}
-
-	/**
-	 * 根据指定的带后缀的文件名，返回文件后缀(不含"."号)<br>
-	 * 有些文件可能没有后缀，则返回""
-	 * 
-	 * @param fileName
-	 * @return
-	 */
-	public static String getFileSuffix(String fileName) {
-		int index = fileName.lastIndexOf('.');
-		int length = fileName.length();
-		index++;
-		if (length > index) {
-			return fileName.substring(index);
-		}
-		return "";
+		return file;
 	}
 
 	/**
@@ -229,6 +214,7 @@ public class FileUtil {
 
 	/**
 	 * 将指定的文件输入流写入到目标文件中
+	 * 
 	 * @param is 指定的文件输入流
 	 * @param target 目标文件
 	 */
@@ -242,7 +228,7 @@ public class FileUtil {
 		} catch (Exception e) {
 			throw new LogicException(e);
 		} finally {
-			closeResource(is, bos);
+			closeResources(is, bos);
 		}
 	}
 
@@ -340,6 +326,7 @@ public class FileUtil {
 
 	/**
 	 * 将指定的文件复制到指定的目录，保持其原文件名
+	 * 
 	 * @param file 指定的文件
 	 * @param directory 指定的目录
 	 * @param override 如果已存在同名的文件，是否允许覆盖
@@ -362,9 +349,9 @@ public class FileUtil {
 			}
 		} else {
 			// 如果目标文件所在的目录不存在，则创建之
-			//			if (!diretory.mkdirs()) {
-			//				throw new LogicException("");
-			//			}
+			// if (!diretory.mkdirs()) {
+			// throw new LogicException("");
+			// }
 			target = new File(directory, file.getName());
 		}
 		copyFile(file, target, true);
@@ -373,6 +360,7 @@ public class FileUtil {
 	/**
 	 * 将指定的文件复制到指定的目录，保持其原文件名<br>
 	 * 如果目标文件夹已存在同名的文件，则引发异常
+	 * 
 	 * @param file 指定的文件
 	 * @param diretory 指定的目录
 	 */
@@ -404,6 +392,7 @@ public class FileUtil {
 
 	/**
 	 * 移动指定的文件到目标文件路径
+	 * 
 	 * @param file 指定的文件
 	 * @param target 目标文件
 	 * @param override 如果已存在同名的文件，是否允许覆盖
@@ -419,6 +408,7 @@ public class FileUtil {
 	/**
 	 * 移动指定的文件到目标文件路径<br>
 	 * 如果目标文件夹已存在同名的文件，则引发异常
+	 * 
 	 * @param file 指定的文件
 	 * @param target 目标文件
 	 */
@@ -428,6 +418,7 @@ public class FileUtil {
 
 	/**
 	 * 移动指定的文件到目标文件路径
+	 * 
 	 * @param path 指定的文件
 	 * @param target 目标文件
 	 * @param override 如果已存在同名的文件，是否允许覆盖
@@ -439,6 +430,7 @@ public class FileUtil {
 	/**
 	 * 移动指定的文件到目标文件路径<br>
 	 * 如果目标文件夹已存在同名的文件，则引发异常
+	 * 
 	 * @param path 指定的文件
 	 * @param target 目标文件
 	 */
@@ -448,6 +440,7 @@ public class FileUtil {
 
 	/**
 	 * 移动指定的文件到目标文件夹
+	 * 
 	 * @param file 指定的文件
 	 * @param directory 目标文件夹
 	 * @param override 如果已存在同名的文件，是否允许覆盖
@@ -463,6 +456,7 @@ public class FileUtil {
 	/**
 	 * 移动指定的文件到目标文件夹<br>
 	 * 如果目标文件夹已存在同名的文件，则引发异常
+	 * 
 	 * @param file 指定的文件
 	 * @param directory 目标文件夹
 	 */
@@ -472,6 +466,7 @@ public class FileUtil {
 
 	/**
 	 * 移动指定的文件到目标文件夹
+	 * 
 	 * @param file 指定的文件
 	 * @param directory 目标文件夹
 	 * @param override 如果已存在同名的文件，是否允许覆盖
@@ -483,6 +478,7 @@ public class FileUtil {
 	/**
 	 * 移动指定的文件到目标文件夹<br>
 	 * 如果目标文件夹已存在同名的文件，则引发异常
+	 * 
 	 * @param file 指定的文件
 	 * @param directory 目标文件夹
 	 */
@@ -493,6 +489,7 @@ public class FileUtil {
 	/**
 	 * 将指定的输入流写入到指定的输出流中<br>
 	 * 注意该方法内部只负责写入，不负责关闭相关流资源
+	 * 
 	 * @param in 指定的输入流
 	 * @param out 指定的输出流
 	 * @throws IOException
@@ -509,10 +506,11 @@ public class FileUtil {
 	/**
 	 * 关闭一组指定的文件流资源<br>
 	 * 内部会先关闭输出流，再关闭输入流
+	 * 
 	 * @param in 输入流
 	 * @param out 输出流
 	 */
-	public static final void closeResource(InputStream in, OutputStream out) {
+	public static final void closeResources(InputStream in, OutputStream out) {
 		try {
 			if (out != null) {
 				out.close();
@@ -528,5 +526,31 @@ public class FileUtil {
 				}
 			}
 		}
+	}
+
+	/**
+	 * 将指定文件复制到指定的目录，并且采用随机的文件名，方法内部会尽可能地确保文件名称不会重复
+	 * 
+	 * @param file 指定的文件对象
+	 * @param targetDir 目标目录
+	 * @return 返回复制后的目标文件对象
+	 */
+	public static final File copyFileToDirectoryWithRandomFileName(File file, String targetDir) {
+		File target = getRandomFile(targetDir, getExtension(file.getName()));
+		copyFile(file, target);
+		return target;
+	}
+
+	/**
+	 * 将指定文件移动到指定的目录，并且采用随机的文件名，方法内部会尽可能地确保文件名称不会重复
+	 * 
+	 * @param file 指定的文件对象
+	 * @param targetDir 目标目录
+	 * @return 返回移动后的目标文件对象
+	 */
+	public static final File moveFileToDirectoryWithRandomFileName(File file, String targetDir) {
+		File target = getRandomFile(targetDir, getExtension(file.getName()));
+		moveFile(file, target);
+		return target;
 	}
 }
