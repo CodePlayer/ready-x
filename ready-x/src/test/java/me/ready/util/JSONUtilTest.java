@@ -1,21 +1,17 @@
 package me.ready.util;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import me.ready.User;
-
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
 
 public class JSONUtilTest {
 
-	 @Test
+	@Test
 	public void testObject() {
-		User user = new User(1, "张三", "123456", true);
-		System.out.println(new JSONObject(user).toString());
-		System.err.println("====" + JSONUtil.encode(user));
+		// User user = new User(1, "张三", "123456", true);
+		// System.out.println(new JSONObject(user).toString());
+		// System.err.println("====" + JSONUtil.encode(user));
 	}
 
 	// @Test
@@ -26,13 +22,13 @@ public class JSONUtilTest {
 
 	// @Test
 	public void testArray() {
-		Object[] array = new Object[] { "张三", true, 15, new User(2, "李四", "45646", false) };
-		System.out.println(new JSONArray(array).toString());
+		// Object[] array = new Object[] { "张三", true, 15, new User(2, "李四", "45646", false) };
+		// System.out.println(new JSONArray(array).toString());
 	}
 
 	@Test
 	public void testVar() {
-		String str = "张三";
-		System.out.println(new JSONObject(str).toString());
+		// String str = "张三";
+		// System.out.println(new JSONObject(str).toString());
 	}
 }

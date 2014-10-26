@@ -553,4 +553,32 @@ public class FileUtil {
 		moveFile(file, target);
 		return target;
 	}
+
+	/**
+	 * 将指定文件复制到指定的目录，并且采用随机的文件名、指定的文件后缀，方法内部会尽可能地确保文件名称不会重复
+	 * 
+	 * @param file 指定的文件对象
+	 * @param targetDir 目标目录
+	 * @param suffix 目标文件的文件后缀。null、""、"gif"、".gif"等形式均可，前两者表示没有后缀，后两者表示指定的后缀。
+	 * @return 返回复制后的目标文件对象
+	 */
+	public static final File copyFileToDirectoryWithRandomFileName(File file, String targetDir, String suffix) {
+		File target = getRandomFile(targetDir, suffix);
+		copyFile(file, target);
+		return target;
+	}
+
+	/**
+	 * 将指定文件移动到指定的目录，并且采用随机的文件名、指定的文件后缀，方法内部会尽可能地确保文件名称不会重复
+	 * 
+	 * @param file 指定的文件对象
+	 * @param targetDir 目标目录
+	 * @param suffix 目标文件的文件后缀。null、""、"gif"、".gif"等形式均可，前两者表示没有后缀，后两者表示指定的后缀。
+	 * @return 返回移动后的目标文件对象
+	 */
+	public static final File moveFileToDirectoryWithRandomFileName(File file, String targetDir, String suffix) {
+		File target = getRandomFile(targetDir, suffix);
+		moveFile(file, target);
+		return target;
+	}
 }
