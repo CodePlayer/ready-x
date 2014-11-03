@@ -13,7 +13,8 @@ import me.ready.e.LogicException;
 public class Assert {
 
 	// 断言类均为静态方法，无需实例化
-	private Assert() {}
+	private Assert() {
+	}
 
 	/**
 	 * 断言布尔表达式结果为true<br>
