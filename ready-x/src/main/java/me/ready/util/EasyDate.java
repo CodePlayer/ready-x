@@ -100,12 +100,10 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	/**
 	 * 根据相对于指定时间的偏移值构造一个对应的实例对象<br>
 	 * 例如，当前时间为：2012-10-10 例如要创建一个2013-10-10的时间对象，new EasyDate(null, 1, 0, 0)即可;<br>
-	 * 创建一个2011-8-10的时间对象，new EasyDate(null, -1, -2, 0)或new EasyDate(null, 0,
-	 * -14, 0)
+	 * 创建一个2011-8-10的时间对象，new EasyDate(null, -1, -2, 0)或new EasyDate(null, 0, -14, 0)
 	 * 
 	 * @param date 指定的时间，作为偏移量的参考对象，如果为null，则默认使用当前时间作为参考对象<br>
-	 *            该对象支持java.util.Date、me.ready.util.EasyDate、java.util.
-	 *            Calendar等对象及其子类实例
+	 *            该对象支持java.util.Date、me.ready.util.EasyDate、java.util. Calendar等对象及其子类实例
 	 * @param offsetYear 相对于当前时间的年份偏移量
 	 * @param offsetMonth 相对于当前时间的月份偏移量
 	 * @param doffsetDay 相对于当前时间的日期偏移量
@@ -303,6 +301,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	/**
 	 * 设置日期的分，值为0~59
 	 * 
+	 * @param minute 指定的分钟数
 	 * @return
 	 */
 	public void setMinute(int minute) {
@@ -312,7 +311,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	/**
 	 * 追加指定的分钟数，例如：当前是2012-05-12 09:12:56，调用addMinute(3)，则为2012-05-12 09:15:56
 	 * 
-	 * @param hour 指定的分钟数，可以为负数
+	 * @param minute 指定的分钟数，可以为负数
 	 */
 	public void addMinute(int minute) {
 		calendar.add(Calendar.MINUTE, minute);
@@ -490,8 +489,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	/**
 	 * 将指定格式的字符串转为对应的日期实例对象
 	 * 
-	 * @param format 一般情况无需自己创建，可直接调用EasyDate.DATE、EasyDate.DATETIME、EasyDate.
-	 *            SHORT_DATE等内置的日期转换对象
+	 * @param format 一般情况无需自己创建，可直接调用EasyDate.DATE、EasyDate.DATETIME、EasyDate. SHORT_DATE等内置的日期转换对象
 	 * @param date 日期字符串
 	 * @return
 	 */
@@ -558,8 +556,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	/**
 	 * 与指定日期进行比较，如果大于指定的日期返回正数；等于返回0；小于返回负数
 	 * 
-	 * @param date 
-	 *            支持java.util.Date、java.util.Calendar、me.ready.util.EasyDate等对象及其子类的比较
+	 * @param date 支持java.util.Date、java.util.Calendar、me.ready.util.EasyDate等对象及其子类的比较
 	 * @return
 	 */
 	public int compareTo(Object date) {
@@ -569,8 +566,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 			return 0;
 		}
 		long diff = calendar.getTimeInMillis() - getTimeOfDate(date);
-		if (diff == 0)
-			return 0;
+		if (diff == 0) return 0;
 		return diff > 0 ? 1 : -1;
 	}
 
@@ -622,14 +618,11 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!(obj instanceof EasyDate))
-			return false;
+		if (this == obj) return true;
+		if (!(obj instanceof EasyDate)) return false;
 		EasyDate other = (EasyDate) obj;
 		if (calendar == null) {
-			if (other.calendar != null)
-				return false;
+			if (other.calendar != null) return false;
 		}
 		return calendar.equals(other.calendar);
 	}
