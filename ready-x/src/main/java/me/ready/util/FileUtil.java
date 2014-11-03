@@ -28,6 +28,25 @@ public class FileUtil {
 	}
 
 	/**
+	 * 用于表示文件大小的单位
+	 */
+	private static final String[] FILE_UNITS = new String[] { "Byte", "KB", "MB", "GB", "TB", "PB" };
+	/** 单位：自动判断 */
+	public static final int UNIT_AUTO = 0;
+	/** 单位：字节 */
+	public static final int UNIT_BYTE = 1;
+	/** 单位：KB */
+	public static final int UNIT_KB = 2;
+	/** 单位：MB */
+	public static final int UNIT_MB = 3;
+	/** 单位：GB */
+	public static final int UNIT_GB = 4;
+	/** 单位：TB */
+	public static final int UNIT_TB = 5;
+	/** 单位：PB */
+	public static final int UNIT_PB = 6;
+
+	/**
 	 * 根据文件路径获取对应的文件扩展名<br>
 	 * 如果没有指定的后缀，则返回空字符串""
 	 * 
@@ -111,57 +130,59 @@ public class FileUtil {
 	}
 
 	/**
-	 * 根据文件的字节数量计算出改文件为多少"Byte"/"KB"/"MB"/"GB"<br>
-	 * 如果unit为null，则根据文件大小自动选择单位，如果存在小数均保留两位小数<br>
-	 * 返回的单位均为注释中所备注的大小写格式
+	 * 根据文件的字节数量计算出改文件为多少"Byte"/"KB"/"MB"/"GB"/"TB"/"PB"<br>
+	 * 如果unit为UNIT_AUTO(0)，则根据文件大小自动选择单位，如果存在小数均保留<code>scale</code>位小数<br>
 	 * 
-	 * @param fileSize
+	 * @param fileSize 指定的文件大小
+	 * @param unit 指定的文件单位
+	 * @param scale 保留的小数位数
 	 * @return
 	 */
-	public static String calcFileSize(String unit, int fileSize) {
+	public static String calcFileSize(long fileSize, int unit, int scale) {
 		if (fileSize < 0) {
-			throw new IllegalArgumentException("需要计算的文件大小不能为负数！");
+			throw new IllegalArgumentException("需要计算的文件大小不能为负数:" + fileSize);
 		}
-		if (!X.isEmpty(unit)) {
-			if ("Byte".equalsIgnoreCase(unit)) {
-				return fileSize + "Byte";
-			} else if ("KB".equalsIgnoreCase(unit)) {
-				return divide(fileSize, 1 << 10) + "KB";
-			} else if ("MB".equalsIgnoreCase(unit)) {
-				return divide(fileSize, 1 << 20) + "MB";
-			} else if ("GB".equalsIgnoreCase(unit)) {
-				return divide(fileSize, 1 << 30) + "GB";
-			}
+		if (unit < UNIT_AUTO || unit > UNIT_PB) {
+			throw new IllegalArgumentException("无法识别的文件大小单位：" + unit);
 		}
-		// 如果没有传入单位或无法识别单位，自动选择
-		long bytes = 1 << 10;
-		if (fileSize < bytes) {
-			return fileSize + "Byte";
+		if (unit != UNIT_AUTO) {
+			int shift = unit - 1;
+			return divide(fileSize, 1 << (10 * shift), scale) + FILE_UNITS[shift];
 		}
-		bytes <<= 10;
-		if (fileSize < bytes) { // 如果是KB
-			return divide(fileSize, 1 << 10) + "KB";
+		// 如果没有传入单位，则自动识别
+		int shift = 0;
+		long unitBytes = 1;
+		long nextUnitBytes = unitBytes << 10;
+		while (fileSize >= nextUnitBytes) {
+			unitBytes = nextUnitBytes;
+			nextUnitBytes <<= 10;
+			shift++;
 		}
-		bytes <<= 10;
-		if (fileSize < bytes) {
-			return divide(fileSize, 1 << 20) + "MB";
-		}
-		bytes <<= 10;
-		if (fileSize < bytes) {
-			return divide(fileSize, 1 << 30) + "GB";
-		}
-		return null;
+		return divide(fileSize, unitBytes, scale) + FILE_UNITS[shift];
 	}
 
 	/**
-	 * 文件大小除以指定度量，返回保留2位小数的值
+	 * 根据文件的字节数量计算出改文件为多少"Byte"/"KB"/"MB"/"GB"/"TB"/"PB"<br>
+	 * 如果unit为UNIT_AUTO(0)，则根据文件大小自动选择单位，如果存在小数均保留两位小数<br>
 	 * 
-	 * @param fileSize
-	 * @param divisor
+	 * @param fileSize 指定的文件大小
+	 * @param unit 指定的文件单位
 	 * @return
 	 */
-	public static String divide(int fileSize, long divisor) {
-		return new BigDecimal(fileSize).divide(new BigDecimal(divisor), 2, RoundingMode.HALF_UP).toString();
+	public static String calcFileSize(long fileSize, int unit) {
+		return calcFileSize(fileSize, unit, 2);
+	}
+
+	/**
+	 * 文件大小除以指定度量，返回保留scale位小数的值
+	 * 
+	 * @param fileSize 文件大小
+	 * @param divisor 指定文件单位的字节数
+	 * @param scale 保留的小数位数
+	 * @return
+	 */
+	public static String divide(long fileSize, long divisor, int scale) {
+		return new BigDecimal(fileSize).divide(new BigDecimal(divisor), scale, RoundingMode.HALF_UP).toString();
 	}
 
 	/**
