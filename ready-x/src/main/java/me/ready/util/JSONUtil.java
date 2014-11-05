@@ -1,5 +1,7 @@
 package me.ready.util;
 
+import java.util.Map;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -11,10 +13,12 @@ import org.json.JSONObject;
  * @date 2014-10-13
  * 
  */
+@SuppressWarnings("rawtypes")
 public class JSONUtil {
 
 	// 禁止实例创建
-	private JSONUtil() {}
+	private JSONUtil() {
+	}
 
 	/**
 	 * 将Java对象编码为JSON字符串
@@ -25,6 +29,8 @@ public class JSONUtil {
 	public static final String encode(Object obj) {
 		if (obj.getClass().isArray()) {
 			return new JSONArray(obj).toString();
+		} else if (obj instanceof Map) {
+			return new JSONObject((Map) obj).toString();
 		}
 		return new JSONObject(obj).toString();
 	}
