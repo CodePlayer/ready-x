@@ -1,5 +1,6 @@
 package me.ready.util;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -29,6 +30,8 @@ public class JSONUtil {
 	public static final String encode(Object obj) {
 		if (obj.getClass().isArray()) {
 			return new JSONArray(obj).toString();
+		} else if (obj instanceof Collection) {
+			return new JSONArray((Collection) obj).toString();
 		} else if (obj instanceof Map) {
 			return new JSONObject((Map) obj).toString();
 		}
