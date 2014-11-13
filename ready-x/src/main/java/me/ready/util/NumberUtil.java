@@ -56,6 +56,8 @@ public class NumberUtil {
 		}
 		if (value instanceof Number) {
 			return ((Number) value).byteValue();
+		} else if ("".equals(value)) {
+			return defaultValue;
 		} else {
 			try {
 				return Byte.parseByte(value.toString());
@@ -91,6 +93,8 @@ public class NumberUtil {
 		}
 		if (value instanceof Number) {
 			return ((Number) value).shortValue();
+		} else if ("".equals(value)) {
+			return defaultValue;
 		} else {
 			try {
 				return Short.parseShort(value.toString());
@@ -163,6 +167,8 @@ public class NumberUtil {
 		}
 		if (value instanceof Number) {
 			return ((Number) value).longValue();
+		} else if ("".equals(value)) {
+			return defaultValue;
 		} else {
 			try {
 				return Long.parseLong(value.toString());
@@ -198,6 +204,8 @@ public class NumberUtil {
 		}
 		if (value instanceof Number) {
 			return ((Number) value).floatValue();
+		} else if ("".equals(value)) {
+			return defaultValue;
 		} else {
 			try {
 				return Float.parseFloat(value.toString());
@@ -233,6 +241,8 @@ public class NumberUtil {
 		}
 		if (value instanceof Number) {
 			return ((Number) value).doubleValue();
+		} else if ("".equals(value)) {
+			return defaultValue;
 		} else {
 			try {
 				return Double.parseDouble(value.toString());
