@@ -320,4 +320,11 @@ public class Arith {
 		Assert.notTrue(scale < 0, "指定的精确小数位数不能小于0!");
 		return new BigDecimal(Double.toString(d)).setScale(scale, mode).doubleValue();
 	}
+
+	/**
+	 * 输出数值字符串
+	 */
+	public String toString() {
+		return value.toString();
+	}
 }
