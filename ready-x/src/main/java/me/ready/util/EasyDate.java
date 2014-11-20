@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 /**
  * 实现常用日期扩展方法的日期工具类(实现Comparable可比较接口、Cloneable可复制接口)
@@ -185,8 +186,9 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 
 	 * @param year
 	 */
-	public void setYear(int year) {
+	public EasyDate setYear(int year) {
 		calendar.set(Calendar.YEAR, year);
+		return this;
 	}
 
 	/**
@@ -194,8 +196,9 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 
 	 * @param year 指定的年数，可以为负数
 	 */
-	public void addYear(int year) {
+	public EasyDate addYear(int year) {
 		calendar.add(Calendar.YEAR, year);
+		return this;
 	}
 
 	/**
@@ -212,8 +215,9 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 
 	 * @return
 	 */
-	public void setMonth(int month) {
+	public EasyDate setMonth(int month) {
 		calendar.set(Calendar.MONTH, month - 1);
+		return this;
 	}
 
 	/**
@@ -221,8 +225,9 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 
 	 * @param month 指定的月数，可以为负数
 	 */
-	public void addMonth(int month) {
+	public EasyDate addMonth(int month) {
 		calendar.add(Calendar.MONDAY, month);
+		return this;
 	}
 
 	/**
@@ -239,8 +244,9 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 
 	 * @return
 	 */
-	public void setDay(int day) {
+	public EasyDate setDay(int day) {
 		calendar.set(Calendar.DAY_OF_MONTH, day);
+		return this;
 	}
 
 	/**
@@ -248,8 +254,9 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 
 	 * @param month 指定的天数，可以为负数
 	 */
-	public void addDay(int day) {
+	public EasyDate addDay(int day) {
 		calendar.add(Calendar.DAY_OF_MONTH, day);
+		return this;
 	}
 
 	/**
@@ -276,8 +283,9 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 
 	 * @return
 	 */
-	public void setHour(int hour) {
+	public EasyDate setHour(int hour) {
 		calendar.set(Calendar.HOUR_OF_DAY, hour);
+		return this;
 	}
 
 	/**
@@ -285,8 +293,9 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 
 	 * @param hour 指定的小时数，可以为负数
 	 */
-	public void addHour(int hour) {
+	public EasyDate addHour(int hour) {
 		calendar.add(Calendar.HOUR_OF_DAY, hour);
+		return this;
 	}
 
 	/**
@@ -304,8 +313,9 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * @param minute 指定的分钟数
 	 * @return
 	 */
-	public void setMinute(int minute) {
+	public EasyDate setMinute(int minute) {
 		calendar.set(Calendar.MINUTE, minute);
+		return this;
 	}
 
 	/**
@@ -313,8 +323,9 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 
 	 * @param minute 指定的分钟数，可以为负数
 	 */
-	public void addMinute(int minute) {
+	public EasyDate addMinute(int minute) {
 		calendar.add(Calendar.MINUTE, minute);
+		return this;
 	}
 
 	/**
@@ -331,8 +342,38 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 
 	 * @param second
 	 */
-	public void setSecond(int second) {
+	public EasyDate setSecond(int second) {
 		calendar.set(Calendar.SECOND, second);
+		return this;
+	}
+
+	/**
+	 * 追加指定的秒数，例如：当前是2012-05-12 09:12:56 123，调用addMillisecond(123)，则为2012-05-12 09:12:56 246
+	 * 
+	 * @param ms 指定的毫秒数，可以为负数
+	 */
+	public EasyDate addMillisecond(int ms) {
+		calendar.add(Calendar.MILLISECOND, ms);
+		return this;
+	}
+
+	/**
+	 * 获取日期的毫秒部分的值，返回值0~999
+	 * 
+	 * @return
+	 */
+	public int getMillisecond() {
+		return calendar.get(Calendar.MILLISECOND);
+	}
+
+	/**
+	 * 设置日期的毫秒部分的值，值为0~999
+	 * 
+	 * @param ms
+	 */
+	public EasyDate setMillisecond(int ms) {
+		calendar.set(Calendar.MILLISECOND, ms);
+		return this;
 	}
 
 	/**
@@ -341,8 +382,9 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * @param hour 指定的秒数，可以为负数
 	 * @param second
 	 */
-	public void addSecond(int second) {
+	public EasyDate addSecond(int second) {
 		calendar.add(Calendar.SECOND, second);
+		return this;
 	}
 
 	/**
@@ -359,8 +401,9 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 
 	 * @param date
 	 */
-	public void setTime(long date) {
+	public EasyDate setTime(long date) {
 		calendar.setTimeInMillis(date);
+		return this;
 	}
 
 	/**
@@ -368,8 +411,9 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 
 	 * @param time 指定的毫秒数，可以为负数
 	 */
-	public void addTime(int time) {
-		calendar.add(Calendar.MILLISECOND, time);
+	public EasyDate addTime(long time) {
+		calendar.setTimeInMillis(calendar.getTimeInMillis() + time);
+		return this;
 	}
 
 	/**
@@ -489,7 +533,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	/**
 	 * 将指定格式的字符串转为对应的日期实例对象
 	 * 
-	 * @param format 一般情况无需自己创建，可直接调用EasyDate.DATE、EasyDate.DATETIME、EasyDate. SHORT_DATE等内置的日期转换对象
+	 * @param format 一般情况无需自己创建，可直接调用EasyDate.DATE、EasyDate.DATETIME、EasyDate.SHORT_DATE等内置的日期转换对象
 	 * @param date 日期字符串
 	 * @return
 	 */
@@ -566,7 +610,8 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 			return 0;
 		}
 		long diff = calendar.getTimeInMillis() - getTimeOfDate(date);
-		if (diff == 0) return 0;
+		if (diff == 0)
+			return 0;
 		return diff > 0 ? 1 : -1;
 	}
 
@@ -600,6 +645,107 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	}
 
 	/**
+	 * 获取当前月的最后一天
+	 * 
+	 * @since 0.0.3
+	 * @return
+	 */
+	public int getLastDayOfMonth() {
+		return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+	}
+
+	/**
+	 * 将当前实例设置为指定时间字段范围内所能表示的最小值
+	 * 
+	 * @since 0.0.3
+	 * @param field 该方法支持的字段有{@link Calendar#YEAR}、{@link Calendar#MONTH}、{@link Calendar#DAY_OF_MONTH}、
+	 *            {@link Calendar#HOUR_OF_DAY}、{@link Calendar#MINUTE}、{@link Calendar#SECOND}
+	 * @return
+	 */
+	public EasyDate beginOf(int field) {
+		switch (field) {
+		case Calendar.YEAR:
+			calendar.set(Calendar.MONTH, 0);
+		case Calendar.MONTH:
+			calendar.set(Calendar.DAY_OF_MONTH, 1);
+		case Calendar.DAY_OF_MONTH:
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+		case Calendar.HOUR_OF_DAY:
+			calendar.set(Calendar.MINUTE, 0);
+		case Calendar.MINUTE:
+			calendar.set(Calendar.SECOND, 0);
+		case Calendar.SECOND:
+			calendar.set(Calendar.MILLISECOND, 0);
+			break;
+		default:
+			throw new IllegalArgumentException("无法识别的日期字段:" + field);
+		}
+		return this;
+	}
+
+	/**
+	 * 设置本地时间相对于GMT时间的偏移分钟数
+	 * 
+	 * @since 0.0.3
+	 * @param minutes 偏移分钟数
+	 * @return
+	 */
+	public EasyDate setTimeZoneOffset(int minutes) {
+		StringBuilder timeZoneID = new StringBuilder().append("GMT").append((minutes > 0 ? '+' : '-')).append(minutes / 60);
+		int min = minutes % 60;
+		if (min > 0) {
+			timeZoneID.append(':');
+			if (min < 10) {
+				timeZoneID.append('0');
+			}
+			timeZoneID.append(min);
+		}
+		System.out.println(timeZoneID);
+		calendar.setTimeZone(TimeZone.getTimeZone(timeZoneID.toString()));
+		return this;
+	}
+
+	/**
+	 * 获取本地时间相对于GMT时间的偏移分钟数
+	 * 
+	 * @since 0.0.3
+	 * @return
+	 */
+	public int getTimeZoneOffset() {
+		TimeZone timeZone = calendar.getTimeZone();
+		return timeZone.getOffset(calendar.getTimeInMillis()) / 60000;
+	}
+
+	/**
+	 * 将当前实例设置为指定时间字段所能表示的最大值
+	 * 
+	 * @since 0.0.3
+	 * @param field 该方法支持的字段有{@link Calendar#YEAR}、{@link Calendar#MONTH}、{@link Calendar#DAY_OF_MONTH}、
+	 *            {@link Calendar#HOUR_OF_DAY}、{@link Calendar#MINUTE}、{@link Calendar#SECOND}
+	 * @return
+	 */
+	public EasyDate endOf(int field) {
+		switch (field) {
+		case Calendar.YEAR:
+			calendar.set(Calendar.MONTH, 11);
+		case Calendar.MONTH:
+			calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+		case Calendar.DAY_OF_MONTH:
+			calendar.set(Calendar.HOUR_OF_DAY, 23);
+		case Calendar.HOUR_OF_DAY:
+			calendar.set(Calendar.MINUTE, 59);
+		case Calendar.MINUTE:
+			calendar.set(Calendar.SECOND, 59);
+		case Calendar.SECOND:
+			calendar.set(Calendar.MILLISECOND, 999);
+			break;
+		default:
+			throw new IllegalArgumentException("无法识别的日期字段:" + field);
+		}
+		return this;
+	}
+
+	/**
 	 * 判断是否在指定日期的时间之前
 	 * 
 	 * @param date
@@ -618,11 +764,14 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) return true;
-		if (!(obj instanceof EasyDate)) return false;
+		if (this == obj)
+			return true;
+		if (!(obj instanceof EasyDate))
+			return false;
 		EasyDate other = (EasyDate) obj;
 		if (calendar == null) {
-			if (other.calendar != null) return false;
+			if (other.calendar != null)
+				return false;
 		}
 		return calendar.equals(other.calendar);
 	}
@@ -632,8 +781,17 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 */
 	@Override
 	public String toString() {
-		// return new SimpleDateFormat(DATE).format(toDate());
 		return new StringBuilder(Integer.toString(getYear())).append('-').append(getMonth()).append('-').append(getDay()).toString();
+	}
+
+	/**
+	 * 返回使用日期格式化工具格式化后的字符串
+	 * 
+	 * @since 0.0.3
+	 * @param 指定的格式化工具类
+	 */
+	public String toString(DateFormat format) {
+		return format.format(toDate());
 	}
 
 	/**
