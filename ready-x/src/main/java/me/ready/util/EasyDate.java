@@ -215,6 +215,31 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	}
 
 	/**
+	 * 设置日期的年、月、日、时、分、秒、毫秒等部分的值<br>
+	 * 如果未指定指定部分的值，则不会进行该部分的设置
+	 * 
+	 * @since 0.3
+	 * @param year
+	 * @param month
+	 * @param day
+	 * @param args
+	 * @return
+	 */
+	public EasyDate set(int year, int month, int day, int... args) {
+		calendar.set(Calendar.YEAR, year);
+		calendar.set(Calendar.MONTH, month - 1);
+		calendar.set(Calendar.DAY_OF_MONTH, day);
+		if (args.length > 0) {
+			int[] fields = new int[] { Calendar.HOUR_OF_DAY, Calendar.MINUTE, Calendar.SECOND, Calendar.MILLISECOND };
+			int i = 0;
+			do {
+				calendar.set(fields[i], args[i]);
+			} while (++i < args.length);
+		}
+		return this;
+	}
+
+	/**
 	 * 获取日期的日；月份的第一天返回1
 	 * 
 	 * @return
@@ -438,11 +463,11 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	}
 
 	/**
-	 * 根据日期字符串的长度智能转换为对应的日期实例对象<br />
-	 * 长度和格式对应如下(找不到对应格式将报错)：<br />
-	 * 6=201206(年月)<br />
-	 * 8=20120126(年月日)<br />
-	 * 10=2012-01-02(年-月-日)<br />
+	 * 根据日期字符串的长度智能转换为对应的日期实例对象<br>
+	 * 长度和格式对应如下(找不到对应格式将报错)：<br>
+	 * 6=201206(年月)<br>
+	 * 8=20120126(年月日)<br>
+	 * 10=2012-01-02(年-月-日)<br>
 	 * 19=2012-01-02 13:22:56(年-月-日 时:分:秒)
 	 * 
 	 * @param date
@@ -634,7 +659,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	/**
 	 * 获取当前月的最后一天
 	 * 
-	 * @since 0.0.3
+	 * @since 0.3
 	 * @return
 	 */
 	public int getLastDayOfMonth() {
@@ -644,7 +669,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	/**
 	 * 将当前实例设置为指定时间字段范围内所能表示的最小值
 	 * 
-	 * @since 0.0.3
+	 * @since 0.3
 	 * @param field 该方法支持的字段有{@link Calendar#YEAR}、{@link Calendar#MONTH}、
 	 *            {@link Calendar#DAY_OF_MONTH}、 {@link Calendar#HOUR_OF_DAY}、
 	 *            {@link Calendar#MINUTE}、{@link Calendar#SECOND}
@@ -674,7 +699,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	/**
 	 * 设置本地时间相对于GMT时间的偏移分钟数
 	 * 
-	 * @since 0.0.3
+	 * @since 0.3
 	 * @param minutes 偏移分钟数
 	 * @return
 	 */
@@ -696,7 +721,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	/**
 	 * 获取本地时间相对于GMT时间的偏移分钟数
 	 * 
-	 * @since 0.0.3
+	 * @since 0.3
 	 * @return
 	 */
 	public int getTimeZoneOffset() {
@@ -707,7 +732,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	/**
 	 * 将当前实例设置为指定时间字段所能表示的最大值
 	 * 
-	 * @since 0.0.3
+	 * @since 0.3
 	 * @param field 该方法支持的字段有{@link Calendar#YEAR}、{@link Calendar#MONTH}、
 	 *            {@link Calendar#DAY_OF_MONTH}、 {@link Calendar#HOUR_OF_DAY}、
 	 *            {@link Calendar#MINUTE}、{@link Calendar#SECOND}
@@ -776,7 +801,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	/**
 	 * 返回使用日期格式化工具格式化后的字符串
 	 * 
-	 * @since 0.0.3
+	 * @since 0.3
 	 * @param 指定的格式化工具类
 	 */
 	public String toString(DateFormat format) {
