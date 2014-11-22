@@ -88,19 +88,39 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	}
 
 	/**
+	 * 根据年、月、日、时、分、秒、毫秒部分的值构造对应的实例对象
+	 * 
+	 * @param year 年份，如2012
+	 * @param month 月份，如12
+	 * @param day 日
+	 * @param hh 小时
+	 * @param mm 分钟
+	 * @param ss 秒
+	 * @param ms 毫秒
+	 */
+	public EasyDate(int year, int month, int day, int... args) {
+		int[] theArgs = new int[] { 0, 0, 0, 0 };
+		for (int i = 0; i < args.length; i++) {
+			theArgs[i] = args[i];
+		}
+		setCalendar(new GregorianCalendar(year, month - 1, day, theArgs[0], theArgs[1], theArgs[2]));
+		calendar.set(Calendar.MILLISECOND, theArgs[3]);
+	}
+
+	/**
 	 * 根据相对于指定时间的偏移值构造一个对应的实例对象<br>
 	 * 例如，当前时间为：2012-10-10 例如要创建一个2013-10-10的时间对象，new EasyDate(null, 1, 0, 0)即可;<br>
 	 * 创建一个2011-8-10的时间对象，new EasyDate(null, -1, -2, 0)或new EasyDate(null, 0,
 	 * -14, 0)
 	 * 
 	 * @param date 指定的时间，作为偏移量的参考对象，如果为null，则默认使用当前时间作为参考对象<br>
-	 *            该对象支持java.util.Date、me.ready.util.EasyDate、java.util.
-	 *            Calendar等对象及其子类实例
+	 *            该对象支持{@link java.util.Date}、{@link me.ready.util.EasyDate}、
+	 *            {@link java.util.Calendar}等对象及其子类实例
 	 * @param offsetYear 相对于当前时间的年份偏移量
 	 * @param offsetMonth 相对于当前时间的月份偏移量
 	 * @param doffsetDay 相对于当前时间的日期偏移量
 	 */
-	public EasyDate(Object date, int offsetYear, int offsetMonth, int offsetDay) {
+	private EasyDate(Object date, int offsetYear, int offsetMonth, int offsetDay) {
 		this(getTimeOfDate(date));
 		if (offsetYear != 0) {
 			calendar.add(Calendar.YEAR, offsetYear);
@@ -111,6 +131,55 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 		if (offsetDay != 0) {
 			calendar.add(Calendar.DAY_OF_MONTH, offsetDay);
 		}
+	}
+
+	/**
+	 * 根据相对于指定时间的偏移值构造一个对应的实例对象<br>
+	 * 例如，当前时间为：2012-10-10 例如要创建一个2013-10-10的时间对象，new EasyDate(null, 1, 0, 0)即可;<br>
+	 * 创建一个2011-8-10的时间对象，new EasyDate(null, -1, -2, 0)或new EasyDate(null, 0,
+	 * -14, 0)
+	 * 
+	 * @param date 指定的时间，作为偏移量的参考对象，如果为null，则默认使用当前时间作为参考对象<br>
+	 *            该对象支持{@link java.util.Date}、{@link me.ready.util.EasyDate}、
+	 *            {@link java.util.Calendar}等对象及其子类实例
+	 * @param offsetYear 相对于当前时间的年份偏移量
+	 * @param offsetMonth 相对于当前时间的月份偏移量
+	 * @param doffsetDay 相对于当前时间的日期偏移量
+	 */
+	public EasyDate(Date date, int offsetYear, int offsetMonth, int offsetDay) {
+		this((Object) date, offsetYear, offsetMonth, offsetDay);
+	}
+
+	/**
+	 * 根据相对于指定时间的偏移值构造一个对应的实例对象<br>
+	 * 例如，当前时间为：2012-10-10 例如要创建一个2013-10-10的时间对象，new EasyDate(null, 1, 0, 0)即可;<br>
+	 * 创建一个2011-8-10的时间对象，new EasyDate(null, -1, -2, 0)或new EasyDate(null, 0,
+	 * -14, 0)
+	 * 
+	 * @param date 指定的时间，作为偏移量的参考对象，如果为null，则默认使用当前时间作为参考对象<br>
+	 *            该对象支持{@link java.util.Date}、{@link me.ready.util.EasyDate}、
+	 *            {@link java.util.Calendar}等对象及其子类实例
+	 * @param offsetYear 相对于当前时间的年份偏移量
+	 * @param offsetMonth 相对于当前时间的月份偏移量
+	 * @param doffsetDay 相对于当前时间的日期偏移量
+	 */
+	public EasyDate(EasyDate date, int offsetYear, int offsetMonth, int offsetDay) {
+		this((Object) date, offsetYear, offsetMonth, offsetDay);
+	}
+
+	/**
+	 * 根据相对于指定时间的偏移值构造一个对应的实例对象<br>
+	 * 例如，当前时间为：2012-10-10 例如要创建一个2013-10-10的时间对象，new EasyDate(null, 1, 0, 0)即可;<br>
+	 * 创建一个2011-8-10的时间对象，new EasyDate(null, -1, -2, 0)或new EasyDate(null, 0,
+	 * -14, 0)
+	 * 
+	 * @param date 指定的日历对象，作为偏移量的参考对象，如果为null，则默认使用当前时间作为参考对象<br>
+	 * @param offsetYear 相对于当前时间的年份偏移量
+	 * @param offsetMonth 相对于当前时间的月份偏移量
+	 * @param doffsetDay 相对于当前时间的日期偏移量
+	 */
+	public EasyDate(Calendar date, int offsetYear, int offsetMonth, int offsetDay) {
+		this((Object) date, offsetYear, offsetMonth, offsetDay);
 	}
 
 	/**
@@ -134,26 +203,6 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 			throw new ClassCastException("指定的对象不是日期类型：" + date);
 		}
 		return theTime;
-	}
-
-	/**
-	 * 根据年、月、日、时、分、秒、毫秒部分的值构造对应的实例对象
-	 * 
-	 * @param year 年份，如2012
-	 * @param month 月份，如12
-	 * @param day 日
-	 * @param hh 小时
-	 * @param mm 分钟
-	 * @param ss 秒
-	 * @param ms 毫秒
-	 */
-	public EasyDate(int year, int month, int day, int... args) {
-		int[] theArgs = new int[] { 0, 0, 0, 0 };
-		for (int i = 0; i < args.length; i++) {
-			theArgs[i] = args[i];
-		}
-		setCalendar(new GregorianCalendar(year, month - 1, day, args[0], args[1], args[2]));
-		calendar.set(Calendar.MILLISECOND, theArgs[3]);
 	}
 
 	/**

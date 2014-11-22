@@ -12,6 +12,7 @@ public class EasyDateTest {
 		System.out.println(d);
 		d.addDay(365);
 		System.err.println(d);
+		d = new EasyDate(2014, 12, 2, 6);
 	}
 
 	// @Test
