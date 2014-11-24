@@ -101,14 +101,26 @@ public class StringUtil {
 
 	/**
 	 * 判断指定的字符串是否为空<br>
-	 * 如果字符串为null、空字符串，则返回true<br>
-	 * <b>注意：</b>本方法不会去除字符串两边的空格，如果需要对字符串进行去除两边空格后的判断，请使用isBlank(String str)方法
+	 * 如果字符串为null、空字符串，则返回true，否则返回false<br>
+	 * <b>注意：</b>本方法不会去除字符串两边的空格，如果需要对字符串进行去除两边空格后的判断，请使用{@link StringUtil#isBlank(String str)}方法
 	 * 
 	 * @param str
 	 * @return
 	 */
 	public static final boolean isEmpty(String str) {
 		return str == null || str.length() == 0; // 后面的表达式相当于"".equals(str)，但比其性能稍好
+	}
+
+	/**
+	 * 判断指定的字符串是否不为空<br>
+	 * 如果指定字符串不为null、空字符串，则返回true，否则返回false<br>
+	 * <b>注意：</b>本方法不会去除字符串两边的空格，如果需要对字符串进行去除两边空格后的判断，请使用 {@link StringUtil#notBlank(String str)}方法
+	 * 
+	 * @param str
+	 * @return
+	 */
+	public static final boolean notEmpty(String str) {
+		return str != null && str.length() > 0;
 	}
 
 	/**
@@ -121,6 +133,18 @@ public class StringUtil {
 	 */
 	public static final boolean isEmpty(Object obj) {
 		return obj == null || obj.toString().length() == 0; // 后面的表达式相当于"".equals(str)，但比其性能稍好
+	}
+
+	/**
+	 * 判断指定的对象是否不为空<br>
+	 * 如果对象(或其toSring()返回值)不为null、空字符串，则返回true，否则返回false<br>
+	 * <b>注意：</b>本方法不会去除字符串两边的空格，如果需要对字符串进行去除两边空格后的判断，请使用{@link StringUtil#isBlank(Object obj)}方法
+	 * 
+	 * @param obj 指定的对象
+	 * @return
+	 */
+	public static final boolean notEmpty(Object obj) {
+		return obj != null && obj.toString().length() > 0;
 	}
 
 	/**
@@ -154,6 +178,18 @@ public class StringUtil {
 	}
 
 	/**
+	 * 判断指定的字符串是否不为空<br>
+	 * 如果字符串不为null、空字符串、空格字符串，则返回true，否则返回false<br>
+	 * <b>注意：</b>本方法会先去除字符串两边的空格，再判断
+	 * 
+	 * @param str
+	 * @return
+	 */
+	public static final boolean notBlank(String str) {
+		return str != null && str.trim().length() > 0;
+	}
+
+	/**
 	 * 判断指定的对象是否为空<br>
 	 * 如果对象(或其toSring()返回值)为null、空字符串、空格字符串，则返回true<br>
 	 * <b>注意：</b>本方法会先去除字符串两边的空格，再判断
@@ -163,6 +199,18 @@ public class StringUtil {
 	 */
 	public static final boolean isBlank(Object obj) {
 		return obj == null || obj.toString().trim().length() == 0;
+	}
+
+	/**
+	 * 判断指定的对象是否为空<br>
+	 * 如果对象(或其toSring()返回值)不为null、空字符串、空格字符串，则返回true，否则返回false<br>
+	 * <b>注意：</b>本方法会先去除字符串两边的空格，再判断
+	 * 
+	 * @param obj 指定的对象
+	 * @return
+	 */
+	public static final boolean notBlank(Object obj) {
+		return obj != null && obj.toString().trim().length() > 0;
 	}
 
 	/**

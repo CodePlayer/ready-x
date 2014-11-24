@@ -1,6 +1,5 @@
 package me.ready.util;
 
-import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -17,11 +16,6 @@ import me.ready.e.LogicException;
  * @date 2012-10-21
  */
 public class Encrypter {
-
-	/**
-	 * 字符串解析编码
-	 */
-	public static final Charset CHARSET = Charset.forName("UTF-8");
 
 	/**
 	 * 获取对应的摘要算法
@@ -45,7 +39,7 @@ public class Encrypter {
 	 * @return
 	 */
 	public static final String md5(String input) {
-		return md5(input.getBytes(CHARSET));
+		return md5(input.getBytes(Charsets.UTF_8));
 	}
 
 	/**
@@ -57,7 +51,7 @@ public class Encrypter {
 	 * @return
 	 */
 	public static final String md5For16(String input) {
-		return md5For16(input.getBytes(CHARSET));
+		return md5For16(input.getBytes(Charsets.UTF_8));
 	}
 
 	/**
@@ -93,7 +87,7 @@ public class Encrypter {
 	 * @return
 	 */
 	public static final String sha1(String input) {
-		return sha1(input.getBytes(CHARSET));
+		return sha1(input.getBytes(Charsets.UTF_8));
 	}
 
 	/**
@@ -187,7 +181,7 @@ public class Encrypter {
 	 */
 	public static final String encode(String input, String algorithm) {
 		MessageDigest digest = getMessageDigest(algorithm);
-		return bytes2Hex(digest.digest(input.getBytes(CHARSET)));
+		return bytes2Hex(digest.digest(input.getBytes(Charsets.UTF_8)));
 	}
 
 	/**

@@ -1,6 +1,7 @@
 package me.ready.util;
 
 import java.util.Calendar;
+import java.util.TimeZone;
 
 import org.junit.Test;
 
@@ -16,7 +17,7 @@ public class EasyDateTest {
 	}
 
 	// @Test
-	public void testGetLastDayOfMonth() {
+	public void getLastDayOfMonth() {
 		EasyDate d = new EasyDate(2013, 2, 5);
 		Assert.isTrue(d.getLastDayOfMonth() == 28, "error");
 		d = new EasyDate(2014, 11, 5);
@@ -28,25 +29,32 @@ public class EasyDateTest {
 	}
 
 	// @Test
-	public void testEndOf() {
+	public void endOf() {
 		EasyDate d = new EasyDate(2013, 2, 5);
 		d.endOf(Calendar.MONTH);
 		System.out.println(d.toLocaleString());
 	}
 
 	// @Test
-	public void testBeginOf() {
+	public void beginOf() {
 		EasyDate d = new EasyDate(2013, 2, 5, 23, 12, 55);
 		d.beginOf(Calendar.YEAR);
 		System.out.println(d.toLocaleString());
 	}
 
 	@Test
-	public void testGetTimeZoneOffset() {
+	public void getTimeZoneOffset() {
 		EasyDate d = new EasyDate(2013, 2, 5, 23, 12, 55);
 		System.out.println(d.getTimeZoneOffset());
-		d.setTimeZoneOffset(60);
+		d.setTimeZoneOffset(0);
 		System.out.println(d.getTimeZoneOffset());
 		System.out.println(d.toLocaleString());
+		System.out.println(d.toLongString());
+		System.out.println(d.toShortString());
+		System.out.println(d.toString());
+		TimeZone timeZone = TimeZone.getDefault();
+		System.out.println(timeZone.getID());
+		TimeZone tz = TimeZone.getTimeZone("GMT+8:00");
+		System.out.println(timeZone.getRawOffset() == tz.getRawOffset());
 	}
 }

@@ -16,7 +16,7 @@ public class JSONUtilTest {
 
 	// @Test
 	@SuppressWarnings("unchecked")
-	public void testMap() {
+	public void createHashMap() {
 		Map<Object, Object> map = CollectionUtil.createHashMap("name", "张三", "age", 18);
 		System.out.println(new JSONObject(map).toString());
 	}

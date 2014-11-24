@@ -8,5 +8,4 @@ public class CollectionUtilTest {
 	public void test() {
 		System.out.println(-9 >> 1);
 	}
-
 }
