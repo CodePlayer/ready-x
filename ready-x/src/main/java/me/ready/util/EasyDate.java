@@ -97,7 +97,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * @param offsetYear 相对于当前时间的年份偏移量
 	 * @param offsetMonth 相对于当前时间的月份偏移量
 	 * @param doffsetDay 相对于当前时间的日期偏移量
-	 */	 
+	 */
 	public EasyDate(Object date, int offsetYear, int offsetMonth, int offsetDay) {
 		this(getTimeOfDate(date));
 		if (offsetYear != 0) {
@@ -626,7 +626,8 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 			return 0;
 		}
 		long diff = calendar.getTimeInMillis() - getTimeOfDate(date);
-		if (diff == 0) return 0;
+		if (diff == 0)
+			return 0;
 		return diff > 0 ? 1 : -1;
 	}
 
@@ -714,7 +715,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 			}
 			timeZoneID.append(min);
 		}
-		System.out.println(timeZoneID);
+		calendar.getTimeInMillis(); // 强迫更新时间，否则之前的时区设置可能不生效
 		calendar.setTimeZone(TimeZone.getTimeZone(timeZoneID.toString()));
 		return this;
 	}
@@ -777,11 +778,14 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) return true;
-		if (!(obj instanceof EasyDate)) return false;
+		if (this == obj)
+			return true;
+		if (!(obj instanceof EasyDate))
+			return false;
 		EasyDate other = (EasyDate) obj;
 		if (calendar == null) {
-			if (other.calendar != null) return false;
+			if (other.calendar != null)
+				return false;
 		}
 		return calendar.equals(other.calendar);
 	}
