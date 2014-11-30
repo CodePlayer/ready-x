@@ -48,14 +48,7 @@ public class DES {
 	 * 根据字符串参数生成KEY
 	 */
 	public void setKey(String strKey) {
-		try {
-			KeyGenerator generator = KeyGenerator.getInstance("DES");
-			generator.init(new SecureRandom(strKey.getBytes()));
-			this.key = generator.generateKey();
-			generator = null;
-		} catch (Exception e) {
-			throw new IllegalArgumentException("设置指定密钥时发生异常!", e);
-		}
+		setKey(strKey.getBytes(Charsets.UTF_8));
 	}
 
 	/**
