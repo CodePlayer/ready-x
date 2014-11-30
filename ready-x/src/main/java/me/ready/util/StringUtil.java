@@ -18,7 +18,7 @@ public class StringUtil {
 
 	/**
 	 * 获取指定字符串的Unicode编码，例如：“中国”将返回“\u4e2d\u56fd”<br>
-	 * 此方法返回的编码中，字母均采用小写形式，此外，本方法采用StringBuilder作为字符容器
+	 * 此方法返回的编码中，字母均采用大写形式，此外，本方法采用StringBuilder作为字符容器
 	 * 
 	 * @param src 指定字符串不能为null，否则将引发空指针异常
 	 * @return
