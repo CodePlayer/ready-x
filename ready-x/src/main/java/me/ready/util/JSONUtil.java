@@ -29,18 +29,17 @@ public class JSONUtil {
 	 * @return
 	 */
 	public static final String encode(Object obj) {
-		return JSON.toJSONString(obj);
+		return JSON.toJSONString(obj, SerializerFeature.DisableCircularReferenceDetect);
 	}
 
 	/**
-	 * 将Java对象编码为JSON字符串，该方法不会对对象的属性进行循环引用检测，因此对象的属性只能是基本数据类型才能使用此方法。<br>
-	 * 它可以提高编码JSON字符串的性能
+	 * 将Java对象编码为JSON字符串，它与encode()方法不同的是，它会进行循环引用检测。如果其中的多个元素或属性指向同一个对象引用，则后者将只输出对前者的引用表示
 	 * 
 	 * @param obj
 	 * @return
 	 */
-	public static final String encodeSimple(Object obj) {
-		return JSON.toJSONString(obj, SerializerFeature.DisableCircularReferenceDetect);
+	public static final String encodeWithReferenceDetect(Object obj) {
+		return JSON.toJSONString(obj);
 	}
 
 	/**

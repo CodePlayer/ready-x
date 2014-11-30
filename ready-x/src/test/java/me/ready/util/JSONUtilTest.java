@@ -11,7 +11,7 @@ import com.alibaba.fastjson.JSONArray;
 @SuppressWarnings("unchecked")
 public class JSONUtilTest {
 
-	//	@Test
+	@Test
 	public void encode() {
 		// 编码HashMap
 		Map<Object, Object> map = CollectionUtil.createHashMap("name", "张三", "age", 18);
@@ -25,26 +25,26 @@ public class JSONUtilTest {
 		// 编码List集合
 		List<User> users = new ArrayList<User>();
 		users.add(user);
-		users.add(new User(2, "李四", "12345", false));
+		users.add(user); // 由于集合中存在重复的引用，请注意比较它与下面的encodeWithReferenceDetect()的输出区别
 		System.out.println(JSONUtil.encode(users)); // [{"gender":true,"id":1,"name":"张三","password":"123456"},{"gender":false,"id":2,"name":"李四","password":"12345"}]
 	}
 
 	//	@Test
-	public void encodeSimple() {
+	public void encodeWithReferenceDetect() {
 		// 编码HashMap
 		Map<Object, Object> map = CollectionUtil.createHashMap("name", "张三", "age", 18);
-		System.out.println(JSONUtil.encodeSimple(map)); // {"age":18,"name":"张三"}
+		System.out.println(JSONUtil.encodeWithReferenceDetect(map)); // {"age":18,"name":"张三"}
 		// 编码User对象
 		User user = new User(1, "张三", "123456", true);
-		System.out.println(JSONUtil.encodeSimple(user)); // {"gender":true,"id":1,"name":"张三","password":"123456"}
+		System.out.println(JSONUtil.encodeWithReferenceDetect(user)); // {"gender":true,"id":1,"name":"张三","password":"123456"}
 		// 编码数组
 		Object[] objects = new Object[] { "Hello", "云创", true, user };
-		System.out.println(JSONUtil.encodeSimple(objects)); // ["Hello","云创",true,{"gender":true,"id":1,"name":"张三","password":"123456"}]
+		System.out.println(JSONUtil.encodeWithReferenceDetect(objects)); // ["Hello","云创",true,{"gender":true,"id":1,"name":"张三","password":"123456"}]
 		// 编码List集合
 		List<User> users = new ArrayList<User>();
 		users.add(user);
-		users.add(new User(2, "李四", "12345", false));
-		System.out.println(JSONUtil.encodeSimple(users)); // [{"gender":true,"id":1,"name":"张三","password":"123456"},{"gender":false,"id":2,"name":"李四","password":"12345"}]
+		users.add(user);
+		System.out.println(JSONUtil.encodeWithReferenceDetect(users)); // [{"gender":true,"id":1,"name":"张三","password":"123456"},{"$ref":"$[0]"}]
 	}
 
 	//	@Test
@@ -56,7 +56,7 @@ public class JSONUtilTest {
 		System.out.println(user.getId()); // 1
 	}
 
-	@Test
+	//	@Test
 	public void parseArray() {
 		JSONArray jsonArray = JSONUtil.parseArray("[\"大家好\"]");
 		System.out.println(jsonArray.get(0)); // 大家好
