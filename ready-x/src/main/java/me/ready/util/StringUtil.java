@@ -324,8 +324,10 @@ public class StringUtil {
 	 * @return
 	 */
 	private static final String pad(String str, char ch, int maxLength, boolean left) {
-		if (str == null) return "";
-		if (maxLength < 1) throw new IllegalArgumentException("指定位数不能小于1!");
+		if (str == null)
+			return "";
+		if (maxLength < 1)
+			throw new IllegalArgumentException("指定位数不能小于1!");
 		int length = str.length();
 		if (maxLength > length) {
 			int diffSize = maxLength - length;

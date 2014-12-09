@@ -5,6 +5,9 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import me.ready.e.LogicException;
 
 /**
@@ -17,6 +20,21 @@ import me.ready.e.LogicException;
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class X {
+
+	// 禁止构造实例
+	private X() {
+	}
+
+	/**
+	 * 获取调用此方法的当前类的日志处理器(Logger)<br>
+	 * 该Logger使用slf4j API
+	 * 
+	 * @return
+	 */
+	public static final Logger getLogger() {
+		String className = new Throwable().getStackTrace()[1].getClassName();
+		return LoggerFactory.getLogger(className);
+	}
 
 	/**
 	 * 判断指定的字符串是否为空<br>
@@ -320,7 +338,8 @@ public class X {
 	 * @return
 	 */
 	public static final Object decode(Object bean, String property, Object... expressions) {
-		if (bean == null) return null;
+		if (bean == null)
+			return null;
 		Object value = null;
 		if (bean instanceof Map) {
 			Map map = (Map) bean;
@@ -373,7 +392,8 @@ public class X {
 	 * @return
 	 */
 	public static final Object decode(Object collection, int index, Object... expressions) {
-		if (collection == null) return null;
+		if (collection == null)
+			return null;
 		Object array = null;
 		if (collection instanceof Collection) {
 			array = ((Collection) collection).toArray();

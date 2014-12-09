@@ -28,7 +28,7 @@ public class EasyDateTest {
 		Assert.isTrue(d.getLastDayOfMonth() == 29, "error");
 	}
 
-	// @Test
+	@Test
 	public void endOf() {
 		EasyDate d = new EasyDate(2013, 2, 5);
 		d.endOf(Calendar.MONTH);
@@ -42,7 +42,7 @@ public class EasyDateTest {
 		System.out.println(d.toLocaleString());
 	}
 
-	@Test
+	//	@Test
 	public void getTimeZoneOffset() {
 		EasyDate d = new EasyDate(2013, 2, 5, 23, 12, 55);
 		System.out.println(d.getTimeZoneOffset());
