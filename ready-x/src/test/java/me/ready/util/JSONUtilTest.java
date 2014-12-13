@@ -11,7 +11,7 @@ import com.alibaba.fastjson.JSONArray;
 @SuppressWarnings("unchecked")
 public class JSONUtilTest {
 
-	@Test
+	//	@Test
 	public void encode() {
 		// 编码HashMap
 		Map<Object, Object> map = CollectionUtil.createHashMap("name", "张三", "age", 18);
@@ -47,6 +47,12 @@ public class JSONUtilTest {
 		System.out.println(JSONUtil.encodeWithReferenceDetect(users)); // [{"gender":true,"id":1,"name":"张三","password":"123456"},{"$ref":"$[0]"}]
 	}
 
+//	@Test
+	public void parse() {
+		Object json = JSONUtil.parse("['大家好']");
+		System.out.println(json.getClass());
+	}
+
 	//	@Test
 	public void parseObject() {
 		String text = "{\"gender\":true,\"id\":1,\"name\":\"张三\",\"password\":\"123456\"}";
@@ -56,9 +62,9 @@ public class JSONUtilTest {
 		System.out.println(user.getId()); // 1
 	}
 
-	//	@Test
+		@Test
 	public void parseArray() {
-		JSONArray jsonArray = JSONUtil.parseArray("[\"大家好\"]");
+		JSONArray jsonArray = JSONUtil.parseArray("['大家好']");
 		System.out.println(jsonArray.get(0)); // 大家好
 	}
 }

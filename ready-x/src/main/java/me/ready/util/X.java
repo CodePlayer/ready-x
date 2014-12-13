@@ -5,10 +5,10 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Map;
 
+import me.ready.e.LogicException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import me.ready.e.LogicException;
 
 /**
  * 通用公共工具类<br>
@@ -31,7 +31,7 @@ public class X {
 	 * 
 	 * @return
 	 */
-	public static final Logger getLogger() {
+	public static Logger getLogger() {
 		String className = new Throwable().getStackTrace()[1].getClassName();
 		return LoggerFactory.getLogger(className);
 	}

@@ -25,11 +25,22 @@ public class JSONUtil {
 	/**
 	 * 将Java对象编码为JSON字符串
 	 * 
-	 * @param obj
+	 * @param obj 指定的任意对象
 	 * @return
 	 */
 	public static final String encode(Object obj) {
 		return JSON.toJSONString(obj, SerializerFeature.DisableCircularReferenceDetect);
+	}
+
+	/**
+	 * 将Java对象编码为JSON字符串，并以指定的格式化模式处理日期类型
+	 * 
+	 * @param obj 指定的任意对象
+	 * @param pattern 指定的格式化字符串，例如{@code "yyyy-MM-dd"}
+	 * @return
+	 */
+	public static final String encodeWithDateFormat(Object obj, String pattern) {
+		return JSON.toJSONStringWithDateFormat(obj, pattern, SerializerFeature.DisableCircularReferenceDetect);
 	}
 
 	/**
@@ -40,6 +51,16 @@ public class JSONUtil {
 	 */
 	public static final String encodeWithReferenceDetect(Object obj) {
 		return JSON.toJSONString(obj);
+	}
+
+	/**
+	 * 将JSON字符串转为对应的JSONObject或JSONArray对象
+	 * 
+	 * @param text 指定的JSON字符串
+	 * @return
+	 */
+	public static final Object parse(String text) {
+		return JSON.parse(text);
 	}
 
 	/**
@@ -64,7 +85,7 @@ public class JSONUtil {
 	}
 
 	/**
-	 * 将JSON字符串转为JSONObject形式的对象(类似于增强型的HashMap)
+	 * 将JSON字符串转为JSONArray形式的对象(类似于增强型的ArrayList)
 	 * 
 	 * @param text 指定的JSON字符串
 	 * @return
