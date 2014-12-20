@@ -23,6 +23,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class CollectionUtil {
 
+	// 禁止实例构建
+	private CollectionUtil() {
+	}
+
 	/**
 	 * 根据可变参数形式的键值数组构造一个HashMap集合<br>
 	 * 

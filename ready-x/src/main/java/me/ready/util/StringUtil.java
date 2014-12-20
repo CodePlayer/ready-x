@@ -11,6 +11,10 @@ import java.util.Arrays;
  */
 public class StringUtil {
 
+	// 禁止实例创建
+	private StringUtil() {
+	}
+
 	/**
 	 * 用于在2-16进制之间进行转换的映射字符数组
 	 */

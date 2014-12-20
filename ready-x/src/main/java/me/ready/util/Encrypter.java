@@ -17,6 +17,10 @@ import me.ready.e.LogicException;
  */
 public class Encrypter {
 
+	// 禁止实例构建
+	private Encrypter() {
+	}
+
 	/**
 	 * 获取对应的摘要算法
 	 * 
