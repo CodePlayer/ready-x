@@ -475,4 +475,39 @@ public class StringUtil {
 		}
 		return new StringBuilder(str).reverse().toString();
 	}
+
+	/**
+	 * 使用指定的转义字符对用于LIKE语句的字符串进行转义，以防止SQL语句注入
+	 * 
+	 * @param likeStr 指定的字符串
+	 * @return
+	 */
+	public static final String escapeSQLLike(String likeStr, char escapeChar) {
+		if (StringUtil.isEmpty(likeStr)) {
+			return "";
+		}
+		boolean modified = false;
+		StringBuilder sb = new StringBuilder(likeStr.length() + 2);
+		String searchChars = "\\\'_%";
+		final char[] strChars = likeStr.toCharArray();
+		for (int i = 0; i < strChars.length; i++) {
+			sb.append(strChars[i]);
+			if (searchChars.indexOf(strChars[i], 0) != -1) {
+				modified = true;
+				sb.append(escapeChar);
+			}
+		}
+		return modified ? sb.toString() : likeStr;
+	}
+
+	/**
+	 * 将指定的用于LIKE语句的字符串转义，以防止SQL语句注入<br>
+	 * 该方法默认使用'\'进行转义操作
+	 * 
+	 * @param likeStr 指定的字符串
+	 * @return
+	 */
+	public static final String escapeSQLLike(String likeStr) {
+		return escapeSQLLike(likeStr, '\\');
+	}
 }

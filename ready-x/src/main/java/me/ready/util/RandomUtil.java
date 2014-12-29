@@ -13,7 +13,8 @@ import java.util.Random;
 public class RandomUtil {
 
 	// 禁止实例构建
-	private RandomUtil() {};
+	private RandomUtil() {
+	}
 
 	/**
 	 * 返回min(包括)和max(包括)之间的一个随机整数
@@ -139,7 +140,7 @@ public class RandomUtil {
 		} else {
 			Random random = new Random();
 			for (int i = 0; i < length; i++) {
-				newChars[i] = chars[random.nextInt(length)];
+				newChars[i] = chars[random.nextInt(chars.length)];
 			}
 		}
 		return new String(newChars);
