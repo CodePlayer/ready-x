@@ -480,16 +480,25 @@ public class StringUtil {
 	 * 使用指定的转义字符对用于LIKE语句的字符串进行转义，以防止SQL语句注入
 	 * 
 	 * @param likeStr 指定的字符串
+	 * @param escapeChar 转义字符
+	 * @param appendLikeWildcard 是否需要在字符串两侧添加通配符'%'
 	 * @return
 	 */
-	public static final String escapeSQLLike(String likeStr, char escapeChar) {
+	public static final String escapeSQLLike(String likeStr, char escapeChar, boolean appendLikeWildcard) {
 		if (StringUtil.isEmpty(likeStr)) {
 			return "";
 		}
 		boolean modified = false;
-		StringBuilder sb = new StringBuilder(likeStr.length() + 2);
-		String searchChars = "\\\'_%";
 		final char[] strChars = likeStr.toCharArray();
+		int length = strChars.length + 2;
+		if (appendLikeWildcard) {
+			length += 2;
+		}
+		StringBuilder sb = new StringBuilder(length);
+		String searchChars = "\\\'_%";
+		if (appendLikeWildcard) {
+			sb.append('%');
+		}
 		for (int i = 0; i < strChars.length; i++) {
 			sb.append(strChars[i]);
 			if (searchChars.indexOf(strChars[i], 0) != -1) {
@@ -497,7 +506,22 @@ public class StringUtil {
 				sb.append(escapeChar);
 			}
 		}
-		return modified ? sb.toString() : likeStr;
+		if (appendLikeWildcard) {
+			sb.append('%');
+		}
+		return appendLikeWildcard || modified ? sb.toString() : likeStr;
+	}
+
+	/**
+	 * 将指定的用于LIKE语句的字符串转义，以防止SQL语句注入<br>
+	 * 该方法默认使用'\'进行转义操作
+	 * 
+	 * @param likeStr 指定的字符串
+	 * @param appendLikeWildcard 是否需要在字符串两侧添加通配符'%'
+	 * @return
+	 */
+	public static final String escapeSQLLike(String likeStr, boolean appendLikeWildcard) {
+		return escapeSQLLike(likeStr, '\\', appendLikeWildcard);
 	}
 
 	/**
@@ -508,6 +532,6 @@ public class StringUtil {
 	 * @return
 	 */
 	public static final String escapeSQLLike(String likeStr) {
-		return escapeSQLLike(likeStr, '\\');
+		return escapeSQLLike(likeStr, '\\', false);
 	}
 }
