@@ -18,7 +18,7 @@ public class StringUtil {
 	/**
 	 * 用于在2-16进制之间进行转换的映射字符数组
 	 */
-	protected static final char[] digits = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+	protected static final char[] digits = "0123456789ABCDEF".toCharArray();
 
 	/**
 	 * 获取指定字符串的Unicode编码，例如：“中国”将返回“\u4e2d\u56fd”<br>
@@ -111,7 +111,7 @@ public class StringUtil {
 	 * @param str
 	 * @return
 	 */
-	public static final boolean isEmpty(String str) {
+	public static final boolean isEmpty(CharSequence str) {
 		return str == null || str.length() == 0; // 后面的表达式相当于"".equals(str)，但比其性能稍好
 	}
 
@@ -123,7 +123,7 @@ public class StringUtil {
 	 * @param str
 	 * @return
 	 */
-	public static final boolean notEmpty(String str) {
+	public static final boolean notEmpty(CharSequence str) {
 		return str != null && str.length() > 0;
 	}
 
@@ -495,16 +495,16 @@ public class StringUtil {
 			length += 2;
 		}
 		StringBuilder sb = new StringBuilder(length);
-		String searchChars = "\\\'_%";
+		String searchChars = "\\\'_%;";
 		if (appendLikeWildcard) {
 			sb.append('%');
 		}
 		for (int i = 0; i < strChars.length; i++) {
-			sb.append(strChars[i]);
 			if (searchChars.indexOf(strChars[i], 0) != -1) {
 				modified = true;
 				sb.append(escapeChar);
 			}
+			sb.append(strChars[i]);
 		}
 		if (appendLikeWildcard) {
 			sb.append('%');

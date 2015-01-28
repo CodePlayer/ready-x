@@ -1,11 +1,13 @@
 package me.ready.util;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
 
 /**
  * JSON字符串序列化转换工具类
@@ -30,6 +32,30 @@ public class JSONUtil {
 	 */
 	public static final String encode(Object obj) {
 		return JSON.toJSONString(obj, SerializerFeature.DisableCircularReferenceDetect);
+	}
+
+	/**
+	 * 将Java对象编码为JSON字符串
+	 * 
+	 * @param obj 指定的任意对象
+	 * @param excludeProperties 需要排除的属性数组
+	 * @return
+	 */
+	public static final String encodeWithExclude(Object obj, String... excludeProperties) {
+		SimplePropertyPreFilter filter = new SimplePropertyPreFilter();
+		Collections.addAll(filter.getExcludes(), excludeProperties);
+		return JSON.toJSONString(obj, filter, SerializerFeature.DisableCircularReferenceDetect);
+	}
+
+	/**
+	 * 将Java对象编码为JSON字符串
+	 * 
+	 * @param obj 指定的任意对象
+	 * @param excludeProperties 需要排除的属性数组
+	 * @return
+	 */
+	public static final String encodeWithInclude(Object obj, String... includeProperties) {
+		return JSON.toJSONString(obj, new SimplePropertyPreFilter(includeProperties), SerializerFeature.DisableCircularReferenceDetect);
 	}
 
 	/**

@@ -1,6 +1,8 @@
 package me.ready.util;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -98,7 +100,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * @param offsetMonth 相对于当前时间的月份偏移量
 	 * @param doffsetDay 相对于当前时间的日期偏移量
 	 */
-	public EasyDate(Object date, int offsetYear, int offsetMonth, int offsetDay) {
+	private EasyDate(Object date, int offsetYear, int offsetMonth, int offsetDay) {
 		this(getTimeOfDate(date));
 		if (offsetYear != 0) {
 			calendar.add(Calendar.YEAR, offsetYear);
@@ -109,6 +111,50 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 		if (offsetDay != 0) {
 			calendar.add(Calendar.DAY_OF_MONTH, offsetDay);
 		}
+	}
+
+	/**
+	 * 根据相对于指定时间的偏移值构造一个对应的实例对象<br>
+	 * 例如，当前时间为：2012-10-10 例如要创建一个2013-10-10的时间对象，new EasyDate(null, 1, 0, 0)即可;<br>
+	 * 创建一个2011-8-10的时间对象，new EasyDate(null, -1, -2, 0)或new EasyDate(null, 0, -14, 0)
+	 * 
+	 * @param date 指定的时间，作为偏移量的参考对象，如果为null，则默认使用当前时间作为参考对象<br>
+	 *            该对象支持{@link java.util.Date}、{@link me.ready.util.EasyDate}、 {@link java.util.Calendar}等对象及其子类实例
+	 * @param offsetYear 相对于当前时间的年份偏移量
+	 * @param offsetMonth 相对于当前时间的月份偏移量
+	 * @param doffsetDay 相对于当前时间的日期偏移量
+	 */
+	public EasyDate(Date date, int offsetYear, int offsetMonth, int offsetDay) {
+		this((Object) date, offsetYear, offsetMonth, offsetDay);
+	}
+
+	/**
+	 * 根据相对于指定时间的偏移值构造一个对应的实例对象<br>
+	 * 例如，当前时间为：2012-10-10 例如要创建一个2013-10-10的时间对象，new EasyDate(null, 1, 0, 0)即可;<br>
+	 * 创建一个2011-8-10的时间对象，new EasyDate(null, -1, -2, 0)或new EasyDate(null, 0, -14, 0)
+	 * 
+	 * @param date 指定的时间，作为偏移量的参考对象，如果为null，则默认使用当前时间作为参考对象<br>
+	 *            该对象支持{@link java.util.Date}、{@link me.ready.util.EasyDate}、 {@link java.util.Calendar}等对象及其子类实例
+	 * @param offsetYear 相对于当前时间的年份偏移量
+	 * @param offsetMonth 相对于当前时间的月份偏移量
+	 * @param doffsetDay 相对于当前时间的日期偏移量
+	 */
+	public EasyDate(EasyDate date, int offsetYear, int offsetMonth, int offsetDay) {
+		this((Object) date, offsetYear, offsetMonth, offsetDay);
+	}
+
+	/**
+	 * 根据相对于指定时间的偏移值构造一个对应的实例对象<br>
+	 * 例如，当前时间为：2012-10-10 例如要创建一个2013-10-10的时间对象，new EasyDate(null, 1, 0, 0)即可;<br>
+	 * 创建一个2011-8-10的时间对象，new EasyDate(null, -1, -2, 0)或new EasyDate(null, 0, -14, 0)
+	 * 
+	 * @param date 指定的日历对象，作为偏移量的参考对象，如果为null，则默认使用当前时间作为参考对象<br>
+	 * @param offsetYear 相对于当前时间的年份偏移量
+	 * @param offsetMonth 相对于当前时间的月份偏移量
+	 * @param doffsetDay 相对于当前时间的日期偏移量
+	 */
+	public EasyDate(Calendar date, int offsetYear, int offsetMonth, int offsetDay) {
+		this((Object) date, offsetYear, offsetMonth, offsetDay);
 	}
 
 	/**
@@ -629,6 +675,106 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 		if (diff == 0)
 			return 0;
 		return diff > 0 ? 1 : -1;
+	}
+
+	/**
+	 * 计算并返回当前日期与指定日期之间基于指定单位和舍入模式的差值
+	 * 
+	 * @param date 与当前日期进行比较的日期
+	 * @param field 指定的日期字段，返回值将以此为单位返回两个日期的差距值
+	 * @param roundingMode 舍入模式
+	 * @return
+	 */
+	public long calcDifference(Object date, int field, RoundingMode roundingMode) {
+		long theMillis, diff;
+		if (date instanceof Date) {
+			theMillis = ((Date) date).getTime();
+		} else if (date instanceof EasyDate) {
+			theMillis = ((EasyDate) date).getTime();
+		} else if (date instanceof Calendar) {
+			theMillis = ((Calendar) date).getTimeInMillis();
+		} else {
+			throw new IllegalArgumentException("unexpected type of date:" + date);
+		}
+		diff = getTime() - theMillis;
+		if (diff == 0) {
+			return 0;
+		}
+		long unit = 1;
+		switch (field) {
+		case Calendar.YEAR:
+		case Calendar.MONTH:
+			boolean isMax = diff > 0;
+			EasyDate me = new EasyDate(getTime());
+			EasyDate other = new EasyDate(theMillis);
+			EasyDate min = isMax ? other : me,
+			max = isMax ? me : other;
+			int diffOfYear = max.getYear() - min.getYear();
+			if (diffOfYear > 0) {
+				min.addYear(diffOfYear);
+			}
+			if (field == Calendar.MONTH) {
+				int diffOfMonth = max.getMonth() - min.getMonth();
+				if (diffOfMonth != 0) {
+					min.addMonth(diffOfMonth);
+				}
+				diff = diffOfYear * 12 + diffOfMonth;
+			} else {
+				diff = diffOfYear;
+			}
+			long prefix = max.getTime() - min.getTime();
+			if (prefix == 0) {
+				return diff;
+			}
+			long suffix = 0;
+			if (prefix > 0) {
+				min.calendar.add(field, 1);
+				suffix = min.getTime() - max.getTime();
+			} else {
+				suffix = -prefix;
+				diff--;
+				min.calendar.add(field, -1);
+				prefix = max.getTime() - min.getTime();
+			}
+			double base = suffix > prefix ? 0.1 : 0.9;
+			diff = new BigDecimal(diff + base).setScale(0, roundingMode).longValue();
+			return isMax ? diff : -diff;
+		case Calendar.DAY_OF_MONTH:
+		case Calendar.DAY_OF_YEAR:
+			unit *= 24; // 86400000; // 24 * 60 * 60 * 1000;
+		case Calendar.HOUR:
+		case Calendar.HOUR_OF_DAY:
+			unit *= 60; // 3600000; // 60 * 60 * 1000;
+		case Calendar.MINUTE:
+			unit *= 60; // 60000; // 60 * 1000
+		case Calendar.SECOND:
+			unit *= 1000;
+		case Calendar.MILLISECOND:
+			return new BigDecimal(diff).divide(new BigDecimal(unit), roundingMode).longValue();
+		default:
+			throw new IllegalArgumentException("unexpected value of field:" + field);
+		}
+	}
+
+	/**
+	 * 计算并返回当前日期与指定日期之间基于指定单位和向上取整模式的差值
+	 * 
+	 * @param date 与当前日期进行比较的日期
+	 * @param field 指定的日期字段，返回值将以此为单位返回两个日期的差距值
+	 * @return
+	 */
+	public long calcDifference(Object date, int field) {
+		return calcDifference(date, field, RoundingMode.CEILING);
+	}
+
+	/**
+	 * 计算并返回当前日期与指定日期之间基于向上取整模式的天数差值
+	 * 
+	 * @param date 与当前日期进行比较的日期
+	 * @return
+	 */
+	public int calcDifference(Object date) {
+		return (int) calcDifference(date, Calendar.DAY_OF_MONTH, RoundingMode.CEILING);
 	}
 
 	/**
