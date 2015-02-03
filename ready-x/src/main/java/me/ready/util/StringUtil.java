@@ -435,6 +435,51 @@ public class StringUtil {
 	}
 
 	/**
+	 * 将指定字符串的 <code>beginIndex</code> 到 <code>endIndex</code> (不包括 <code>endIndex</code> ) 之间的子字符串全部替换为指定的字符串 <code>replacement</code>
+	 * 
+	 * @param str 指定的字符串
+	 * @param replacement 指定的字符串
+	 * @param beginIndex 指定的字符串起始索引(可以为负数，表示 <code>beginIndex + str.length()</code> )
+	 * @param endIndex 指定的字符串结束索引(可以为负数，表示 <code>endIndex + str.length()</code> )
+	 * @return
+	 */
+	public static final String replaceSubstring(String str, String replacement, int beginIndex, int endIndex) {
+		int length = str.length();
+		if (beginIndex < 0) {
+			beginIndex += length;
+		}
+		if (endIndex < 0) {
+			endIndex += length;
+		}
+		if (beginIndex > endIndex) {
+			int temp = beginIndex;
+			beginIndex = endIndex;
+			endIndex = temp;
+		}
+		StringBuilder sb = new StringBuilder(replacement.length() + length - endIndex + beginIndex);
+		if (beginIndex > 0) {
+			sb.append(str, 0, beginIndex);
+		}
+		sb.append(replacement);
+		if (endIndex < length) {
+			sb.append(str, endIndex, length);
+		}
+		return sb.toString();
+	}
+
+	/**
+	 * 将指定字符串的 <code>beginIndex</code> 及其后的子字符串全部替换为指定的字符串 <code>replacement</code>
+	 * 
+	 * @param str 指定的字符串
+	 * @param replacement 指定的字符串
+	 * @param beginIndex 指定的字符串起始索引(可以为负数，表示 <code>beginIndex + str.length()</code> )
+	 * @return
+	 */
+	public static final String replaceSubstring(String str, String replacement, int beginIndex) {
+		return replaceSubstring(str, replacement, beginIndex, str.length());
+	}
+
+	/**
 	 * 将字符串从指定字符集编码转换为目标字符集编码
 	 * 
 	 * @param str 指定的字符串

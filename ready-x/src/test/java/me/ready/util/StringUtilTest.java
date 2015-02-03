@@ -1,6 +1,5 @@
 package me.ready.util;
 
-import org.junit.Test;
 
 public class StringUtilTest {
 
@@ -35,6 +34,16 @@ public class StringUtilTest {
 	}
 
 	//	@Test
+	public void replaceSubstring() {
+		// 将第3个及其后的字符替换为"***"
+		System.out.println(StringUtil.replaceSubstring("helloworld", "***", 2)); // he***
+		// 将第3~5个字符替换为"***"
+		System.out.println(StringUtil.replaceSubstring("helloworld", "***", 2, 5)); // he***world
+		// 将第3~倒数第二个字符替换为"***"
+		System.out.println(StringUtil.replaceSubstring("helloworld", "***", 2, -1)); // he***d
+	}
+
+	//	@Test
 	public void limitChars() {
 		// 限制字符串的长度最大为15个字符，并默认附加三个句点表示省略(长度不足15，直接返回原字符串)
 		System.out.println(StringUtil.limitChars("张三李四王五", 15)); // 张三李四王五
@@ -53,7 +62,7 @@ public class StringUtilTest {
 		System.out.println(StringUtil.isEmpty("   ")); // false
 	}
 
-	@Test
+	//	@Test
 	public void notEmpty() {
 		System.out.println(StringUtil.notEmpty("")); // false
 		System.out.println(StringUtil.notEmpty(null)); // false
