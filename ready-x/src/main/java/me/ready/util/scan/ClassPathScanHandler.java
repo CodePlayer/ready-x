@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 
 /**
  * 扫描指定包（包括jar）下的class文件 <br>
+ * 支持jar文件扫描
  */
 public class ClassPathScanHandler {
 
