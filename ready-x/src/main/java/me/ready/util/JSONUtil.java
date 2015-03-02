@@ -6,6 +6,8 @@ import java.util.List;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.JSONSerializer;
+import com.alibaba.fastjson.serializer.SerializeWriter;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
 
@@ -67,6 +69,30 @@ public class JSONUtil {
 	 */
 	public static final String encodeWithDateFormat(Object obj, String pattern) {
 		return JSON.toJSONStringWithDateFormat(obj, pattern, SerializerFeature.DisableCircularReferenceDetect);
+	}
+
+	/**
+	 * 将Java对象编码为JSON字符串，并使用指定的属性过滤器进行过滤(只有符合条件的属性才可以序列化为JSON字符串)
+	 * 
+	 * @param obj 指定的任意对象
+	 * @param dateFormat 日期格式化字符串(如果没有可以为null)
+	 * @return
+	 */
+	public static final String encodeWithJSONFilter(Object object, String dateFormat) {
+		SerializeWriter out = new SerializeWriter();
+		try {
+			JSONSerializer serializer = new JSONSerializer(out);
+			serializer.config(SerializerFeature.DisableCircularReferenceDetect, true);
+			serializer.getPropertyPreFilters().add(JSONPropertyPreFilter.getInstance());
+			if (dateFormat != null) {
+				serializer.config(SerializerFeature.WriteDateUseDateFormat, true);
+				serializer.setDateFormat(dateFormat);
+			}
+			serializer.write(object);
+			return out.toString();
+		} finally {
+			out.close();
+		}
 	}
 
 	/**
