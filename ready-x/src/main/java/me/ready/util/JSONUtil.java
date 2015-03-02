@@ -78,7 +78,7 @@ public class JSONUtil {
 	 * @param dateFormat 日期格式化字符串(如果没有可以为null)
 	 * @return
 	 */
-	public static final String encodeWithJSONFilter(Object object, String dateFormat) {
+	public static final String encodeWithJSONFilter(Object object, final String dateFormat) {
 		SerializeWriter out = new SerializeWriter();
 		try {
 			JSONSerializer serializer = new JSONSerializer(out);
