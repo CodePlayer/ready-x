@@ -678,7 +678,8 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	}
 
 	/**
-	 * 计算并返回当前日期与指定日期之间基于指定单位和舍入模式的差值
+	 * 计算并返回当前日期与指定日期之间基于指定单位和舍入模式的差值<br>
+	 * 如果当前日期大于等于指定日期，则返回正数，否则返回负数
 	 * 
 	 * @param date 与当前日期进行比较的日期
 	 * @param field 指定的日期字段，返回值将以此为单位返回两个日期的差距值
@@ -757,7 +758,8 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	}
 
 	/**
-	 * 计算并返回当前日期与指定日期之间基于指定单位和向上取整模式的差值
+	 * 计算并返回当前日期与指定日期之间基于指定单位和向上取整模式的差值<br>
+	 * 如果当前日期大于等于指定日期，则返回正数，否则返回负数
 	 * 
 	 * @param date 与当前日期进行比较的日期
 	 * @param field 指定的日期字段，返回值将以此为单位返回两个日期的差距值
@@ -768,7 +770,8 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	}
 
 	/**
-	 * 计算并返回当前日期与指定日期之间基于向上取整模式的天数差值
+	 * 计算并返回当前日期与指定日期之间基于向上取整模式的天数差值<br>
+	 * 如果当前日期大于等于指定日期，则返回正数，否则返回负数
 	 * 
 	 * @param date 与当前日期进行比较的日期
 	 * @return

@@ -108,11 +108,15 @@ public class FileUtil {
 	 * 获取随机文件名，根据当前时间采用随机算法自动生成，并且内部保证本地没有重复文件名的文件
 	 * 
 	 * @param path
+	 * @param prefix 文件名前缀(可以为null)
 	 * @param suffix
 	 * @return
 	 */
-	public static final File getRandomFile(String path, String suffix) {
+	public static final File getRandomFile(String path, String prefix, String suffix) {
 		String fileName = new SimpleDateFormat("yyyyMMdd-HHmmssSSS").format(new Date());
+		if (prefix != null) {
+			fileName = prefix + fileName;
+		}
 		if (suffix == null) {
 			suffix = "";
 		} else if (suffix.length() > 0) { // 如果有后缀就+"."
@@ -127,6 +131,17 @@ public class FileUtil {
 			file = new File(path, destFileName);
 		}
 		return file;
+	}
+
+	/**
+	 * 获取随机文件名，根据当前时间采用随机算法自动生成，并且内部保证本地没有重复文件名的文件
+	 * 
+	 * @param path
+	 * @param suffix
+	 * @return
+	 */
+	public static final File getRandomFile(String path, String suffix) {
+		return getRandomFile(path, null, suffix);
 	}
 
 	/**
@@ -580,12 +595,40 @@ public class FileUtil {
 	 * 
 	 * @param file 指定的文件对象
 	 * @param targetDir 目标目录
+	 * @param prefix 目标文件的文件名前缀(可以为null)
+	 * @param suffix 目标文件的文件后缀。null、""、"gif"、".gif"等形式均可，前两者表示没有后缀，后两者表示指定的后缀。
+	 * @return 返回复制后的目标文件对象
+	 */
+	public static final File copyFileToDirectoryWithRandomFileName(File file, String targetDir, String prefix, String suffix) {
+		File target = getRandomFile(targetDir, prefix, suffix);
+		copyFile(file, target);
+		return target;
+	}
+
+	/**
+	 * 将指定文件复制到指定的目录，并且采用随机的文件名、指定的文件后缀，方法内部会尽可能地确保文件名称不会重复
+	 * 
+	 * @param file 指定的文件对象
+	 * @param targetDir 目标目录
 	 * @param suffix 目标文件的文件后缀。null、""、"gif"、".gif"等形式均可，前两者表示没有后缀，后两者表示指定的后缀。
 	 * @return 返回复制后的目标文件对象
 	 */
 	public static final File copyFileToDirectoryWithRandomFileName(File file, String targetDir, String suffix) {
-		File target = getRandomFile(targetDir, suffix);
-		copyFile(file, target);
+		return copyFileToDirectoryWithRandomFileName(file, targetDir, null, suffix);
+	}
+
+	/**
+	 * 将指定文件移动到指定的目录，并且采用随机的文件名、指定的文件后缀，方法内部会尽可能地确保文件名称不会重复
+	 * 
+	 * @param file 指定的文件对象
+	 * @param targetDir 目标目录
+	 * @param prefix 目标文件的文件名前缀(可以为null)
+	 * @param suffix 目标文件的文件后缀。null、""、"gif"、".gif"等形式均可，前两者表示没有后缀，后两者表示指定的后缀。
+	 * @return 返回移动后的目标文件对象
+	 */
+	public static final File moveFileToDirectoryWithRandomFileName(File file, String targetDir, String prefix, String suffix) {
+		File target = getRandomFile(targetDir, prefix, suffix);
+		moveFile(file, target);
 		return target;
 	}
 
@@ -598,8 +641,6 @@ public class FileUtil {
 	 * @return 返回移动后的目标文件对象
 	 */
 	public static final File moveFileToDirectoryWithRandomFileName(File file, String targetDir, String suffix) {
-		File target = getRandomFile(targetDir, suffix);
-		moveFile(file, target);
-		return target;
+		return moveFileToDirectoryWithRandomFileName(file, targetDir, null, suffix);
 	}
 }
