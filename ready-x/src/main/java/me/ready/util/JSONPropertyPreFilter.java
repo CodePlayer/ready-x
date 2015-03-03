@@ -37,7 +37,7 @@ public class JSONPropertyPreFilter implements PropertyPreFilter {
 	public boolean apply(JSONSerializer serializer, Object object, String name) {
 		if (object != null) {
 			Class<?> clazz = object.getClass();
-			ImmutableSet<String> set = null;
+			ImmutableSet<String> set = properties.get(clazz);
 			if (set == null) {
 				if (object instanceof JSONFilter) {
 					Builder<String> builder = ImmutableSet.builder();
