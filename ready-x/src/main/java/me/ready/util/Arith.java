@@ -277,15 +277,37 @@ public class Arith {
 	}
 
 	/**
-	 * 以四舍五入的方式使指定小数精确到指定的小数位数
+	 * 以四舍五入({@link RoundingMode#HALF_UP})的方式使指定小数精确到指定的小数位数
 	 * 
 	 * @param d 指定的小数
 	 * @param scale 指定的小数精确位数
 	 * @return
 	 */
 	public static final double round(double d, int scale) {
-		Assert.notTrue(scale < 0, "四舍五入时，指定的精确小数位数不能小于0!");
-		return new BigDecimal(Double.toString(d)).setScale(scale, RoundingMode.HALF_UP).doubleValue();
+		return scale(d, scale, RoundingMode.HALF_UP);
+	}
+
+	/**
+	 * 以 {@link RoundingMode#HALF_EVEN} 的方式使指定小数精确到指定的小数位数
+	 * 
+	 * @param d 指定的小数
+	 * @param scale 指定的小数精确位数
+	 * @return
+	 */
+	public static final double even(double d, int scale) {
+		return scale(d, scale, RoundingMode.HALF_EVEN);
+	}
+
+	/**
+	 * 以指定的舍入方式使指定小数精确到指定的小数位数
+	 * 
+	 * @param d 指定的小数
+	 * @param scale 指定的小数精确位数
+	 * @return
+	 */
+	public static final double scale(double d, int scale, RoundingMode mode) {
+		Assert.notTrue(scale < 0, "执行舍入时，指定的精确小数位数不能小于0!");
+		return new BigDecimal(Double.toString(d)).setScale(scale, mode).doubleValue();
 	}
 
 	/**

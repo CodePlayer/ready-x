@@ -3,7 +3,7 @@
 
 	<groupId>me.ready</groupId>
 	<artifactId>ready-x</artifactId>
-	<version>0.2.8-SNAPSHOT</version>
+	<version>0.3.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>ready-x</name>
@@ -23,7 +23,7 @@
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
-			<version>1.2.4</version>
+			<version>1.2.5.1</version>
 		</dependency>
 
 		<dependency>
@@ -56,12 +56,12 @@
 		<repository>
 			<id>nexus-releases</id>
 			<name>Nexus Release Repository</name>
-			<url>http://yc.com:8080/nexus/content/repositories/releases/</url>
+			<url>http://yc.com:8081/nexus/content/repositories/releases/</url>
 		</repository>
 		<snapshotRepository>
 			<id>nexus-snapshots</id>
 			<name>Nexus Snapshot Repository</name>
-			<url>http://yc.com:8080/nexus/content/repositories/snapshots/</url>
+			<url>http://yc.com:8081/nexus/content/repositories/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
 
