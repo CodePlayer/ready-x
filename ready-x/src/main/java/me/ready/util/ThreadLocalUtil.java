@@ -10,10 +10,7 @@ import java.util.Map;
  * @author Ready
  * @date 2014-10-23
  */
-public class ThreadLocalUtil {
-
-	// 禁止构造实例
-	private ThreadLocalUtil() {}
+public abstract class ThreadLocalUtil {
 
 	private static final ThreadLocal<Map<Object, Object>> LOCAL_CACHE = new ThreadLocal<Map<Object, Object>>();
 

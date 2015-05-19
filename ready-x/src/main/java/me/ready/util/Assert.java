@@ -10,11 +10,7 @@ import me.ready.e.LogicException;
  * @author Ready
  * @date 2012-4-23
  */
-public class Assert {
-
-	// 断言类均为静态方法，无需实例化
-	private Assert() {
-	}
+public abstract class Assert {
 
 	/**
 	 * 断言布尔表达式结果为true<br>

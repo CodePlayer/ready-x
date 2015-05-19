@@ -18,11 +18,7 @@ import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
  * 
  */
 @SuppressWarnings("unchecked")
-public class JSONUtil {
-
-	// 禁止实例创建
-	private JSONUtil() {
-	}
+public abstract class JSONUtil {
 
 	/**
 	 * 将Java对象编码为JSON字符串

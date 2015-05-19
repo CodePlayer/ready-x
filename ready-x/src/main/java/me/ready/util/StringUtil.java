@@ -9,11 +9,7 @@ import java.util.Arrays;
  * @author Ready
  * @date 2012-10-29
  */
-public class StringUtil {
-
-	// 禁止实例创建
-	private StringUtil() {
-	}
+public abstract class StringUtil {
 
 	/**
 	 * 用于在2-16进制之间进行转换的映射字符数组

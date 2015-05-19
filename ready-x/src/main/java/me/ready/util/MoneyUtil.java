@@ -5,13 +5,12 @@ import java.util.List;
 
 /**
  * 将阿拉伯数字形式的整数转换为中文大写形式的字符串的工具类
+ * 
  * @author Ready
  * @date 2013-4-20
  */
-public class MoneyUtil {
+public abstract class MoneyUtil {
 
-	// 禁止实例构造
-	private MoneyUtil() {}
 	/**
 	 * 中文数字 0-9： '零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'
 	 */
@@ -27,6 +26,7 @@ public class MoneyUtil {
 
 	/**
 	 * 格式化阿拉伯数字为中文大写形式
+	 * 
 	 * @param numberStr 不能传入非阿拉伯形式的数字字符串
 	 * @return
 	 */
@@ -74,6 +74,7 @@ public class MoneyUtil {
 
 	/**
 	 * 计算单元，接收一个4位以内的阿拉伯数字字符串，并将其转换为对应的中文大写形式
+	 * 
 	 * @author Ready
 	 * @date 2013-4-19
 	 */
@@ -86,6 +87,7 @@ public class MoneyUtil {
 
 		/**
 		 * 构造函数
+		 * 
 		 * @param moneyCell
 		 */
 		public Cell(String moneyCell) {

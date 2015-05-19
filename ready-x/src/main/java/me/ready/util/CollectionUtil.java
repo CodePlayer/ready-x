@@ -13,7 +13,7 @@ import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * List、Set、Map等常见集合数据操作的工具类 <<<<<<< HEAD
+ * List、Set、Map等常见集合数据操作的工具类
  * 
  * @package me.ready.util
  * @author Ready
@@ -21,11 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class CollectionUtil {
-
-	// 禁止实例构建
-	private CollectionUtil() {
-	}
+public abstract class CollectionUtil {
 
 	/**
 	 * 根据可变参数形式的键值数组构造一个HashMap集合<br>

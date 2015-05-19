@@ -19,11 +19,7 @@ import org.slf4j.LoggerFactory;
  * @author Ready
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class X {
-
-	// 禁止构造实例
-	private X() {
-	}
+public abstract class X {
 
 	/**
 	 * 获取调用此方法的当前类的日志处理器(Logger)<br>

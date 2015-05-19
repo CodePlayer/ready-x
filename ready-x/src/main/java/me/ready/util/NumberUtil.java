@@ -8,11 +8,7 @@ import java.math.BigDecimal;
  * @author Ready
  * @date 2012-10-29
  */
-public class NumberUtil {
-
-	// 禁止实例创建
-	private NumberUtil() {
-	}
+public abstract class NumberUtil {
 
 	/**
 	 * 将int类型的变量转为二进制字符串

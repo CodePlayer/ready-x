@@ -15,11 +15,7 @@ import me.ready.e.LogicException;
  * @author Ready
  * @date 2012-10-21
  */
-public class Encrypter {
-
-	// 禁止实例构建
-	private Encrypter() {
-	}
+public abstract class Encrypter {
 
 	/**
 	 * 获取对应的摘要算法

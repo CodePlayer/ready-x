@@ -21,11 +21,7 @@ import me.ready.e.LogicException;
  * @author Ready
  * @date 2013-4-9
  */
-public class FileUtil {
-
-	// 禁止实例构建
-	private FileUtil() {
-	}
+public abstract class FileUtil {
 
 	/**
 	 * 用于表示文件大小的单位

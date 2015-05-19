@@ -9,10 +9,7 @@ import java.nio.charset.Charset;
  * @author Ready
  * @date 2014-10-23
  */
-public class Charsets {
-
-	// 禁止构造实例
-	private Charsets() {}
+public abstract class Charsets {
 
 	/**
 	 * 美国 ASCII 标准字符集

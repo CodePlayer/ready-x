@@ -10,11 +10,7 @@ import java.util.Random;
  * @author Ready
  * @date 2014-10-15
  */
-public class RandomUtil {
-
-	// 禁止实例构建
-	private RandomUtil() {
-	}
+public abstract class RandomUtil {
 
 	/**
 	 * 返回min(包括)和max(包括)之间的一个随机整数

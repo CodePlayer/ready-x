@@ -6,14 +6,11 @@ import me.ready.e.LogicException;
 
 /**
  * 用于对数组类型的数据(字节数组参见NumberUtil类)进行相应处理的工具类
+ * 
  * @author Ready
  * @date 2012-9-29
  */
-public class ArrayUtil {
-
-	// 禁止实例创建
-	private ArrayUtil() {
-	}
+public abstract class ArrayUtil {
 
 	/**
 	 * 长度为0的对象数组
@@ -34,6 +31,7 @@ public class ArrayUtil {
 
 	/**
 	 * 判断指定对象是否为数组类型
+	 * 
 	 * @param obj 指定的对象
 	 * @return
 	 */
@@ -44,6 +42,7 @@ public class ArrayUtil {
 	/**
 	 * 以指定的分隔符拼接数组元素，并追加到指定的StringBuilder中<br>
 	 * 如果数组为空，将会引发异常
+	 * 
 	 * @param sb 指定的StringBuilder
 	 * @param array 指定的数组
 	 * @param delimiter 指定的分隔符
@@ -67,6 +66,7 @@ public class ArrayUtil {
 	/**
 	 * 以指定的分隔符拼接数组元素并返回拼接后的字符串<br>
 	 * 如果数组为空，将会引发异常
+	 * 
 	 * @param array 指定的数组对象
 	 * @param delimiter 指定的分隔符
 	 * @return
@@ -80,6 +80,7 @@ public class ArrayUtil {
 	 * 如果数组为空，将会引发异常<br>
 	 * 如果数组元素只有一个，拼接内容为“=1”或“='1'”<br>
 	 * 如果数组元素有多个，拼接内容为“ IN (1, 2, 5)”或“ IN ('1', '2', '5')”
+	 * 
 	 * @param sb 指定的StringBuilder
 	 * @param array 指定的任意数组
 	 * @param isInclude 指示IN SQL是包含还是排除查询，如果是包含(true)将返回=、IN，如果是排除(false)将返回!=、NOT IN
@@ -126,6 +127,7 @@ public class ArrayUtil {
 	 * 如果数组为空，将会引发异常<br>
 	 * 如果数组元素只有一个，将会返回“=1”或“='1'”<br>
 	 * 如果数组元素有多个，将会返回“ IN (1, 2, 5)”或“ IN ('1', '2', '5')”
+	 * 
 	 * @param array 指定的数组
 	 * @param isInclude 指示IN SQL是包含还是排除查询，如果是包含(true)将返回=、IN，如果是排除(false)将返回!=、NOT IN
 	 * @param isString 指示元素是否以字符串形式参与InSQL语句。如果为true，将会在每个元素两侧加上单引号"'"
@@ -140,6 +142,7 @@ public class ArrayUtil {
 	 * 如果数组为空，将会引发异常<br>
 	 * 如果数组元素只有一个，将会返回“=1”或“='1'”<br>
 	 * 如果数组元素有多个，将会返回“ IN (1, 2, 5)”或“ IN ('1', '2', '5')”
+	 * 
 	 * @param array 指定的数组
 	 * @param isString 指示元素是否以字符串形式参与InSQL语句。如果为true，将会在每个元素两侧加上单引号"'"
 	 * @return
@@ -152,6 +155,7 @@ public class ArrayUtil {
 	 * 返回指定数组对象的字符串形式<br>
 	 * 如果<code>array</code>是一个数组，则迭代其元素返回字符串，如“[e1, e2, e3, e4]”<br>
 	 * 如果<code>array</code>不是一个数组，则直接调用String.valueOf()方法返回
+	 * 
 	 * @param array
 	 * @return
 	 */
@@ -181,6 +185,7 @@ public class ArrayUtil {
 	/**
 	 * 迭代数组元素并将迭代字符串追加至StringBuilder中,追加字符串形如：“[e1, e2, e3, [e4_1, e4_2, e4_3, e4_4]]<br>
 	 * 本方法可以迭代多维数组，内部采用递归算法
+	 * 
 	 * @param sb 指定的StringBuilder
 	 * @param array 指定的数组对象
 	 * @return
@@ -217,6 +222,7 @@ public class ArrayUtil {
 	/**
 	 * 迭代数组元素并返回迭代字符串，例如：“[e1, e2, e3, [e4_1, e4_2, e4_3, e4_4]]”<br>
 	 * 本方法可以迭代多维数组，内部采用递归算法
+	 * 
 	 * @param array 指定的数组对象
 	 * @return
 	 */
@@ -227,6 +233,7 @@ public class ArrayUtil {
 	/**
 	 * 判断指定数组是否不为null并且数组长度<code>length > 0</code>，如果是，则返回true<br>
 	 * 如果指定参数不为null，也不是数组类型，则引发异常
+	 * 
 	 * @param array 指定的数组
 	 * @return
 	 */
@@ -236,6 +243,7 @@ public class ArrayUtil {
 
 	/**
 	 * 获取指定数组元素的长度，如果数组为null将返回0，如果不是数组类型，将引发异常
+	 * 
 	 * @param array 指定的数组
 	 * @param triggerError 当数组为null或数组长度为0时，是否触发异常，如果为true，则触发异常
 	 * @return
@@ -251,6 +259,7 @@ public class ArrayUtil {
 	/**
 	 * 获取指定数组元素的长度，如果指定的参数为null或长度为0，则返回0<br>
 	 * 如果指定参数不是数组类型，将引发异常
+	 * 
 	 * @param array 指定的对象数组
 	 * @return
 	 */
