@@ -3,7 +3,7 @@
 
 	<groupId>me.ready</groupId>
 	<artifactId>ready-x</artifactId>
-	<version>0.3.0-SNAPSHOT</version>
+	<version>0.3.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>ready-x</name>

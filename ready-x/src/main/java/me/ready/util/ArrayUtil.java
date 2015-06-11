@@ -260,7 +260,7 @@ public abstract class ArrayUtil {
 	 * 获取指定数组元素的长度，如果指定的参数为null或长度为0，则返回0<br>
 	 * 如果指定参数不是数组类型，将引发异常
 	 * 
-	 * @param array 指定的对象数组
+	 * @param array 指定的数组对象
 	 * @return
 	 */
 	public static final int getLength(Object array) {
@@ -268,5 +268,47 @@ public abstract class ArrayUtil {
 			return 0;
 		}
 		return Array.getLength(array);
+	}
+
+	/**
+	 * 获取指定数组元素的"维度"，如果数组为普通的一维数组，则返回1；如果为二维数组，则返回2；以此类推...<br>
+	 * 如果不是数组，则返回-1<br>
+	 * <b>注意：</b>Java没有真正意义上的多维数组，只有嵌套数组
+	 * 
+	 * @param array 指定的数组对象
+	 * @return
+	 * @author Ready
+	 * @since 0.3.1
+	 */
+	public static final int getDimension(Object array) {
+		if (array != null) {
+			Class<?> clazz = array.getClass();
+			if (clazz.isArray()) {
+				String className = clazz.getName();
+				int len = className.length();
+				for (int i = 0; i < len; i++) {
+					if (className.charAt(i) != '[') {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+
+	/**
+	 * 判断指定对象是否是一个原始类型的数组(例如：int[]、float[]、char[]、double[]等)
+	 * 
+	 * @param array 指定的对象
+	 * @return
+	 * @since 0.3.1
+	 * @author Ready
+	 */
+	public static final boolean isPrimitiveArray(Object array) {
+		if (array != null) {
+			String className = array.getClass().getName();
+			return className.length() == 2 && className.charAt(0) == '[';
+		}
+		return false;
 	}
 }

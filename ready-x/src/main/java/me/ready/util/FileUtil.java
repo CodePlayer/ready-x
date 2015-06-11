@@ -1,17 +1,22 @@
 package me.ready.util;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
+import java.util.Properties;
 
 import me.ready.e.LogicException;
 
@@ -638,5 +643,103 @@ public abstract class FileUtil {
 	 */
 	public static final File moveFileToDirectoryWithRandomFileName(File file, String targetDir, String suffix) {
 		return moveFileToDirectoryWithRandomFileName(file, targetDir, null, suffix);
+	}
+
+	/**
+	 * 根据指定的文件路径获取对应的File对象
+	 * 
+	 * @param pathname 指定的文件路径
+	 * @param inClassPath 是否相对于classpath类路径下
+	 * @return
+	 * @since 0.3.1
+	 * @author Ready
+	 */
+	public static final File getFile(String pathname, boolean inClassPath) {
+		if (inClassPath) {
+			char char0 = pathname.charAt(0);
+			if (char0 != '/' && char0 != '\\') {
+				pathname = '/' + pathname;
+			}
+			try {
+				return new File(FileUtil.class.getResource(pathname).toURI());
+			} catch (URISyntaxException e) {
+				throw new IllegalArgumentException(e);
+			}
+		}
+		return new File(pathname);
+	}
+
+	/**
+	 * 读取指定的文件内容
+	 * 
+	 * @param file
+	 * @return 返回文件内容字符串，内部换行符为'\n'
+	 * @throws IOException
+	 * @since 6.0
+	 * @author Ready
+	 */
+	public static final String readContent(File file) throws IOException {
+		BufferedReader reader = null;
+		long length = (file.length() >>> 3) + 1;
+		StringBuilder sb = new StringBuilder((int) length);
+		try {
+			reader = new BufferedReader(new FileReader(file));
+			String str = null;
+			while ((str = reader.readLine()) != null) {
+				sb.append(str).append('\n');
+			}
+		} finally {
+			if (reader != null) {
+				reader.close();
+			}
+		}
+		return sb.toString();
+	}
+
+	/**
+	 * 读取指定的文件内容
+	 * 
+	 * @param pathname
+	 * @param inClassPath 是否相对于classpath类路径下
+	 * @return 返回文件内容字符串，内部换行符为'\n'
+	 * @throws IOException
+	 * @since 0.3.1
+	 * @author Ready
+	 */
+	public static final String readContent(String pathname, boolean inClassPath) throws IOException {
+		return readContent(getFile(pathname, inClassPath));
+	}
+
+	/**
+	 * 读取指定名称的".properties"文件
+	 * 
+	 * @param pathname 指定的文件路径
+	 * @param inClassPath 是否相对于classpath类路径下
+	 * @return 对应的Properties对象(出于泛型兼容考虑，以Map&lt;String, String&gt;形式返回)。如果指定的文件不存在，则返回null
+	 * @since 0.3.1
+	 * @author Ready
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static final Map<String, String> readProperties(String pathname, boolean inClassPath) {
+		InputStream inputStream = null;
+		try {
+			inputStream = new FileInputStream(getFile(pathname, inClassPath));
+			Properties prop = new Properties();
+			prop.load(inputStream);
+			Map m = prop;
+			return m;
+		} catch (FileNotFoundException fe) {
+			return null; // 如果文件不存在，则返回null
+		} catch (IOException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if (inputStream != null) {
+				try {
+					inputStream.close();
+				} catch (IOException e) {
+					// ignore exception
+				}
+			}
+		}
 	}
 }

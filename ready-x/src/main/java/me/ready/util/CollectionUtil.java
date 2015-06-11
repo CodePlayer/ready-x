@@ -1,5 +1,6 @@
 package me.ready.util;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -159,8 +160,26 @@ public abstract class CollectionUtil {
 	 * @param elements 可变参数形式的元素数组
 	 */
 	public static final <E> void addToCollection(Collection<? super E> collection, E... elements) {
-		for (E e : elements) {
-			collection.add(e);
+		for (int i = 0; i < elements.length; i++) {
+			collection.add(elements[i]);
 		}
+	}
+
+	/**
+	 * 获取Map集合中指定的多个键的值，并以数组的形式依次返回。如果集合中没有指定的键，则数组对应位置的值为null
+	 * 
+	 * @param map 指定的Map集合
+	 * @param valueClass Map中存储的值的类型
+	 * @param keys 指定的键数组
+	 * @return
+	 * @author Ready
+	 * @since 0.3.1
+	 */
+	public static final <K, V> V[] mapValues(Map<K, V> map, Class<V> valueClass, K... keys) {
+		V[] results = (V[]) Array.newInstance(valueClass, keys.length);
+		for (int i = 0; i < keys.length; i++) {
+			results[i] = map.get(keys[i]);
+		}
+		return results;
 	}
 }
