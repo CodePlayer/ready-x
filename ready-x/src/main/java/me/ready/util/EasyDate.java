@@ -697,7 +697,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 		} else {
 			throw new IllegalArgumentException("unexpected type of date:" + date);
 		}
-		diff = getTime() - theMillis;
+		diff = getTime() - theMillis; // 毫秒值差距
 		if (diff == 0) {
 			return 0;
 		}

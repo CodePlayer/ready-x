@@ -21,7 +21,16 @@ public class Arith {
 	 * @param d
 	 */
 	public Arith(double d) {
-		value = new BigDecimal(Double.toString(d));
+		this(Double.toString(d));
+	}
+
+	/**
+	 * 构造一个为指定值(字符串形式)的商业计算数
+	 * 
+	 * @param d
+	 */
+	public Arith(String d) {
+		value = new BigDecimal(d);
 	}
 
 	/**
@@ -46,6 +55,48 @@ public class Arith {
 	}
 
 	/**
+	 * 构造一个指定int值的商业计算数
+	 * 
+	 * @param d
+	 */
+	public Arith(int d) {
+		value = new BigDecimal(d);
+	}
+
+	/**
+	 * 构造一个指定boolean值的商业计算数。 boolean值true=1，false=0
+	 * 
+	 * @param d
+	 */
+	public Arith(boolean d) {
+		this(d ? 1 : 0);
+	}
+
+	/**
+	 * 构造一个指定Object值的商业计算数
+	 * 
+	 * @param d
+	 */
+	public Arith(Object d) {
+		if (d == null) {
+			throw new NullPointerException("Object对象不能为null");
+		}
+		if (d instanceof BigDecimal) {
+			value = (BigDecimal) d;
+		} else if (d instanceof Number) {
+			Number n = (Number) d;
+			long val = n.longValue();
+			if (val == n.doubleValue()) {
+				value = new BigDecimal(val);
+			} else {
+				value = new BigDecimal(d.toString());
+			}
+		} else {
+			value = new BigDecimal(d.toString());
+		}
+	}
+
+	/**
 	 * 构造一个默认值为0的商业计算数
 	 */
 	public Arith() {
@@ -58,8 +109,59 @@ public class Arith {
 	 * @param d 指定的加数
 	 * @return
 	 */
+	public Arith add(BigDecimal d) {
+		value = value.add(d);
+		return this;
+	}
+
+	/**
+	 * 商业加法运算
+	 * 
+	 * @param d 指定的加数
+	 * @return
+	 */
+	public Arith add(String d) {
+		return add(new BigDecimal(d));
+	}
+
+	/**
+	 * 商业加法运算
+	 * 
+	 * @param d 指定的加数
+	 * @return
+	 */
 	public Arith add(double d) {
-		value = value.add(new BigDecimal(Double.toString(d)));
+		return add(Double.toString(d));
+	}
+
+	/**
+	 * 商业加法运算
+	 * 
+	 * @param d 指定的加数
+	 * @return
+	 */
+	public Arith add(long d) {
+		return add(new BigDecimal(d));
+	}
+
+	/**
+	 * 商业加法运算
+	 * 
+	 * @param d 指定的加数
+	 * @return
+	 */
+	public Arith add(int d) {
+		return add(new BigDecimal(d));
+	}
+
+	/**
+	 * 商业减法运算
+	 * 
+	 * @param d 指定的减数
+	 * @return
+	 */
+	public Arith minus(BigDecimal d) {
+		value.subtract(d);
 		return this;
 	}
 
@@ -69,8 +171,60 @@ public class Arith {
 	 * @param d 指定的减数
 	 * @return
 	 */
+	public Arith minus(String d) {
+		return minus(new BigDecimal(d));
+	}
+
+	/**
+	 * 商业减法运算
+	 * 
+	 * @param d 指定的减数
+	 * @return
+	 */
 	public Arith minus(double d) {
-		return add(-d);
+		return minus(Double.toString(d));
+	}
+
+	/**
+	 * 商业减法运算
+	 * 
+	 * @param d 指定的减数
+	 * @return
+	 */
+	public Arith minus(long d) {
+		return minus(new BigDecimal(d));
+	}
+
+	/**
+	 * 商业减法运算
+	 * 
+	 * @param d 指定的减数
+	 * @return
+	 */
+	public Arith minus(int d) {
+		return minus(new BigDecimal(d));
+	}
+
+	/**
+	 * 商业乘法运算
+	 * 
+	 * @param d 指定的乘数
+	 * @return
+	 * @throws ArithmeticException 如果无法除尽或除数为0则会抛出该异常，无法除尽时请使用{@code Arith#divide(BigDecimal, int, RoundingMode)}替代
+	 */
+	public Arith multiply(BigDecimal d) throws ArithmeticException {
+		value = value.multiply(d);
+		return this;
+	}
+
+	/**
+	 * 商业乘法运算
+	 * 
+	 * @param d 指定的乘数
+	 * @return
+	 */
+	public Arith multiply(String d) {
+		return multiply(new BigDecimal(d));
 	}
 
 	/**
@@ -80,7 +234,38 @@ public class Arith {
 	 * @return
 	 */
 	public Arith multiply(double d) {
-		value = value.multiply(new BigDecimal(Double.toString(d)));
+		return multiply(Double.toString(d));
+	}
+
+	/**
+	 * 商业乘法运算
+	 * 
+	 * @param d 指定的乘数
+	 * @return
+	 */
+	public Arith multiply(long d) {
+		return multiply(new BigDecimal(d));
+	}
+
+	/**
+	 * 商业乘法运算
+	 * 
+	 * @param d 指定的乘数
+	 * @return
+	 */
+	public Arith multiply(int d) {
+		return multiply(new BigDecimal(d));
+	}
+
+	/**
+	 * 商业除法运算
+	 * 
+	 * @param d 指定的除数
+	 * @return
+	 * @throws ArithmeticException 如果无法除尽或除数为0则会抛出该异常，无法除尽时请使用{@code Arith#divide(BigDecimal, int, RoundingMode)}替代
+	 */
+	public Arith divide(BigDecimal d) throws ArithmeticException {
+		value = value.divide(d);
 		return this;
 	}
 
@@ -89,10 +274,159 @@ public class Arith {
 	 * 
 	 * @param d 指定的除数
 	 * @return
+	 * @throws ArithmeticException 如果无法除尽或除数为0则会抛出该异常，无法除尽时请使用{@code Arith#divide(String, int, RoundingMode)}替代
+	 */
+	public Arith divide(String d) throws ArithmeticException {
+		return divide(new BigDecimal(d));
+	}
+
+	/**
+	 * 商业除法运算
+	 * 
+	 * @param d 指定的除数
+	 * @return
+	 * @throws ArithmeticException 如果无法除尽或除数为0则会抛出该异常，无法除尽时请使用{@code Arith#divide(double, int, RoundingMode)}替代
 	 */
 	public Arith divide(double d) {
-		value = value.divide(new BigDecimal(Double.toString(d)));
+		return divide(Double.toString(d));
+	}
+
+	/**
+	 * 商业除法运算
+	 * 
+	 * @param d 指定的除数
+	 * @return
+	 * @throws ArithmeticException 如果无法除尽或除数为0则会抛出该异常，无法除尽时请使用{@code Arith#divide(long, int, RoundingMode)}替代
+	 */
+	public Arith divide(long d) {
+		return divide(new BigDecimal(d));
+	}
+
+	/**
+	 * 商业除法运算
+	 * 
+	 * @param d 指定的除数
+	 * @return
+	 * @throws ArithmeticException 如果无法除尽或除数为0则会抛出该异常，无法除尽时请使用{@code Arith#divide(int, int, RoundingMode)}替代
+	 */
+	public Arith divide(int d) {
+		return divide(new BigDecimal(d));
+	}
+
+	/**
+	 * 商业除法运算
+	 * 
+	 * @param d 指定的除数
+	 * @param scale 指定的精确位数
+	 * @param roundingMode 设置应用的舍入模式(四舍五入、向上舍入、向下舍去等)
+	 * @return
+	 */
+	public Arith divide(BigDecimal d, int scale, RoundingMode roundingMode) {
+		value = value.divide(d, scale, roundingMode);
 		return this;
+	}
+
+	/**
+	 * 商业除法运算
+	 * 
+	 * @param d 指定的除数
+	 * @param scale 指定的精确位数
+	 * @param roundingMode 设置应用的舍入模式(四舍五入、向上舍入、向下舍去等)
+	 * @return
+	 */
+	public Arith divide(String d, int scale, RoundingMode roundingMode) {
+		return divide(new BigDecimal(d), scale, roundingMode);
+	}
+
+	/**
+	 * 商业除法运算
+	 * 
+	 * @param d 指定的除数
+	 * @param scale 指定的精确位数
+	 * @param roundingMode 设置应用的舍入模式(四舍五入、向上舍入、向下舍去等)
+	 * @return
+	 */
+	public Arith divide(double d, int scale, RoundingMode roundingMode) {
+		return divide(Double.toString(d), scale, roundingMode);
+	}
+
+	/**
+	 * 商业除法运算
+	 * 
+	 * @param d 指定的除数
+	 * @param scale 指定的精确位数
+	 * @param roundingMode 设置应用的舍入模式(四舍五入、向上舍入、向下舍去等)
+	 * @return
+	 */
+	public Arith divide(long d, int scale, RoundingMode roundingMode) {
+		return divide(new BigDecimal(d), scale, roundingMode);
+	}
+
+	/**
+	 * 商业除法运算
+	 * 
+	 * @param d 指定的除数
+	 * @param scale 指定的精确位数
+	 * @param roundingMode 设置应用的舍入模式(四舍五入、向上舍入、向下舍去等)
+	 * @return
+	 */
+	public Arith divide(int d, int scale, RoundingMode roundingMode) {
+		return divide(new BigDecimal(d), scale, roundingMode);
+	}
+
+	/**
+	 * 以四舍五入的舍入方式进行商业除法运算
+	 * 
+	 * @param d 指定的除数
+	 * @param scale 指定的精确位数
+	 * @return
+	 */
+	public Arith divideRound(BigDecimal d, int scale) {
+		return divide(d, scale, RoundingMode.HALF_UP);
+	}
+
+	/**
+	 * 以四舍五入的舍入方式进行商业除法运算
+	 * 
+	 * @param d 指定的除数
+	 * @param scale 指定的精确位数
+	 * @return
+	 */
+	public Arith divideRound(String d, int scale) {
+		return divide(d, scale, RoundingMode.HALF_UP);
+	}
+
+	/**
+	 * 以四舍五入的舍入方式进行商业除法运算
+	 * 
+	 * @param d 指定的除数
+	 * @param scale 指定的精确位数
+	 * @return
+	 */
+	public Arith divideRound(double d, int scale) {
+		return divide(Double.toString(d), scale, RoundingMode.HALF_UP);
+	}
+
+	/**
+	 * 以四舍五入的舍入方式进行商业除法运算
+	 * 
+	 * @param d 指定的除数
+	 * @param scale 指定的精确位数
+	 * @return
+	 */
+	public Arith divideRound(long d, int scale) {
+		return divide(new BigDecimal(d), scale, RoundingMode.HALF_UP);
+	}
+
+	/**
+	 * 以四舍五入的舍入方式进行商业除法运算
+	 * 
+	 * @param d 指定的除数
+	 * @param scale 指定的精确位数
+	 * @return
+	 */
+	public Arith divideRound(int d, int scale) {
+		return divide(new BigDecimal(d), scale, RoundingMode.HALF_UP);
 	}
 
 	/**
@@ -115,6 +449,24 @@ public class Arith {
 	 */
 	public Arith round(int newScale) {
 		return setScale(newScale, RoundingMode.HALF_UP);
+	}
+
+	/**
+	 * 将当前BigDecimal进行向上舍入到相邻的整数
+	 * 
+	 * @return
+	 */
+	public Arith ceil() {
+		return setScale(0, RoundingMode.CEILING);
+	}
+
+	/**
+	 * 将当前BigDecimal进行向下舍去到相邻的整数
+	 * 
+	 * @return
+	 */
+	public Arith floor() {
+		return setScale(0, RoundingMode.FLOOR);
 	}
 
 	/**
@@ -142,6 +494,15 @@ public class Arith {
 	 */
 	public double doubleValue() {
 		return value.doubleValue();
+	}
+
+	/**
+	 * 转换为四舍五入精确到指定小数位的double值
+	 * 
+	 * @return
+	 */
+	public double doubleValue(int scale) {
+		return value.divide(BigDecimal.ONE, scale, RoundingMode.HALF_UP).doubleValue();
 	}
 
 	/**
@@ -348,5 +709,12 @@ public class Arith {
 	 */
 	public String toString() {
 		return value.toString();
+	}
+
+	/**
+	 * 输出以四舍五入模式保留指定小数位精度的数值字符串
+	 */
+	public String toString(int scale) {
+		return value.divide(BigDecimal.ONE, scale, RoundingMode.HALF_UP).toString();
 	}
 }
