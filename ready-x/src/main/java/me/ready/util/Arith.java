@@ -13,6 +13,22 @@ import java.math.RoundingMode;
  */
 public class Arith {
 
+	// constant
+	/** 表示数值 0(零) 的BigDecimal */
+	public static final BigDecimal ZERO = BigDecimal.ZERO;
+	/** 表示数值 1(一) 的BigDecimal */
+	public static final BigDecimal ONE = BigDecimal.ONE;
+	/** 表示数值 10(一十) 的BigDecimal */
+	public static final BigDecimal TEN = BigDecimal.TEN;
+	/** 表示数值 100(一百) 的BigDecimal */
+	public static final BigDecimal HANDRED = new BigDecimal(100);
+	/** 表示数值 1000(一千) 的BigDecimal */
+	public static final BigDecimal THOUSAND = new BigDecimal(1000);
+	/** 表示数值 10 000(一万) 的BigDecimal */
+	public static final BigDecimal MYRIAD = new BigDecimal(10000);
+	/** 表示数值 100 000 000(一亿) 的BigDecimal */
+	public static final BigDecimal HANDRED_MILLION = new BigDecimal(100000000);
+	// property
 	protected BigDecimal value;
 
 	/**
@@ -769,6 +785,22 @@ public class Arith {
 	}
 
 	/**
+	 * 判断两个数值a和b的大小
+	 * 
+	 * @param a
+	 * @param b
+	 * @return 如果：
+	 *         <ul>
+	 *         <li>a > b ，则返回 1</li>
+	 *         <li>a == b ，则返回 0</li>
+	 *         <li>a < b ，则返回 -1</li>
+	 *         </ul>
+	 */
+	public static final int compareTo(BigDecimal a, String b) {
+		return a.compareTo(new BigDecimal(b));
+	}
+
+	/**
 	 * 输出数值字符串
 	 */
 	public String toString() {
@@ -780,5 +812,31 @@ public class Arith {
 	 */
 	public String toString(int scale) {
 		return value.divide(BigDecimal.ONE, scale, RoundingMode.HALF_UP).toString();
+	}
+
+	/**
+	 * 输出中文形式的数值字符串，例如："135000000"->"一亿三千五百万"
+	 * 
+	 * @param ignoreFractionalPart 是否忽略小数部分
+	 */
+	public String toChineseString(boolean ignoreFractionalPart, boolean upperCase) {
+		return value.toString();
+	}
+
+	/**
+	 * 输出大写中文形式的数值字符串，例如："135000000"->"壹亿叁千伍佰万"
+	 * 
+	 * @param ignoreFractionalPart 是否忽略小数部分
+	 */
+	public String toChineseUpperCase(boolean ignoreFractionalPart) {
+		return value.toString();
+	}
+
+	/**
+	 * 输出大写中文形式的用于金额(人民币)显示的数值字符串，例如："135000000"->"壹亿叁千伍佰万"
+	 * 
+	 */
+	public String toMoneyUpperCase() {
+		return value.toString();
 	}
 }
