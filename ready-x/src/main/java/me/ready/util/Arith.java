@@ -510,7 +510,7 @@ public class Arith {
 	 * 
 	 * @return
 	 */
-	public double intValue() {
+	public int intValue() {
 		return value.intValue();
 	}
 
@@ -519,7 +519,7 @@ public class Arith {
 	 * 
 	 * @return
 	 */
-	public double longValue() {
+	public long longValue() {
 		return value.longValue();
 	}
 
@@ -528,7 +528,7 @@ public class Arith {
 	 * 
 	 * @return
 	 */
-	public double floatValue() {
+	public float floatValue() {
 		return value.floatValue();
 	}
 
@@ -702,6 +702,70 @@ public class Arith {
 	public static final double truncate(double d, int scale, RoundingMode mode) {
 		Assert.notTrue(scale < 0, "指定的精确小数位数不能小于0!");
 		return new BigDecimal(Double.toString(d)).setScale(scale, mode).doubleValue();
+	}
+
+	/**
+	 * 判断两个数值a和b的大小
+	 * 
+	 * @param a
+	 * @param b
+	 * @return 如果：
+	 *         <ul>
+	 *         <li>a > b ，则返回 1</li>
+	 *         <li>a == b ，则返回 0</li>
+	 *         <li>a < b ，则返回 -1</li>
+	 *         </ul>
+	 */
+	public static final int compareTo(BigDecimal a, BigDecimal b) {
+		return a.compareTo(b);
+	}
+
+	/**
+	 * 判断两个数值a和b的大小
+	 * 
+	 * @param a
+	 * @param b
+	 * @return 如果：
+	 *         <ul>
+	 *         <li>a > b ，则返回 1</li>
+	 *         <li>a == b ，则返回 0</li>
+	 *         <li>a < b ，则返回 -1</li>
+	 *         </ul>
+	 */
+	public static final int compareTo(BigDecimal a, double b) {
+		return a.compareTo(BigDecimal.valueOf(b));
+	}
+
+	/**
+	 * 判断两个数值a和b的大小
+	 * 
+	 * @param a
+	 * @param b
+	 * @return 如果：
+	 *         <ul>
+	 *         <li>a > b ，则返回 1</li>
+	 *         <li>a == b ，则返回 0</li>
+	 *         <li>a < b ，则返回 -1</li>
+	 *         </ul>
+	 */
+	public static final int compareTo(BigDecimal a, int b) {
+		return a.compareTo(new BigDecimal(b));
+	}
+
+	/**
+	 * 判断两个数值a和b的大小
+	 * 
+	 * @param a
+	 * @param b
+	 * @return 如果：
+	 *         <ul>
+	 *         <li>a > b ，则返回 1</li>
+	 *         <li>a == b ，则返回 0</li>
+	 *         <li>a < b ，则返回 -1</li>
+	 *         </ul>
+	 */
+	public static final int compareTo(BigDecimal a, long b) {
+		return a.compareTo(new BigDecimal(b));
 	}
 
 	/**
