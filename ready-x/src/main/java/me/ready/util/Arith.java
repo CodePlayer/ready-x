@@ -5,6 +5,8 @@ import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 
+import me.ready.util.ChineseNumber.ChineseNumberStyle;
+
 /**
  * 用于商业运算的常用计算工具类
  * 
@@ -678,7 +680,7 @@ public class Arith {
 	/**
 	 * 以指定的舍入方式使指定小数精确到指定的小数位数
 	 * 
-	 * @param d 指定的小数
+	 * @param num 指定的小数
 	 * @param scale 指定的小数精确位数
 	 * @return
 	 */
@@ -804,7 +806,7 @@ public class Arith {
 	 * @param ignoreFractionalPart 是否忽略小数部分
 	 */
 	public String toChineseString(boolean ignoreFractionalPart, boolean upperCase) {
-		return value.toString();
+		return new ChineseNumber(ignoreFractionalPart ? value.setScale(0).toString() : value.toString(), upperCase ? ChineseNumberStyle.UPPER_CASE : ChineseNumberStyle.LOWER_CASE).toString();
 	}
 
 	/**
@@ -813,14 +815,14 @@ public class Arith {
 	 * @param ignoreFractionalPart 是否忽略小数部分
 	 */
 	public String toChineseUpperCase(boolean ignoreFractionalPart) {
-		return value.toString();
+		return toChineseString(ignoreFractionalPart, true);
 	}
 
 	/**
-	 * 输出大写中文形式的用于金额(人民币)显示的数值字符串，例如："135000000"->"壹亿叁千伍佰万"
+	 * 输出大写中文形式的用于金额(人民币)显示的数值字符串，例如："135000000"->"壹亿叁千伍佰万元整"
 	 * 
 	 */
 	public String toMoneyUpperCase() {
-		return value.toString();
+		return new ChineseNumber(value.setScale(2).toString(), ChineseNumberStyle.MONEY).toString();
 	}
 }
