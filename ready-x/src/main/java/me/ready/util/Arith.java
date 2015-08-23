@@ -764,24 +764,8 @@ public class Arith {
 	 *         <li>a < b ，则返回 -1</li>
 	 *         </ul>
 	 */
-	public static final int compareTo(BigDecimal a, int b) {
-		return a.compareTo(new BigDecimal(b));
-	}
-
-	/**
-	 * 判断两个数值a和b的大小
-	 * 
-	 * @param a
-	 * @param b
-	 * @return 如果：
-	 *         <ul>
-	 *         <li>a > b ，则返回 1</li>
-	 *         <li>a == b ，则返回 0</li>
-	 *         <li>a < b ，则返回 -1</li>
-	 *         </ul>
-	 */
 	public static final int compareTo(BigDecimal a, long b) {
-		return a.compareTo(new BigDecimal(b));
+		return a.compareTo(BigDecimal.valueOf(b));
 	}
 
 	/**
