@@ -1,6 +1,7 @@
 package me.ready.util;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 /**
  * 对数值类型的数据(包含字节)进行相应处理的工具类
@@ -256,14 +257,16 @@ public abstract class NumberUtil {
 	 * @return
 	 */
 	public static final BigDecimal getBigDecimal(Object value) {
-		Assert.notNull(value, "将要转换为整数或小数的值不能为null!");
 		if (value instanceof BigDecimal) {
 			return (BigDecimal) value;
-		} else if (value instanceof Number) {
-			return new BigDecimal(((Number) value).doubleValue());
-		} else {
-			return new BigDecimal(value.toString());
 		}
+		if (value instanceof BigInteger) {
+			return new BigDecimal((BigInteger) value);
+		}
+		if (value instanceof Integer || value instanceof Long) {
+			return BigDecimal.valueOf(((Number) value).longValue());
+		}
+		return new BigDecimal(value.toString());
 	}
 
 	/**
@@ -274,53 +277,14 @@ public abstract class NumberUtil {
 	 * @param defaultValue 指定的默认值
 	 * @return
 	 */
-	public static final BigDecimal getBigDecimal(Object value, BigDecimal defaultValue) {
+	public static final BigDecimal getBigDecimal(Object value, Object defaultValue) {
 		if (value == null) {
-			return defaultValue;
+			return getBigDecimal(defaultValue);
 		}
-		if (value instanceof BigDecimal) {
-			return (BigDecimal) value;
-		} else if (value instanceof Number) {
-			try {
-				return new BigDecimal(((Number) value).doubleValue());
-			} catch (Exception e) {
-				return defaultValue;
-			}
-		} else {
-			try {
-				return new BigDecimal(value.toString());
-			} catch (Exception e) {
-				return defaultValue;
-			}
-		}
-	}
-
-	/**
-	 * 以BigDecimal形式返回指定的值<br>
-	 * 如果指定的值为null或无法转为BigDecimal形式，将返回指定的<code>defaultValue</code>
-	 * 
-	 * @param value 指定的对象
-	 * @param defaultValue 指定的可封装成BigDecimal字符串形式默认值(应当返回默认值时，如果无法有效的转为BigDecimal，将引发异常)
-	 * @return
-	 */
-	public static final BigDecimal getBigDecimal(Object value, String defaultValue) {
-		if (value == null) {
-			return new BigDecimal(defaultValue);
-		}
-		if (value instanceof BigDecimal) {
-			return (BigDecimal) value;
-		} else if (value instanceof Number) {
-			try {
-				return new BigDecimal(((Number) value).doubleValue());
-			} catch (Exception e) {
-				return new BigDecimal(defaultValue);
-			}
-		} else {
-			try {
-				return new BigDecimal(value.toString());
-			} catch (Exception e) {
-				return new BigDecimal(defaultValue);
-			}
+		try {
+			return getBigDecimal(value);
+		} catch (Exception e) {
+			return getBigDecimal(defaultValue);
 		}
 	}
 
