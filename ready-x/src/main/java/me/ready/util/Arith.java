@@ -179,7 +179,7 @@ public class Arith {
 	 * @return
 	 */
 	public Arith minus(BigDecimal d) {
-		value.subtract(d);
+		value = value.subtract(d);
 		return this;
 	}
 
@@ -455,7 +455,7 @@ public class Arith {
 	 * @return
 	 */
 	public Arith setScale(int newScale, RoundingMode roundingMode) {
-		value.setScale(newScale, roundingMode);
+		value = value.setScale(newScale, roundingMode);
 		return this;
 	}
 
