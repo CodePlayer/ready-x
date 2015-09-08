@@ -24,12 +24,7 @@ public abstract class StringUtil {
 	 * @return
 	 */
 	public static String unicode(String src) {
-		byte[] bytes;
-		try {
-			bytes = src.getBytes("UTF-16");// 转为UTF-16字节数组
-		} catch (UnsupportedEncodingException e) {
-			throw new IllegalArgumentException(e);
-		}
+		byte[] bytes = src.getBytes(Charsets.UTF_16);// 转为UTF-16字节数组
 		int length = bytes.length;
 		if (length > 2) {// 由于转换出来的字节数组前两位属于UNICODE固定标记，因此要过滤掉
 			int i = 2;
@@ -56,12 +51,7 @@ public abstract class StringUtil {
 	 * @return
 	 */
 	public static String fastUnicode(String str) {
-		byte[] bytes;
-		try {
-			bytes = str.getBytes("UTF-16");// 转为UTF-16字节数组
-		} catch (UnsupportedEncodingException e) {
-			throw new IllegalArgumentException(e);
-		}
+		byte[] bytes = str.getBytes(Charsets.UTF_16);// 转为UTF-16字节数组
 		int length = bytes.length;
 		if (length > 2) {
 			int i = 2;
