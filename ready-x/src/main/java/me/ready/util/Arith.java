@@ -159,17 +159,7 @@ public class Arith {
 	 * @return
 	 */
 	public Arith add(long d) {
-		return add(new BigDecimal(d));
-	}
-
-	/**
-	 * 商业加法运算
-	 * 
-	 * @param d 指定的加数
-	 * @return
-	 */
-	public Arith add(int d) {
-		return add(new BigDecimal(d));
+		return add(BigDecimal.valueOf(d));
 	}
 
 	/**
@@ -210,17 +200,7 @@ public class Arith {
 	 * @return
 	 */
 	public Arith minus(long d) {
-		return minus(new BigDecimal(d));
-	}
-
-	/**
-	 * 商业减法运算
-	 * 
-	 * @param d 指定的减数
-	 * @return
-	 */
-	public Arith minus(int d) {
-		return minus(new BigDecimal(d));
+		return minus(BigDecimal.valueOf(d));
 	}
 
 	/**
@@ -262,17 +242,7 @@ public class Arith {
 	 * @return
 	 */
 	public Arith multiply(long d) {
-		return multiply(new BigDecimal(d));
-	}
-
-	/**
-	 * 商业乘法运算
-	 * 
-	 * @param d 指定的乘数
-	 * @return
-	 */
-	public Arith multiply(int d) {
-		return multiply(new BigDecimal(d));
+		return multiply(BigDecimal.valueOf(d));
 	}
 
 	/**
@@ -317,18 +287,7 @@ public class Arith {
 	 * @throws ArithmeticException 如果无法除尽或除数为0则会抛出该异常，无法除尽时请使用{@code Arith#divide(long, int, RoundingMode)}替代
 	 */
 	public Arith divide(long d) {
-		return divide(new BigDecimal(d));
-	}
-
-	/**
-	 * 商业除法运算
-	 * 
-	 * @param d 指定的除数
-	 * @return
-	 * @throws ArithmeticException 如果无法除尽或除数为0则会抛出该异常，无法除尽时请使用{@code Arith#divide(int, int, RoundingMode)}替代
-	 */
-	public Arith divide(int d) {
-		return divide(new BigDecimal(d));
+		return divide(BigDecimal.valueOf(d));
 	}
 
 	/**
@@ -377,19 +336,7 @@ public class Arith {
 	 * @return
 	 */
 	public Arith divide(long d, int scale, RoundingMode roundingMode) {
-		return divide(new BigDecimal(d), scale, roundingMode);
-	}
-
-	/**
-	 * 商业除法运算
-	 * 
-	 * @param d 指定的除数
-	 * @param scale 指定的精确位数
-	 * @param roundingMode 设置应用的舍入模式(四舍五入、向上舍入、向下舍去等)
-	 * @return
-	 */
-	public Arith divide(int d, int scale, RoundingMode roundingMode) {
-		return divide(new BigDecimal(d), scale, roundingMode);
+		return divide(BigDecimal.valueOf(d), scale, roundingMode);
 	}
 
 	/**
@@ -433,18 +380,7 @@ public class Arith {
 	 * @return
 	 */
 	public Arith divideRound(long d, int scale) {
-		return divide(new BigDecimal(d), scale, RoundingMode.HALF_UP);
-	}
-
-	/**
-	 * 以四舍五入的舍入方式进行商业除法运算
-	 * 
-	 * @param d 指定的除数
-	 * @param scale 指定的精确位数
-	 * @return
-	 */
-	public Arith divideRound(int d, int scale) {
-		return divide(new BigDecimal(d), scale, RoundingMode.HALF_UP);
+		return divide(BigDecimal.valueOf(d), scale, RoundingMode.HALF_UP);
 	}
 
 	/**
@@ -520,7 +456,7 @@ public class Arith {
 	 * @return
 	 */
 	public double doubleValue(int scale) {
-		return value.divide(BigDecimal.ONE, scale, RoundingMode.HALF_UP).doubleValue();
+		return value.setScale(scale, RoundingMode.HALF_UP).doubleValue();
 	}
 
 	/**
@@ -797,7 +733,8 @@ public class Arith {
 	 * 输出以四舍五入模式保留指定小数位精度的数值字符串
 	 */
 	public String toString(int scale) {
-		return value.divide(BigDecimal.ONE, scale, RoundingMode.HALF_UP).toString();
+		return value.setScale(scale, RoundingMode.HALF_UP).toString();
+		// return value.divide(BigDecimal.ONE, scale, RoundingMode.HALF_UP).toString();
 	}
 
 	/**
