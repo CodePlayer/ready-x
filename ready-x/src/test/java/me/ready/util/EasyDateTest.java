@@ -28,7 +28,7 @@ public class EasyDateTest {
 		Assert.isTrue(d.getLastDayOfMonth() == 29, "error");
 	}
 
-	@Test
+	// @Test
 	public void endOf() {
 		EasyDate d = new EasyDate(2013, 2, 5);
 		d.endOf(Calendar.MONTH);
@@ -42,7 +42,7 @@ public class EasyDateTest {
 		System.out.println(d.toLocaleString());
 	}
 
-	//	@Test
+	// @Test
 	public void getTimeZoneOffset() {
 		EasyDate d = new EasyDate(2013, 2, 5, 23, 12, 55);
 		System.out.println(d.getTimeZoneOffset());
@@ -56,5 +56,14 @@ public class EasyDateTest {
 		System.out.println(timeZone.getID());
 		TimeZone tz = TimeZone.getTimeZone("GMT+8:00");
 		System.out.println(timeZone.getRawOffset() == tz.getRawOffset());
+	}
+
+	@Test
+	public void isSameAs() {
+		EasyDate a = new EasyDate(2015, 2, 28, 0, 0, 0);
+		System.out.println(a.getTime());
+		System.out.println(a.getTime() % EasyDate.MILLIS_OF_DAY);
+		EasyDate b = new EasyDate(2015, 3, 28, 22, 59, 59);
+		System.out.println(EasyDate.isSameAs(a, b, Calendar.YEAR));
 	}
 }

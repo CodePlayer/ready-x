@@ -671,7 +671,7 @@ public class Arith {
 	 *         </ul>
 	 */
 	public static final int compareTo(BigDecimal a, BigDecimal b) {
-		return a.compareTo(b);
+		return a == b ? 0 : a.compareTo(b);
 	}
 
 	/**

@@ -21,6 +21,7 @@ import java.util.TimeZone;
  */
 public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 
+	private static final long serialVersionUID = 1L;
 	/**
 	 * yyyy-MM-dd格式的日期转换器
 	 */
@@ -46,9 +47,17 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 */
 	public static final String GMT_NET_DATE = "EEE, d MMM yyyy HH:mm:ss 'GMT'";
 	/**
-	 * 
+	 * 一分钟的毫秒数
 	 */
-	private static final long serialVersionUID = 1L;
+	public static final long MILLIS_OF_MINUTE = 1000 * 60;
+	/**
+	 * 一小时的毫秒数
+	 */
+	public static final long MILLIS_OF_HOUR = MILLIS_OF_MINUTE * 60;
+	/**
+	 * 一天的毫秒数
+	 */
+	public static final long MILLIS_OF_DAY = MILLIS_OF_HOUR * 24;
 	private Calendar calendar;
 
 	/**
@@ -701,7 +710,6 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 		if (diff == 0) {
 			return 0;
 		}
-		long unit = 1;
 		switch (field) {
 		case Calendar.YEAR:
 		case Calendar.MONTH:
@@ -740,20 +748,9 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 			double base = suffix > prefix ? 0.1 : 0.9;
 			diff = new BigDecimal(diff + base).setScale(0, roundingMode).longValue();
 			return isMax ? diff : -diff;
-		case Calendar.DAY_OF_MONTH:
-		case Calendar.DAY_OF_YEAR:
-			unit *= 24; // 86400000; // 24 * 60 * 60 * 1000;
-		case Calendar.HOUR:
-		case Calendar.HOUR_OF_DAY:
-			unit *= 60; // 3600000; // 60 * 60 * 1000;
-		case Calendar.MINUTE:
-			unit *= 60; // 60000; // 60 * 1000
-		case Calendar.SECOND:
-			unit *= 1000;
-		case Calendar.MILLISECOND:
-			return new BigDecimal(diff).divide(new BigDecimal(unit), roundingMode).longValue();
 		default:
-			throw new IllegalArgumentException("unexpected value of field:" + field);
+			long unit = getMillisOfUnit(field);
+			return BigDecimal.valueOf(diff).divide(BigDecimal.valueOf(unit), roundingMode).longValue();
 		}
 	}
 
@@ -797,6 +794,131 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 */
 	public boolean isLeapYear() {
 		return ((GregorianCalendar) calendar).isLeapYear(getYear());
+	}
+
+	/**
+	 * 获取指定日历单位所对应的毫秒值，单位仅支持"天"及其以下的单位
+	 * 
+	 * @param field 该方法支持的字段有{@link Calendar#YEAR}、{@link Calendar#MONTH}、 {@link Calendar#DAY_OF_MONTH}、 {@link Calendar#HOUR_OF_DAY}、 {@link Calendar#MINUTE}、{@link Calendar#SECOND}
+	 * @return
+	 * @since 0.3.6
+	 * @author Ready
+	 */
+	public static final long getMillisOfUnit(int field) {
+		switch (field) {
+		case Calendar.DAY_OF_YEAR:
+		case Calendar.DAY_OF_MONTH:
+			return MILLIS_OF_DAY;
+		case Calendar.HOUR:
+		case Calendar.HOUR_OF_DAY:
+			return MILLIS_OF_HOUR;
+		case Calendar.MINUTE:
+			return MILLIS_OF_MINUTE;
+		case Calendar.SECOND:
+			return 1000;
+		case Calendar.MILLISECOND:
+			return 1;
+		default:
+			throw new IllegalArgumentException("Unexpected value of field:" + field);
+		}
+	}
+
+	/**
+	 * 比较两个以毫秒数表示的时间值是否处于同一年/月/天/小时/分钟/秒/毫秒
+	 * 
+	 * @param a 时间 a
+	 * @param b 时间 b
+	 * @param inField 指定用于判断是否为同一值的时间单位字段，可以使用Calendar类的单位常量
+	 * @return 0.3.6
+	 * @author Ready
+	 * @see Calendar#YEAR
+	 * @see Calendar#MONTH
+	 * @see Calendar#WEEK_OF_YEAR
+	 * @see Calendar#WEEK_OF_MONTH
+	 * @see Calendar#DAY_OF_YEAR
+	 * @see Calendar#DAY_OF_MONTH
+	 * @see Calendar#HOUR
+	 * @see Calendar#HOUR_OF_DAY
+	 * @see Calendar#MINUTE
+	 * @see Calendar#SECOND
+	 * @see Calendar#MILLISECOND
+	 */
+	public static boolean isSameAs(long a, long b, int inField) {
+		if (a == b) {
+			return true;
+		}
+		if (inField > Calendar.WEEK_OF_MONTH) {
+			long unit = getMillisOfUnit(inField);
+			long diff = a - b;
+			if (diff > -unit && diff < unit) {
+				long offset = (a + TimeZone.getDefault().getRawOffset()) % unit - diff;
+				return 0 <= offset && offset < unit;
+			}
+		} else {
+			Calendar ac = Calendar.getInstance();
+			ac.setTimeInMillis(a);
+			Calendar bc = Calendar.getInstance();
+			bc.setTimeInMillis(b);
+			switch (inField) {
+			case Calendar.WEEK_OF_YEAR:
+			case Calendar.WEEK_OF_MONTH:
+				if (ac.get(Calendar.WEEK_OF_MONTH) != bc.get(Calendar.WEEK_OF_MONTH))
+					break;
+			case Calendar.MONTH:
+				if (ac.get(Calendar.MONTH) != bc.get(Calendar.MONTH))
+					break;
+			case Calendar.YEAR:
+				return ac.get(Calendar.ERA) == bc.get(Calendar.ERA) && ac.get(Calendar.YEAR) == bc.get(Calendar.YEAR);
+			default:
+				throw new IllegalArgumentException("Unexpected value of inField:" + inField);
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * 当前时间是否与指定时间是否处于同一年/月/天/小时/分钟/秒/毫秒<br>
+	 * 时间对象可以为：{@link Date}、{@link EasyDate}、{@link Calendar}
+	 * 
+	 * @param date
+	 * @param inField 指定用于判断是否为同一值的时间单位字段，可以使用Calendar类的单位常量
+	 * @return
+	 * @since 0.3.6
+	 * @author Ready
+	 * @see Calendar#YEAR
+	 * @see Calendar#MONTH
+	 * @see Calendar#WEEK_OF_MONTH
+	 * @see Calendar#DAY_OF_MONTH
+	 * @see Calendar#HOUR_OF_DAY
+	 * @see Calendar#MINUTE
+	 * @see Calendar#SECOND
+	 * @see Calendar#MILLISECOND
+	 */
+	public boolean isSameAs(Object date, int inField) {
+		return isSameAs(getTime(), getTimeOfDate(date), inField);
+	}
+
+	/**
+	 * 比较两个时间值是否处于同一年/月/天/小时/分钟/秒/毫秒<br>
+	 * 时间对象可以为：{@link Date}、{@link EasyDate}、{@link Calendar}
+	 * 
+	 * @param a 时间 a
+	 * @param b 时间 b
+	 * @param inField 指定用于判断是否为同一值的时间单位字段，可以使用Calendar类的单位常量
+	 * @return
+	 * @since 1.0
+	 * @author Ready
+	 * @see Calendar#YEAR
+	 * @see Calendar#MONTH
+	 * @see Calendar#WEEK_OF_MONTH
+	 * @see Calendar#DAY_OF_MONTH
+	 * @see Calendar#HOUR_OF_DAY
+	 * @see Calendar#MINUTE
+	 * @see Calendar#SECOND
+	 * @see Calendar#MILLISECOND
+	 */
+	public static boolean isSameAs(Object a, Object b, int inField) {
+		return isSameAs(getTimeOfDate(a), getTimeOfDate(b), inField);
 	}
 
 	/**
