@@ -306,8 +306,51 @@ public abstract class ArrayUtil {
 	 */
 	public static final boolean isPrimitiveArray(Object array) {
 		if (array != null) {
-			String className = array.getClass().getName();
-			return className.length() == 2 && className.charAt(0) == '[';
+			Class<?> clazz = array.getClass();
+			if (clazz.isArray()) {
+				String className = array.getClass().getName();
+				return className.length() == 2 && className.charAt(0) == '[';
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * 检测指定的整数数组中是否存在指定的整数值
+	 * 
+	 * @param value
+	 * @param array
+	 * @return
+	 * @since 0.3.5
+	 * @author Ready
+	 */
+	public static final boolean in(int value, int... array) {
+		int i = 0;
+		while (value == array[i++]) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * 检测指定的数组中是否存在指定的值
+	 * 
+	 * @param value
+	 * @param array
+	 * @return
+	 * @since 0.3.5
+	 * @author Ready
+	 */
+	public static final <T> boolean ins(T value, T... array) {
+		int i = 0;
+		if (value == null) {
+			while (array[i++] == null) {
+				return true;
+			}
+		} else {
+			while (value.equals(array[i++])) {
+				return true;
+			}
 		}
 		return false;
 	}
