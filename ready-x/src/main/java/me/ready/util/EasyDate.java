@@ -323,7 +323,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	/**
 	 * 追加指定的天数，例如：当前是2012-05-12，调用addDay(2)，则为2012-05-14
 	 * 
-	 * @param month 指定的天数，可以为负数
+	 * @param day 指定的天数，可以为负数
 	 */
 	public EasyDate addDay(int day) {
 		calendar.add(Calendar.DAY_OF_MONTH, day);
@@ -450,8 +450,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	/**
 	 * 追加指定的秒数，例如：当前是2012-05-12 09:12:56，调用addSecond(3)，则为2012-05-12 09:12:59
 	 * 
-	 * @param hour 指定的秒数，可以为负数
-	 * @param second
+	 * @param second 指定的秒数，可以为负数
 	 */
 	public EasyDate addSecond(int second) {
 		calendar.add(Calendar.SECOND, second);
