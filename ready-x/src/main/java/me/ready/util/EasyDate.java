@@ -1062,12 +1062,24 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	}
 
 	/**
-	 * 返回yyyy-MM-dd格式的字符串
+	 * 返回"yyyy-MM-dd"格式的字符串
 	 */
 	@Override
 	public String toString() {
 		// "0000-00-00".toCharArray();
 		char[] chars = new char[] { '0', '0', '0', '0', '-', '0', '0', '-', '0', '0' };
+		setNumberToTheRight(chars, getYear(), 0, 4);
+		setNumberToTheRight(chars, getMonth(), 5, 2);
+		setNumberToTheRight(chars, getDay(), 8, 2);
+		return new String(chars);
+	}
+
+	/**
+	 * 返回"yyyy年MM月dd日"格式的字符串
+	 */
+	public String toDateString() {
+		// "0000年00月00日".toCharArray();
+		char[] chars = new char[] { '0', '0', '0', '0', '年', '0', '0', '月', '0', '0', '日' };
 		setNumberToTheRight(chars, getYear(), 0, 4);
 		setNumberToTheRight(chars, getMonth(), 5, 2);
 		setNumberToTheRight(chars, getDay(), 8, 2);
@@ -1093,7 +1105,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 
 	 * @return
 	 */
-	public String toLocaleString() {
+	public String toDateTimeString() {
 		// "0000-00-00 00:00:00".toCharArray();
 		char[] chars = new char[] { '0', '0', '0', '0', '-', '0', '0', '-', '0', '0', ' ', '0', '0', ':', '0', '0', ':', '0', '0' };
 		setNumberToTheRight(chars, getYear(), 0, 4);

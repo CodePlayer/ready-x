@@ -32,14 +32,14 @@ public class EasyDateTest {
 	public void endOf() {
 		EasyDate d = new EasyDate(2013, 2, 5);
 		d.endOf(Calendar.MONTH);
-		System.out.println(d.toLocaleString());
+		System.out.println(d.toDateTimeString());
 	}
 
 	// @Test
 	public void beginOf() {
 		EasyDate d = new EasyDate(2013, 2, 5, 23, 12, 55);
 		d.beginOf(Calendar.YEAR);
-		System.out.println(d.toLocaleString());
+		System.out.println(d.toDateTimeString());
 	}
 
 	// @Test
@@ -48,7 +48,7 @@ public class EasyDateTest {
 		System.out.println(d.getTimeZoneOffset());
 		d.setTimeZoneOffset(0);
 		System.out.println(d.getTimeZoneOffset());
-		System.out.println(d.toLocaleString());
+		System.out.println(d.toDateTimeString());
 		System.out.println(d.toLongString());
 		System.out.println(d.toShortString());
 		System.out.println(d.toString());
