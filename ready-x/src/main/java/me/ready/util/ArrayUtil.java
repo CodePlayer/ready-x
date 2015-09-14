@@ -325,9 +325,10 @@ public abstract class ArrayUtil {
 	 * @author Ready
 	 */
 	public static final boolean in(int value, int... array) {
-		int i = 0;
-		while (value == array[i++]) {
-			return true;
+		for (int i = 0; i < array.length; i++) {
+			if (value == array[i]) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -342,14 +343,17 @@ public abstract class ArrayUtil {
 	 * @author Ready
 	 */
 	public static final <T> boolean ins(T value, T... array) {
-		int i = 0;
 		if (value == null) {
-			while (array[i++] == null) {
-				return true;
+			for (int i = 0; i < array.length; i++) {
+				if (array[i] == null) {
+					return true;
+				}
 			}
 		} else {
-			while (value.equals(array[i++])) {
-				return true;
+			for (int i = 0; i < array.length; i++) {
+				if (value.equals(array[i])) {
+					return true;
+				}
 			}
 		}
 		return false;

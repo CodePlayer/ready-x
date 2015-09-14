@@ -1066,10 +1066,11 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 */
 	@Override
 	public String toString() {
+		// "0000-00-00".toCharArray();
 		char[] chars = new char[] { '0', '0', '0', '0', '-', '0', '0', '-', '0', '0' };
-		setNumberToChars(chars, getYear(), 0, 4);
-		setNumberToChars(chars, getMonth(), 5, 2);
-		setNumberToChars(chars, getDay(), 8, 2);
+		setNumberToTheRight(chars, getYear(), 0, 4);
+		setNumberToTheRight(chars, getMonth(), 5, 2);
+		setNumberToTheRight(chars, getDay(), 8, 2);
 		return new String(chars);
 	}
 
@@ -1088,48 +1089,51 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	}
 
 	/**
-	 * 返回yyyy-MM-dd HH:mm:ss格式的字符串
+	 * 返回"yyyy-MM-dd HH:mm:ss"格式的字符串
 	 * 
 	 * @return
 	 */
 	public String toLocaleString() {
+		// "0000-00-00 00:00:00".toCharArray();
 		char[] chars = new char[] { '0', '0', '0', '0', '-', '0', '0', '-', '0', '0', ' ', '0', '0', ':', '0', '0', ':', '0', '0' };
-		setNumberToChars(chars, getYear(), 0, 4);
-		setNumberToChars(chars, getMonth(), 5, 2);
-		setNumberToChars(chars, getDay(), 8, 2);
-		setNumberToChars(chars, getHour(), 11, 2);
-		setNumberToChars(chars, getMinute(), 14, 2);
-		setNumberToChars(chars, getSecond(), 17, 2);
+		setNumberToTheRight(chars, getYear(), 0, 4);
+		setNumberToTheRight(chars, getMonth(), 5, 2);
+		setNumberToTheRight(chars, getDay(), 8, 2);
+		setNumberToTheRight(chars, getHour(), 11, 2);
+		setNumberToTheRight(chars, getMinute(), 14, 2);
+		setNumberToTheRight(chars, getSecond(), 17, 2);
 		return new String(chars);
 	}
 
 	/**
-	 * 返回yyyyMMdd格式的字符串
+	 * 返回"yyyyMMdd"格式的字符串
 	 * 
 	 * @return
 	 */
 	public String toShortString() {
-		char[] chars = new char[] { '0', '0', '0', '0', '0', '0', '0', '0' };
-		setNumberToChars(chars, getYear(), 0, 4);
-		setNumberToChars(chars, getMonth(), 4, 2);
-		setNumberToChars(chars, getDay(), 6, 2);
+		// "00000000".toCharArray();
+		final char[] chars = new char[] { '0', '0', '0', '0', '0', '0', '0', '0' };
+		setNumberToTheRight(chars, getYear(), 0, 4);
+		setNumberToTheRight(chars, getMonth(), 4, 2);
+		setNumberToTheRight(chars, getDay(), 6, 2);
 		return new String(chars);
 	}
 
 	/**
-	 * 返回yyyy-MM-dd HH:mm:ss sss格式的字符串
+	 * 返回"yyyy-MM-dd HH:mm:ss sss"格式的字符串
 	 * 
 	 * @return
 	 */
 	public String toLongString() {
-		char[] chars = new char[] { '0', '0', '0', '0', '-', '0', '0', '-', '0', '0', ' ', '0', '0', ':', '0', '0', ':', '0', '0', ' ', '0', '0', '0' };
-		setNumberToChars(chars, getYear(), 0, 4);
-		setNumberToChars(chars, getMonth(), 5, 2);
-		setNumberToChars(chars, getDay(), 8, 2);
-		setNumberToChars(chars, getHour(), 11, 2);
-		setNumberToChars(chars, getMinute(), 14, 2);
-		setNumberToChars(chars, getSecond(), 17, 2);
-		setNumberToChars(chars, getMillisecond(), 20, 3);
+		// "0000-00-00 00:00:00 000".toCharArray();
+		final char[] chars = new char[] { '0', '0', '0', '0', '-', '0', '0', '-', '0', '0', ' ', '0', '0', ':', '0', '0', ':', '0', '0', ' ', '0', '0', '0' };
+		setNumberToTheRight(chars, getYear(), 0, 4);
+		setNumberToTheRight(chars, getMonth(), 5, 2);
+		setNumberToTheRight(chars, getDay(), 8, 2);
+		setNumberToTheRight(chars, getHour(), 11, 2);
+		setNumberToTheRight(chars, getMinute(), 14, 2);
+		setNumberToTheRight(chars, getSecond(), 17, 2);
+		setNumberToTheRight(chars, getMillisecond(), 20, 3);
 		return new String(chars);
 	}
 
@@ -1176,7 +1180,23 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	public static final void setNumberToChars(char[] chars, int number, int start, int length) {
 		int end = start + length;
 		while (length-- > 0) {
-			chars[--end] = Character.forDigit(number % 10, 10);
+			chars[--end] = (char) ('0' + (number % 10));
+			number /= 10;
+		}
+	}
+
+	/**
+	 * 将指定的数字设置到指定的字符数组中的指定索引处，从右向左依次填充，并最多填充指定的长度
+	 * 
+	 * @param chars 指定的字符数组
+	 * @param number 指定的数字
+	 * @param start 指定的起始索引
+	 * @param length 指定的长度
+	 */
+	protected static final void setNumberToTheRight(char[] chars, int number, int start, int length) {
+		int end = start + length;
+		while (number > 0 && length-- > 0) {
+			chars[--end] = (char) ('0' + (number % 10));
 			number /= 10;
 		}
 	}
