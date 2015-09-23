@@ -143,7 +143,7 @@ public abstract class StringUtil {
 	 * 
 	 * @param values 指定的数组
 	 * @return
-	 * @see me.ready.util.StringUtil#isEmpty(Object)
+	 * @see me.codeplayer.util.StringUtil#isEmpty(Object)
 	 */
 	public boolean hasEmpty(Object... values) {
 		int length = ArrayUtil.getLength(values, true);

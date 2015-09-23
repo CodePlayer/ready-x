@@ -5,7 +5,7 @@ import java.nio.charset.Charset;
 /**
  * 常用的字符集常量
  * 
- * @package me.ready.util
+ * @package me.codeplayer.util
  * @author Ready
  * @date 2014-10-23
  */

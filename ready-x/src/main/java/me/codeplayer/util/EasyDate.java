@@ -104,7 +104,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 创建一个2011-8-10的时间对象，new EasyDate(null, -1, -2, 0)或new EasyDate(null, 0, -14, 0)
 	 * 
 	 * @param date 指定的时间，作为偏移量的参考对象，如果为null，则默认使用当前时间作为参考对象<br>
-	 *            该对象支持java.util.Date、me.ready.util.EasyDate、java.util. Calendar等对象及其子类实例
+	 *            该对象支持java.util.Date、me.codeplayer.util.EasyDate、java.util. Calendar等对象及其子类实例
 	 * @param offsetYear 相对于当前时间的年份偏移量
 	 * @param offsetMonth 相对于当前时间的月份偏移量
 	 * @param doffsetDay 相对于当前时间的日期偏移量
@@ -128,7 +128,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 创建一个2011-8-10的时间对象，new EasyDate(null, -1, -2, 0)或new EasyDate(null, 0, -14, 0)
 	 * 
 	 * @param date 指定的时间，作为偏移量的参考对象，如果为null，则默认使用当前时间作为参考对象<br>
-	 *            该对象支持{@link java.util.Date}、{@link me.ready.util.EasyDate}、 {@link java.util.Calendar}等对象及其子类实例
+	 *            该对象支持{@link java.util.Date}、{@link me.codeplayer.util.EasyDate}、 {@link java.util.Calendar}等对象及其子类实例
 	 * @param offsetYear 相对于当前时间的年份偏移量
 	 * @param offsetMonth 相对于当前时间的月份偏移量
 	 * @param doffsetDay 相对于当前时间的日期偏移量
@@ -143,7 +143,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 创建一个2011-8-10的时间对象，new EasyDate(null, -1, -2, 0)或new EasyDate(null, 0, -14, 0)
 	 * 
 	 * @param date 指定的时间，作为偏移量的参考对象，如果为null，则默认使用当前时间作为参考对象<br>
-	 *            该对象支持{@link java.util.Date}、{@link me.ready.util.EasyDate}、 {@link java.util.Calendar}等对象及其子类实例
+	 *            该对象支持{@link java.util.Date}、{@link me.codeplayer.util.EasyDate}、 {@link java.util.Calendar}等对象及其子类实例
 	 * @param offsetYear 相对于当前时间的年份偏移量
 	 * @param offsetMonth 相对于当前时间的月份偏移量
 	 * @param doffsetDay 相对于当前时间的日期偏移量
@@ -670,7 +670,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	/**
 	 * 与指定日期进行比较，如果大于指定的日期返回正数；等于返回0；小于返回负数
 	 * 
-	 * @param date 支持java.util.Date、java.util.Calendar、me.ready.util.EasyDate等对象及其子类的比较
+	 * @param date 支持java.util.Date、java.util.Calendar、me.codeplayer.util.EasyDate等对象及其子类的比较
 	 * @return
 	 */
 	public int compareTo(Object date) {

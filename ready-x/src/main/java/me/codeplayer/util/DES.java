@@ -41,7 +41,7 @@ public class DES {
 	 * 利用默认的密钥构造一个DES工具实例
 	 */
 	public DES() {
-		setKey("me.ready");
+		setKey("me.codeplayer");
 	}
 
 	/**

@@ -6,7 +6,7 @@ import java.util.Random;
 /**
  * 用于协助处理与随机生成有关的工具类
  * 
- * @package me.ready.util
+ * @package me.codeplayer.util
  * @author Ready
  * @date 2014-10-15
  */

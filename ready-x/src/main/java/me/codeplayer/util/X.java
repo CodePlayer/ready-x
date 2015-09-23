@@ -73,7 +73,7 @@ public abstract class X {
 	 * 
 	 * @param obj 指定的对象
 	 * @return
-	 * @see me.ready.util.StringUtil#isBlank(Object)
+	 * @see me.codeplayer.util.StringUtil#isBlank(Object)
 	 */
 	public static final boolean isBlank(Object obj) {
 		return StringUtil.isBlank(obj);
@@ -86,7 +86,7 @@ public abstract class X {
 	 * @param t 指定的对象
 	 * @param defaultValue 指定的默认值
 	 * @return
-	 * @see me.ready.util.StringUtil#isEmpty(Object)
+	 * @see me.codeplayer.util.StringUtil#isEmpty(Object)
 	 */
 	public static final <T> T getDefault(T t, T defaultValue) {
 		return StringUtil.isEmpty(t) ? defaultValue : t;
@@ -552,7 +552,7 @@ public abstract class X {
 	 * 
 	 * @param obj 指定的对象
 	 * @return
-	 * @see me.ready.util.ArrayUtil#isArray(Object)
+	 * @see me.codeplayer.util.ArrayUtil#isArray(Object)
 	 */
 	public final static boolean isArray(Object obj) {
 		return obj != null && obj.getClass().isArray();
