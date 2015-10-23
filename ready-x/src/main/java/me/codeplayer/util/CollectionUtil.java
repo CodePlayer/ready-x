@@ -16,7 +16,6 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * List、Set、Map等常见集合数据操作的工具类
  * 
- * @package me.codeplayer.util
  * @author Ready
  * @date 2014-10-21
  * 

@@ -239,8 +239,7 @@ public class ChineseNumber {
 	/**
 	 * 表示中文数字的文本表现形式的枚举类
 	 * 
-	 * @package me.codeplayer.util
-	 * @date 2015年8月21日
+		 * @date 2015年8月21日
 	 * @since 1.0
 	 * @author Ready
 	 */

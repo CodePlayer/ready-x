@@ -12,7 +12,6 @@ import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
 /**
  * JSON字符串序列化转换工具类
  * 
- * @package me.codeplayer.util
  * @author Ready
  * @date 2014-10-13
  * 

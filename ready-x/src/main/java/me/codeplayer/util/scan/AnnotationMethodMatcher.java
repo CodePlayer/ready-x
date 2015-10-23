@@ -6,7 +6,6 @@ import java.lang.reflect.Method;
 /**
  * 注解方法过滤器
  * 
- * @package me.codeplayer.util
  * @author Ready
  * @date 2015年2月4日
  * @since

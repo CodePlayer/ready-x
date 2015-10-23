@@ -126,16 +126,7 @@ public class DES {
 	 * @return
 	 */
 	public byte[] encode(byte[] srcBytes) {
-		Cipher cipher;
-		try {
-			cipher = Cipher.getInstance("DES");
-			cipher.init(Cipher.ENCRYPT_MODE, key);
-			return cipher.doFinal(srcBytes);
-		} catch (Exception e) {
-			throw new IllegalArgumentException("对指定的明文字节数组进行加密时发生异常!", e);
-		} finally {
-			cipher = null;
-		}
+		return process(srcBytes, true);
 	}
 
 	/**
@@ -145,15 +136,23 @@ public class DES {
 	 * @return
 	 */
 	public byte[] decode(byte[] srcBytes) {
-		Cipher cipher;
+		return process(srcBytes, false);
+	}
+
+	/**
+	 * 加密或解密处理指定的字节数组
+	 * 
+	 * @param srcBytes 直接数组
+	 * @param encrypt 如果为true表示加密，否则表示解密。
+	 * @return
+	 */
+	public byte[] process(byte[] srcBytes, boolean encrypt) {
 		try {
-			cipher = Cipher.getInstance("DES");
-			cipher.init(Cipher.DECRYPT_MODE, key);
+			Cipher cipher = Cipher.getInstance("DES");
+			cipher.init(encrypt ? Cipher.ENCRYPT_MODE : Cipher.DECRYPT_MODE, key);
 			return cipher.doFinal(srcBytes);
 		} catch (Exception e) {
-			throw new IllegalArgumentException("对指定的密文字节数组进行解密时发生异常!", e);
-		} finally {
-			cipher = null;
+			throw new IllegalArgumentException(e);
 		}
 	}
 }

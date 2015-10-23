@@ -127,7 +127,7 @@ public abstract class NumberUtil {
 		}
 		if (value instanceof Number) {
 			return ((Number) value).intValue();
-		} else if ("".equals(value)) {
+		} else if (value instanceof CharSequence && ((CharSequence) value).length() == 0) {
 			return defaultValue;
 		} else {
 			try {

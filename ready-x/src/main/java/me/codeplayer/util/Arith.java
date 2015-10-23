@@ -723,6 +723,31 @@ public class Arith {
 	}
 
 	/**
+	 * 检测指定的BigDecimal是否为整数值
+	 * 
+	 * @param d
+	 * @return
+	 * @version 1.0
+	 * @author Ready
+	 */
+	public static final boolean isIntegral(BigDecimal d) {
+		return d != null && (d.scale() == 0 || d.setScale(0, RoundingMode.FLOOR).compareTo(d) == 0);
+	}
+
+	/**
+	 * 检测数值d能否被divisor整除(即：余数为0)
+	 * 
+	 * @param d 被除数
+	 * @param divisor 除数
+	 * @return
+	 * @version 1.0
+	 * @author Ready
+	 */
+	public static final boolean canDivideExactly(BigDecimal d, BigDecimal divisor) {
+		return divisor.compareTo(BigDecimal.ZERO) != 0 && d.remainder(divisor).compareTo(BigDecimal.ZERO) == 0;
+	}
+
+	/**
 	 * 输出数值字符串
 	 */
 	public String toString() {
