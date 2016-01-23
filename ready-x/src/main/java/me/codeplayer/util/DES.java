@@ -76,7 +76,7 @@ public class DES {
 	 */
 	public String encode(String plaintext, String encoding) {
 		try {
-			return new String(Base64.encodeBase64(plaintext.getBytes(encoding)), encoding);
+			return new String(Base64.encodeBase64(encode(plaintext.getBytes(encoding))));
 		} catch (UnsupportedEncodingException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -102,7 +102,7 @@ public class DES {
 	 */
 	public String decode(String ciphertext, String encoding) {
 		try {
-			return new String(Base64.decodeBase64(ciphertext.getBytes(encoding)), encoding);
+			return new String(decode(Base64.decodeBase64(ciphertext.getBytes(encoding))), encoding);
 		} catch (UnsupportedEncodingException e) {
 			throw new IllegalArgumentException(e);
 		}
