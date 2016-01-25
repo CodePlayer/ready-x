@@ -2,10 +2,10 @@ package me.codeplayer.util;
 
 import java.io.UnsupportedEncodingException;
 import java.security.Key;
-import java.security.SecureRandom;
 
 import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.DESKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -58,10 +58,7 @@ public class DES {
 	 */
 	public void setKey(byte[] byteKey) {
 		try {
-			KeyGenerator generator = KeyGenerator.getInstance("DES");
-			generator.init(new SecureRandom(byteKey));
-			this.key = generator.generateKey();
-			generator = null;
+			this.key = SecretKeyFactory.getInstance("DES").generateSecret(new DESKeySpec(byteKey));
 		} catch (Exception e) {
 			throw new IllegalArgumentException("设置指定密钥时发生异常!", e);
 		}
