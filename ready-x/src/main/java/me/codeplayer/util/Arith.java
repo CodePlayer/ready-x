@@ -548,7 +548,7 @@ public class Arith {
 	 * @return
 	 */
 	public static final double multiply(double a, double b, int scale, RoundingMode roundingMode) {
-		return new BigDecimal(Double.toString(a)).divide(new BigDecimal(Double.toString(b))).setScale(scale, roundingMode).doubleValue();
+		return new BigDecimal(Double.toString(a)).multiply(new BigDecimal(Double.toString(b))).setScale(scale, roundingMode).doubleValue();
 	}
 
 	/**
