@@ -5,13 +5,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
+import java.text.*;
+import java.util.*;
 
 /**
  * 实现常用日期扩展方法的日期工具类(实现Comparable可比较接口、Cloneable可复制接口)
@@ -115,7 +110,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 			calendar.add(Calendar.YEAR, offsetYear);
 		}
 		if (offsetMonth != 0) {
-			calendar.add(Calendar.MONDAY, offsetMonth);
+			calendar.add(Calendar.MONTH, offsetMonth);
 		}
 		if (offsetDay != 0) {
 			calendar.add(Calendar.DAY_OF_MONTH, offsetDay);
@@ -263,7 +258,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * @param month 指定的月数，可以为负数
 	 */
 	public EasyDate addMonth(int month) {
-		calendar.add(Calendar.MONDAY, month);
+		calendar.add(Calendar.MONTH, month);
 		return this;
 	}
 
