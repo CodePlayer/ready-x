@@ -1,22 +1,11 @@
 package me.codeplayer.util;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 import me.codeplayer.e.LogicException;
 
@@ -59,10 +48,8 @@ public abstract class FileUtil {
 		int pos = path.lastIndexOf('.');
 		if (pos == -1) {
 			return "";
-		} else if (removeDot) {
-			return path.substring(pos + 1);
 		} else {
-			return path.substring(pos);
+			return path.substring(removeDot ? pos + 1 : pos);
 		}
 	}
 

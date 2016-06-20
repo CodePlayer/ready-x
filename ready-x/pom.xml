@@ -3,7 +3,7 @@
 
 	<groupId>me.codeplayer</groupId>
 	<artifactId>ready-x</artifactId>
-	<version>0.4.1-SNAPSHOT</version>
+	<version>0.4.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>ready-x</name>
@@ -23,25 +23,25 @@
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
-			<version>1.2.6</version>
+			<version>1.2.12</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>3.3.2</version>
+			<version>3.4</version>
 		</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.11</version>
+			<version>4.12</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.7.12</version>
+			<version>1.7.21</version>
 		</dependency>
 
 	</dependencies>

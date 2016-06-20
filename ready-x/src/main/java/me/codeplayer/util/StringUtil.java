@@ -164,7 +164,16 @@ public abstract class StringUtil {
 	 * @return
 	 */
 	public static final boolean isBlank(String str) {
-		return str == null || str.trim().length() == 0;
+		if (str == null) {
+			return true;
+		}
+		int length = str.length();
+		for (int i = 0; i < length; i++) {
+			if (str.charAt(i) > ' ') {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -176,7 +185,7 @@ public abstract class StringUtil {
 	 * @return
 	 */
 	public static final boolean notBlank(String str) {
-		return str != null && str.trim().length() > 0;
+		return !isBlank(str);
 	}
 
 	/**
@@ -188,7 +197,7 @@ public abstract class StringUtil {
 	 * @return
 	 */
 	public static final boolean isBlank(Object obj) {
-		return obj == null || obj.toString().trim().length() == 0;
+		return obj == null || isBlank(obj.toString());
 	}
 
 	/**
@@ -200,7 +209,7 @@ public abstract class StringUtil {
 	 * @return
 	 */
 	public static final boolean notBlank(Object obj) {
-		return obj != null && obj.toString().trim().length() > 0;
+		return !isBlank(obj);
 	}
 
 	/**
