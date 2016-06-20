@@ -1,16 +1,7 @@
 package me.codeplayer.util;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -22,6 +13,15 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public abstract class CollectionUtil {
+
+	/** 不做任何忽略处理 */
+	public static final int IGNORE_NONE = 0;
+	/** 忽略null值 */
+	public static final int IGNORE_NULL = 1;
+	/** 忽略null值和空字符串 */
+	public static final int IGNORE_EMPTY = 2;
+	/** 忽略null值、空字符串""和空白字符串 */
+	public static final int IGNORE_BLANK = 3;
 
 	/**
 	 * 根据可变参数形式的键值数组构造一个HashMap集合<br>
@@ -142,13 +142,54 @@ public abstract class CollectionUtil {
 	/**
 	 * 将可变参数形式的键值数组添加到一个Map集合中
 	 * 
+	 * @param ignore 指示忽略当前键值的情况：{@link CollectionUtil#IGNORE_NONE }、{@link CollectionUtil#IGNORE_NULL } 、{@link CollectionUtil#IGNORE_EMPTY }、 {@link CollectionUtil#IGNORE_BLANK }
 	 * @param map 指定的Map集合
-	 * @param KeysAndValues 可变参数形式的键值数组，必须是K1, V1, K2, V2, K3, V3...这种形式
+	 * @param kvPairs 可变参数形式的键值数组，必须是K1, V1, K2, V2, K3, V3...这种形式
 	 */
-	public static final void addToMap(Map map, Object... KeysAndValues) {
-		Assert.isTrue((KeysAndValues.length & 1) == 0, "指定键值的参数个数必须为偶数!");
-		for (int i = 0; i < KeysAndValues.length;) {
-			map.put(KeysAndValues[i++], KeysAndValues[i++]);
+	public static final void addToMap(int ignore, Map map, Object... kvPairs) {
+		Assert.isTrue((kvPairs.length & 1) == 0, "指定键值的参数个数必须为偶数!");
+		if (ignore == IGNORE_NONE) {
+			for (int i = 0; i < kvPairs.length;) {
+				map.put(kvPairs[i++], kvPairs[i++]);
+			}
+		} else {
+			for (int i = 0; i < kvPairs.length;) {
+				Object key = kvPairs[i++], value = kvPairs[i++];
+				if (notIgnore(value, ignore)) {
+					map.put(key, value);
+				}
+			}
+		}
+	}
+
+	/**
+	 * 将可变参数形式的键值数组添加到一个Map集合中
+	 * 
+	 * @param map 指定的Map集合
+	 * @param kvPairs 可变参数形式的键值数组，必须是K1, V1, K2, V2, K3, V3...这种形式
+	 */
+	public static final void addToMap(Map map, Object... kvPairs) {
+		addToMap(IGNORE_NONE, map, kvPairs);
+	}
+
+	/**
+	 * 将可变参数形式的键值数组添加到一个Map集合中
+	 * 
+	 * @param ignore 指示忽略当前键值的情况：{@link CollectionUtil#IGNORE_NONE }、{@link CollectionUtil#IGNORE_NULL } 、{@link CollectionUtil#IGNORE_EMPTY }、 {@link CollectionUtil#IGNORE_BLANK }
+	 * @param collection 指定的Collection集合
+	 * @param elements 可变参数形式的元素数组
+	 */
+	public static final <E> void addToCollection(int ignore, Collection<? super E> collection, E... elements) {
+		if (ignore == IGNORE_NONE) {
+			for (int i = 0; i < elements.length; i++) {
+				collection.add(elements[i]);
+			}
+		} else {
+			for (int i = 0; i < elements.length; i++) {
+				if (notIgnore(elements[i], ignore)) {
+					collection.add(elements[i]);
+				}
+			}
 		}
 	}
 
@@ -159,9 +200,28 @@ public abstract class CollectionUtil {
 	 * @param elements 可变参数形式的元素数组
 	 */
 	public static final <E> void addToCollection(Collection<? super E> collection, E... elements) {
-		for (int i = 0; i < elements.length; i++) {
-			collection.add(elements[i]);
+		addToCollection(IGNORE_NONE, collection, elements);
+	}
+
+	/**
+	 * 判断是否不忽略指定值
+	 * 
+	 * @param value
+	 * @param ignore
+	 * @return
+	 */
+	protected static final boolean notIgnore(Object value, int ignore) {
+		if (ignore > IGNORE_NONE) {
+			switch (ignore) {
+			case IGNORE_NULL:
+				return value != null;
+			case IGNORE_EMPTY:
+				return value != null && value.toString().length() > 0;
+			case IGNORE_BLANK:
+				return value != null && StringUtil.notEmpty(value.toString());
+			}
 		}
+		return true;
 	}
 
 	/**
