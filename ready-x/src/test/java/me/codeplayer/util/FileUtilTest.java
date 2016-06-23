@@ -3,15 +3,14 @@ package me.codeplayer.util;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-
-import me.codeplayer.util.FileUtil;
+import java.io.IOException;
 
 import org.junit.Test;
 
 public class FileUtilTest {
 
-	// @Test
-	public void copyFile() {
+	@Test
+	public void copyFile() throws IOException {
 		FileUtil.copyFile("D:\\BaiduYunDownload\\API\\Apache2.2_zh_CN.chm", "E:/notfound/xxxxx/apache-maven-3.2.3-bin-23.zip", true);
 	}
 
@@ -32,7 +31,7 @@ public class FileUtilTest {
 		System.out.println(new File(path).isDirectory());
 	}
 
-	@Test
+	// @Test
 	public void getFileName() {
 		String path = "hhkjhjkhk/xxx\\yyy.name";
 		System.out.println(FileUtil.getFileName(path));
@@ -44,8 +43,8 @@ public class FileUtilTest {
 		FileUtil.moveFileToDirectory(path, "D:/BaiduYunDownload", true);
 	}
 
-	@Test
+	// @Test
 	public void calcFileSize() {
-		System.out.println(FileUtil.calcFileSize(10154L, FileUtil.UNIT_AUTO));
+		System.out.println(FileUtil.calcFileSize(10154, FileUtil.UNIT_AUTO));
 	}
 }

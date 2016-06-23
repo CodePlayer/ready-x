@@ -17,11 +17,12 @@ public abstract class StringUtil {
 	protected static final char[] digits = "0123456789ABCDEF".toCharArray();
 
 	/**
-	 * 获取指定字符串的Unicode编码，例如：“中国”将返回“\u4e2d\u56fd”<br>
+	 * 获取指定字符串的Unicode编码，例如：“中国”将返回“\u4E2D\u56FD”<br>
 	 * 此方法返回的编码中，字母均采用大写形式，此外，本方法采用StringBuilder作为字符容器
 	 * 
 	 * @param src 指定字符串不能为null，否则将引发空指针异常
 	 * @return
+	 * @since 0.0.1
 	 */
 	public static String unicode(String src) {
 		byte[] bytes = src.getBytes(Charsets.UTF_16);// 转为UTF-16字节数组
@@ -49,6 +50,7 @@ public abstract class StringUtil {
 	 * 
 	 * @param src 指定字符串不能为null，否则将引发空指针异常
 	 * @return
+	 * @since 0.0.1
 	 */
 	public static String fastUnicode(String str) {
 		byte[] bytes = str.getBytes(Charsets.UTF_16);// 转为UTF-16字节数组
@@ -80,6 +82,7 @@ public abstract class StringUtil {
 	 * @param length 元素个数
 	 * @param shift 每个元素参与拼接的平均字符数相对于2的位移量
 	 * @return
+	 * @since 0.0.1
 	 */
 	public static final StringBuilder getBuilder(int length, int shift) {
 		int capacity = length << shift;
@@ -96,6 +99,7 @@ public abstract class StringUtil {
 	 * 
 	 * @param str
 	 * @return
+	 * @since 0.0.1
 	 */
 	public static final boolean isEmpty(CharSequence str) {
 		return str == null || str.length() == 0; // 后面的表达式相当于"".equals(str)，但比其性能稍好
@@ -108,6 +112,7 @@ public abstract class StringUtil {
 	 * 
 	 * @param str
 	 * @return
+	 * @since 0.0.1
 	 */
 	public static final boolean notEmpty(CharSequence str) {
 		return str != null && str.length() > 0;
@@ -120,6 +125,7 @@ public abstract class StringUtil {
 	 * 
 	 * @param obj 指定的对象
 	 * @return
+	 * @since 0.0.1
 	 */
 	public static final boolean isEmpty(Object obj) {
 		return obj == null || obj.toString().length() == 0; // 后面的表达式相当于"".equals(str)，但比其性能稍好
@@ -132,6 +138,7 @@ public abstract class StringUtil {
 	 * 
 	 * @param obj 指定的对象
 	 * @return
+	 * @since 0.0.1
 	 */
 	public static final boolean notEmpty(Object obj) {
 		return obj != null && obj.toString().length() > 0;
@@ -162,6 +169,7 @@ public abstract class StringUtil {
 	 * 
 	 * @param str
 	 * @return
+	 * @since 0.0.1
 	 */
 	public static final boolean isBlank(String str) {
 		if (str == null) {
@@ -183,6 +191,7 @@ public abstract class StringUtil {
 	 * 
 	 * @param str
 	 * @return
+	 * @since 0.0.1
 	 */
 	public static final boolean notBlank(String str) {
 		return !isBlank(str);
@@ -195,6 +204,7 @@ public abstract class StringUtil {
 	 * 
 	 * @param obj 指定的对象
 	 * @return
+	 * @since 0.0.1
 	 */
 	public static final boolean isBlank(Object obj) {
 		return obj == null || isBlank(obj.toString());
@@ -207,6 +217,7 @@ public abstract class StringUtil {
 	 * 
 	 * @param obj 指定的对象
 	 * @return
+	 * @since 0.0.1
 	 */
 	public static final boolean notBlank(Object obj) {
 		return !isBlank(obj);
@@ -219,6 +230,7 @@ public abstract class StringUtil {
 	 * 
 	 * @param values 指定的数组
 	 * @return
+	 * @since 0.0.1
 	 */
 	public boolean hasBlank(Object... values) {
 		int length = ArrayUtil.getLength(values, true);
@@ -235,6 +247,7 @@ public abstract class StringUtil {
 	 * 
 	 * @param obj 指定的对象
 	 * @return
+	 * @since 0.0.1
 	 */
 	public static final String toString(Object obj) {
 		return obj == null ? "" : obj.toString();
@@ -245,6 +258,7 @@ public abstract class StringUtil {
 	 * 
 	 * @param obj 指定的对象
 	 * @return
+	 * @since 0.0.1
 	 */
 	public static final String trim(Object obj) {
 		return obj == null ? "" : obj.toString().trim();
@@ -255,6 +269,7 @@ public abstract class StringUtil {
 	 * 
 	 * @param obj 指定的对象
 	 * @return
+	 * @since 0.0.1
 	 */
 	public static final String trim4Html(Object obj) {
 		String str;
@@ -270,6 +285,7 @@ public abstract class StringUtil {
 	 * @param maxLength 最大限制长度
 	 * @param suffix 超出长度时添加的指定后缀,如果不需要，可以为null
 	 * @return
+	 * @since 0.0.1
 	 */
 	public static final String limitChars(String str, int maxLength, String suffix) {
 		if (str == null) {
@@ -293,6 +309,7 @@ public abstract class StringUtil {
 	 * @param str 指定的字符串
 	 * @param maxLength 最大限制长度
 	 * @return
+	 * @since 0.0.1
 	 */
 	public static final String limitChars(String str, int maxLength) {
 		return limitChars(str, maxLength, "...");
@@ -306,6 +323,7 @@ public abstract class StringUtil {
 	 * @param str 字符串
 	 * @param maxLength 指定位数，不能小于1
 	 * @return
+	 * @since 0.0.1
 	 */
 	public static final String zeroFill(String str, int maxLength) {
 		return pad(str, '0', maxLength, true);
@@ -321,6 +339,7 @@ public abstract class StringUtil {
 	 * @param maxLength 指定位数，不能小于1
 	 * @param left 是在字符串左侧添加，还是右侧添加。true=左侧，false=右侧
 	 * @return
+	 * @since 0.0.1
 	 */
 	private static final String pad(String str, char ch, int maxLength, boolean left) {
 		if (str == null)
@@ -357,6 +376,7 @@ public abstract class StringUtil {
 	 * @param ch 指定的字符
 	 * @param maxLength 指定位数，不能小于1
 	 * @return
+	 * @since 0.0.1
 	 */
 	public static final String leftPad(String str, char ch, int maxLength) {
 		return pad(str, ch, maxLength, true);
@@ -371,6 +391,7 @@ public abstract class StringUtil {
 	 * @param ch 指定的字符
 	 * @param maxLength 指定位数，不能小于1
 	 * @return
+	 * @since 0.0.1
 	 */
 	public static final String rightPad(String str, char ch, int maxLength) {
 		return pad(str, ch, maxLength, false);
@@ -382,6 +403,7 @@ public abstract class StringUtil {
 	 * 
 	 * @param str
 	 * @return
+	 * @since 0.0.1
 	 */
 	public static final String trim(String str) {
 		return str == null ? "" : str.trim();
@@ -395,6 +417,7 @@ public abstract class StringUtil {
 	 * @param beginIndex 指定的字符串起始索引(可以为负数，表示 <code>beginIndex + str.length()</code> )
 	 * @param endIndex 指定的字符串结束索引(可以为负数，表示 <code>endIndex + str.length()</code> )
 	 * @return
+	 * @since 0.1.1
 	 */
 	public static final String replaceChars(String str, char ch, int beginIndex, int endIndex) {
 		int length = str.length();
@@ -424,6 +447,7 @@ public abstract class StringUtil {
 	 * @param ch 指定的字符
 	 * @param beginIndex 指定的字符串起始索引(可以为负数，表示 <code>beginIndex + str.length()</code> )
 	 * @return
+	 * @since 0.1.1
 	 */
 	public static final String replaceChars(String str, char ch, int beginIndex) {
 		return replaceChars(str, ch, beginIndex, str.length());
@@ -437,6 +461,7 @@ public abstract class StringUtil {
 	 * @param beginIndex 指定的字符串起始索引(可以为负数，表示 <code>beginIndex + str.length()</code> )
 	 * @param endIndex 指定的字符串结束索引(可以为负数，表示 <code>endIndex + str.length()</code> )
 	 * @return
+	 * @since 0.1.1
 	 */
 	public static final String replaceSubstring(String str, String replacement, int beginIndex, int endIndex) {
 		int length = str.length();
@@ -469,6 +494,7 @@ public abstract class StringUtil {
 	 * @param replacement 指定的字符串
 	 * @param beginIndex 指定的字符串起始索引(可以为负数，表示 <code>beginIndex + str.length()</code> )
 	 * @return
+	 * @since 0.1.1
 	 */
 	public static final String replaceSubstring(String str, String replacement, int beginIndex) {
 		return replaceSubstring(str, replacement, beginIndex, str.length());
@@ -481,6 +507,7 @@ public abstract class StringUtil {
 	 * @param originalCharset 原始字符集编码
 	 * @param targetCharset 目标字符集编码
 	 * @return
+	 * @since 0.3.9
 	 */
 	public static final String transEncoding(String str, String originalCharset, String targetCharset) {
 		try {
@@ -497,6 +524,7 @@ public abstract class StringUtil {
 	 * @param str 指定的URI参数字符串
 	 * @param targetCharset 目标字符集编码
 	 * @return
+	 * @since 0.3.9
 	 */
 	public static final String transEncodingForURI(String str, String targetCharset) {
 		return transEncoding(str, "ISO-8859-1", targetCharset);
@@ -508,12 +536,25 @@ public abstract class StringUtil {
 	 * 
 	 * @param str 指定的字符串
 	 * @return
+	 * @since 0.0.1
 	 */
-	public static final String reverse(String str) {
+	public static final String reverse(CharSequence str) {
 		if (str == null) {
 			return "";
 		}
 		return new StringBuilder(str).reverse().toString();
+	}
+
+	/**
+	 * 判断指定字符串是否以指定的单个字符开头
+	 * 
+	 * @param str 指定的字符串
+	 * @param firstChar 指定的单个字符
+	 * @return
+	 * @since 0.4.2
+	 */
+	public static final boolean startWith(String str, char firstChar) {
+		return str != null && str.length() > 0 && str.charAt(0) == firstChar;
 	}
 
 	/**
@@ -523,6 +564,7 @@ public abstract class StringUtil {
 	 * @param escapeChar 转义字符
 	 * @param appendLikeWildcard 是否需要在字符串两侧添加通配符'%'
 	 * @return
+	 * @since 0.3.5
 	 */
 	public static final String escapeSQLLike(String likeStr, char escapeChar, boolean appendLikeWildcard) {
 		if (StringUtil.isEmpty(likeStr)) {
@@ -559,6 +601,7 @@ public abstract class StringUtil {
 	 * @param likeStr 指定的字符串
 	 * @param appendLikeWildcard 是否需要在字符串两侧添加通配符'%'
 	 * @return
+	 * @since 0.3.5
 	 */
 	public static final String escapeSQLLike(String likeStr, boolean appendLikeWildcard) {
 		return escapeSQLLike(likeStr, '\\', appendLikeWildcard);
@@ -570,6 +613,7 @@ public abstract class StringUtil {
 	 * 
 	 * @param likeStr 指定的字符串
 	 * @return
+	 * @since 0.3.5
 	 */
 	public static final String escapeSQLLike(String likeStr) {
 		return escapeSQLLike(likeStr, '\\', false);

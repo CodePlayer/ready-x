@@ -4,6 +4,7 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URISyntaxException;
+import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -43,8 +44,10 @@ public abstract class FileUtil {
 	 * @param path 指定的文件路径
 	 * @param removeDot 是否移除点号
 	 * @return
+	 * @throws NullPointerException 如果参数 {@code path } 为null
+	 * @since 0.0.1
 	 */
-	public static final String getExtension(String path, boolean removeDot) {
+	public static final String getExtension(String path, boolean removeDot) throws NullPointerException {
 		int pos = path.lastIndexOf('.');
 		if (pos == -1) {
 			return "";
@@ -59,6 +62,8 @@ public abstract class FileUtil {
 	 * 
 	 * @param path 指定的文件路径
 	 * @return
+	 * @throws NullPointerException 如果参数 {@code path } 为null
+	 * @since 0.0.1
 	 */
 	public static final String getExtension(String path) {
 		return getExtension(path, false);
@@ -69,6 +74,8 @@ public abstract class FileUtil {
 	 * 
 	 * @param path 指定的文件路径
 	 * @return
+	 * @throws NullPointerException 如果参数 {@code path } 为null
+	 * @since 0.0.1
 	 */
 	public static final String getFileName(String path) {
 		return getFileName(path, false);
@@ -80,11 +87,13 @@ public abstract class FileUtil {
 	 * @param path 指定的文件路径
 	 * @param withoutExt 是否需要去除文件扩展名
 	 * @return
+	 * @throws NullPointerException 如果参数 {@code path } 为null
+	 * @since 0.0.1
 	 */
 	public static final String getFileName(String path, boolean withoutExt) {
 		String str = new File(path).getName();
 		if (withoutExt) {
-			int pos = str.lastIndexOf(',');
+			int pos = str.lastIndexOf('.');
 			if (pos > -1) {
 				str = str.substring(0, pos);
 			}
@@ -99,6 +108,7 @@ public abstract class FileUtil {
 	 * @param prefix 文件名前缀(可以为null)
 	 * @param suffix
 	 * @return
+	 * @since 0.0.1
 	 */
 	public static final File getRandomFile(String path, String prefix, String suffix) {
 		String fileName = new SimpleDateFormat("yyyyMMdd-HHmmssSSS").format(new Date());
@@ -127,6 +137,7 @@ public abstract class FileUtil {
 	 * @param path
 	 * @param suffix
 	 * @return
+	 * @since 0.0.1
 	 */
 	public static final File getRandomFile(String path, String suffix) {
 		return getRandomFile(path, null, suffix);
@@ -140,6 +151,7 @@ public abstract class FileUtil {
 	 * @param unit 指定的文件单位
 	 * @param scale 保留的小数位数
 	 * @return
+	 * @since 0.0.1
 	 */
 	public static String calcFileSize(long fileSize, int unit, int scale) {
 		if (fileSize < 0) {
@@ -171,6 +183,7 @@ public abstract class FileUtil {
 	 * @param fileSize 指定的文件大小
 	 * @param unit 指定的文件单位
 	 * @return
+	 * @since 0.0.1
 	 */
 	public static String calcFileSize(long fileSize, int unit) {
 		return calcFileSize(fileSize, unit, 2);
@@ -183,6 +196,7 @@ public abstract class FileUtil {
 	 * @param divisor 指定文件单位的字节数
 	 * @param scale 保留的小数位数
 	 * @return
+	 * @since 0.0.1
 	 */
 	public static String divide(long fileSize, long divisor, int scale) {
 		return new BigDecimal(fileSize).divide(new BigDecimal(divisor), scale, RoundingMode.HALF_UP).toString();
@@ -196,6 +210,7 @@ public abstract class FileUtil {
 	 * 
 	 * @param filePath 文件路径(包含文件名)
 	 * @return
+	 * @since 0.0.1
 	 */
 	public static int deleteFile(String filePath) {
 		return deleteFile(new File(filePath));
@@ -205,11 +220,12 @@ public abstract class FileUtil {
 	 * 删除指定路径的文件。<br>
 	 * 如果该文件不存在则返回0<br>
 	 * 如果该文件存在并成功删除则返回1<br>
-	 * 其他情况返回-1
+	 * 其他情况(例如没有删除权限)返回-1
 	 * 
 	 * @param directoryPath 文件所在的文件夹路径
 	 * @param fileName 文件名
 	 * @return
+	 * @since 0.0.1
 	 */
 	public static int deleteFile(String directoryPath, String fileName) {
 		return deleteFile(new File(directoryPath, fileName));
@@ -219,10 +235,11 @@ public abstract class FileUtil {
 	 * 删除指定的文件。<br>
 	 * 如果该文件不存在则返回0<br>
 	 * 如果该文件存在并成功删除则返回1<br>
-	 * 其他情况返回-1
+	 * 其他情况(例如没有删除权限)返回-1
 	 * 
 	 * @param file
 	 * @return
+	 * @since 0.0.1
 	 */
 	private static int deleteFile(File file) {
 		int result = -1;
@@ -241,18 +258,17 @@ public abstract class FileUtil {
 	 * 
 	 * @param is 指定的文件输入流
 	 * @param target 目标文件
+	 * @since 0.0.1
 	 */
 	private static final void copy(InputStream is, File target) {
 		FileOutputStream fos = null;
-		BufferedOutputStream bos = null;
 		try {
 			fos = new FileOutputStream(target);
-			bos = new BufferedOutputStream(fos);
-			writeStream(is, bos);
+			writeStream(is, fos);
 		} catch (Exception e) {
 			throw new LogicException(e);
 		} finally {
-			closeResources(is, bos);
+			closeResources(is, fos);
 		}
 	}
 
@@ -263,6 +279,7 @@ public abstract class FileUtil {
 	 * @param target 指定的目标文件对象
 	 * @param override 如果目标文件已存在，是否允许覆盖
 	 * @return
+	 * @since 0.0.1
 	 */
 	public static final void copyFile(InputStream is, File target, boolean override) {
 		if (target.exists()) {
@@ -295,6 +312,7 @@ public abstract class FileUtil {
 	 * @param target 目标文件对象
 	 * @param override 如果目标文件已存在，是否允许覆盖
 	 * @return
+	 * @since 0.0.1
 	 */
 	public final static void copyFile(File src, File target, boolean override) {
 		if (!src.exists()) {
@@ -317,6 +335,7 @@ public abstract class FileUtil {
 	 * @param src 源文件对象
 	 * @param target 目标文件对象
 	 * @return
+	 * @since 0.0.1
 	 */
 	public final static void copyFile(File src, File target) {
 		copyFile(src, target, false);
@@ -328,6 +347,7 @@ public abstract class FileUtil {
 	 * @param src 源文件对象
 	 * @param target 目标文件对象
 	 * @return
+	 * @since 0.0.1
 	 */
 	public final static void copyFile(String src, String target, boolean override) {
 		try {
@@ -343,6 +363,7 @@ public abstract class FileUtil {
 	 * @param src 源文件路径
 	 * @param target 目标文件路径
 	 * @return
+	 * @since 0.0.1
 	 */
 	public final static void copyFile(String src, String target) {
 		copyFile(src, target, false);
@@ -387,6 +408,7 @@ public abstract class FileUtil {
 	 * 
 	 * @param file 指定的文件
 	 * @param diretory 指定的目录
+	 * @since 0.0.1
 	 */
 	public final static void copyFileToDirectory(File file, File diretory) {
 		copyFileToDirectory(file, diretory, false);
@@ -398,6 +420,7 @@ public abstract class FileUtil {
 	 * @param file 指定的文件
 	 * @param diretory 指定的目录
 	 * @param override 如果已存在同名的文件，是否允许覆盖
+	 * @since 0.0.1
 	 */
 	public final static void copyFileToDirectory(String file, String diretory, boolean override) {
 		copyFileToDirectory(new File(file), new File(diretory), override);
@@ -409,6 +432,7 @@ public abstract class FileUtil {
 	 * 
 	 * @param file 指定的文件
 	 * @param diretory 指定的目录
+	 * @since 0.0.1
 	 */
 	public final static void copyFileToDirectory(String file, String diretory) {
 		copyFileToDirectory(file, diretory, false);
@@ -420,6 +444,7 @@ public abstract class FileUtil {
 	 * @param file 指定的文件
 	 * @param target 目标文件
 	 * @param override 如果已存在同名的文件，是否允许覆盖
+	 * @since 0.0.1
 	 */
 	public static final void moveFile(File file, File target, boolean override) {
 		if (!file.canWrite()) {
@@ -435,6 +460,7 @@ public abstract class FileUtil {
 	 * 
 	 * @param file 指定的文件
 	 * @param target 目标文件
+	 * @since 0.0.1
 	 */
 	public static final void moveFile(File file, File target) {
 		moveFile(file, target, false);
@@ -446,6 +472,7 @@ public abstract class FileUtil {
 	 * @param path 指定的文件
 	 * @param target 目标文件
 	 * @param override 如果已存在同名的文件，是否允许覆盖
+	 * @since 0.0.1
 	 */
 	public static final void moveFile(String path, String target, boolean override) {
 		moveFile(new File(path), new File(target), override);
@@ -457,6 +484,7 @@ public abstract class FileUtil {
 	 * 
 	 * @param path 指定的文件
 	 * @param target 目标文件
+	 * @since 0.0.1
 	 */
 	public static final void moveFile(String path, String target) {
 		moveFile(new File(path), new File(target), false);
@@ -468,6 +496,7 @@ public abstract class FileUtil {
 	 * @param file 指定的文件
 	 * @param directory 目标文件夹
 	 * @param override 如果已存在同名的文件，是否允许覆盖
+	 * @since 0.0.1
 	 */
 	public static final void moveFileToDirectory(File file, File directory, boolean override) {
 		if (!file.canWrite()) {
@@ -483,6 +512,7 @@ public abstract class FileUtil {
 	 * 
 	 * @param file 指定的文件
 	 * @param directory 目标文件夹
+	 * @since 0.0.1
 	 */
 	public static final void moveFileToDirectory(File file, File directory) {
 		moveFileToDirectory(file, directory, false);
@@ -494,6 +524,7 @@ public abstract class FileUtil {
 	 * @param file 指定的文件
 	 * @param directory 目标文件夹
 	 * @param override 如果已存在同名的文件，是否允许覆盖
+	 * @since 0.0.1
 	 */
 	public static final void moveFileToDirectory(String path, String directory, boolean override) {
 		moveFileToDirectory(new File(path), new File(directory), override);
@@ -505,6 +536,7 @@ public abstract class FileUtil {
 	 * 
 	 * @param file 指定的文件
 	 * @param directory 目标文件夹
+	 * @since 0.0.1
 	 */
 	public static final void moveFileToDirectory(String path, String directory) {
 		moveFileToDirectory(path, directory, false);
@@ -517,14 +549,47 @@ public abstract class FileUtil {
 	 * @param in 指定的输入流
 	 * @param out 指定的输出流
 	 * @throws IOException
+	 * @since 0.0.1
 	 */
 	public static final void writeStream(InputStream in, OutputStream out) throws IOException {
+		if (in instanceof FileInputStream && out instanceof FileOutputStream) {
+			writeStream((FileInputStream) in, (FileOutputStream) out);
+			return;
+		}
 		int length = 0;
-		byte[] buffer = new byte[4096];
+		final byte[] buffer = new byte[8192];
 		while ((length = in.read(buffer)) != -1) {
 			out.write(buffer, 0, length);
 		}
 		out.flush();
+	}
+
+	/**
+	 * 将指定的输入流写入到指定的输出流中<br>
+	 * 注意该方法内部只负责写入，不负责关闭相关流资源
+	 * 
+	 * @param fis 指定的文件输入流
+	 * @param fos 指定的文件输出流
+	 * @throws IOException
+	 * @since 0.4.2
+	 */
+	public static final void writeStream(FileInputStream fis, FileOutputStream fos) throws IOException {
+		FileChannel inChannel = fis.getChannel();
+		FileChannel outChannel = fos.getChannel();
+		try {
+			inChannel.transferTo(0, Long.MAX_VALUE, outChannel);
+		} finally {
+			try {
+				outChannel.close();
+			} catch (IOException e) {
+				// ignore
+			}
+			try {
+				inChannel.close();
+			} catch (IOException e) {
+				// ignore
+			}
+		}
 	}
 
 	/**
@@ -533,6 +598,7 @@ public abstract class FileUtil {
 	 * 
 	 * @param in 输入流
 	 * @param out 输出流
+	 * @since 0.0.1
 	 */
 	public static final void closeResources(InputStream in, OutputStream out) {
 		try {
@@ -558,6 +624,7 @@ public abstract class FileUtil {
 	 * @param file 指定的文件对象
 	 * @param targetDir 目标目录
 	 * @return 返回复制后的目标文件对象
+	 * @since 0.0.1
 	 */
 	public static final File copyFileToDirectoryWithRandomFileName(File file, String targetDir) {
 		File target = getRandomFile(targetDir, getExtension(file.getName()));
@@ -571,6 +638,7 @@ public abstract class FileUtil {
 	 * @param file 指定的文件对象
 	 * @param targetDir 目标目录
 	 * @return 返回移动后的目标文件对象
+	 * @since 0.0.1
 	 */
 	public static final File moveFileToDirectoryWithRandomFileName(File file, String targetDir) {
 		File target = getRandomFile(targetDir, getExtension(file.getName()));
@@ -586,6 +654,7 @@ public abstract class FileUtil {
 	 * @param prefix 目标文件的文件名前缀(可以为null)
 	 * @param suffix 目标文件的文件后缀。null、""、"gif"、".gif"等形式均可，前两者表示没有后缀，后两者表示指定的后缀。
 	 * @return 返回复制后的目标文件对象
+	 * @since 0.0.1
 	 */
 	public static final File copyFileToDirectoryWithRandomFileName(File file, String targetDir, String prefix, String suffix) {
 		File target = getRandomFile(targetDir, prefix, suffix);
@@ -600,6 +669,7 @@ public abstract class FileUtil {
 	 * @param targetDir 目标目录
 	 * @param suffix 目标文件的文件后缀。null、""、"gif"、".gif"等形式均可，前两者表示没有后缀，后两者表示指定的后缀。
 	 * @return 返回复制后的目标文件对象
+	 * @since 0.0.1
 	 */
 	public static final File copyFileToDirectoryWithRandomFileName(File file, String targetDir, String suffix) {
 		return copyFileToDirectoryWithRandomFileName(file, targetDir, null, suffix);
@@ -613,6 +683,7 @@ public abstract class FileUtil {
 	 * @param prefix 目标文件的文件名前缀(可以为null)
 	 * @param suffix 目标文件的文件后缀。null、""、"gif"、".gif"等形式均可，前两者表示没有后缀，后两者表示指定的后缀。
 	 * @return 返回移动后的目标文件对象
+	 * @since 0.0.1
 	 */
 	public static final File moveFileToDirectoryWithRandomFileName(File file, String targetDir, String prefix, String suffix) {
 		File target = getRandomFile(targetDir, prefix, suffix);
@@ -627,6 +698,7 @@ public abstract class FileUtil {
 	 * @param targetDir 目标目录
 	 * @param suffix 目标文件的文件后缀。null、""、"gif"、".gif"等形式均可，前两者表示没有后缀，后两者表示指定的后缀。
 	 * @return 返回移动后的目标文件对象
+	 * @since 0.0.1
 	 */
 	public static final File moveFileToDirectoryWithRandomFileName(File file, String targetDir, String suffix) {
 		return moveFileToDirectoryWithRandomFileName(file, targetDir, null, suffix);
@@ -662,7 +734,7 @@ public abstract class FileUtil {
 	 * @param file
 	 * @return 返回文件内容字符串，内部换行符为'\n'
 	 * @throws IOException
-	 * @since
+	 * @since 0.3.1
 	 * @author Ready
 	 */
 	public static final String readContent(File file) throws IOException {
