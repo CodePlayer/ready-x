@@ -1,7 +1,6 @@
 package me.codeplayer.util;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
 
 /**
  * 用于对字符串类型的数据进行常用处理操作的工具类
@@ -420,24 +419,58 @@ public abstract class StringUtil {
 	 * @since 0.1.1
 	 */
 	public static final String replaceChars(String str, char ch, int beginIndex, int endIndex) {
-		int length = str.length();
-		if (beginIndex < 0) {
+		final int length = str.length();
+		int[] range = ensureRangeSafe(beginIndex, endIndex, length);
+		if (range == null) {
+			return str;
+		}
+		final char[] chars = str.toCharArray();
+		for (int i = range[0]; i < range[1]; i++) {
+			chars[i] = ch;
+		}
+		return new String(chars);
+	}
+
+	/**
+	 * 确保起始和结束索引的范围边界安全，并返回范围安全的 [开始索引, 结束索引] 数组<br>
+	 * 如果索引参数为负，自动加上 <code>length</code>，如果处理后的 <code>beginIndex > endIndex</code>，则自动对调位置<br>
+	 * 方法起始索引或结束索引超出合理边界，方法内会尽可能地根据 <code>length</code> 进行调整：<br>
+	 * 1、如果 <code>beginIndex < -length </code> ，则 <code>beginIndex = 0</code><br>
+	 * 2、如果 <code>endIndex > length </code> ，则 <code>endIndex = length</code>
+	 * 
+	 * @param beginIndex 起始索引
+	 * @param endIndex 结束索引
+	 * @param length 指定数组、集合或字符串的长度，不能小于0
+	 * @return 如果范围安全则返回对应的范围数组，否则返回null
+	 * @author Ready
+	 * @since 0.4.2
+	 */
+	public static final int[] ensureRangeSafe(int beginIndex, int endIndex, final int length) {
+		if (length <= 0 || beginIndex == endIndex) {
+			return null;
+		}
+		if (beginIndex < 0) { // 确保 beginIndex 参数安全
 			beginIndex += length;
+			if (beginIndex < 0) {
+				beginIndex = 0;
+			}
+		} else if (beginIndex >= length) {
+			return null;
 		}
-		if (endIndex < 0) {
+		if (endIndex < 0) { // 确保 endIndex 参数安全
 			endIndex += length;
+			if (endIndex < 0) {
+				return null;
+			}
+		} else if (endIndex > length) {
+			endIndex = length;
 		}
-		StringBuilder sb = new StringBuilder(length);
-		if (beginIndex > 0) {
-			sb.append(str.substring(0, beginIndex));
+		int[] range = new int[] { beginIndex, endIndex };
+		if (beginIndex > endIndex) {
+			range[0] = endIndex;
+			range[1] = beginIndex;
 		}
-		char[] chars = new char[endIndex - beginIndex];
-		Arrays.fill(chars, ch);
-		sb.append(chars);
-		if (endIndex < length) {
-			sb.append(str.substring(endIndex));
-		}
-		return sb.toString();
+		return range;
 	}
 
 	/**
@@ -464,18 +497,16 @@ public abstract class StringUtil {
 	 * @since 0.1.1
 	 */
 	public static final String replaceSubstring(String str, String replacement, int beginIndex, int endIndex) {
-		int length = str.length();
-		if (beginIndex < 0) {
-			beginIndex += length;
+		if (replacement == null || replacement.length() == 0) {
+			return str;
 		}
-		if (endIndex < 0) {
-			endIndex += length;
+		final int length = str.length();
+		int[] range = ensureRangeSafe(beginIndex, endIndex, length);
+		if (range == null) {
+			return str;
 		}
-		if (beginIndex > endIndex) {
-			int temp = beginIndex;
-			beginIndex = endIndex;
-			endIndex = temp;
-		}
+		beginIndex = range[0];
+		endIndex = range[1];
 		StringBuilder sb = new StringBuilder(replacement.length() + length - endIndex + beginIndex);
 		if (beginIndex > 0) {
 			sb.append(str, 0, beginIndex);
