@@ -4,10 +4,10 @@ import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Map;
 
-import me.codeplayer.e.LogicException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import me.codeplayer.e.LogicException;
 
 /**
  * 通用公共工具类<br>
@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Ready
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings("rawtypes")
 public abstract class X {
 
 	/**
