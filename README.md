@@ -1,7 +1,7 @@
 # ready-x
 ready-x 是一个基于Java 5 编写的基础工具库，其中包含了常见的文本(字符串)、数组、集合、文件、商业计算、随机数等方面的处理工具类。目前主要方便本人在工作中快速开发使用。
 
-该工具库的定位与Apache的 commons-lang3 相似，但 ready-x 并没有重复实现 commons-lang3 的大部分方法，仅仅作为该工具库的补充，建议在实际开发过程中将common-lang3和ready-x配合使用（由于历史原因，ready-x 也重复实现了common-lang3 的部分方法，因为common-lang3的部分方法在早期版本中的实现性能并不理想，例如：使用StringBuffer，没有按照最优逻辑处理）。
+该工具库的定位与Apache的 commons-lang3 相似，但 ready-x 并没有重复实现 commons-lang3 的大部分方法，仅仅作为该工具库的补充，建议在实际开发过程中将 common-lang3 和 ready-x 配合使用（由于历史原因，ready-x 也重复实现了 common-lang3 的部分方法，因为 common-lang3 的部分方法在早期版本中的实现不够理想，例如：使用StringBuffer、没有按照最优逻辑处理）。
 
 由于源代码中的每个方法都已经注明了非常详细的中文注释，因此暂不另行提供API文档。
 
