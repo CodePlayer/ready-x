@@ -72,8 +72,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * @param date
 	 */
 	public EasyDate(java.util.Date date) {
-		setCalendar(new GregorianCalendar());
-		calendar.setTimeInMillis(date.getTime());
+		this(date.getTime());
 	}
 
 	/**
@@ -711,7 +710,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 			EasyDate me = new EasyDate(getTime());
 			EasyDate other = new EasyDate(theMillis);
 			EasyDate min = isMax ? other : me,
-			max = isMax ? me : other;
+					max = isMax ? me : other;
 			int diffOfYear = max.getYear() - min.getYear();
 			if (diffOfYear > 0) {
 				min.addYear(diffOfYear);

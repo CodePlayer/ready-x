@@ -170,13 +170,13 @@ public abstract class StringUtil {
 	 * @return
 	 * @since 0.0.1
 	 */
-	public static final boolean isBlank(String str) {
+	public static final boolean isBlank(CharSequence str) {
 		if (str == null) {
 			return true;
 		}
 		int length = str.length();
 		for (int i = 0; i < length; i++) {
-			if (str.charAt(i) > ' ') {
+			if (str.charAt(i) > ' ') { // ' '即'\u0020'，参考 java.lang.String.trim() 方法的实现
 				return false;
 			}
 		}
