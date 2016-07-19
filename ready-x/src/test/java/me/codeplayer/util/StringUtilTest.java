@@ -71,4 +71,11 @@ public class StringUtilTest {
 		assertFalse(StringUtil.notEmpty(null));
 		assertTrue(StringUtil.notEmpty("   "));
 	}
+
+	@Test
+	public void containsWord() {
+		assertTrue(StringUtil.containsWord("edit view submit", "view", " "));
+		assertFalse(StringUtil.containsWord("edit,view,submit", "view", " "));
+		assertTrue(StringUtil.containsWord("edit,view submit", "submit", ", "));
+	}
 }

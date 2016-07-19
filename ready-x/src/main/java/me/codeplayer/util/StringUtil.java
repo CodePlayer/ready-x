@@ -649,4 +649,30 @@ public abstract class StringUtil {
 	public static final String escapeSQLLike(String likeStr) {
 		return escapeSQLLike(likeStr, '\\', false);
 	}
+
+	/**
+	 * 检测指定字符串中是否存在指定的单词
+	 * 
+	 * @param container 待检测的字符串
+	 * @param searchedWord 指定的单词
+	 * @param seperatorChars 单词两侧必须是指定的字符之一或位于字符串 {@code container }的首/尾位置
+	 * @return
+	 * @author Ready
+	 * @since 0.4.2
+	 */
+	public static final boolean containsWord(String container, String searchedWord, String seperatorChars) {
+		if (searchedWord == null)
+			return false;
+		int startIndex = container.indexOf(searchedWord);
+		if (startIndex == -1) {
+			return false;
+		}
+		if (startIndex == 0 || seperatorChars.indexOf(container.charAt(startIndex - 1)) != -1) {
+			int endPos = startIndex + searchedWord.length();
+			if (endPos == container.length() || seperatorChars.indexOf(container.charAt(endPos)) != -1) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
