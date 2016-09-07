@@ -21,13 +21,23 @@ import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
 public abstract class JSONUtil {
 
 	/**
-	 * 将Java对象编码为JSON字符串
-	 * 
+	 * 将Java对象编码为JSON字符串。<br/>
+	 * 如果对象里存在为null的属性，则不包含在字符串中。
 	 * @param obj 指定的任意对象
 	 * @return
 	 */
 	public static final String encode(Object obj) {
 		return JSON.toJSONString(obj, SerializerFeature.DisableCircularReferenceDetect);
+	}
+
+	/**
+	 * 将Java对象编码为JSON字符串。<br/>
+	 * 空的属性也会输出。
+	 * @param obj 指定的任意对象
+	 * @return
+	 */
+	public static final String encodeWithNull(Object obj) {
+		return JSON.toJSONString(obj, SerializerFeature.DisableCircularReferenceDetect, SerializerFeature.WriteMapNullValue);
 	}
 
 	/**
