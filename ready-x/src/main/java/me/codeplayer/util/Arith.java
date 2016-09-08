@@ -727,7 +727,6 @@ public class Arith {
 	 * 
 	 * @param d
 	 * @return
-	 * @version 1.0
 	 * @author Ready
 	 */
 	public static final boolean isIntegral(BigDecimal d) {

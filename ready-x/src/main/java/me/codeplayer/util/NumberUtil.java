@@ -117,12 +117,25 @@ public abstract class NumberUtil {
 	 * 以int形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为int形式，将返回指定的<code>defaultValue</code>
 	 *
-	 * @param value        指定的对象
+	 * @param value 指定的对象
 	 * @param defaultValue 指定的默认值
 	 * @return
 	 */
 	public static final int getInt(Object value, int defaultValue) {
-		return getInteger(value, Integer.valueOf(defaultValue)).intValue();
+		if (value == null) {
+			return defaultValue;
+		}
+		if (value instanceof Number) {
+			return ((Number) value).intValue();
+		} else if (value instanceof CharSequence && ((CharSequence) value).length() == 0) {
+			return defaultValue;
+		} else {
+			try {
+				return Integer.parseInt(value.toString());
+			} catch (Exception e) {
+				return defaultValue;
+			}
+		}
 	}
 
 	/**
@@ -138,7 +151,7 @@ public abstract class NumberUtil {
 			return defaultValue;
 		}
 		if (value instanceof Number) {
-			return Integer.valueOf(((Number) value).intValue());
+			return value.getClass() == Integer.class ? (Integer) value : ((Number) value).intValue();
 		} else if (value instanceof CharSequence && ((CharSequence) value).length() == 0) {
 			return defaultValue;
 		} else {
@@ -166,19 +179,32 @@ public abstract class NumberUtil {
 	 * 以long形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为long形式，将返回指定的<code>defaultValue</code>
 	 *
-	 * @param value        指定的对象
+	 * @param value 指定的对象
 	 * @param defaultValue 指定的默认值
 	 * @return
 	 */
 	public static final long getLong(Object value, long defaultValue) {
-		return getLong(value, Long.valueOf(defaultValue)).longValue();
+		if (value == null) {
+			return defaultValue;
+		}
+		if (value instanceof Number) {
+			return ((Number) value).longValue();
+		} else if (value instanceof CharSequence && ((CharSequence) value).length() == 0) {
+			return defaultValue;
+		} else {
+			try {
+				return Long.parseLong(value.toString());
+			} catch (Exception e) {
+				return defaultValue;
+			}
+		}
 	}
 
 	/**
 	 * 以Long形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为Long形式，将返回指定的<code>defaultValue</code>
 	 *
-	 * @param value        指定的对象
+	 * @param value 指定的对象
 	 * @param defaultValue 指定的默认值
 	 * @return
 	 */
@@ -187,8 +213,8 @@ public abstract class NumberUtil {
 			return defaultValue;
 		}
 		if (value instanceof Number) {
-			return ((Number) value).longValue();
-		} else if ("".equals(value)) {
+			return Long.class == value.getClass() ? (Long) value : ((Number) value).longValue();
+		} else if (value instanceof CharSequence && ((CharSequence) value).length() == 0) {
 			return defaultValue;
 		} else {
 			try {

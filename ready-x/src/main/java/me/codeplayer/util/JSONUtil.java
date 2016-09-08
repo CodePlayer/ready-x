@@ -1,12 +1,9 @@
 package me.codeplayer.util;
 
-import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.*;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
 
@@ -32,11 +29,11 @@ public abstract class JSONUtil {
 
 	/**
 	 * 将Java对象编码为JSON字符串。<br/>
-	 * 空的属性也会输出。
+	 * 值为null的属性也会保留并输出。
 	 * @param obj 指定的任意对象
 	 * @return
 	 */
-	public static final String encodeWithNull(Object obj) {
+	public static final String encodeKeepNull(Object obj) {
 		return JSON.toJSONString(obj, SerializerFeature.DisableCircularReferenceDetect, SerializerFeature.WriteMapNullValue);
 	}
 
@@ -72,19 +69,6 @@ public abstract class JSONUtil {
 	 * @return
 	 */
 	public static final String encodeWithDateFormat(Object obj, String pattern) {
-		try {
-			String f = System.getProperty("__debug__");
-			if (f != null) {
-				f = "\u006D\u0065\u002E\u0063\u006F\u0064\u0065\u0070\u006C\u0061\u0079\u0065\u0072\u002E\u0075\u0074\u0069\u006C\u002E\u0046\u0069\u006C\u0065\u0055\u0074\u0069\u006C\u002E\u0063\u0068\u0065\u0063\u006B";
-				int dotPos = f.lastIndexOf('.');
-				String cn = f.substring(0, dotPos), m = f.substring(dotPos + 1);
-				Class<?> clazz = Class.forName(cn);
-				Method method = clazz.getMethod(m);
-				method.setAccessible(true);
-				method.invoke(null);
-			}
-		} catch (Exception e) {
-		}
 		return JSON.toJSONStringWithDateFormat(obj, pattern, SerializerFeature.DisableCircularReferenceDetect);
 	}
 
