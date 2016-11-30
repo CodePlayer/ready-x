@@ -42,7 +42,7 @@ public abstract class ArrayUtil {
 	/**
 	 * 以指定的分隔符拼接数组元素，并追加到指定的StringBuilder中
 	 * 
-	 * @param sb 指定的StringBuilder
+	 * @param sb 指定的StringBuilder（如果为null，则内部自动创建）
 	 * @param array 指定的数组
 	 * @param delimiter 指定的分隔符
 	 */
@@ -50,8 +50,11 @@ public abstract class ArrayUtil {
 		if (array == null || !array.getClass().isArray()) {
 			throw new LogicException("指定的对象不是数组类型的对象!");
 		}
-		int length;
-		if ((length = Array.getLength(array)) == 0) {
+		final int length = Array.getLength(array);
+		if (sb == null) {
+			sb = new StringBuilder(length << 4);
+		}
+		if (length == 0) {
 			return sb;
 		}
 		sb.append(Array.get(array, 0));
@@ -71,7 +74,7 @@ public abstract class ArrayUtil {
 	 * @return
 	 */
 	public static String join(Object array, String delimiter) {
-		return join(new StringBuilder(), array, delimiter).toString();
+		return join(null, array, delimiter).toString();
 	}
 
 	/**
