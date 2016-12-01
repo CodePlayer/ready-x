@@ -390,7 +390,8 @@ public abstract class ArrayUtil {
 		if (num < length) {
 			array = Array.newInstance(componentType, num);
 			System.arraycopy(newArray, 0, array, 0, num);
+			return array;
 		}
-		return array;
+		return newArray;
 	}
 }
