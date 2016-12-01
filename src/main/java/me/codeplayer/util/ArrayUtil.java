@@ -1,12 +1,12 @@
 package me.codeplayer.util;
 
-import java.lang.reflect.Array;
-
 import me.codeplayer.e.LogicException;
+
+import java.lang.reflect.Array;
 
 /**
  * 用于对数组类型的数据(字节数组参见NumberUtil类)进行相应处理的工具类
- * 
+ *
  * @author Ready
  * @date 2012-9-29
  */
@@ -31,7 +31,7 @@ public abstract class ArrayUtil {
 
 	/**
 	 * 判断指定对象是否为数组类型
-	 * 
+	 *
 	 * @param obj 指定的对象
 	 * @return
 	 */
@@ -361,4 +361,39 @@ public abstract class ArrayUtil {
 		}
 		return false;
 	}
+
+	/**
+	 * 移除数组里重复的元素
+	 *
+	 * @param array 指定的数组对象
+	 * @return
+	 */
+	static Object removeDuplicate(Object array) {
+		int length = Array.getLength(array);
+		Class componentType = array.getClass().getComponentType();
+		Object newArray = Array.newInstance(componentType, length);
+		System.arraycopy(array, 0, newArray, 0, length);
+		array = newArray;
+		if (length < 2) {
+			return array;
+		}
+		int newLength = length;
+		for (int i = 0; i < newLength; i++) {
+			Object a = Array.get(array, i);
+			for (int j = i + 1; j < newLength; j++) {
+				Object na = Array.get(newArray, j);
+				if (a.equals(na) && j < --newLength) {
+					for (int k = j--; k < newLength; k++) {
+						Array.set(newArray, k, Array.get(newArray, k + 1));
+					}
+				}
+			}
+		}
+		if (length > newLength) {
+			array = Array.newInstance(componentType, newLength);
+			System.arraycopy(newArray, 0, array, 0, newLength);
+		}
+		return array;
+	}
+
 }
