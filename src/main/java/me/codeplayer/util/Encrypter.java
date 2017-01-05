@@ -3,8 +3,6 @@ package me.codeplayer.util;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import me.codeplayer.e.LogicException;
-
 /**
  * 封装常用数据加密算法的加密器<br>
  * 内部主要包含MD5、SHA-1等不可逆算法以及DES可逆算法的常用处理方法<br>
@@ -39,7 +37,7 @@ public abstract class Encrypter {
 	 * @return
 	 */
 	public static final String md5(String input) {
-		return md5(input.getBytes(Charsets.UTF_8));
+		return encode(input, "MD5");
 	}
 
 	/**
@@ -51,7 +49,8 @@ public abstract class Encrypter {
 	 * @return
 	 */
 	public static final String md5For16(String input) {
-		return md5For16(input.getBytes(Charsets.UTF_8));
+		byte[] bytes = encode(input.getBytes(Charsets.UTF_8), "MD5");
+		return bytes2Hex(bytes, 4, 12);
 	}
 
 	/**
@@ -61,21 +60,8 @@ public abstract class Encrypter {
 	 * @param buf
 	 * @return
 	 */
-	public static final String md5(byte[] buf) {
-		byte[] buffer = getMessageDigest("MD5").digest(buf);
-		return bytes2Hex(buffer);
-	}
-
-	/**
-	 * 将指定的字节数组通过MD5加密算法进行加密，并返回加密后的16位MD5值<br>
-	 * 如果数组为null，则引发空指针异常
-	 * 
-	 * @param buf
-	 * @return
-	 */
-	public static final String md5For16(byte[] buf) {
-		byte[] buffer = getMessageDigest("MD5").digest(buf);
-		return bytes2Hex(buffer, 4, 12);
+	public static final byte[] md5(final byte[] buf) {
+		return encode(buf, "MD5");
 	}
 
 	/**
@@ -87,19 +73,18 @@ public abstract class Encrypter {
 	 * @return
 	 */
 	public static final String sha1(String input) {
-		return sha1(input.getBytes(Charsets.UTF_8));
+		return encode(input, "SHA");
 	}
 
 	/**
-	 * 将指定的字节数组通过SHA-1加密算法进行加密，并返回加密后的40位SHA-1值<br>
+	 * 将指定的字节数组通过SHA-1加密算法进行加密，并返回加密后的字节数组<br>
 	 * 如果数组为null，则引发空指针异常
 	 * 
 	 * @param buf
 	 * @return
 	 */
-	public static final String sha1(byte[] buf) {
-		byte[] buffer = getMessageDigest("SHA").digest(buf);
-		return bytes2Hex(buffer);
+	public static final byte[] sha1(final byte[] buf) {
+		return encode(buf, "SHA");
 	}
 
 	/**
@@ -136,7 +121,7 @@ public abstract class Encrypter {
 	 * @param input 需要加密的字节数组
 	 * @return
 	 */
-	public static final byte[] desEncode(String key, byte[] input) {
+	public static final byte[] desEncode(String key, final byte[] input) {
 		DES des = new DES(key);
 		return des.encode(input);
 	}
@@ -149,26 +134,21 @@ public abstract class Encrypter {
 	 * @param dest 需要解密的字节数组
 	 * @return
 	 */
-	public static final byte[] desDecode(String key, byte[] dest) {
+	public static final byte[] desDecode(String key, final byte[] dest) {
 		DES des = new DES(key);
 		return des.decode(dest);
 	}
 
 	/**
-	 * 以指定的算法对指定的字节数组进行加密运算，并返回加密后的十六进制的字符串值<br>
+	 * 以指定的算法对指定的字节数组进行加密运算，并返回加密后的字节数组<br>
 	 * <b>注意：</b>算法名称必须是MessageDigest对象支持的算法，否则可能引发异常
 	 * 
 	 * @param buf 指定的字节数组
 	 * @param algorithm 算法名称
 	 * @return
 	 */
-	public static final String encode(byte[] buf, String algorithm) {
-		try {
-			MessageDigest digest = MessageDigest.getInstance(algorithm);
-			return bytes2Hex(digest.digest(buf));
-		} catch (NoSuchAlgorithmException e) {
-			throw new LogicException(e);
-		}
+	public static final byte[] encode(final byte[] buf, String algorithm) {
+		return getMessageDigest(algorithm).digest(buf);
 	}
 
 	/**
@@ -180,8 +160,7 @@ public abstract class Encrypter {
 	 * @return
 	 */
 	public static final String encode(String input, String algorithm) {
-		MessageDigest digest = getMessageDigest(algorithm);
-		return bytes2Hex(digest.digest(input.getBytes(Charsets.UTF_8)));
+		return bytes2Hex(getMessageDigest(algorithm).digest(input.getBytes(Charsets.UTF_8)));
 	}
 
 	/**
@@ -191,14 +170,8 @@ public abstract class Encrypter {
 	 * @param bytes
 	 * @return
 	 */
-	public static final String bytes2Hex(byte[] bytes) {
-		int length = bytes.length;
-		StringBuilder sb = new StringBuilder(length << 1);
-		for (int i = 0; i < length; i++) {
-			sb.append(Character.forDigit((bytes[i] >> 4) & 0xf, 16));
-			sb.append(Character.forDigit(bytes[i] & 0xf, 16));
-		}
-		return sb.toString();
+	public static final String bytes2Hex(final byte[] bytes) {
+		return bytes2Hex(bytes, 0, bytes.length);
 	}
 
 	/**
@@ -210,17 +183,18 @@ public abstract class Encrypter {
 	 * @param end 结束转换的索引
 	 * @return
 	 */
-	public static final String bytes2Hex(byte[] bytes, int start, int end) {
-		int length = end - start;
-		if (length <= 0 || end > bytes.length || length > bytes.length) {
+	public static final String bytes2Hex(final byte[] bytes, final int start, final int end) {
+		final int length = end - start;
+		if (start < 0 || end > bytes.length || length < 0) {
 			// 如果结尾索引或截取长度大于数组长度
 			throw new ArrayIndexOutOfBoundsException(end);
 		}
-		StringBuilder sb = new StringBuilder(length << 1);
+		final char[] chars = new char[length << 1];
+		int c = 0;
 		for (int i = start; i < end; i++) {
-			sb.append(Character.forDigit((bytes[i] >> 4) & 0xf, 16));
-			sb.append(Character.forDigit(bytes[i] & 0xf, 16));
+			chars[c++] = Character.forDigit((bytes[i] >> 4) & 0xf, 16);
+			chars[c++] = Character.forDigit(bytes[i] & 0xf, 16);
 		}
-		return sb.toString();
+		return new String(chars);
 	}
 }
