@@ -1,6 +1,7 @@
 package me.codeplayer.util;
 
 import java.lang.reflect.Array;
+import java.util.Collection;
 
 import me.codeplayer.e.LogicException;
 
@@ -360,5 +361,18 @@ public abstract class ArrayUtil {
 			}
 		}
 		return false;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static final <T> T[] toArray(Collection<? extends T> collection, Class<T> type) {
+		if (collection == null) {
+			return null;
+		}
+		final int size = collection.size();
+		T[] array = (T[]) Array.newInstance(type, size);
+		if (size > 0) {
+			collection.toArray(array);
+		}
+		return array;
 	}
 }
