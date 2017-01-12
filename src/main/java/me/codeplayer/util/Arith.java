@@ -1,9 +1,6 @@
 package me.codeplayer.util;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.MathContext;
-import java.math.RoundingMode;
+import java.math.*;
 
 import me.codeplayer.util.ChineseNumber.ChineseNumberStyle;
 
@@ -403,6 +400,31 @@ public class Arith {
 	 */
 	public Arith round(int newScale) {
 		return setScale(newScale, RoundingMode.HALF_UP);
+	}
+
+	/**
+	 * 设置四舍五入的精度(即精确到的小数位数)<br>
+	 * <b>注意：</b>该方法底层直接根据需求自行计算，常规情况下比 {@link #round(int) } 要快 10+倍，但目前尚处于实验性质（不过一般基本上没什么问题）
+	 * 
+	 * @param value 指定的数值
+	 * @param newScale 指定的精确位数
+	 * @return
+	 */
+	public static final double roundFast(final double value, final int newScale) {
+		final double factor = Math.pow(10, newScale + 1);
+		final double target = value * factor;
+		if (newScale > 10 || target < Long.MIN_VALUE || target > Long.MAX_VALUE || !Double.isFinite(target)) {
+			return round(value, newScale);
+		}
+		final double adjust = 0.000000000001;
+		long val = (long) (target + adjust);
+		final long remainder = val % 10;
+		if (remainder >= 5) {
+			val += 10 - remainder;
+		} else {
+			val -= remainder;
+		}
+		return val / factor;
 	}
 
 	/**

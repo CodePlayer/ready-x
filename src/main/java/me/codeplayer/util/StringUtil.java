@@ -78,17 +78,82 @@ public abstract class StringUtil {
 	 * 内部采用<code>length << shift </code>来获取设置初始容量<br>
 	 * 并且生成的StringBuilder的最小容量为16(StringBuilder的默认容量)
 	 * 
-	 * @param length 元素个数
+	 * @param size 元素个数
 	 * @param shift 每个元素参与拼接的平均字符数相对于2的位移量
 	 * @return
 	 * @since 0.0.1
 	 */
-	public static final StringBuilder getBuilder(int length, int shift) {
-		int capacity = length << shift;
+	public static final StringBuilder getBuilder(int size, int shift) {
+		int capacity = size << shift;
 		if (capacity < 16) {
 			capacity = 16;
 		}
 		return new StringBuilder(capacity);
+	}
+
+	/**
+	 * 获取指定字符序列的字符长度
+	 * 
+	 * @param cs
+	 * @return 对应的字符长度，如果{@code cs}为{@code null}，则返回 0
+	 * @since 0.4.2
+	 */
+	public static final int length(final CharSequence cs) {
+		return cs == null ? 0 : cs.length();
+	}
+
+	/**
+	 * 根据将要追加的多个字符序列获得适当初始容量的 {@code StringBuilder}
+	 * 
+	 * @param extra 除指定的字符序列外应额外预留的字符容量
+	 * @param s1
+	 * @param s2
+	 * @param s3
+	 * @param s4
+	 * @return
+	 * @since 0.4.2
+	 */
+	public static final StringBuilder getBuilder(final int extra, final CharSequence s1, final CharSequence s2, final CharSequence s3, final CharSequence s4) {
+		return new StringBuilder(extra + length(s1) + length(s2) + length(s3) + length(s4));
+	}
+
+	/**
+	 * 根据将要追加的多个字符序列获得适当初始容量的 {@code StringBuilder}
+	 * 
+	 * @param extra 除指定的字符序列外应额外预留的字符容量
+	 * @param s1
+	 * @param s2
+	 * @param s3
+	 * @return
+	 * @since 0.4.2
+	 */
+	public static final StringBuilder getBuilder(final int extra, final CharSequence s1, final CharSequence s2, final CharSequence s3) {
+		return new StringBuilder(extra + length(s1) + length(s2) + length(s3));
+	}
+
+	/**
+	 * 根据将要追加的多个字符序列获得适当初始容量的 {@code StringBuilder}
+	 * 
+	 * @param extra 除指定的字符序列外应额外预留的字符容量
+	 * @param s1
+	 * @param s2
+	 * @return
+	 * @since 0.4.2
+	 */
+	public static final StringBuilder getBuilder(final int extra, final CharSequence s1, final CharSequence s2) {
+		return new StringBuilder(extra + length(s1) + length(s2));
+	}
+
+	/**
+	 * 根据将要追加的多个字符序列获得适当初始容量的 {@code StringBuilder}
+	 * 
+	 * @param extra 除指定的字符序列外应额外预留的字符容量
+	 * @param s1
+	 * @return
+	 * @since 0.4.2
+	 */
+	public static final StringBuilder getBuilder(final int extra, final CharSequence s1) {
+		return new StringBuilder(extra + length(s1));
 	}
 
 	/**
