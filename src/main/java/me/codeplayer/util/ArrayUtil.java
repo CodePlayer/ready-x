@@ -1,13 +1,9 @@
 package me.codeplayer.util;
 
 import java.lang.reflect.Array;
-import java.util.Collection;
+import java.util.*;
 
 import me.codeplayer.e.LogicException;
-
-import java.lang.reflect.Array;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 用于对数组类型的数据(字节数组参见NumberUtil类)进行相应处理的工具类
@@ -367,48 +363,71 @@ public abstract class ArrayUtil {
 		return false;
 	}
 
+	/**
+	 * 移除数组里的元素唯一化。如果存在重复的元素，则只保留排序最靠前(索引较小)的那个元素
+	 *
+	 * @param array 指定的数组对象
+	 * @param forceNewCopy 是否必须返回新的数组副本。如果为 {@code false}，在没有找到重复元素时，将会直接返回原数组 {@code array}
+	 * @return
+	 */
+	public static Object unique(Object array, final boolean forceNewCopy) {
+		final int length = Array.getLength(array);
+		if (!forceNewCopy && length < 2) {
+			return array;
+		}
+		final Class<?> componentType = array.getClass().getComponentType();
+		Object copy = Array.newInstance(componentType, length);
+		System.arraycopy(array, 0, copy, 0, length);
+		if (length < 2) {
+			return copy;
+		}
+		final Map<Object, Object> map = new HashMap<Object, Object>(length * 4 / 3 + 1);
+		int size = 0;
+		for (int i = 0; i < length; i++) {
+			Object ele = Array.get(array, i);
+			if (!map.containsKey(ele)) {
+				map.put(ele, null);
+				Array.set(copy, size++, ele);
+			}
+		}
+		if (size < length) {
+			array = Array.newInstance(componentType, size);
+			if (size > 0) {
+				System.arraycopy(copy, 0, array, 0, size);
+			}
+			return array;
+		}
+		return copy;
+	}
 
 	/**
-	 * 移除数组里重复的元素
+	 * 移除数组里的元素唯一化。如果存在重复的元素，则只保留排序最靠前(索引较小)的那个元素
 	 *
 	 * @param array 指定的数组对象
 	 * @return
+	 * @see #unique(Object, boolean)
 	 */
-	public static Object removeDuplicate(Object array) {
-		int length = Array.getLength(array);
-		Class componentType = array.getClass().getComponentType();
-		Object newArray = Array.newInstance(componentType, length);
-		System.arraycopy(array, 0, newArray, 0, length);
-		if (length < 2) {
-			return newArray;
-		}
-		Map<Object, Object> hashMap = new HashMap<Object, Object>(length);
-		int num = 0;
-		for (int i = 0; i < length; i++) {
-			Object a = Array.get(array, i);
-			if (!hashMap.containsKey(a)) {
-				hashMap.put(a, null);
-				Array.set(newArray, num++, a);
-			}
-		}
-		if (num < length) {
-			array = Array.newInstance(componentType, num);
-			System.arraycopy(newArray, 0, array, 0, num);
-			return array;
-		}
-		return newArray;
+	public static Object unique(Object array) {
+		return unique(array, true);
+	}
 
+	/**
+	 * 将指定的集合转为对应的数组
+	 * 
+	 * @param collection
+	 * @param type
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public static final <T> T[] toArray(Collection<? extends T> collection, Class<T> type) {
 		if (collection == null) {
 			return null;
 		}
 		final int size = collection.size();
-		T[] array = (T[]) Array.newInstance(type, size);
+		final T[] array = (T[]) Array.newInstance(type, size);
 		if (size > 0) {
 			collection.toArray(array);
 		}
 		return array;
-
 	}
 }
