@@ -5,6 +5,10 @@ import java.util.Collection;
 
 import me.codeplayer.e.LogicException;
 
+import java.lang.reflect.Array;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 用于对数组类型的数据(字节数组参见NumberUtil类)进行相应处理的工具类
  * 
@@ -363,6 +367,37 @@ public abstract class ArrayUtil {
 		return false;
 	}
 
+
+	/**
+	 * 移除数组里重复的元素
+	 *
+	 * @param array 指定的数组对象
+	 * @return
+	 */
+	public static Object removeDuplicate(Object array) {
+		int length = Array.getLength(array);
+		Class componentType = array.getClass().getComponentType();
+		Object newArray = Array.newInstance(componentType, length);
+		System.arraycopy(array, 0, newArray, 0, length);
+		if (length < 2) {
+			return newArray;
+		}
+		Map<Object, Object> hashMap = new HashMap<Object, Object>(length);
+		int num = 0;
+		for (int i = 0; i < length; i++) {
+			Object a = Array.get(array, i);
+			if (!hashMap.containsKey(a)) {
+				hashMap.put(a, null);
+				Array.set(newArray, num++, a);
+			}
+		}
+		if (num < length) {
+			array = Array.newInstance(componentType, num);
+			System.arraycopy(newArray, 0, array, 0, num);
+			return array;
+		}
+		return newArray;
+
 	@SuppressWarnings("unchecked")
 	public static final <T> T[] toArray(Collection<? extends T> collection, Class<T> type) {
 		if (collection == null) {
@@ -374,5 +409,6 @@ public abstract class ArrayUtil {
 			collection.toArray(array);
 		}
 		return array;
+
 	}
 }

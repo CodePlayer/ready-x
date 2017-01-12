@@ -241,4 +241,24 @@ public abstract class CollectionUtil {
 		}
 		return results;
 	}
+
+	/**
+	 * 移除集合里重复的元素
+	 *
+	 * @param list 待处理的集合
+	 * @param <E>
+	 * @return
+	 */
+	public static <E> List<E> removeDuplicate(List<E> list) {
+		if (list == null || list.isEmpty()) {
+			return Collections.EMPTY_LIST;
+		}
+		ArrayList<E> singleList = new ArrayList<E>(list.size());
+		for (E e : list) {
+			if (!singleList.contains(e)) {
+				singleList.add(e);
+			}
+		}
+		return singleList;
+	}
 }
