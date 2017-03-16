@@ -282,25 +282,9 @@ public abstract class FileUtil {
 	 * @since 0.0.1
 	 */
 	public static final void copyFile(InputStream is, File target, boolean override) {
-		if (target.exists()) {
-			// 如果目标文件是一个目录
-			if (target.isDirectory()) {
-				throw new IllegalStateException("目标文件是一个目录：" + target);
-			}
-			// 如果目标文件不可写入数据
-			if (!target.canWrite()) {
-				throw new IllegalStateException("目标文件不可写：" + target);
-			}
-			// 如果目标文件不允许被覆盖
-			if (!override) {
-				throw new IllegalStateException("目标文件已存在：" + target);
-			}
-		} else {
+		if (!checkTargetFileCanBeRewrite(target, override)) {
 			// 如果目标文件所在的目录不存在，则创建
-			File parent = target.getParentFile();
-			if (!parent.exists() && !parent.mkdirs()) {
-				throw new IllegalStateException("无法创建目标文件的所在目录：" + parent);
-			}
+			ensureParentDirExists(target);
 		}
 		copy(is, target);
 	}
@@ -450,8 +434,48 @@ public abstract class FileUtil {
 		if (!file.canWrite()) {
 			throw new IllegalStateException("指定的文件不存在或无法删除：" + file);
 		}
-		copyFile(file, target, override);
-		file.delete();
+		if (!checkTargetFileCanBeRewrite(target, override)) {
+			ensureParentDirExists(target);
+		}
+		file.renameTo(target);
+	}
+
+	/**
+	 * 检测目标文件路径是否可以被重写
+	 * 
+	 * @param target 目标文件
+	 * @param override 如果已存在同名的文件，是否允许覆盖
+	 * @return 返回目标文件是否已存在
+	 */
+	public static final boolean checkTargetFileCanBeRewrite(File target, boolean override) {
+		if (target.exists()) {
+			// 如果目标文件是一个目录
+			if (target.isDirectory()) {
+				throw new IllegalStateException("目标文件是一个目录：" + target);
+			}
+			// 如果目标文件不可写入数据
+			if (!target.canWrite()) {
+				throw new IllegalStateException("目标文件不可写：" + target);
+			}
+			// 如果目标文件不允许被覆盖
+			if (!override) {
+				throw new IllegalStateException("目标文件已存在：" + target);
+			}
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * 确保指定文件所在的目录已存在（如果不存在，则创建）
+	 * 
+	 * @param target 指定文件
+	 */
+	public static final void ensureParentDirExists(File target) {
+		File parent = target.getParentFile();
+		if (!parent.exists() && !parent.mkdirs()) {
+			throw new IllegalStateException("无法创建目标文件的所在目录：" + parent);
+		}
 	}
 
 	/**
