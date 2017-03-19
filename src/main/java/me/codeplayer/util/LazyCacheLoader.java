@@ -25,7 +25,7 @@ public class LazyCacheLoader<E> implements CacheLoader<E> {
 	}
 
 	protected boolean flushRequired(long baseTime) {
-		return nextUpdateTime == 0 && internal > 0 && nextUpdateTime < baseTime;
+		return nextUpdateTime == 0 || internal > 0 && nextUpdateTime < baseTime;
 	}
 
 	@Override
