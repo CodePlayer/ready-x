@@ -3,7 +3,6 @@ package me.codeplayer.util;
 import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.net.URISyntaxException;
 import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -743,11 +742,7 @@ public abstract class FileUtil {
 			if (char0 != '/' && char0 != '\\') {
 				pathname = '/' + pathname;
 			}
-			try {
-				return new File(FileUtil.class.getResource(pathname).toURI());
-			} catch (URISyntaxException e) {
-				throw new IllegalArgumentException(e);
-			}
+			return new File(FileUtil.class.getResource(pathname).getPath());
 		}
 		return new File(pathname);
 	}
