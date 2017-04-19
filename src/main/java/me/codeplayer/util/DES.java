@@ -48,7 +48,11 @@ public class DES {
 	 * 根据字符串参数生成KEY
 	 */
 	public void setKey(String strKey) {
-		setKey(strKey.getBytes(Charsets.UTF_8));
+		try {
+			setKey(strKey.getBytes("UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 
 	/**
