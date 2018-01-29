@@ -334,7 +334,7 @@ public abstract class NumberUtil {
 		try {
 			return getBigDecimal(value);
 		} catch (Exception e) {
-			return getBigDecimal(defaultValue);
+			return defaultValue == null ? null : getBigDecimal(defaultValue);
 		}
 	}
 
