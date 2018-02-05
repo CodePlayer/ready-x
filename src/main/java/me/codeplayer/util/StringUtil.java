@@ -193,6 +193,25 @@ public abstract class StringUtil {
 	}
 
 	/**
+	 * 判断指定的字符序列数组是否存在不为空的元素<br>
+	 * 如果数组中存在不为null、空字符串的元素，则返回true，否则返回false<br>
+	 * 
+	 * @param css
+	 * @return
+	 * @since 1.0.2
+	 */
+	public static final boolean isAnyNotEmpty(final CharSequence... css) {
+		if (css != null && css.length > 0) {
+			for (final CharSequence cs : css) {
+				if (notEmpty(cs)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * 判断指定的对象是否为空<br>
 	 * 如果对象(或其toSring()返回值)为null、空字符串，则返回true<br>
 	 * <b>注意：</b>本方法不会去除字符串两边的空格，如果需要对字符串进行去除两边空格后的判断，请使用isBlank(Object obj)方法
