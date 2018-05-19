@@ -485,8 +485,9 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 
 	 * @param date
 	 */
-	public void setDate(java.util.Date date) {
+	public EasyDate setDate(java.util.Date date) {
 		calendar.setTime(date);
+		return this;
 	}
 
 	/**
@@ -1086,10 +1087,12 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * @since 0.3
 	 * @param 指定的格式化工具类
 	 */
-	public String toString(DateFormat format) {
-		TimeZone timeZone = calendar.getTimeZone();
-		if (timeZone.getRawOffset() != TimeZone.getDefault().getRawOffset()) {
-			format.setTimeZone(timeZone);
+	public String toString(Format format) {
+		if (format instanceof DateFormat) {
+			TimeZone timeZone = calendar.getTimeZone();
+			if (timeZone.getRawOffset() != TimeZone.getDefault().getRawOffset()) {
+				((DateFormat) format).setTimeZone(timeZone);
+			}
 		}
 		return format.format(toDate());
 	}

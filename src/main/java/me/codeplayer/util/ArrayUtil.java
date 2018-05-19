@@ -364,7 +364,117 @@ public abstract class ArrayUtil {
 	}
 
 	/**
-	 * 移除数组里的元素唯一化。如果存在重复的元素，则只保留排序最靠前(索引较小)的那个元素
+	 * 查找指定对象在已经排序好的区间临界值数组中的区间索引。
+	 * <p>
+	 * 数组{@code array }必须预先排序好，可以是升序或降序。例如：{@code [5, 10, 20, 50, 100] }。
+	 * 此时，如果 {@code toCompare = 4 }，则返回 -1；如果 {@code toCompare = 5 }，则返回 0；如果 {@code toCompare = 12 }，则返回 1。
+	 * <p>
+	 * 如果数组中存在相等的值，则返回最靠近最大值的区间索引。
+	 * 
+	 * @param array 区间临界值数组
+	 * @param toCompare 指定的对象
+	 * @param ascOrDesc 指定区间临界值数组的排序方式： true 表示升序， false 表示 降序；null 则自动根据数组中前两个元素的比较结果智能判断排序方式
+	 * @since 1.0.4
+	 * @return 返回对应的区间索引。如果不满足最小的区间临界值，则返回 -1
+	 * @throws IllegalArgumentException 如果数组前两个元素的大小相等，则抛出该异常
+	 */
+	public static final <T extends Comparable<T>> int indexOfInterval(T[] array, T toCompare, Boolean ascOrDesc) throws IllegalArgumentException {
+		if (array == null || array.length == 0) {
+			return -1;
+		}
+		boolean orderByAsc;
+		if (ascOrDesc == null) {
+			if (array.length > 1) {
+				int result = array[0].compareTo(array[1]);
+				if (result != 0) {
+					orderByAsc = result < 0;
+				} else {
+					throw new IllegalArgumentException("Unable to determine the sort order");
+				}
+			} else {
+				throw new IllegalArgumentException("Unable to determine the sort order");
+			}
+		} else {
+			orderByAsc = ascOrDesc;
+		}
+		int index = -1;
+		if (orderByAsc) {
+			for (int i = array.length - 1; i >= 0; i--) {
+				if (toCompare.compareTo(array[i]) >= 0) {
+					index = i;
+					break;
+				}
+			}
+		} else {
+			for (int i = 0; i < array.length; i++) {
+				if (toCompare.compareTo(array[i]) >= 0) {
+					index = i;
+					break;
+				}
+			}
+		}
+		return index;
+	}
+
+	/**
+	 * 查找指定数值在已经排序好的区间临界值数组中的区间索引（本方法主要用于兼容原始数据类型）。
+	 * <p>
+	 * 数组{@code array }必须预先排序好，可以是升序或降序。例如：{@code [5, 10, 20, 50, 100] }。
+	 * 此时，如果 {@code toCompare = 4 }，则返回 -1；如果 {@code toCompare = 5 }，则返回 0；如果 {@code toCompare = 12 }，则返回 1。
+	 * <p>
+	 * 如果数组中存在相等的值，则返回最靠近最大值的区间索引。
+	 * 
+	 * @param array 区间临界值数组
+	 * @param toCompare 指定的对象
+	 * @param ascOrDesc 指定区间临界值数组的排序方式： true 表示升序， false 表示 降序；null 则自动根据数组中前两个元素的比较结果智能判断排序方式
+	 * @since 1.0.4
+	 * @return 返回对应的区间索引。如果不满足最小的区间临界值，则返回 -1
+	 * @throws IllegalArgumentException 如果数组前两个元素的大小相等，则抛出该异常
+	 */
+	public static final int indexOfInterval(Object array, double toCompare, Boolean ascOrDesc) throws IllegalArgumentException {
+		if (array == null) {
+			return -1;
+		}
+		int len = Array.getLength(array);
+		if (len == 0) {
+			return -1;
+		}
+		boolean orderByAsc;
+		if (ascOrDesc == null) {
+			if (len > 1) {
+				double result = Array.getDouble(array, 0) - Array.getDouble(array, 1);
+				if (result != 0) {
+					orderByAsc = result < 0;
+				} else {
+					throw new IllegalArgumentException("Unable to determine the sort order");
+				}
+			} else {
+				throw new IllegalArgumentException("Unable to determine the sort order");
+			}
+		} else {
+			orderByAsc = ascOrDesc;
+		}
+		int index = -1;
+		if (orderByAsc) {
+			for (int i = len - 1; i >= 0; i--) {
+				if (toCompare >= Array.getDouble(array, i)) {
+					index = i;
+					break;
+				}
+			}
+		} else {
+			for (int i = 0; i < len; i++) {
+				if (toCompare >= Array.getDouble(array, i)) {
+					index = i;
+					break;
+				}
+			}
+		}
+		return index;
+	}
+
+	/**
+	 * 移除数组里的重复元素，使其唯一化。如果存在重复的元素，则只保留排序最靠前(索引较小)的那个元素
 	 *
 	 * @param array 指定的数组对象
 	 * @param forceNewCopy 是否必须返回新的数组副本。如果为 {@code false}，在没有找到重复元素时，将会直接返回原数组 {@code array}
