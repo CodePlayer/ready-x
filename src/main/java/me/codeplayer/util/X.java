@@ -321,7 +321,6 @@ public abstract class X {
 	 * </pre>
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public static final <T> T decode(T value, T... expressions) {
 		int length;
 		if (expressions == null || (length = expressions.length) == 0) {

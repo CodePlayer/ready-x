@@ -19,7 +19,6 @@ public class LazyCacheLoader<E> implements CacheLoader<E> {
 		this.loader = loader;
 	}
 
-	@Override
 	public boolean flushRequired() {
 		return flushRequired(System.currentTimeMillis());
 	}
@@ -28,7 +27,6 @@ public class LazyCacheLoader<E> implements CacheLoader<E> {
 		return nextUpdateTime == 0 || internal > 0 && nextUpdateTime < baseTime;
 	}
 
-	@Override
 	public E flush(boolean lazy) {
 		E val;
 		if (lazy) {
@@ -40,7 +38,6 @@ public class LazyCacheLoader<E> implements CacheLoader<E> {
 		return val;
 	}
 
-	@Override
 	public E load() {
 		final long now = System.currentTimeMillis();
 		if (flushRequired(now)) {

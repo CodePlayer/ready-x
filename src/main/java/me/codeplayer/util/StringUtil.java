@@ -245,7 +245,7 @@ public abstract class StringUtil {
 	 * @return
 	 * @see me.codeplayer.util.StringUtil#isEmpty(Object)
 	 */
-	public boolean hasEmpty(Object... values) {
+	public static final boolean hasEmpty(Object... values) {
 		int length = ArrayUtil.getLength(values, true);
 		do {
 			if (isEmpty(values[--length])) {
@@ -325,7 +325,7 @@ public abstract class StringUtil {
 	 * @return
 	 * @since 0.0.1
 	 */
-	public boolean hasBlank(Object... values) {
+	public static final boolean hasBlank(Object... values) {
 		int length = ArrayUtil.getLength(values, true);
 		do {
 			if (isBlank(values[--length])) {

@@ -345,7 +345,6 @@ public abstract class ArrayUtil {
 	 * @since 0.3.5
 	 * @author Ready
 	 */
-	@SuppressWarnings("unchecked")
 	public static final <T> boolean ins(T value, T... array) {
 		if (value == null) {
 			for (int i = 0; i < array.length; i++) {
