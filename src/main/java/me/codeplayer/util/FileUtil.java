@@ -1,13 +1,12 @@
 package me.codeplayer.util;
 
 import java.io.*;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.nio.channels.FileChannel;
-import java.text.SimpleDateFormat;
+import java.math.*;
+import java.nio.channels.*;
+import java.text.*;
 import java.util.*;
 
-import me.codeplayer.e.LogicException;
+import me.codeplayer.e.*;
 
 /**
  * 用于文件操作的公共工具类
@@ -37,6 +36,26 @@ public abstract class FileUtil {
 	public static final int UNIT_PB = 6;
 
 	/**
+	 * 根据文件名称返回对应的扩展名在字符串中的索引值
+	 * 
+	 * @param filename 指定的文件名
+	 * @return 返回扩展名分隔符'.'对应的索引值，如果不存在则返回 -1
+	 * @author Ready
+	 */
+	public static final int indexOfExtension(String filename) {
+		int pos = filename.lastIndexOf('.');
+		if (pos != -1) {
+			if (filename.lastIndexOf('/', pos + 1) != -1) {
+				return -1;
+			}
+			if (filename.lastIndexOf('\\', pos + 1) != -1) {
+				return -1;
+			}
+		}
+		return pos;
+	}
+
+	/**
 	 * 根据文件路径获取对应的文件扩展名<br>
 	 * 如果没有指定的后缀，则返回空字符串""
 	 * 
@@ -47,7 +66,7 @@ public abstract class FileUtil {
 	 * @since 0.0.1
 	 */
 	public static final String getExtension(String path, boolean removeDot) throws NullPointerException {
-		int pos = path.lastIndexOf('.');
+		int pos = indexOfExtension(path);
 		if (pos == -1) {
 			return "";
 		} else {
@@ -92,7 +111,7 @@ public abstract class FileUtil {
 	public static final String getFileName(String path, boolean withoutExt) {
 		String str = new File(path).getName();
 		if (withoutExt) {
-			int pos = str.lastIndexOf('.');
+			int pos = indexOfExtension(path);
 			if (pos > -1) {
 				str = str.substring(0, pos);
 			}
