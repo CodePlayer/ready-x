@@ -538,4 +538,11 @@ public abstract class ArrayUtil {
 		}
 		return array;
 	}
+
+	/**
+	 * 快捷创建 Object 数组
+	 */
+	public static final Object[] of(Object... elements) {
+		return elements;
+	}
 }
