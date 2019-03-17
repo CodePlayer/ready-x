@@ -15,7 +15,6 @@ import me.codeplayer.e.*;
  * 
  * @author Ready
  */
-@SuppressWarnings("rawtypes")
 public abstract class X {
 
 	/**
@@ -274,6 +273,7 @@ public abstract class X {
 	 * @param arg
 	 * @return 上述无效的情况返回 <code>false</code>，其他情况均返回 <code>true</code>
 	 */
+	@SuppressWarnings("rawtypes")
 	public static final boolean isValid(Object arg) {
 		if (arg == null) {
 			return false;

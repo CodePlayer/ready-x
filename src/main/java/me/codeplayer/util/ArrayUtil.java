@@ -527,13 +527,12 @@ public abstract class ArrayUtil {
 	 * @param type
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public static final <T> T[] toArray(Collection<? extends T> collection, Class<T> type) {
 		if (collection == null) {
 			return null;
 		}
 		final int size = collection.size();
-		final T[] array = (T[]) Array.newInstance(type, size);
+		final T[] array = X.castType(Array.newInstance(type, size));
 		if (size > 0) {
 			collection.toArray(array);
 		}

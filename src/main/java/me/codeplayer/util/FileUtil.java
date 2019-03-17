@@ -816,15 +816,13 @@ public abstract class FileUtil {
 	 * @since 0.3.1
 	 * @author Ready
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static final Map<String, String> readProperties(String pathname, boolean inClassPath) {
 		InputStream inputStream = null;
 		try {
 			inputStream = new FileInputStream(getFile(pathname, inClassPath));
 			Properties prop = new Properties();
 			prop.load(inputStream);
-			Map m = prop;
-			return m;
+			return X.castType(prop);
 		} catch (FileNotFoundException fe) {
 			return null; // 如果文件不存在，则返回null
 		} catch (IOException e) {

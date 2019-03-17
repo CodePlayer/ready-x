@@ -1,20 +1,14 @@
 package me.codeplayer.util;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import me.codeplayer.util.CollectionUtil;
-import me.codeplayer.util.JSONUtil;
+import org.junit.*;
 
-import org.junit.Test;
+import com.alibaba.fastjson.*;
 
-import com.alibaba.fastjson.JSONArray;
-
-@SuppressWarnings("unchecked")
 public class JSONUtilTest {
 
-	//	@Test
+	// @Test
 	public void encode() {
 		// 编码HashMap
 		Map<Object, Object> map = CollectionUtil.createHashMap("name", "张三", "age", 18);
@@ -32,7 +26,7 @@ public class JSONUtilTest {
 		System.out.println(JSONUtil.encode(users)); // [{"gender":true,"id":1,"name":"张三","password":"123456"},{"gender":false,"id":2,"name":"李四","password":"12345"}]
 	}
 
-	//	@Test
+	// @Test
 	public void encodeWithReferenceDetect() {
 		// 编码HashMap
 		Map<Object, Object> map = CollectionUtil.createHashMap("name", "张三", "age", 18);
@@ -50,13 +44,13 @@ public class JSONUtilTest {
 		System.out.println(JSONUtil.encodeWithReferenceDetect(users)); // [{"gender":true,"id":1,"name":"张三","password":"123456"},{"$ref":"$[0]"}]
 	}
 
-//	@Test
+	// @Test
 	public void parse() {
 		Object json = JSONUtil.parse("['大家好']");
 		System.out.println(json.getClass());
 	}
 
-	//	@Test
+	// @Test
 	public void parseObject() {
 		String text = "{\"gender\":true,\"id\":1,\"name\":\"张三\",\"password\":\"123456\"}";
 		User user = JSONUtil.parseObject(text, User.class);
@@ -65,7 +59,7 @@ public class JSONUtilTest {
 		System.out.println(user.getId()); // 1
 	}
 
-		@Test
+	@Test
 	public void parseArray() {
 		JSONArray jsonArray = JSONUtil.parseArray("['大家好']");
 		System.out.println(jsonArray.get(0)); // 大家好
