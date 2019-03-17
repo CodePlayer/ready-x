@@ -1,13 +1,11 @@
 package me.codeplayer.util;
 
-import java.lang.reflect.Array;
-import java.util.Collection;
-import java.util.Map;
+import java.lang.reflect.*;
+import java.util.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.*;
 
-import me.codeplayer.e.LogicException;
+import me.codeplayer.e.*;
 
 /**
  * 通用公共工具类<br>
@@ -380,5 +378,16 @@ public abstract class X {
 			initCapacity <<= 1;// 如果默认容量小于指定的期望，则扩大一倍
 		}
 		return initCapacity;
+	}
+
+	/**
+	 * 将指定泛型对象进行泛型擦除，并转换为对应的泛型声明
+	 * 
+	 * @param obj
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public final static <T> T castType(Object obj) {
+		return obj == null ? null : (T) obj;
 	}
 }
