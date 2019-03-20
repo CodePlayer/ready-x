@@ -11,7 +11,7 @@ public class JSONUtilTest {
 	// @Test
 	public void encode() {
 		// 编码HashMap
-		Map<Object, Object> map = CollectionUtil.createHashMap("name", "张三", "age", 18);
+		Map<Object, Object> map = CollectionUtil.asHashMap("name", "张三", "age", 18);
 		System.out.println(JSONUtil.encode(map)); // {"age":18,"name":"张三"}
 		// 编码User对象
 		User user = new User(1, "张三", "123456", true);
@@ -29,7 +29,7 @@ public class JSONUtilTest {
 	// @Test
 	public void encodeWithReferenceDetect() {
 		// 编码HashMap
-		Map<Object, Object> map = CollectionUtil.createHashMap("name", "张三", "age", 18);
+		Map<Object, Object> map = CollectionUtil.asHashMap("name", "张三", "age", 18);
 		System.out.println(JSONUtil.encodeWithReferenceDetect(map)); // {"age":18,"name":"张三"}
 		// 编码User对象
 		User user = new User(1, "张三", "123456", true);

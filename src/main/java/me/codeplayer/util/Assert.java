@@ -1,6 +1,8 @@
 package me.codeplayer.util;
 
-import me.codeplayer.e.LogicException;
+import java.util.function.*;
+
+import me.codeplayer.e.*;
 
 /**
  * 项目中的通用断言类，用于处理异常，如果断言失败将会抛出异常<br>
@@ -17,11 +19,36 @@ public abstract class Assert {
 	 * 如果断言失败则抛出异常
 	 * 
 	 * @param expression boolean表达式
+	 */
+	public static final void isTrue(final boolean expression) {
+		if (!expression) {
+			throw new IllegalArgumentException();
+		}
+	}
+
+	/**
+	 * 断言布尔表达式结果为true<br>
+	 * 如果断言失败则抛出异常
+	 * 
+	 * @param expression boolean表达式
 	 * @param message 异常消息内容
 	 */
-	public static final void isTrue(boolean expression, String message) {
+	public static final void isTrue(final boolean expression, final String message) {
 		if (!expression) {
 			throw new LogicException(message);
+		}
+	}
+
+	/**
+	 * 断言布尔表达式结果为true<br>
+	 * 如果断言失败则抛出异常
+	 * 
+	 * @param expression boolean表达式
+	 * @param message 异常消息内容
+	 */
+	public static final void isTrue(final boolean expression, final Supplier<String> message) {
+		if (!expression) {
+			throw new LogicException(message.get());
 		}
 	}
 
@@ -32,8 +59,30 @@ public abstract class Assert {
 	 * @param expression boolean表达式
 	 * @param message 异常消息内容
 	 */
-	public static final void notTrue(boolean expression, String message) {
+	public static final void notTrue(final boolean expression, final String message) {
 		isTrue(!expression, message);
+	}
+
+	/**
+	 * 断言布尔表达式结果为false<br>
+	 * 如果断言失败则抛出异常
+	 * 
+	 * @param expression boolean表达式
+	 * @param message 异常消息内容
+	 */
+	public static final void notTrue(boolean expression, Supplier<String> message) {
+		isTrue(!expression, message);
+	}
+
+	/**
+	 * 断言指定对象为null<br>
+	 * 如果断言失败则抛出异常
+	 * 
+	 * @param object 指定对象
+	 * @param message 异常消息内容
+	 */
+	public static final void isNull(Object object) {
+		isTrue(object == null);
 	}
 
 	/**
@@ -52,9 +101,30 @@ public abstract class Assert {
 	 * 如果断言失败则抛出异常
 	 * 
 	 * @param object 指定对象
+	 */
+	public static final void notNull(Object object) {
+		isTrue(object != null);
+	}
+
+	/**
+	 * 断言指定对象不为null<br>
+	 * 如果断言失败则抛出异常
+	 * 
+	 * @param object 指定对象
 	 * @param message 异常消息内容
 	 */
 	public static final void notNull(Object object, String message) {
+		isTrue(object != null, message);
+	}
+
+	/**
+	 * 断言指定对象不为null<br>
+	 * 如果断言失败则抛出异常
+	 * 
+	 * @param object 指定对象
+	 * @param message 异常消息内容
+	 */
+	public static final void notNull(Object object, Supplier<String> message) {
 		isTrue(object != null, message);
 	}
 
@@ -64,7 +134,7 @@ public abstract class Assert {
 	 * 
 	 * @param str 指定字符串
 	 * @param message 异常消息内容
-	 * @see easymapping.util.StringUtil#isEmpty(Object)
+	 * @see #isEmpty(Object)
 	 */
 	public static final void isEmpty(Object str, String message) {
 		isTrue(StringUtil.isEmpty(str), message);
@@ -76,9 +146,33 @@ public abstract class Assert {
 	 * 
 	 * @param str 指定字符串
 	 * @param message 异常消息内容
-	 * @see easymapping.util.StringUtil#isEmpty(Object)
+	 * @see #isEmpty(Object)
+	 */
+	public static final void notEmpty(Object str) {
+		isTrue(!StringUtil.isEmpty(str));
+	}
+
+	/**
+	 * 断言指定字符串不为空(若为null、空字符串均属断言失败)<br>
+	 * 如果断言失败则抛出异常
+	 * 
+	 * @param str 指定字符串
+	 * @param message 异常消息内容
+	 * @see #isEmpty(Object)
 	 */
 	public static final void notEmpty(Object str, String message) {
+		isTrue(!StringUtil.isEmpty(str), message);
+	}
+
+	/**
+	 * 断言指定字符串不为空(若为null、空字符串均属断言失败)<br>
+	 * 如果断言失败则抛出异常
+	 * 
+	 * @param str 指定字符串
+	 * @param message 异常消息内容
+	 * @see #isEmpty(Object)
+	 */
+	public static final void notEmpty(Object str, Supplier<String> message) {
 		isTrue(!StringUtil.isEmpty(str), message);
 	}
 
@@ -90,7 +184,7 @@ public abstract class Assert {
 	 * 
 	 * @param obj 指定对象
 	 * @param message 异常消息内容
-	 * @see easymapping.util.StringUtil#isBlank(Object)
+	 * @see #isBlank(Object)
 	 */
 	public static final void isBlank(Object obj, String message) {
 		isTrue(StringUtil.isBlank(obj), message);
@@ -104,7 +198,7 @@ public abstract class Assert {
 	 * 
 	 * @param obj 指定对象
 	 * @param message 异常消息内容
-	 * @see easymapping.util.StringUtil#isBlank(Object)
+	 * @see #isBlank(Object)
 	 */
 	public static final void notBlank(Object obj, String message) {
 		isTrue(!StringUtil.isBlank(obj), message);

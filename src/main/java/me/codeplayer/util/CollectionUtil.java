@@ -28,7 +28,7 @@ public abstract class CollectionUtil {
 	 * @param KeysAndValues 可变参数形式的键值数组，必须是K1, V1, K2, V2, K3, V3...这种形式
 	 * @return
 	 */
-	public static final <K, V> HashMap<K, V> createHashMap(Object... KeysAndValues) {
+	public static final <K, V> HashMap<K, V> asHashMap(Object... KeysAndValues) {
 		Assert.isTrue((KeysAndValues.length & 1) == 0, "指定键值的参数个数必须为偶数!");
 		int size = KeysAndValues.length >> 1;
 		HashMap<K, V> map = size > 12 ? new HashMap<K, V>(X.getCapacity(size)) : new HashMap<K, V>();
@@ -42,12 +42,12 @@ public abstract class CollectionUtil {
 	 * @param KeysAndValues 可变参数形式的键值数组，必须是K1, V1, K2, V2, K3, V3...这种形式
 	 * @return
 	 */
-	public static final <K, V> Hashtable<K, V> createHashtable(Object... KeysAndValues) {
+	public static final <K, V> ConcurrentHashMap<K, V> asConcurrentHashMap(Object... KeysAndValues) {
 		Assert.isTrue((KeysAndValues.length & 1) == 0, "指定键值的参数个数必须为偶数!");
 		int size = KeysAndValues.length >> 1;
-		Hashtable<K, V> table = size > 12 ? new Hashtable<K, V>(X.getCapacity(size)) : new Hashtable<K, V>();
-		addToMap(table, KeysAndValues);
-		return table;
+		ConcurrentHashMap<K, V> map = size > 12 ? new ConcurrentHashMap<K, V>(X.getCapacity(size)) : new ConcurrentHashMap<K, V>();
+		addToMap(map, KeysAndValues);
+		return map;
 	}
 
 	/**
@@ -56,7 +56,7 @@ public abstract class CollectionUtil {
 	 * @param KeysAndValues 可变参数形式的键值数组，必须是K1, V1, K2, V2, K3, V3...这种形式
 	 * @return
 	 */
-	public static final <K, V> LinkedHashMap<K, V> createLinkedHashMap(Object... KeysAndValues) {
+	public static final <K, V> LinkedHashMap<K, V> asLinkedHashMap(Object... KeysAndValues) {
 		Assert.isTrue((KeysAndValues.length & 1) == 0, "指定键值的参数个数必须为偶数!");
 		int size = KeysAndValues.length >> 1;
 		LinkedHashMap<K, V> map = size > 12 ? new LinkedHashMap<K, V>(X.getCapacity(size)) : new LinkedHashMap<K, V>();
@@ -84,6 +84,7 @@ public abstract class CollectionUtil {
 	 * @param elements 可变参数形式的元素数组
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public static final <E> ArrayList<E> createArrayList(E... elements) {
 		ArrayList<E> list = new ArrayList<E>(elements.length);
 		addToCollection(list, elements);
@@ -96,7 +97,8 @@ public abstract class CollectionUtil {
 	 * @param elements 可变参数形式的元素数组
 	 * @return
 	 */
-	public static final <E> LinkedList<E> createLinkedList(E... elements) {
+	@SuppressWarnings("unchecked")
+	public static final <E> LinkedList<E> asLinkedList(E... elements) {
 		LinkedList<E> list = new LinkedList<E>();
 		addToCollection(list, elements);
 		return list;
@@ -108,7 +110,8 @@ public abstract class CollectionUtil {
 	 * @param elements 可变参数形式的元素数组
 	 * @return
 	 */
-	public static final <E> Vector<E> createVector(E... elements) {
+	@SuppressWarnings("unchecked")
+	public static final <E> Vector<E> asVector(E... elements) {
 		Vector<E> list = new Vector<E>();
 		addToCollection(list, elements);
 		return list;
@@ -120,7 +123,8 @@ public abstract class CollectionUtil {
 	 * @param elements 可变参数形式的元素数组
 	 * @return
 	 */
-	public static final <E> HashSet<E> createHashSet(E... elements) {
+	@SuppressWarnings("unchecked")
+	public static final <E> HashSet<E> asHashSet(E... elements) {
 		HashSet<E> list = new HashSet<E>();
 		addToCollection(list, elements);
 		return list;
@@ -132,7 +136,8 @@ public abstract class CollectionUtil {
 	 * @param elements 可变参数形式的元素数组
 	 * @return
 	 */
-	public static final <E> LinkedHashSet<E> createLinkedHashSet(E... elements) {
+	@SuppressWarnings("unchecked")
+	public static final <E> LinkedHashSet<E> asLinkedHashSet(E... elements) {
 		LinkedHashSet<E> list = new LinkedHashSet<E>();
 		addToCollection(list, elements);
 		return list;
@@ -145,7 +150,7 @@ public abstract class CollectionUtil {
 	 * @param map 指定的Map集合
 	 * @param kvPairs 可变参数形式的键值数组，必须是K1, V1, K2, V2, K3, V3...这种形式
 	 */
-	public static final <K, V> void addToMap(int ignore, Map<K, V> map, Object... kvPairs) {
+	public static final <K, V> Map<K, V> addToMap(int ignore, Map<K, V> map, Object... kvPairs) {
 		Assert.isTrue((kvPairs.length & 1) == 0, "指定键值的参数个数必须为偶数!");
 		Map<Object, Object> m = X.castType(map);
 		if (ignore == IGNORE_NONE) {
@@ -160,6 +165,7 @@ public abstract class CollectionUtil {
 				}
 			}
 		}
+		return map;
 	}
 
 	/**
@@ -168,8 +174,8 @@ public abstract class CollectionUtil {
 	 * @param map 指定的Map集合
 	 * @param kvPairs 可变参数形式的键值数组，必须是K1, V1, K2, V2, K3, V3...这种形式
 	 */
-	public static final <K, V> void addToMap(Map<K, V> map, Object... kvPairs) {
-		addToMap(IGNORE_NONE, map, kvPairs);
+	public static final <K, V> Map<K, V> addToMap(Map<K, V> map, Object... kvPairs) {
+		return addToMap(IGNORE_NONE, map, kvPairs);
 	}
 
 	/**
@@ -179,7 +185,8 @@ public abstract class CollectionUtil {
 	 * @param collection 指定的Collection集合
 	 * @param elements 可变参数形式的元素数组
 	 */
-	public static final <E> void addToCollection(int ignore, Collection<? super E> collection, E... elements) {
+	@SuppressWarnings("unchecked")
+	public static final <E> Collection<E> addToCollection(int ignore, Collection<? super E> collection, E... elements) {
 		if (ignore == IGNORE_NONE) {
 			for (int i = 0; i < elements.length; i++) {
 				collection.add(elements[i]);
@@ -191,6 +198,7 @@ public abstract class CollectionUtil {
 				}
 			}
 		}
+		return X.castType(collection);
 	}
 
 	/**
@@ -199,8 +207,9 @@ public abstract class CollectionUtil {
 	 * @param collection 指定的Collection集合
 	 * @param elements 可变参数形式的元素数组
 	 */
-	public static final <E> void addToCollection(Collection<? super E> collection, E... elements) {
-		addToCollection(IGNORE_NONE, collection, elements);
+	@SuppressWarnings("unchecked")
+	public static final <E> Collection<E> addToCollection(Collection<? super E> collection, E... elements) {
+		return addToCollection(IGNORE_NONE, collection, elements);
 	}
 
 	/**
@@ -234,6 +243,7 @@ public abstract class CollectionUtil {
 	 * @author Ready
 	 * @since 0.3.1
 	 */
+	@SuppressWarnings("unchecked")
 	public static final <K, V> V[] mapValues(Map<K, V> map, Class<V> valueClass, K... keys) {
 		V[] results = X.castType(Array.newInstance(valueClass, keys.length));
 		for (int i = 0; i < keys.length; i++) {

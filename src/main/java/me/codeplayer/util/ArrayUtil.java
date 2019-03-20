@@ -1,9 +1,9 @@
 package me.codeplayer.util;
 
-import java.lang.reflect.Array;
+import java.lang.reflect.*;
 import java.util.*;
 
-import me.codeplayer.e.LogicException;
+import me.codeplayer.e.*;
 
 /**
  * 用于对数组类型的数据(字节数组参见NumberUtil类)进行相应处理的工具类
@@ -345,6 +345,7 @@ public abstract class ArrayUtil {
 	 * @since 0.3.5
 	 * @author Ready
 	 */
+	@SuppressWarnings("unchecked")
 	public static final <T> boolean ins(T value, T... array) {
 		if (value == null) {
 			for (int i = 0; i < array.length; i++) {
