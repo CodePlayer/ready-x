@@ -1,6 +1,6 @@
 package me.codeplayer.util;
 
-import java.util.*;
+import java.lang.reflect.*;
 import java.util.function.*;
 
 import javax.annotation.*;
@@ -39,6 +39,7 @@ public abstract class EnumUtil {
 	 * @return
 	 * @since 2.0.0
 	 */
+	@SuppressWarnings("unchecked")
 	public static final <E extends Enum<?>> E[] getMatchedEnums(final Class<E> enumClass, @Nullable final E[] values, final Predicate<E> matcher) {
 		final E[] newAarray = values == null ? enumClass.getEnumConstants() : values.clone();
 		int count = 0;
@@ -50,7 +51,11 @@ public abstract class EnumUtil {
 		if (count == newAarray.length) {
 			return newAarray;
 		} else {
-			return Arrays.copyOf(newAarray, count);
+			final E[] result = (E[]) Array.newInstance(enumClass, count);
+			if (count > 0) {
+				System.arraycopy(newAarray, 0, result, 0, count);
+			}
+			return result;
 		}
 	}
 }
