@@ -11,6 +11,7 @@ import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
@@ -215,13 +216,13 @@ public class ClassPathScanHandler {
 	 * @param recursive
 	 * @return
 	 */
-	public Set<Method> getMethodsFromPackage(String basePackage, boolean recursive, MethodMatcher methodMatcher) {
+	public Set<Method> getMethodsFromPackage(String basePackage, boolean recursive, Predicate<Method> methodMatcher) {
 		Set<Class<?>> classes = getAllClassesFromPackage(basePackage, recursive);
 		final Set<Method> finalMethods = new LinkedHashSet<Method>();
 		for (Class<?> clazz : classes) {
 			Method[] methods = clazz.getDeclaredMethods();
 			for (Method method : methods) {
-				if (methodMatcher == null || methodMatcher.match(method)) {
+				if (methodMatcher == null || methodMatcher.test(method)) {
 					finalMethods.add(method);
 				}
 			}

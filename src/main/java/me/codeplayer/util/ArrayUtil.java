@@ -2,6 +2,7 @@ package me.codeplayer.util;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.function.*;
 
 import me.codeplayer.e.*;
 
@@ -545,5 +546,27 @@ public abstract class ArrayUtil {
 	 */
 	public static final Object[] of(Object... elements) {
 		return elements;
+	}
+
+	/**
+	 * 过滤指定的数组，获得符合条件的元素数组
+	 * 
+	 * @param array 指定的数组
+	 * @param matcher 只有经过该过滤器后返回 true 的元素才符合条件
+	 * @since 2.0.0
+	 */
+	public static final <E> E[] filter(final E[] array, final Predicate<E> matcher) {
+		final E[] newAarray = array.clone();
+		int count = 0;
+		for (E e : newAarray) {
+			if (matcher.test(e)) {
+				newAarray[count++] = e;
+			}
+		}
+		if (count == newAarray.length) {
+			return newAarray;
+		} else {
+			return Arrays.copyOf(array, count);
+		}
 	}
 }

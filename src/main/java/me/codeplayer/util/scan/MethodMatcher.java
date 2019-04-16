@@ -1,6 +1,7 @@
 package me.codeplayer.util.scan;
 
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
+import java.util.function.*;
 
 /**
  * 方法过滤器
@@ -8,13 +9,5 @@ import java.lang.reflect.Method;
  * @author Ready
  * @date 2015年2月4日
  */
-public interface MethodMatcher {
-
-	/**
-	 * 判断指定的方法是否符合条件，如果符合则返回true，否则返回false
-	 * 
-	 * @param method
-	 * @return
-	 */
-	boolean match(Method method);
+public interface MethodMatcher extends Predicate<Method> {
 }

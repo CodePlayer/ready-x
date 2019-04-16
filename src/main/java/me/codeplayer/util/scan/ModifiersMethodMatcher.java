@@ -1,6 +1,6 @@
 package me.codeplayer.util.scan;
 
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 
 /**
  * 修饰符方法过滤器

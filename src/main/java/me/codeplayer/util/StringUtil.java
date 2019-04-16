@@ -424,7 +424,7 @@ public abstract class StringUtil {
 
 	/**
 	 * 如果字符串不足指定位数，则在其左侧或右侧补充指定的字符，直到指定位数<br>
-	 * 如果字符串=null，则返回空字符串""<br>
+	 * 如果字符串 = null，则返回空字符串""<br>
 	 * 如果字符串位数大于指定位数，则返回原字符串
 	 * 
 	 * @param str 指定的字符串
@@ -678,8 +678,20 @@ public abstract class StringUtil {
 	 * @return
 	 * @since 0.4.2
 	 */
-	public static final boolean startWith(String str, char firstChar) {
+	public static final boolean startsWith(final String str, final char firstChar) {
 		return str != null && str.length() > 0 && str.charAt(0) == firstChar;
+	}
+
+	/**
+	 * 判断指定字符串是否以指定的单个字符结尾
+	 * 
+	 * @param str 指定的字符串
+	 * @param lastChar 指定的单个字符
+	 * @return
+	 * @since 0.4.2
+	 */
+	public static final boolean endsWith(final String str, final char lastChar) {
+		return str != null && str.length() > 0 && str.charAt(str.length() - 1) == lastChar;
 	}
 
 	/**
@@ -691,7 +703,7 @@ public abstract class StringUtil {
 	 * @return
 	 * @since 0.3.5
 	 */
-	public static final String escapeSQLLike(String likeStr, char escapeChar, boolean appendLikeWildcard) {
+	public static final String escapeSQLLike(final String likeStr, final char escapeChar, final boolean appendLikeWildcard) {
 		if (StringUtil.isEmpty(likeStr)) {
 			return "";
 		}
@@ -728,7 +740,7 @@ public abstract class StringUtil {
 	 * @return
 	 * @since 0.3.5
 	 */
-	public static final String escapeSQLLike(String likeStr, boolean appendLikeWildcard) {
+	public static final String escapeSQLLike(final String likeStr, final boolean appendLikeWildcard) {
 		return escapeSQLLike(likeStr, '\\', appendLikeWildcard);
 	}
 
@@ -740,7 +752,7 @@ public abstract class StringUtil {
 	 * @return
 	 * @since 0.3.5
 	 */
-	public static final String escapeSQLLike(String likeStr) {
+	public static final String escapeSQLLike(final String likeStr) {
 		return escapeSQLLike(likeStr, '\\', false);
 	}
 
@@ -754,17 +766,25 @@ public abstract class StringUtil {
 	 * @author Ready
 	 * @since 0.4.2
 	 */
-	public static final boolean containsWord(String container, String searchedWord, String seperatorChars) {
-		if (searchedWord == null)
+	public static final boolean containsWord(final String container, final String searchedWord, final String seperatorChars) {
+		if (container == null || searchedWord == null)
 			return false;
-		int startIndex = container.indexOf(searchedWord);
-		if (startIndex == -1) {
-			return false;
-		}
-		if (startIndex == 0 || seperatorChars.indexOf(container.charAt(startIndex - 1)) != -1) {
-			int endPos = startIndex + searchedWord.length();
-			if (endPos == container.length() || seperatorChars.indexOf(container.charAt(endPos)) != -1) {
-				return true;
+		final int cLength = container.length(), sLength = searchedWord.length();
+		if (cLength == sLength) {
+			return container.equals(searchedWord);
+		} else if (cLength > sLength) {
+			int fromIndex = 0;
+			int startIndex;
+			// 需要考虑 containsWord("12123,123", "123", ",") 这种特殊情况
+			while ((startIndex = container.indexOf(searchedWord, fromIndex)) != -1) {
+				fromIndex = startIndex + sLength; // as endIndex
+				if ((startIndex == 0 || seperatorChars.indexOf(container.charAt(startIndex - 1)) != -1)
+						&& (fromIndex == cLength || seperatorChars.indexOf(container.charAt(fromIndex)) != -1)) {
+					return true;
+				}
+				if (fromIndex + sLength > cLength) {
+					break;
+				}
 			}
 		}
 		return false;
