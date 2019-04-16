@@ -764,9 +764,9 @@ public abstract class StringUtil {
 	 * @param seperatorChars 单词两侧必须是指定的字符之一或位于字符串 {@code container }的首/尾位置
 	 * @return
 	 * @author Ready
-	 * @since 0.4.2
+	 * @since 2.0.0
 	 */
-	public static final boolean containsWord(final String container, final String searchedWord, final String seperatorChars) {
+	public static final boolean containsWord(final String container, final String searchedWord, final String seperatorChars, final boolean fastMode) {
 		if (container == null || searchedWord == null)
 			return false;
 		final int cLength = container.length(), sLength = searchedWord.length();
@@ -782,11 +782,27 @@ public abstract class StringUtil {
 						&& (fromIndex == cLength || seperatorChars.indexOf(container.charAt(fromIndex)) != -1)) {
 					return true;
 				}
-				if (fromIndex + sLength > cLength) {
+				if (fastMode || fromIndex + sLength > cLength) {
 					break;
 				}
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * 检测指定字符串中是否存在指定的单词<br>
+	 * 该方法采用快速模式，对于类似 {@code containsWord("abc123,123", "123", ",") } 等特殊情况无法保证100%可靠；如果想要保证可靠性，建议使用 {@link #containsWord(String, String, String, boolean) }
+	 * 
+	 * @param container 待检测的字符串
+	 * @param searchedWord 指定的单词
+	 * @param seperatorChars 单词两侧必须是指定的字符之一或位于字符串 {@code container }的首/尾位置
+	 * @return
+	 * @author Ready
+	 * @since 0.4.2
+	 * @see {@link StringUtil#containsWord(String, String, String, boolean) }
+	 */
+	public static final boolean containsWord(final String container, final String searchedWord, final String seperatorChars) {
+		return containsWord(container, searchedWord, seperatorChars, true);
 	}
 }
