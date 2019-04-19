@@ -569,4 +569,21 @@ public abstract class ArrayUtil {
 			return Arrays.copyOf(array, count);
 		}
 	}
+
+	/**
+	 * 将单个元素构造成一个仅包含该元素的数组
+	 * 
+	 * @param element 指定的元素值
+	 * @return 如果 val == null，则返回 null；否则返回对应类型的数组
+	 * @since 2.1.0
+	 */
+	@SuppressWarnings("unchecked")
+	public static final <E> E[] ofNullable(E element) {
+		if (element == null) {
+			return null;
+		}
+		Object array = Array.newInstance(element.getClass(), 1);
+		Array.set(array, 0, element);
+		return (E[]) array;
+	}
 }
