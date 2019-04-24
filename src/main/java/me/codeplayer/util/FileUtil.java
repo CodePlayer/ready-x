@@ -3,10 +3,9 @@ package me.codeplayer.util;
 import java.io.*;
 import java.math.*;
 import java.nio.channels.*;
+import java.nio.file.*;
 import java.text.*;
 import java.util.*;
-
-import me.codeplayer.e.*;
 
 /**
  * 用于文件操作的公共工具类
@@ -173,10 +172,10 @@ public abstract class FileUtil {
 	 */
 	public static String calcFileSize(long fileSize, int unit, int scale) {
 		if (fileSize < 0) {
-			throw new IllegalArgumentException("需要计算的文件大小不能为负数:" + fileSize);
+			throw new IllegalArgumentException("Argument 'fileSize' can not less than 0:" + fileSize);
 		}
 		if (unit < UNIT_AUTO || unit > UNIT_PB) {
-			throw new IllegalArgumentException("无法识别的文件大小单位：" + unit);
+			throw new IllegalArgumentException(String.valueOf(unit));
 		}
 		if (unit != UNIT_AUTO) {
 			int shift = unit - 1;
@@ -284,7 +283,7 @@ public abstract class FileUtil {
 			fos = new FileOutputStream(target);
 			writeStream(is, fos);
 		} catch (Exception e) {
-			throw new LogicException(e);
+			throw new IllegalArgumentException(e);
 		} finally {
 			closeResources(is, fos);
 		}
@@ -318,10 +317,10 @@ public abstract class FileUtil {
 	 */
 	public final static void copyFile(File src, File target, boolean override) {
 		if (!src.exists()) {
-			throw new IllegalStateException("指定的文件不存在：" + src);
+			throw new IllegalArgumentException(new FileNotFoundException(src.toString()));
 		}
 		if (!src.canRead()) {
-			throw new IllegalStateException("无法读取指定的文件：" + src);
+			throw new IllegalStateException(new IOException("Unable to read file：" + src));
 		}
 		try {
 			copyFile(new FileInputStream(src), target, override);
@@ -383,16 +382,16 @@ public abstract class FileUtil {
 		if (directory.exists()) {
 			// 如果目标文件是一个目录
 			if (!directory.isDirectory()) {
-				throw new IllegalStateException("目标文件夹不是一个目录：" + directory);
+				throw new IllegalStateException("Target is not a directory:" + directory);
 			}
 			// 如果目标文件不可写入数据
 			if (!directory.canWrite()) {
-				throw new IllegalStateException("目标文件夹不可写入：" + directory);
+				throw new IllegalStateException(new IOException("Unable to write to file：" + directory));
 			}
 			// 如果目标文件不允许被覆盖
 			target = new File(directory, file.getName());
 			if (target.exists() && !override) {
-				throw new IllegalStateException("目标文件夹已存在同名的文件：" + target);
+				throw new IllegalStateException("File already exists:" + target);
 			}
 		} else {
 			// 如果目标文件所在的目录不存在，则创建之
@@ -450,7 +449,7 @@ public abstract class FileUtil {
 	 */
 	public static final void moveFile(File file, File target, boolean override) {
 		if (!file.canWrite()) {
-			throw new IllegalStateException("指定的文件不存在或无法删除：" + file);
+			throw new IllegalStateException(new AccessDeniedException(file.toString()));
 		}
 		if (!checkTargetFileCanBeRewrite(target, override)) {
 			ensureParentDirExists(target);
@@ -469,15 +468,15 @@ public abstract class FileUtil {
 		if (target.exists()) {
 			// 如果目标文件是一个目录
 			if (target.isDirectory()) {
-				throw new IllegalStateException("目标文件是一个目录：" + target);
+				throw new IllegalArgumentException("File is a directory:" + target);
 			}
 			// 如果目标文件不可写入数据
 			if (!target.canWrite()) {
-				throw new IllegalStateException("目标文件不可写：" + target);
+				throw new IllegalStateException(new IOException("Unable to write to file:" + target));
 			}
 			// 如果目标文件不允许被覆盖
 			if (!override) {
-				throw new IllegalStateException("目标文件已存在：" + target);
+				throw new IllegalStateException("File already exists:" + target);
 			}
 			return true;
 		}
@@ -492,7 +491,7 @@ public abstract class FileUtil {
 	public static final void ensureParentDirExists(File target) {
 		File parent = target.getParentFile();
 		if (!parent.exists() && !parent.mkdirs()) {
-			throw new IllegalStateException("无法创建目标文件的所在目录：" + parent);
+			throw new IllegalStateException(new IOException("Unable to create directory:" + parent));
 		}
 	}
 
@@ -542,7 +541,7 @@ public abstract class FileUtil {
 	 */
 	public static final void moveFileToDirectory(File file, File directory, boolean override) {
 		if (!file.canWrite()) {
-			throw new IllegalStateException("无法删除指定的文件：" + file);
+			throw new IllegalStateException(new IOException("Unable to write to file:" + file));
 		}
 		copyFileToDirectory(file, directory, override);
 		file.delete();
@@ -648,13 +647,13 @@ public abstract class FileUtil {
 				out.close();
 			}
 		} catch (IOException e) {
-			throw new LogicException(e);
+			throw new IllegalArgumentException(e);
 		} finally {
 			if (in != null) {
 				try {
 					in.close();
 				} catch (IOException e) {
-					throw new LogicException(e);
+					throw new IllegalArgumentException(e);
 				}
 			}
 		}

@@ -64,7 +64,7 @@ public class DES {
 		try {
 			this.key = SecretKeyFactory.getInstance("DES").generateSecret(new DESKeySpec(byteKey));
 		} catch (Exception e) {
-			throw new IllegalArgumentException("设置指定密钥时发生异常!", e);
+			throw new IllegalArgumentException(e);
 		}
 	}
 

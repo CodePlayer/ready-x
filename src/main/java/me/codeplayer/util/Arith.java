@@ -55,7 +55,7 @@ public class Arith {
 	 */
 	public Arith(BigDecimal d) {
 		if (d == null) {
-			throw new NullPointerException("BigDecimal对象不能为null");
+			throw new NullPointerException();
 		}
 		value = d;
 	}
@@ -94,7 +94,7 @@ public class Arith {
 	 */
 	public Arith(Object d) {
 		if (d == null) {
-			throw new NullPointerException("Object对象不能为null");
+			throw new NullPointerException();
 		}
 		if (d instanceof BigDecimal) {
 			value = (BigDecimal) d;
@@ -609,7 +609,7 @@ public class Arith {
 	 * @return
 	 */
 	public static final double divide(double a, double b, int scale) {
-		Assert.notTrue(scale < 0, "指定的小数位数不能小于0!");
+		checkScale(scale);
 		return new BigDecimal(Double.toString(a)).divide(new BigDecimal(Double.toString(b)), scale, RoundingMode.HALF_UP).doubleValue();
 	}
 
@@ -643,7 +643,7 @@ public class Arith {
 	 * @return
 	 */
 	public static final double scale(double d, int scale, RoundingMode mode) {
-		Assert.notTrue(scale < 0, "执行舍入时，指定的精确小数位数不能小于0!");
+		checkScale(scale);
 		return new BigDecimal(Double.toString(d)).setScale(scale, mode).doubleValue();
 	}
 
@@ -676,8 +676,14 @@ public class Arith {
 	 * @return
 	 */
 	public static final double truncate(double d, int scale, RoundingMode mode) {
-		Assert.notTrue(scale < 0, "指定的精确小数位数不能小于0!");
+		checkScale(scale);
 		return new BigDecimal(Double.toString(d)).setScale(scale, mode).doubleValue();
+	}
+
+	static final void checkScale(int scale) {
+		if (scale < 0) {
+			throw new IllegalArgumentException("Argument 'scale' can not less than 0:" + scale);
+		}
 	}
 
 	/**

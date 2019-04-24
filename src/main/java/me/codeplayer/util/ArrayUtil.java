@@ -4,8 +4,6 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 
-import me.codeplayer.e.*;
-
 /**
  * 用于对数组类型的数据(字节数组参见NumberUtil类)进行相应处理的工具类
  * 
@@ -49,8 +47,8 @@ public abstract class ArrayUtil {
 	 * @param delimiter 指定的分隔符
 	 */
 	public static StringBuilder join(StringBuilder sb, Object array, String delimiter) {
-		if (array == null || !array.getClass().isArray()) {
-			throw new LogicException("指定的对象不是数组类型的对象!");
+		if (array == null) {
+			throw new NullPointerException();
 		}
 		final int length = Array.getLength(array);
 		if (sb == null) {
@@ -91,8 +89,8 @@ public abstract class ArrayUtil {
 	 * @param isString 指示元素是否以字符串形式参与InSQL语句。如果为true，将会在每个元素两侧加上单引号"'"
 	 */
 	public static StringBuilder getInSQL(StringBuilder sb, Object array, boolean isInclude, boolean isString) {
-		if (array == null || !array.getClass().isArray()) {
-			throw new LogicException("指定的参数对象必须为数组类型!");
+		if (array == null) {
+			throw new NullPointerException();
 		}
 		int length = Array.getLength(array);
 		if (sb == null && length > 0) {
@@ -100,7 +98,7 @@ public abstract class ArrayUtil {
 		}
 		switch (length) {
 		case 0:
-			throw new LogicException("指定的数组对象的长度必须大于0!");
+			throw new IllegalArgumentException("Array can not be empty:" + array);
 		case 1:
 			if (!isInclude) {
 				sb.append('!');
@@ -255,7 +253,7 @@ public abstract class ArrayUtil {
 	public static final int getLength(Object array, boolean triggerError) {
 		int length = getLength(array);
 		if (length == 0 && triggerError) {
-			throw new LogicException("指定的参数必须是数组类型，并且长度不能为0!");
+			throw new IllegalArgumentException("Array can not be empty:" + array);
 		}
 		return length;
 	}

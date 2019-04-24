@@ -25,57 +25,63 @@ public abstract class CollectionUtil {
 	/**
 	 * 根据可变参数形式的键值数组构造一个HashMap集合<br>
 	 * 
-	 * @param KeysAndValues 可变参数形式的键值数组，必须是K1, V1, K2, V2, K3, V3...这种形式
+	 * @param kvPairs 可变参数形式的键值数组，必须是K1, V1, K2, V2, K3, V3...这种形式
 	 * @return
 	 */
-	public static final <K, V> HashMap<K, V> asHashMap(Object... KeysAndValues) {
-		Assert.isTrue((KeysAndValues.length & 1) == 0, "指定键值的参数个数必须为偶数!");
-		int size = KeysAndValues.length >> 1;
+	public static final <K, V> HashMap<K, V> asHashMap(Object... kvPairs) {
+		checkPairs(kvPairs);
+		int size = kvPairs.length >> 1;
 		HashMap<K, V> map = size > 12 ? new HashMap<K, V>(X.getCapacity(size)) : new HashMap<K, V>();
-		addToMap(map, KeysAndValues);
+		addToMap(map, kvPairs);
 		return map;
 	}
 
 	/**
 	 * 根据可变参数形式的键值数组构造一个Hashtable集合<br>
 	 * 
-	 * @param KeysAndValues 可变参数形式的键值数组，必须是K1, V1, K2, V2, K3, V3...这种形式
+	 * @param kvPairs 可变参数形式的键值数组，必须是K1, V1, K2, V2, K3, V3...这种形式
 	 * @return
 	 */
-	public static final <K, V> ConcurrentHashMap<K, V> asConcurrentHashMap(Object... KeysAndValues) {
-		Assert.isTrue((KeysAndValues.length & 1) == 0, "指定键值的参数个数必须为偶数!");
-		int size = KeysAndValues.length >> 1;
+	public static final <K, V> ConcurrentHashMap<K, V> asConcurrentHashMap(Object... kvPairs) {
+		checkPairs(kvPairs);
+		int size = kvPairs.length >> 1;
 		ConcurrentHashMap<K, V> map = size > 12 ? new ConcurrentHashMap<K, V>(X.getCapacity(size)) : new ConcurrentHashMap<K, V>();
-		addToMap(map, KeysAndValues);
+		addToMap(map, kvPairs);
 		return map;
 	}
 
 	/**
 	 * 根据可变参数形式的键值数组构造一个LinkedHashMap集合<br>
 	 * 
-	 * @param KeysAndValues 可变参数形式的键值数组，必须是K1, V1, K2, V2, K3, V3...这种形式
+	 * @param kvPairs 可变参数形式的键值数组，必须是K1, V1, K2, V2, K3, V3...这种形式
 	 * @return
 	 */
-	public static final <K, V> LinkedHashMap<K, V> asLinkedHashMap(Object... KeysAndValues) {
-		Assert.isTrue((KeysAndValues.length & 1) == 0, "指定键值的参数个数必须为偶数!");
-		int size = KeysAndValues.length >> 1;
+	public static final <K, V> LinkedHashMap<K, V> asLinkedHashMap(Object... kvPairs) {
+		checkPairs(kvPairs);
+		int size = kvPairs.length >> 1;
 		LinkedHashMap<K, V> map = size > 12 ? new LinkedHashMap<K, V>(X.getCapacity(size)) : new LinkedHashMap<K, V>();
-		addToMap(map, KeysAndValues);
+		addToMap(map, kvPairs);
 		return map;
 	}
 
 	/**
 	 * 根据可变参数形式的键值数组构造一个ConcurrentHashMap集合<br>
 	 * 
-	 * @param KeysAndValues 可变参数形式的键值数组，必须是K1, V1, K2, V2, K3, V3...这种形式
+	 * @param kvPairs 可变参数形式的键值数组，必须是K1, V1, K2, V2, K3, V3...这种形式
 	 * @return
 	 */
-	public static final <K, V> ConcurrentHashMap<K, V> createConcurrentHashMap(Object... KeysAndValues) {
-		Assert.isTrue((KeysAndValues.length & 1) == 0, "指定键值的参数个数必须为偶数!");
-		int size = KeysAndValues.length >> 1;
+	public static final <K, V> ConcurrentHashMap<K, V> createConcurrentHashMap(Object... kvPairs) {
+		checkPairs(kvPairs);
+		int size = kvPairs.length >> 1;
 		ConcurrentHashMap<K, V> map = size > 12 ? new ConcurrentHashMap<K, V>(X.getCapacity(size)) : new ConcurrentHashMap<K, V>();
-		addToMap(map, KeysAndValues);
+		addToMap(map, kvPairs);
 		return map;
+	}
+
+	protected static final void checkPairs(final Object... pairs) {
+		if ((pairs.length & 1) != 0) {
+			throw new IllegalArgumentException("The length of the Array must be even:" + pairs.length);
+		}
 	}
 
 	/**
@@ -151,7 +157,7 @@ public abstract class CollectionUtil {
 	 * @param kvPairs 可变参数形式的键值数组，必须是K1, V1, K2, V2, K3, V3...这种形式
 	 */
 	public static final <K, V> Map<K, V> addToMap(int ignore, Map<K, V> map, Object... kvPairs) {
-		Assert.isTrue((kvPairs.length & 1) == 0, "指定键值的参数个数必须为偶数!");
+		checkPairs(kvPairs);
 		Map<Object, Object> m = X.castType(map);
 		if (ignore == IGNORE_NONE) {
 			for (int i = 0; i < kvPairs.length;) {

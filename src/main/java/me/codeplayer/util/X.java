@@ -2,10 +2,11 @@ package me.codeplayer.util;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.function.*;
+
+import javax.annotation.*;
 
 import org.slf4j.*;
-
-import me.codeplayer.e.*;
 
 /**
  * 通用公共工具类<br>
@@ -330,7 +331,7 @@ public abstract class X {
 	public static final <T> T decode(T value, T... expressions) {
 		int length;
 		if (expressions == null || (length = expressions.length) == 0) {
-			throw new LogicException("decode的表达式参数个数不能小于1!");
+			throw new IllegalArgumentException("decode的表达式参数个数不能小于1!");
 		}
 		int i = 0;
 		if ((length & 1) == 1) {// 如果是奇数
@@ -395,7 +396,103 @@ public abstract class X {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public final static <T> T castType(Object obj) {
-		return obj == null ? null : (T) obj;
+	public static final <T> T castType(Object obj) {
+		return (T) obj;
+	}
+
+	/**
+	 * 对指定的对象执行执行的 {@code mapper } 转换，安全地获得期望的转换结果
+	 * 
+	 * @param obj 指定的对象，可以为 null
+	 * @param mapper 转换器
+	 * @return 如果 {@code obj == null } 则返回null，否则返回转换后的结果
+	 * @author Ready
+	 * @since 2.3.0
+	 */
+	public static final <T, R> R map(@Nullable T obj, Function<? super T, R> mapper) {
+		if (obj == null) {
+			return null;
+		}
+		return mapper.apply(obj);
+	}
+
+	/**
+	 * 尝试拆箱可能由 {@link Supplier } 接口包装的实体对象
+	 * 
+	 * @param supplier
+	 * @return 如果指定参数实现了 {@link Supplier } 接口，则调用 get() 方法 并返回其值；否则直接返回 该对象本身
+	 * @author Ready
+	 * @since 2.3.0
+	 */
+	public static final Object tryUnwrap(Object supplier) {
+		if (supplier instanceof Supplier) {
+			return ((Supplier<?>) supplier).get();
+		}
+		return supplier;
+	}
+
+	/**
+	 * 检测指定的对象在经过指定的转换后，是否符合指定的条件
+	 * 
+	 * @param bean 指定的对象
+	 * @param mapper 转换器
+	 * @param matcher 条件判断器
+	 * @return
+	 * @author Ready
+	 * @since 2.3.0
+	 */
+	public static final <T, R> boolean isMatch(@Nullable T bean, final Function<? super T, R> mapper, final Predicate<? super R> matcher) {
+		final R val = map(bean, mapper);
+		return matcher.test(val);
+	}
+
+	/**
+	 * 将指定的异常信息封装为运行时异常
+	 * 
+	 * @param forceUseMsg 如果指定的异常是运行时异常，且 {@code msg } 不为null；此时是否还需要包装一个 {@link IllegalArgumentException } 来确保强制使用传入的 {@code msg } 作为异常信息
+	 * @return 如果异常 {@code ex } 为 null，或者不是运行时异常，则自动将其封装为 {@link IllegalArgumentException }；否则返回对应的运行时异常
+	 * @since 2.3.0
+	 */
+	public static final RuntimeException wrapException(final @Nullable String msg, final boolean forceUseMsg, final @Nullable Throwable ex, final @Nullable Throwable cause) {
+		if (ex == null) {
+			return cause == null ? new IllegalArgumentException(msg) : new IllegalArgumentException(msg, cause);
+		} else if (ex instanceof RuntimeException) {
+			return forceUseMsg && msg != null ? new IllegalArgumentException(msg, ex) : (RuntimeException) ex;
+		} else {
+			return msg == null ? new IllegalArgumentException(ex) : new IllegalArgumentException(msg, ex);
+		}
+	}
+
+	/**
+	 * 将指定的异常信息封装为运行时异常
+	 * <p>
+	 * 注意：如果指定的异常是运行时异常；此时不会使用传入的 {@code msg }
+	 * 
+	 * @return 如果异常 {@code ex } 为 null，或者不是运行时异常，则自动将其封装为 {@link IllegalArgumentException }；否则返回对应的运行时异常
+	 * @since 2.3.0
+	 */
+	public static final RuntimeException wrapException(final @Nullable String msg, final @Nullable Throwable ex, final @Nullable Throwable cause) {
+		return wrapException(msg, false, ex, cause);
+	}
+
+	/**
+	 * 将指定的异常信息封装为运行时异常
+	 * 
+	 * @param forceUseMsg 如果指定的异常是运行时异常，且 {@code msg } 不为null；此时是否还需要包装一个 {@link IllegalArgumentException } 来确保强制使用传入的 {@code msg } 作为异常信息
+	 * @return 如果异常 {@code ex } 为 null，或者不是运行时异常，则自动将其封装为 {@link IllegalArgumentException }；否则返回对应的运行时异常
+	 * @since 2.3.0
+	 */
+	public static final RuntimeException wrapException(final @Nullable String msg, final boolean forceUseMsg, final @Nullable Throwable ex) {
+		return wrapException(msg, forceUseMsg, ex, null);
+	}
+
+	/**
+	 * 将指定的异常信息封装为运行时异常
+	 * 
+	 * @return 如果异常 {@code ex } 为 null，或者不是运行时异常，则自动将其封装为 {@link IllegalArgumentException }；否则返回对应的运行时异常
+	 * @since 2.3.0
+	 */
+	public static final RuntimeException wrapException(final @Nullable String msg, final @Nullable Throwable ex) {
+		return wrapException(msg, false, ex, null);
 	}
 }

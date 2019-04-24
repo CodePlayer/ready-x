@@ -2,7 +2,7 @@ package me.codeplayer.util;
 
 import java.util.function.*;
 
-import me.codeplayer.e.*;
+import javax.annotation.*;
 
 /**
  * 项目中的通用断言类，用于处理异常，如果断言失败将会抛出异常<br>
@@ -31,11 +31,11 @@ public abstract class Assert {
 	 * 如果断言失败则抛出异常
 	 * 
 	 * @param expression boolean表达式
-	 * @param message 异常消息内容
+	 * @param errorMsg 异常消息内容
 	 */
-	public static final void isTrue(final boolean expression, final String message) {
+	public static final void isTrue(final boolean expression, final @Nullable CharSequence errorMsg) {
 		if (!expression) {
-			throw new LogicException(message);
+			throw new IllegalArgumentException(X.map(errorMsg, CharSequence::toString));
 		}
 	}
 
@@ -44,11 +44,14 @@ public abstract class Assert {
 	 * 如果断言失败则抛出异常
 	 * 
 	 * @param expression boolean表达式
-	 * @param message 异常消息内容
+	 * @param msger 异常消息内容
 	 */
-	public static final void isTrue(final boolean expression, final Supplier<String> message) {
+	public static final void isTrue(final boolean expression, final @Nullable Supplier<CharSequence> msger) {
 		if (!expression) {
-			throw new LogicException(message.get());
+			if (msger != null) {
+				throw new IllegalArgumentException(X.map(msger.get(), CharSequence::toString));
+			}
+			throw new IllegalArgumentException();
 		}
 	}
 
@@ -59,7 +62,7 @@ public abstract class Assert {
 	 * @param expression boolean表达式
 	 * @param message 异常消息内容
 	 */
-	public static final void notTrue(final boolean expression, final String message) {
+	public static final void notTrue(final boolean expression, final @Nullable CharSequence message) {
 		isTrue(!expression, message);
 	}
 
@@ -68,10 +71,10 @@ public abstract class Assert {
 	 * 如果断言失败则抛出异常
 	 * 
 	 * @param expression boolean表达式
-	 * @param message 异常消息内容
+	 * @param msger 异常消息内容
 	 */
-	public static final void notTrue(boolean expression, Supplier<String> message) {
-		isTrue(!expression, message);
+	public static final void notTrue(boolean expression, final @Nullable Supplier<CharSequence> msger) {
+		isTrue(!expression, msger);
 	}
 
 	/**
@@ -92,7 +95,7 @@ public abstract class Assert {
 	 * @param object 指定对象
 	 * @param message 异常消息内容
 	 */
-	public static final void isNull(Object object, String message) {
+	public static final void isNull(Object object, @Nullable CharSequence message) {
 		isTrue(object == null, message);
 	}
 
@@ -102,8 +105,11 @@ public abstract class Assert {
 	 * 
 	 * @param object 指定对象
 	 */
-	public static final void notNull(Object object) {
-		isTrue(object != null);
+	public static final <T> T notNull(T object) {
+		if (object == null) {
+			throw new NullPointerException();
+		}
+		return object;
 	}
 
 	/**
@@ -113,8 +119,10 @@ public abstract class Assert {
 	 * @param object 指定对象
 	 * @param message 异常消息内容
 	 */
-	public static final void notNull(Object object, String message) {
-		isTrue(object != null, message);
+	public static final void notNull(Object object, final @Nullable CharSequence errorMsg) {
+		if (object == null) {
+			throw new NullPointerException(X.map(errorMsg, CharSequence::toString));
+		}
 	}
 
 	/**
@@ -122,10 +130,15 @@ public abstract class Assert {
 	 * 如果断言失败则抛出异常
 	 * 
 	 * @param object 指定对象
-	 * @param message 异常消息内容
+	 * @param msger 异常消息内容
 	 */
-	public static final void notNull(Object object, Supplier<String> message) {
-		isTrue(object != null, message);
+	public static final void notNull(Object object, final @Nullable Supplier<CharSequence> msger) {
+		if (object == null) {
+			if (msger != null) {
+				throw new NullPointerException(X.map(msger.get(), CharSequence::toString));
+			}
+			throw new NullPointerException();
+		}
 	}
 
 	/**
@@ -136,7 +149,7 @@ public abstract class Assert {
 	 * @param message 异常消息内容
 	 * @see #isEmpty(Object)
 	 */
-	public static final void isEmpty(Object str, String message) {
+	public static final void isEmpty(Object str, final @Nullable CharSequence message) {
 		isTrue(StringUtil.isEmpty(str), message);
 	}
 
@@ -148,8 +161,9 @@ public abstract class Assert {
 	 * @param message 异常消息内容
 	 * @see #isEmpty(Object)
 	 */
-	public static final void notEmpty(Object str) {
-		isTrue(!StringUtil.isEmpty(str));
+	public static final <T> T notEmpty(T str) {
+		isTrue(StringUtil.notEmpty(str));
+		return str;
 	}
 
 	/**
@@ -160,8 +174,8 @@ public abstract class Assert {
 	 * @param message 异常消息内容
 	 * @see #isEmpty(Object)
 	 */
-	public static final void notEmpty(Object str, String message) {
-		isTrue(!StringUtil.isEmpty(str), message);
+	public static final void notEmpty(Object str, final @Nullable CharSequence message) {
+		isTrue(StringUtil.notEmpty(str), message);
 	}
 
 	/**
@@ -172,8 +186,8 @@ public abstract class Assert {
 	 * @param message 异常消息内容
 	 * @see #isEmpty(Object)
 	 */
-	public static final void notEmpty(Object str, Supplier<String> message) {
-		isTrue(!StringUtil.isEmpty(str), message);
+	public static final void notEmpty(Object str, final @Nullable Supplier<CharSequence> message) {
+		isTrue(StringUtil.notEmpty(str), message);
 	}
 
 	/**

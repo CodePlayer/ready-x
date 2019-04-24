@@ -26,7 +26,7 @@ public abstract class Encrypter {
 		try {
 			return MessageDigest.getInstance(algorithm);
 		} catch (NoSuchAlgorithmException e) {
-			throw new IllegalArgumentException("不支持算法[" + algorithm + "]", e);
+			throw new IllegalArgumentException("Unexpected algorithm:" + algorithm, e);
 		}
 	}
 

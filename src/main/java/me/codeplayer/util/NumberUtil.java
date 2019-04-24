@@ -3,6 +3,8 @@ package me.codeplayer.util;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import javax.annotation.*;
+
 /**
  * 对数值类型的数据(包含字节)进行相应处理的工具类
  * 
@@ -461,5 +463,41 @@ public abstract class NumberUtil {
 	 */
 	public static final boolean isDouble(Object value) {
 		return value != null && (value instanceof Number || isDouble(value.toString()));
+	}
+
+	/**
+	 * 指示指定的数字是否是正数
+	 * 
+	 * @since 2.3.0
+	 */
+	protected static final boolean isPositive(@Nullable final Number val, final boolean allowZero) {
+		if (val != null) {
+			if (val instanceof Integer) {
+				return allowZero ? val.intValue() >= 0 : val.intValue() > 0;
+			} else if (val instanceof Long) {
+				return allowZero ? val.longValue() >= 0 : val.longValue() > 0;
+			} else {
+				return allowZero ? val.doubleValue() >= 0 : val.doubleValue() > 0;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * 指示指定的数字是否是正数
+	 * 
+	 * @since 2.3.0
+	 */
+	public static final boolean isPositive(@Nullable final Number val) {
+		return isPositive(val, false);
+	}
+
+	/**
+	 * 指示指定的数字是否是非负数
+	 * 
+	 * @since 2.3.0
+	 */
+	public static final boolean isNonNegative(@Nullable final Number val) {
+		return isPositive(val, true);
 	}
 }

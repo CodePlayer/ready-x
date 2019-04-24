@@ -438,7 +438,7 @@ public abstract class StringUtil {
 		if (str == null)
 			return "";
 		if (maxLength < 1)
-			throw new IllegalArgumentException("指定位数不能小于1!");
+			throw new IllegalArgumentException("Argument 'maxLength' can not be less than 1:" + maxLength);
 		int length = str.length();
 		if (maxLength > length) {
 			int diffSize = maxLength - length;

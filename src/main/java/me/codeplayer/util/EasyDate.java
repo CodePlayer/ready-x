@@ -178,7 +178,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 		} else if (date instanceof Calendar) {
 			theTime = ((Calendar) date).getTimeInMillis();
 		} else {
-			throw new ClassCastException("指定的对象不是日期类型：" + date);
+			throw new ClassCastException(date.getClass().getName());
 		}
 		return theTime;
 	}
@@ -530,7 +530,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 */
 	public static EasyDate smartParse(String date) {
 		if (date == null) {
-			throw new NullPointerException("指定的日期字符串不能为null");
+			throw new NullPointerException();
 		}
 		int length = date.length(); // 字符串长度
 		String format = null;
@@ -548,7 +548,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 			format = YM_DATE;
 			break;
 		default:
-			throw new IllegalArgumentException("智能转换日期字符串时无法找到对应的DateFormat.");
+			throw new IllegalArgumentException("Unable to parse the date string because of unexpected format:" + date);
 		}
 		return parse(format, date);
 	}
@@ -614,16 +614,18 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 将指定格式的字符串转为对应的日期实例对象
 	 * 
 	 * @param format 指定的格式字符串，例如“yyyy-MM-dd”，内部将使用SimpleDateFormat进行转换
-	 * @param date 日期字符串
+	 * @param dateStr 日期字符串
 	 * @return
 	 */
-	public static EasyDate parse(String format, String date) {
+	public static EasyDate parse(String format, String dateStr) {
 		DateFormat dateFormat = new SimpleDateFormat(format);
+		final Date date;
 		try {
-			return new EasyDate(dateFormat.parse(date));
+			date = dateFormat.parse(dateStr);
 		} catch (ParseException e) {
-			throw new IllegalArgumentException("无法将指定的日期字符串[" + date + "]使用SimpleDateFormat按照指定的格式[" + format + "]转为日期对象");
+			throw new IllegalArgumentException(e);
 		}
+		return new EasyDate(date);
 	}
 
 	/**
@@ -670,7 +672,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 */
 	public int compareTo(Object date) {
 		if (date == null) {
-			throw new NullPointerException("用于比较的指定日期对象不能为null。");
+			throw new NullPointerException();
 		} else if (this == date) {
 			return 0;
 		}
@@ -698,7 +700,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 		} else if (date instanceof Calendar) {
 			theMillis = ((Calendar) date).getTimeInMillis();
 		} else {
-			throw new IllegalArgumentException("unexpected type of date:" + date);
+			throw new ClassCastException(date.getClass().getName());
 		}
 		diff = getTime() - theMillis; // 毫秒值差距
 		if (diff == 0) {
@@ -813,7 +815,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 		case Calendar.MILLISECOND:
 			return 1;
 		default:
-			throw new IllegalArgumentException("Unexpected value of field:" + field);
+			throw new IllegalArgumentException(String.valueOf(field));
 		}
 	}
 
@@ -865,7 +867,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 			case Calendar.YEAR:
 				return ac.get(Calendar.ERA) == bc.get(Calendar.ERA) && ac.get(Calendar.YEAR) == bc.get(Calendar.YEAR);
 			default:
-				throw new IllegalArgumentException("Unexpected value of inField:" + inField);
+				throw new IllegalArgumentException(String.valueOf(inField));
 			}
 		}
 		return false;
@@ -959,7 +961,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 			calendar.set(Calendar.MILLISECOND, 0);
 			break;
 		default:
-			throw new IllegalArgumentException("无法识别的日期字段:" + field);
+			throw new IllegalArgumentException(String.valueOf(field));
 		}
 		return this;
 	}
@@ -1020,7 +1022,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 			calendar.set(Calendar.MILLISECOND, 999);
 			break;
 		default:
-			throw new IllegalArgumentException("无法识别的日期字段:" + field);
+			throw new IllegalArgumentException(String.valueOf(field));
 		}
 		return this;
 	}
