@@ -17,6 +17,8 @@ public class Pipeline<T, R> implements PropertyAccessor<T, R> {
 	protected transient T bean;
 	protected transient Function<? super T, R> getter;
 	protected transient BiConsumer<? super T, R> setter;
+	protected transient R val;
+	//
 	protected transient Object result = OK;
 	protected transient boolean silent;
 
@@ -25,10 +27,10 @@ public class Pipeline<T, R> implements PropertyAccessor<T, R> {
 	}
 
 	public <N, E> Pipeline<N, E> begin(N newBean, Function<? super N, E> getter, @Nullable BiConsumer<? super N, E> setter) {
-		this.result = OK;
 		this.bean = X.castType(newBean);
 		this.getter = X.castType(getter);
 		this.setter = X.castType(setter);
+		resetForNewProperty();
 		return X.castType(this);
 	}
 
@@ -42,9 +44,9 @@ public class Pipeline<T, R> implements PropertyAccessor<T, R> {
 	}
 
 	public <N, E> Pipeline<N, E> begin(Function<? super N, E> getter, @Nullable BiConsumer<? super N, E> setter) {
-		this.result = OK;
 		this.getter = X.castType(getter);
 		this.setter = X.castType(setter);
+		resetForNewProperty();
 		return X.castType(this);
 	}
 
@@ -76,9 +78,14 @@ public class Pipeline<T, R> implements PropertyAccessor<T, R> {
 		return true;
 	}
 
+	protected void resetForNewProperty() {
+		this.result = OK;
+		this.val = getter == null || (bean == null && silent) ? null : getter.apply(bean);
+	}
+
 	public Pipeline<T, R> apply(Function<? super R, R> validator) {
 		if (canNext()) {
-			R val = getter.apply(bean);
+			R val = this.val;
 			if (silent) {
 				try {
 					val = validator.apply(val);
@@ -109,6 +116,9 @@ public class Pipeline<T, R> implements PropertyAccessor<T, R> {
 				}
 			} else {
 				validator.accept(bean);
+			}
+			if (getter != null) { // ensure val is refresh
+				this.val = getter.apply(bean);
 			}
 		}
 		return this;
