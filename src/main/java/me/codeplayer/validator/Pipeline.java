@@ -76,7 +76,7 @@ public class Pipeline<T, R> implements PropertyAccessor<T, R> {
 		return true;
 	}
 
-	public Pipeline<T, R> apply(Function<R, R> validator) {
+	public Pipeline<T, R> apply(Function<? super R, R> validator) {
 		if (canNext()) {
 			R val = getter.apply(bean);
 			if (silent) {
@@ -133,27 +133,27 @@ public class Pipeline<T, R> implements PropertyAccessor<T, R> {
 		return this;
 	}
 
-	public Pipeline<T, R> asserts(Predicate<R> validator, final @Nullable Supplier<?> throwsError) {
+	public Pipeline<T, R> asserts(Predicate<? super R> validator, final @Nullable Supplier<?> throwsError) {
 		return assertInternal(() -> validator.test(getter.apply(bean)), throwsError);
 	}
 
-	public Pipeline<T, R> asserts(Predicate<R> validator, final @Nullable CharSequence charSequence) {
+	public Pipeline<T, R> asserts(Predicate<? super R> validator, final @Nullable CharSequence charSequence) {
 		return asserts(validator, charSequence == null ? null : () -> charSequence);
 	}
 
-	public Pipeline<T, R> asserts(Predicate<R> validator) {
+	public Pipeline<T, R> asserts(Predicate<? super R> validator) {
 		return asserts(validator, (Supplier<?>) null);
 	}
 
-	public Pipeline<T, R> assertsNot(Predicate<R> validator, final @Nullable Supplier<?> throwsError) {
+	public Pipeline<T, R> assertsNot(Predicate<? super R> validator, final @Nullable Supplier<?> throwsError) {
 		return assertInternal(() -> !validator.test(getter.apply(bean)), throwsError);
 	}
 
-	public Pipeline<T, R> assertsNot(Predicate<R> validator, final @Nullable CharSequence charSequence) {
+	public Pipeline<T, R> assertsNot(Predicate<? super R> validator, final @Nullable CharSequence charSequence) {
 		return assertsNot(validator, charSequence == null ? null : () -> charSequence);
 	}
 
-	public Pipeline<T, R> assertsNot(Predicate<R> validator) {
+	public Pipeline<T, R> assertsNot(Predicate<? super R> validator) {
 		return assertsNot(validator, (Supplier<?>) null);
 	}
 
