@@ -1,5 +1,7 @@
 package me.codeplayer.util;
 
+import java.util.function.*;
+
 /**
  * 缓存数据加载器
  * 
@@ -7,7 +9,7 @@ package me.codeplayer.util;
  * @since 0.4.3
  * @param <E>
  */
-public interface CacheLoader<E> extends LazyLoader<E> {
+public interface CacheLoader<E> extends Supplier<E> {
 
 	boolean flushRequired();
 

@@ -1,6 +1,6 @@
 package me.codeplayer.util.scan;
 
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 
 public abstract class AbstractMethodMatcher implements MethodMatcher {
 
@@ -10,8 +10,8 @@ public abstract class AbstractMethodMatcher implements MethodMatcher {
 		this.methodMatcher = methodMatcher;
 	}
 
-	public boolean match(Method method) {
-		return (methodMatcher == null || methodMatcher.match(method)) && matchMethod(method);
+	public boolean test(Method method) {
+		return (methodMatcher == null || methodMatcher.test(method)) && matchMethod(method);
 	}
 
 	public abstract boolean matchMethod(Method method);

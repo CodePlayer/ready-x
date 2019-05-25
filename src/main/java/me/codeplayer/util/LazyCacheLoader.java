@@ -1,59 +1,57 @@
 package me.codeplayer.util;
 
+import java.util.function.*;
+
 /**
- * 缓存数据加载器
+ * 支持懒加载的缓存数据加载器，一般情况下，数据只会加载一次
  * 
- * @date 2017年1月10日
- * @since 0.4.3
+ * @since 2.0
+ * @author Ready
+ * @date 2019年3月20日
  * @param <E>
  */
 public class LazyCacheLoader<E> implements CacheLoader<E> {
 
-	protected final LazyLoader<E> loader;
-	protected long internal;
-	protected transient volatile E data;
-	protected transient volatile long nextUpdateTime;
+	public static final Object uninitialized = new Object();
+	//
+	protected transient volatile Object value = uninitialized;
+	protected final Supplier<E> loader;
 
-	public LazyCacheLoader(long internal, LazyLoader<E> loader) {
-		this.internal = internal;
+	public LazyCacheLoader(Supplier<E> loader) {
+		Assert.notNull(loader);
 		this.loader = loader;
+	}
+
+	public LazyCacheLoader(final boolean initialize, Supplier<E> loader) {
+		this(loader);
+		if (initialize) {
+			this.value = loader.get();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public E get() {
+		if (flushRequired()) {
+			value = loader.get();
+		}
+		return (E) value;
 	}
 
 	@Override
 	public boolean flushRequired() {
-		return flushRequired(System.currentTimeMillis());
-	}
-
-	protected boolean flushRequired(long baseTime) {
-		return nextUpdateTime == 0 && internal > 0 && nextUpdateTime < baseTime;
+		return value == uninitialized;
 	}
 
 	@Override
 	public E flush(boolean lazy) {
-		E val;
 		if (lazy) {
-			nextUpdateTime = 0;
-			val = null;
+			value = uninitialized;
+			return null;
 		} else {
-			data = val = load(System.currentTimeMillis());
+			final E val = loader.get();
+			value = val;
+			return val;
 		}
-		return val;
-	}
-
-	@Override
-	public E load() {
-		final long now = System.currentTimeMillis();
-		if (flushRequired(now)) {
-			return load(now);
-		} else {
-			return data;
-		}
-	}
-
-	protected E load(final long now) {
-		final E val = loader.load();
-		data = val;
-		nextUpdateTime = now + internal;
-		return val;
 	}
 }

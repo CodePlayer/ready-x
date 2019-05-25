@@ -24,7 +24,12 @@ public abstract class StringUtil {
 	 * @since 0.0.1
 	 */
 	public static String unicode(String src) {
-		byte[] bytes = src.getBytes(Charsets.UTF_16);// 转为UTF-16字节数组
+		byte[] bytes;
+		try {
+			bytes = src.getBytes("UTF-16");// 转为UTF-16字节数组
+		} catch (UnsupportedEncodingException e) {
+			throw new IllegalArgumentException(e);
+		}
 		int length = bytes.length;
 		if (length > 2) {// 由于转换出来的字节数组前两位属于UNICODE固定标记，因此要过滤掉
 			int i = 2;
@@ -52,7 +57,12 @@ public abstract class StringUtil {
 	 * @since 0.0.1
 	 */
 	public static String fastUnicode(String str) {
-		byte[] bytes = str.getBytes(Charsets.UTF_16);// 转为UTF-16字节数组
+		byte[] bytes;
+		try {
+			bytes = str.getBytes("UTF-16"); // 转为UTF-16字节数组
+		} catch (UnsupportedEncodingException e) {
+			throw new IllegalArgumentException(e);
+		}
 		int length = bytes.length;
 		if (length > 2) {
 			int i = 2;
@@ -183,6 +193,25 @@ public abstract class StringUtil {
 	}
 
 	/**
+	 * 判断指定的字符序列数组是否存在不为空的元素<br>
+	 * 如果数组中存在不为null、空字符串的元素，则返回true，否则返回false<br>
+	 * 
+	 * @param css
+	 * @return
+	 * @since 1.0.2
+	 */
+	public static final boolean isAnyNotEmpty(final CharSequence... css) {
+		if (css != null && css.length > 0) {
+			for (final CharSequence cs : css) {
+				if (notEmpty(cs)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * 判断指定的对象是否为空<br>
 	 * 如果对象(或其toSring()返回值)为null、空字符串，则返回true<br>
 	 * <b>注意：</b>本方法不会去除字符串两边的空格，如果需要对字符串进行去除两边空格后的判断，请使用isBlank(Object obj)方法
@@ -216,7 +245,7 @@ public abstract class StringUtil {
 	 * @return
 	 * @see me.codeplayer.util.StringUtil#isEmpty(Object)
 	 */
-	public boolean hasEmpty(Object... values) {
+	public static final boolean hasEmpty(Object... values) {
 		int length = ArrayUtil.getLength(values, true);
 		do {
 			if (isEmpty(values[--length])) {
@@ -296,7 +325,7 @@ public abstract class StringUtil {
 	 * @return
 	 * @since 0.0.1
 	 */
-	public boolean hasBlank(Object... values) {
+	public static final boolean hasBlank(Object... values) {
 		int length = ArrayUtil.getLength(values, true);
 		do {
 			if (isBlank(values[--length])) {
@@ -395,7 +424,7 @@ public abstract class StringUtil {
 
 	/**
 	 * 如果字符串不足指定位数，则在其左侧或右侧补充指定的字符，直到指定位数<br>
-	 * 如果字符串=null，则返回空字符串""<br>
+	 * 如果字符串 = null，则返回空字符串""<br>
 	 * 如果字符串位数大于指定位数，则返回原字符串
 	 * 
 	 * @param str 指定的字符串
@@ -409,7 +438,7 @@ public abstract class StringUtil {
 		if (str == null)
 			return "";
 		if (maxLength < 1)
-			throw new IllegalArgumentException("指定位数不能小于1!");
+			throw new IllegalArgumentException("Argument 'maxLength' can not be less than 1:" + maxLength);
 		int length = str.length();
 		if (maxLength > length) {
 			int diffSize = maxLength - length;
@@ -649,8 +678,20 @@ public abstract class StringUtil {
 	 * @return
 	 * @since 0.4.2
 	 */
-	public static final boolean startWith(String str, char firstChar) {
+	public static final boolean startsWith(final String str, final char firstChar) {
 		return str != null && str.length() > 0 && str.charAt(0) == firstChar;
+	}
+
+	/**
+	 * 判断指定字符串是否以指定的单个字符结尾
+	 * 
+	 * @param str 指定的字符串
+	 * @param lastChar 指定的单个字符
+	 * @return
+	 * @since 0.4.2
+	 */
+	public static final boolean endsWith(final String str, final char lastChar) {
+		return str != null && str.length() > 0 && str.charAt(str.length() - 1) == lastChar;
 	}
 
 	/**
@@ -662,7 +703,7 @@ public abstract class StringUtil {
 	 * @return
 	 * @since 0.3.5
 	 */
-	public static final String escapeSQLLike(String likeStr, char escapeChar, boolean appendLikeWildcard) {
+	public static final String escapeSQLLike(final String likeStr, final char escapeChar, final boolean appendLikeWildcard) {
 		if (StringUtil.isEmpty(likeStr)) {
 			return "";
 		}
@@ -699,7 +740,7 @@ public abstract class StringUtil {
 	 * @return
 	 * @since 0.3.5
 	 */
-	public static final String escapeSQLLike(String likeStr, boolean appendLikeWildcard) {
+	public static final String escapeSQLLike(final String likeStr, final boolean appendLikeWildcard) {
 		return escapeSQLLike(likeStr, '\\', appendLikeWildcard);
 	}
 
@@ -711,7 +752,7 @@ public abstract class StringUtil {
 	 * @return
 	 * @since 0.3.5
 	 */
-	public static final String escapeSQLLike(String likeStr) {
+	public static final String escapeSQLLike(final String likeStr) {
 		return escapeSQLLike(likeStr, '\\', false);
 	}
 
@@ -723,21 +764,45 @@ public abstract class StringUtil {
 	 * @param seperatorChars 单词两侧必须是指定的字符之一或位于字符串 {@code container }的首/尾位置
 	 * @return
 	 * @author Ready
-	 * @since 0.4.2
+	 * @since 2.0.0
 	 */
-	public static final boolean containsWord(String container, String searchedWord, String seperatorChars) {
-		if (searchedWord == null)
+	public static final boolean containsWord(final String container, final String searchedWord, final String seperatorChars, final boolean fastMode) {
+		if (container == null || searchedWord == null)
 			return false;
-		int startIndex = container.indexOf(searchedWord);
-		if (startIndex == -1) {
-			return false;
-		}
-		if (startIndex == 0 || seperatorChars.indexOf(container.charAt(startIndex - 1)) != -1) {
-			int endPos = startIndex + searchedWord.length();
-			if (endPos == container.length() || seperatorChars.indexOf(container.charAt(endPos)) != -1) {
-				return true;
+		final int cLength = container.length(), sLength = searchedWord.length();
+		if (cLength == sLength) {
+			return container.equals(searchedWord);
+		} else if (cLength > sLength) {
+			int fromIndex = 0;
+			int startIndex;
+			// 需要考虑 containsWord("12123,123", "123", ",") 这种特殊情况
+			while ((startIndex = container.indexOf(searchedWord, fromIndex)) != -1) {
+				fromIndex = startIndex + sLength; // as endIndex
+				if ((startIndex == 0 || seperatorChars.indexOf(container.charAt(startIndex - 1)) != -1)
+						&& (fromIndex == cLength || seperatorChars.indexOf(container.charAt(fromIndex)) != -1)) {
+					return true;
+				}
+				if (fastMode || fromIndex + sLength > cLength) {
+					break;
+				}
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * 检测指定字符串中是否存在指定的单词<br>
+	 * 该方法采用快速模式，对于类似 {@code containsWord("abc123,123", "123", ",") } 等特殊情况无法保证100%可靠；如果想要保证可靠性，建议使用 {@link #containsWord(String, String, String, boolean) }
+	 * 
+	 * @param container 待检测的字符串
+	 * @param searchedWord 指定的单词
+	 * @param seperatorChars 单词两侧必须是指定的字符之一或位于字符串 {@code container }的首/尾位置
+	 * @return
+	 * @author Ready
+	 * @since 0.4.2
+	 * @see {@link StringUtil#containsWord(String, String, String, boolean) }
+	 */
+	public static final boolean containsWord(final String container, final String searchedWord, final String seperatorChars) {
+		return containsWord(container, searchedWord, seperatorChars, true);
 	}
 }

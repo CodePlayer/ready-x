@@ -11,6 +11,7 @@ import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
@@ -80,16 +81,16 @@ public class ClassPathScanHandler {
 				URL url = dirs.nextElement();
 				String protocol = url.getProtocol();
 				if ("file".equals(protocol)) {
-					logger.info("扫描file类型的class文件");
+					logger.debug("Scanning class files in {}", url);
 					String filePath = URLDecoder.decode(url.getFile(), "UTF-8");
 					doScanPackageClassesByFile(classes, packageName, filePath, recursive);
 				} else if ("jar".equals(protocol)) {
-					logger.info("扫描jar文件中的类");
+					logger.debug("Scanning class files in {}", url);
 					doScanPackageClassesByJar(packageName, url, recursive, classes);
 				}
 			}
 		} catch (IOException e) {
-			logger.error("扫描包中的类时出现异常", e);
+			logger.error("An error occurs when scanning class files", e);
 		}
 		return classes;
 	}
@@ -120,7 +121,7 @@ public class ClassPathScanHandler {
 				}
 				// 判断是否过滤 inner class
 				if (this.excludeInner && name.lastIndexOf('$') != -1) {
-					logger.info("exclude inner class with name:" + name);
+					logger.debug("exclude inner class with name: {}", name);
 					continue;
 				}
 				String classSimpleName = name.substring(name.lastIndexOf('/') + 1);
@@ -131,7 +132,7 @@ public class ClassPathScanHandler {
 					try {
 						classes.add(Thread.currentThread().getContextClassLoader().loadClass(className));
 					} catch (ClassNotFoundException e) {
-						logger.error("Class.forName error:", e);
+						logger.error("Class.forName() error:", e);
 					}
 				}
 			}
@@ -162,7 +163,7 @@ public class ClassPathScanHandler {
 				}
 				String filename = file.getName();
 				if (excludeInner && filename.indexOf('$') != -1) {
-					logger.info("exclude inner class with name:" + filename);
+					logger.debug("exclude inner class with name:{}", filename);
 					return false;
 				}
 				return filterClassName(filename);
@@ -215,13 +216,13 @@ public class ClassPathScanHandler {
 	 * @param recursive
 	 * @return
 	 */
-	public Set<Method> getMethodsFromPackage(String basePackage, boolean recursive, MethodMatcher methodMatcher) {
+	public Set<Method> getMethodsFromPackage(String basePackage, boolean recursive, Predicate<Method> methodMatcher) {
 		Set<Class<?>> classes = getAllClassesFromPackage(basePackage, recursive);
 		final Set<Method> finalMethods = new LinkedHashSet<Method>();
 		for (Class<?> clazz : classes) {
 			Method[] methods = clazz.getDeclaredMethods();
 			for (Method method : methods) {
-				if (methodMatcher == null || methodMatcher.match(method)) {
+				if (methodMatcher == null || methodMatcher.test(method)) {
 					finalMethods.add(method);
 				}
 			}

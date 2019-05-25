@@ -1,5 +1,6 @@
 package me.codeplayer.util;
 
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -25,7 +26,7 @@ public abstract class Encrypter {
 		try {
 			return MessageDigest.getInstance(algorithm);
 		} catch (NoSuchAlgorithmException e) {
-			throw new IllegalArgumentException("不支持算法[" + algorithm + "]", e);
+			throw new IllegalArgumentException("Unexpected algorithm:" + algorithm, e);
 		}
 	}
 
@@ -49,7 +50,12 @@ public abstract class Encrypter {
 	 * @return
 	 */
 	public static final String md5For16(String input) {
-		byte[] bytes = encode(input.getBytes(Charsets.UTF_8), "MD5");
+		byte[] bytes;
+		try {
+			bytes = encode(input.getBytes("UTF-8"), "MD5");
+		} catch (UnsupportedEncodingException e) {
+			throw new IllegalArgumentException(e);
+		}
 		return bytes2Hex(bytes, 4, 12);
 	}
 
@@ -160,7 +166,11 @@ public abstract class Encrypter {
 	 * @return
 	 */
 	public static final String encode(String input, String algorithm) {
-		return bytes2Hex(getMessageDigest(algorithm).digest(input.getBytes(Charsets.UTF_8)));
+		try {
+			return bytes2Hex(getMessageDigest(algorithm).digest(input.getBytes("UTF-8")));
+		} catch (UnsupportedEncodingException e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 
 	/**

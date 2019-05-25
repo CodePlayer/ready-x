@@ -1,7 +1,7 @@
 package me.codeplayer.util.scan;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
+import java.lang.annotation.*;
+import java.lang.reflect.*;
 
 /**
  * 注解方法过滤器

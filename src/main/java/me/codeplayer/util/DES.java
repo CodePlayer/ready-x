@@ -1,13 +1,10 @@
 package me.codeplayer.util;
 
-import java.io.UnsupportedEncodingException;
-import java.security.Key;
+import java.io.*;
+import java.security.*;
 
-import javax.crypto.Cipher;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.DESKeySpec;
-
-import org.apache.commons.codec.binary.Base64;
+import javax.crypto.*;
+import javax.crypto.spec.*;
 
 /**
  * 可逆的数据算法工具，实现DES加密算法，利用指定的密钥对字符串或字节数组进行加密或解密
@@ -48,7 +45,11 @@ public class DES {
 	 * 根据字符串参数生成KEY
 	 */
 	public void setKey(String strKey) {
-		setKey(strKey.getBytes(Charsets.UTF_8));
+		try {
+			setKey(strKey.getBytes("UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 
 	/**
@@ -60,7 +61,7 @@ public class DES {
 		try {
 			this.key = SecretKeyFactory.getInstance("DES").generateSecret(new DESKeySpec(byteKey));
 		} catch (Exception e) {
-			throw new IllegalArgumentException("设置指定密钥时发生异常!", e);
+			throw new IllegalArgumentException(e);
 		}
 	}
 
@@ -73,7 +74,7 @@ public class DES {
 	 */
 	public String encode(String plaintext, String encoding) {
 		try {
-			return new String(Base64.encodeBase64(encode(plaintext.getBytes(encoding))));
+			return new String(java.util.Base64.getEncoder().encode(encode(plaintext.getBytes(encoding))));
 		} catch (UnsupportedEncodingException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -99,7 +100,7 @@ public class DES {
 	 */
 	public String decode(String ciphertext, String encoding) {
 		try {
-			return new String(decode(Base64.decodeBase64(ciphertext.getBytes(encoding))), encoding);
+			return new String(decode(java.util.Base64.getDecoder().decode(ciphertext.getBytes(encoding))), encoding);
 		} catch (UnsupportedEncodingException e) {
 			throw new IllegalArgumentException(e);
 		}

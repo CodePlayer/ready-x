@@ -14,12 +14,12 @@ import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
  * @date 2014-10-13
  * 
  */
-@SuppressWarnings("unchecked")
 public abstract class JSONUtil {
 
 	/**
 	 * 将Java对象编码为JSON字符串。<br/>
 	 * 如果对象里存在为null的属性，则不包含在字符串中。
+	 * 
 	 * @param obj 指定的任意对象
 	 * @return
 	 */
@@ -30,6 +30,7 @@ public abstract class JSONUtil {
 	/**
 	 * 将Java对象编码为JSON字符串。<br/>
 	 * 值为null的属性也会保留并输出。
+	 * 
 	 * @param obj 指定的任意对象
 	 * @return
 	 */
@@ -154,6 +155,6 @@ public abstract class JSONUtil {
 	 * @return
 	 */
 	public static final <T> T deserialize(String text) {
-		return (T) JSON.parse(text);
+		return X.castType(JSON.parse(text));
 	}
 }
