@@ -390,7 +390,7 @@ public abstract class StringUtil {
 			return str;
 		} else {
 			str = str.substring(0, maxLength);
-			return suffix == null ? suffix : str + suffix;
+			return suffix == null ? str : str + suffix;
 		}
 	}
 
