@@ -14,7 +14,7 @@ ready-x ***2.x*** 是一个基于Java 8（ ***1.x*** 基于 Java 5，后续将�
 # 使用
 本工具类库已发布至 Maven 中央仓库，当前最新版本为：**2.5.2-RELEASE** ，你可以通过如下 Maven 依赖配置引入本库：
 
-```
+```xml
 <dependency>
 	<groupId>me.codeplayer</groupId>
 	<artifactId>ready-x</artifactId>
