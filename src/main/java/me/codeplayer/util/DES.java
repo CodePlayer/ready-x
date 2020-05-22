@@ -36,7 +36,10 @@ public class DES {
 
 	/**
 	 * 利用默认的密钥构造一个DES工具实例
+	 * <p>
+	 * 警告：<b>不应该</b>使用该构造方法，因为默认且开源的密钥将导致对称加密的安全性无法保证
 	 */
+	@Deprecated
 	public DES() {
 		setKey("me.codeplayer");
 	}
