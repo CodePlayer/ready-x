@@ -103,7 +103,7 @@ public abstract class X {
 
 	/**
 	 * 从指定的多个值依次检测并选取第一个不为null的值
-	 * 
+	 *
 	 * @see #expectNotNull(Object, Object, Object, Object)
 	 */
 	public static final <T> T expectNotNull(T v1, T v2) {
@@ -298,11 +298,11 @@ public abstract class X {
 	/**
 	 * 将指定的值根据指定的表达式解析，并返回解析后的结果
 	 * 
-	 * @param value 指定的值
+	 * @param value       指定的值
 	 * @param expressions 指定的表达式，例如：<code>("1", "男", "0", "女")</code>方法将会将指定属性的值(value)，与表达式进行匹配，形如：
 	 * 
-	 *            <pre>
-	 * <code> 
+	 * <pre>
+	 * <code>
 	 * if(value 等于 "1"){
 	 * 	return "男";
 	 * }else if(value 等于 "0"){
@@ -311,11 +311,11 @@ public abstract class X {
 	 * 	return value;
 	 * }
 	 * </code>
-	 *            </pre>
+	 * </pre>
 	 * 
-	 *            本方法接收的表达式参数个数可以为奇数，例如：<code>(6, "星期六", 7, "星期天", "工作日")</code>，相当于：
+	 * 本方法接收的表达式参数个数可以为奇数，例如：<code>(6, "星期六", 7, "星期天", "工作日")</code>，相当于：
 	 * 
-	 *            <pre>
+	 * <pre>
 	 * if(value 等于 6){
 	 * 	return "星期六";
 	 * }else if(value 等于 7){
@@ -323,7 +323,7 @@ public abstract class X {
 	 * }else{
 	 * 	return "工作日";
 	 * }
-	 *            </pre>
+	 * </pre>
 	 * 
 	 * @return
 	 */
@@ -377,7 +377,7 @@ public abstract class X {
 	/**
 	 * 根据需要存储的元素个数确定HashMap等Map接口实现类的初始容量
 	 * 
-	 * @param capacity 需要存储的元素个数
+	 * @param capacity   需要存储的元素个数
 	 * @param loadFactor 负载因子，必须介于0-1之间，如果不在此范围，内部也不检测，后果自负
 	 * @return
 	 */
@@ -401,9 +401,9 @@ public abstract class X {
 	}
 
 	/**
-	 * 对指定的对象执行执行的 {@code mapper } 转换，安全地获得期望的转换结果
+	 * 对指定的对象执行指定的 {@code mapper } 转换，安全地获得期望的转换结果
 	 * 
-	 * @param obj 指定的对象，可以为 null
+	 * @param obj    指定的对象，可以为 null
 	 * @param mapper 转换器
 	 * @return 如果 {@code obj == null } 则返回null，否则返回转换后的结果
 	 * @author Ready
@@ -417,6 +417,50 @@ public abstract class X {
 	}
 
 	/**
+	 * 对指定的对象执行 {@code mapper }、{@code chainedMapper} 双重转换，安全地获得期望的转换结果
+	 * 
+	 * @param obj           指定的对象，可以为 null
+	 * @param mapper        转换器
+	 * @param chainedMapper 二次转换器
+	 * @return 如果 {@code obj == null } 则返回 null，否则返回转换后的结果
+	 * @author Ready
+	 * @since 2.6
+	 */
+	public static final <T, R, E> E map(@Nullable T obj, Function<? super T, R> mapper, Function<R, E> chainedMapper) {
+		return map(map(obj, mapper), chainedMapper);
+	}
+
+	/**
+	 * 对指定的对象执行执行的 {@code mapper } 转换，安全地获得期望的转换结果
+	 * 
+	 * @param obj    指定的对象，可以为 null
+	 * @param mapper 转换器
+	 * @param other  如果转换后的值为null，则返回该参数值
+	 * @return 如果 {@code obj == null } 则返回null，否则返回转换后的结果
+	 * @author Ready
+	 * @since 2.6
+	 */
+	public static final <T, R> R mapElse(@Nullable T obj, Function<? super T, R> mapper, R other) {
+		R val = map(obj, mapper);
+		return val == null ? other : val;
+	}
+
+	/**
+	 * 对指定的对象执行执行的 {@code mapper } 转换，安全地获得期望的转换结果
+	 * 
+	 * @param obj    指定的对象，可以为 null
+	 * @param mapper 转换器
+	 * @param other  如果转换后的值为null，则返回该备用对象的返回值
+	 * @return 如果 {@code obj == null } 则返回null，否则返回转换后的结果
+	 * @author Ready
+	 * @since 2.6
+	 */
+	public static final <T, R> R mapElse(@Nullable T obj, Function<? super T, R> mapper, Supplier<R> other) {
+		R val = map(obj, mapper);
+		return val == null ? other.get() : val;
+	}
+
+	/**
 	 * 尝试拆箱可能由 {@link Supplier } 接口包装的实体对象
 	 * 
 	 * @param supplier
@@ -424,7 +468,7 @@ public abstract class X {
 	 * @author Ready
 	 * @since 2.3.0
 	 */
-	public static final Object tryUnwrap(Object supplier) {
+	public static final Object tryUnwrap(@Nullable Object supplier) {
 		if (supplier instanceof Supplier) {
 			return ((Supplier<?>) supplier).get();
 		}
@@ -432,10 +476,19 @@ public abstract class X {
 	}
 
 	/**
+	 * 当指定 val 为 null 时，则返回替补 {@code other} 中的返回值，否则返回 val 本身
+	 * 
+	 * @since 2.6
+	 */
+	public static <T> T getElse(@Nullable T val, Supplier<T> other) {
+		return val == null ? other.get() : val;
+	}
+
+	/**
 	 * 检测指定的对象在经过指定的转换后，是否符合指定的条件
 	 * 
-	 * @param bean 指定的对象
-	 * @param mapper 转换器
+	 * @param bean    指定的对象
+	 * @param mapper  转换器
 	 * @param matcher 条件判断器
 	 * @return
 	 * @author Ready
