@@ -301,7 +301,7 @@ public abstract class X {
 	 * @param value       指定的值
 	 * @param expressions 指定的表达式，例如：<code>("1", "男", "0", "女")</code>方法将会将指定属性的值(value)，与表达式进行匹配，形如：
 	 * 
-	 * <pre>
+	 *                    <pre>
 	 * <code>
 	 * if(value 等于 "1"){
 	 * 	return "男";
@@ -311,11 +311,11 @@ public abstract class X {
 	 * 	return value;
 	 * }
 	 * </code>
-	 * </pre>
+	 *                    </pre>
 	 * 
-	 * 本方法接收的表达式参数个数可以为奇数，例如：<code>(6, "星期六", 7, "星期天", "工作日")</code>，相当于：
+	 *                    本方法接收的表达式参数个数可以为奇数，例如：<code>(6, "星期六", 7, "星期天", "工作日")</code>，相当于：
 	 * 
-	 * <pre>
+	 *                    <pre>
 	 * if(value 等于 6){
 	 * 	return "星期六";
 	 * }else if(value 等于 7){
@@ -323,7 +323,7 @@ public abstract class X {
 	 * }else{
 	 * 	return "工作日";
 	 * }
-	 * </pre>
+	 *                    </pre>
 	 * 
 	 * @return
 	 */
@@ -455,7 +455,7 @@ public abstract class X {
 	 * @author Ready
 	 * @since 2.6
 	 */
-	public static final <T, R> R mapElse(@Nullable T obj, Function<? super T, R> mapper, Supplier<R> other) {
+	public static final <T, R> R mapElseGet(@Nullable T obj, Function<? super T, R> mapper, Supplier<R> other) {
 		R val = map(obj, mapper);
 		return val == null ? other.get() : val;
 	}
