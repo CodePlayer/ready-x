@@ -3,6 +3,7 @@ package me.codeplayer.util;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.function.*;
 
 /**
  * List、Set、Map等常见集合数据操作的工具类
@@ -152,8 +153,8 @@ public abstract class CollectionUtil {
 	/**
 	 * 将可变参数形式的键值数组添加到一个Map集合中
 	 * 
-	 * @param ignore 指示忽略当前键值的情况：{@link CollectionUtil#IGNORE_NONE }、{@link CollectionUtil#IGNORE_NULL } 、{@link CollectionUtil#IGNORE_EMPTY }、 {@link CollectionUtil#IGNORE_BLANK }
-	 * @param map 指定的Map集合
+	 * @param ignore  指示忽略当前键值的情况：{@link CollectionUtil#IGNORE_NONE }、{@link CollectionUtil#IGNORE_NULL } 、{@link CollectionUtil#IGNORE_EMPTY }、 {@link CollectionUtil#IGNORE_BLANK }
+	 * @param map     指定的Map集合
 	 * @param kvPairs 可变参数形式的键值数组，必须是K1, V1, K2, V2, K3, V3...这种形式
 	 */
 	public static final <K, V> Map<K, V> addToMap(int ignore, Map<K, V> map, Object... kvPairs) {
@@ -177,7 +178,7 @@ public abstract class CollectionUtil {
 	/**
 	 * 将可变参数形式的键值数组添加到一个Map集合中
 	 * 
-	 * @param map 指定的Map集合
+	 * @param map     指定的Map集合
 	 * @param kvPairs 可变参数形式的键值数组，必须是K1, V1, K2, V2, K3, V3...这种形式
 	 */
 	public static final <K, V> Map<K, V> addToMap(Map<K, V> map, Object... kvPairs) {
@@ -187,9 +188,9 @@ public abstract class CollectionUtil {
 	/**
 	 * 将可变参数形式的键值数组添加到一个Map集合中
 	 * 
-	 * @param ignore 指示忽略当前键值的情况：{@link CollectionUtil#IGNORE_NONE }、{@link CollectionUtil#IGNORE_NULL } 、{@link CollectionUtil#IGNORE_EMPTY }、 {@link CollectionUtil#IGNORE_BLANK }
+	 * @param ignore     指示忽略当前键值的情况：{@link CollectionUtil#IGNORE_NONE }、{@link CollectionUtil#IGNORE_NULL } 、{@link CollectionUtil#IGNORE_EMPTY }、 {@link CollectionUtil#IGNORE_BLANK }
 	 * @param collection 指定的Collection集合
-	 * @param elements 可变参数形式的元素数组
+	 * @param elements   可变参数形式的元素数组
 	 */
 	@SuppressWarnings("unchecked")
 	public static final <E> Collection<E> addToCollection(int ignore, Collection<? super E> collection, E... elements) {
@@ -211,7 +212,7 @@ public abstract class CollectionUtil {
 	 * 将可变参数形式的键值数组添加到一个Map集合中
 	 * 
 	 * @param collection 指定的Collection集合
-	 * @param elements 可变参数形式的元素数组
+	 * @param elements   可变参数形式的元素数组
 	 */
 	@SuppressWarnings("unchecked")
 	public static final <E> Collection<E> addToCollection(Collection<? super E> collection, E... elements) {
@@ -242,9 +243,9 @@ public abstract class CollectionUtil {
 	/**
 	 * 获取Map集合中指定的多个键的值，并以数组的形式依次返回。如果集合中没有指定的键，则数组对应位置的值为null
 	 * 
-	 * @param map 指定的Map集合
+	 * @param map        指定的Map集合
 	 * @param valueClass Map中存储的值的类型
-	 * @param keys 指定的键数组
+	 * @param keys       指定的键数组
 	 * @return
 	 * @author Ready
 	 * @since 0.3.1
@@ -262,7 +263,7 @@ public abstract class CollectionUtil {
 	 * 移除集合里重复的元素
 	 *
 	 * @param list 待处理的集合
-	 * @param <E>
+	 * @param      <E>
 	 * @return
 	 */
 	public static <E> List<E> removeDuplicate(List<E> list) {
@@ -277,4 +278,21 @@ public abstract class CollectionUtil {
 		}
 		return singleList;
 	}
+
+	/**
+	 * 遍历集合，并使用指定的过滤器进行检测，返回第一个符合条件的元素
+	 * 
+	 * @since 2.8
+	 */
+	public static final <T> T findFirst(final Collection<T> range, final Predicate<? super T> filter) {
+		if (range != null && !range.isEmpty()) {
+			for (T t : range) {
+				if (filter.test(t)) {
+					return t;
+				}
+			}
+		}
+		return null;
+	}
+
 }

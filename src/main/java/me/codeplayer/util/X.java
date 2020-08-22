@@ -410,7 +410,7 @@ public abstract class X {
 	 * @since 2.3.0
 	 */
 	public static final <T, R> R map(@Nullable T obj, Function<? super T, R> mapper) {
-		if (obj == null) {
+		if (obj == null || mapper == null) {
 			return null;
 		}
 		return mapper.apply(obj);
@@ -547,5 +547,138 @@ public abstract class X {
 	 */
 	public static final RuntimeException wrapException(final @Nullable String msg, final @Nullable Throwable ex) {
 		return wrapException(msg, false, ex, null);
+	}
+
+	/**
+	 * 递归地调用对象的指定方法，直到返回的对象满足指定条件（如果 {@code root} 对象本身符合条件就返回其本身）
+	 * 
+	 * @since 2.8
+	 */
+	public static <T> T getRecursively(T root, Function<T, T> recursion, Predicate<T> untilMatch) {
+		T t = root;
+		while (t != null) {
+			if (untilMatch.test(t)) {
+				return t;
+			}
+			t = recursion.apply(t);
+		}
+		return null;
+	}
+
+	/**
+	 * 宽松地比较两个实体的指定属性值是否相等，并返回比较结果
+	 *
+	 * @return 相等 -> 1；如果有一方为 null -> 0；否则返回 -1
+	 * @since 2.8
+	 */
+	public static <T> int eqLax(@Nullable T inputVal, @Nullable T currentVal) {
+		if (inputVal == currentVal) {
+			return 1;
+		} else if (inputVal == null || currentVal == null) {
+			return 0;
+		} else {
+			return inputVal.equals(currentVal) ? 1 : -1;
+		}
+	}
+
+	/**
+	 * 宽松地比较两个实体的指定属性值是否相等
+	 *
+	 * @return 相等 -> 1；如果有一方为 null -> 0；否则返回 -1
+	 * @since 2.8
+	 */
+	public static <T, R> int eqLax(@Nullable T input, @Nullable T current, Function<T, R> getter) {
+		R inputVal = X.map(input, getter), currentVal = X.map(current, getter);
+		return eqLax(inputVal, currentVal);
+	}
+
+	/**
+	 * 期望两个实体的指定属性值是相等的，并返回该值。 本方法允许其中一个属性值为 null，并会自动使用另一方的值进行填补。如果两者都不为 null 且不相等，则直接抛出非法参数异常
+	 *
+	 * @return 返回非空的属性值。如果两个属性值相等，优先返回 {@code current} 的属性值
+	 * @since 2.8
+	 */
+	public static <T, R> R expectEquals(@Nullable T input, @Nullable T current, Function<T, R> getter, BiConsumer<T, R> setIfNull) throws IllegalArgumentException {
+		final R inputVal = X.map(input, getter), currentVal = X.map(current, getter);
+		if (inputVal == currentVal) {
+			return currentVal;
+		} else if (inputVal == null) {
+			setIfNull.accept(input, currentVal);
+			return currentVal;
+		} else if (currentVal == null) {
+			setIfNull.accept(current, inputVal);
+			return inputVal;
+		} else if (inputVal.equals(currentVal)) {
+			return currentVal;
+		}
+		throw new IllegalArgumentException();
+	}
+
+	/**
+	 * 期望两个实体的指定属性值是相等的，并返回该值。 如果两者不相等且 {@code input} 为 null，则会自动使用 {@code old} 进行赋值操作。如果两者都不为 null 且不相等，则直接抛出非法参数异常
+	 *
+	 * @return 返回 {@code old} 的属性值
+	 * @since 2.8
+	 */
+	public static <T, R> R expectEqualsBasedOld(@Nullable T input, @Nullable T old, Function<T, R> getter, Consumer<T> setOldIfInputNull) throws IllegalArgumentException {
+		final R currentVal = X.map(old, getter);
+		if (input == old) {
+			return currentVal;
+		}
+		final R inputVal = X.map(input, getter);
+		if (inputVal == currentVal) {
+			return currentVal;
+		} else if (inputVal == null) {
+			setOldIfInputNull.accept(old);
+			return currentVal;
+		} else if (inputVal.equals(currentVal)) {
+			return currentVal;
+		}
+		throw new IllegalArgumentException();
+	}
+
+	/**
+	 * 返回集合的长度，如果参数为null，则返回 0
+	 * 
+	 * @since 2.8
+	 */
+	public static int size(final Collection<?> c) {
+		return c == null ? 0 : c.size();
+	}
+
+	/**
+	 * 返回 Map 的长度，如果参数为null，则返回 0
+	 * 
+	 * @since 2.8
+	 */
+	public static int size(final Map<?, ?> map) {
+		return map == null ? 0 : map.size();
+	}
+
+	/**
+	 * 返回数组的长度，如果参数为null，则返回 0
+	 * 
+	 * @since 2.8
+	 */
+	public static int size(final Object[] array) {
+		return array == null ? 0 : array.length;
+	}
+
+	/**
+	 * 返回字符序列的长度，如果参数为null，则返回 0
+	 * 
+	 * @since 2.8
+	 */
+	public static int size(final CharSequence cs) {
+		return cs == null ? 0 : cs.length();
+	}
+
+	/**
+	 * 返回数组的长度，如果参数为null，则返回 0
+	 * 
+	 * @since 2.8
+	 */
+	public static int sizeOfArray(final Object array) {
+		return array == null ? 0 : Array.getLength(array);
 	}
 }

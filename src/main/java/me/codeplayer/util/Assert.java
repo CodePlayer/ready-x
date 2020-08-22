@@ -31,7 +31,7 @@ public abstract class Assert {
 	 * 如果断言失败则抛出异常
 	 * 
 	 * @param expression boolean表达式
-	 * @param errorMsg 异常消息内容
+	 * @param errorMsg   异常消息内容
 	 */
 	public static final void isTrue(final boolean expression, final @Nullable CharSequence errorMsg) {
 		if (!expression) {
@@ -44,7 +44,7 @@ public abstract class Assert {
 	 * 如果断言失败则抛出异常
 	 * 
 	 * @param expression boolean表达式
-	 * @param msger 异常消息内容
+	 * @param msger      异常消息内容
 	 */
 	public static final void isTrue(final boolean expression, final @Nullable Supplier<CharSequence> msger) {
 		if (!expression) {
@@ -60,7 +60,7 @@ public abstract class Assert {
 	 * 如果断言失败则抛出异常
 	 * 
 	 * @param expression boolean表达式
-	 * @param message 异常消息内容
+	 * @param message    异常消息内容
 	 */
 	public static final void notTrue(final boolean expression, final @Nullable CharSequence message) {
 		isTrue(!expression, message);
@@ -71,7 +71,7 @@ public abstract class Assert {
 	 * 如果断言失败则抛出异常
 	 * 
 	 * @param expression boolean表达式
-	 * @param msger 异常消息内容
+	 * @param msger      异常消息内容
 	 */
 	public static final void notTrue(boolean expression, final @Nullable Supplier<CharSequence> msger) {
 		isTrue(!expression, msger);
@@ -81,7 +81,7 @@ public abstract class Assert {
 	 * 断言指定对象为null<br>
 	 * 如果断言失败则抛出异常
 	 * 
-	 * @param object 指定对象
+	 * @param object  指定对象
 	 * @param message 异常消息内容
 	 */
 	public static final void isNull(Object object) {
@@ -92,7 +92,7 @@ public abstract class Assert {
 	 * 断言指定对象为null<br>
 	 * 如果断言失败则抛出异常
 	 * 
-	 * @param object 指定对象
+	 * @param object  指定对象
 	 * @param message 异常消息内容
 	 */
 	public static final void isNull(Object object, @Nullable CharSequence message) {
@@ -116,7 +116,7 @@ public abstract class Assert {
 	 * 断言指定对象不为null<br>
 	 * 如果断言失败则抛出异常
 	 * 
-	 * @param object 指定对象
+	 * @param object  指定对象
 	 * @param message 异常消息内容
 	 */
 	public static final void notNull(Object object, final @Nullable CharSequence errorMsg) {
@@ -130,7 +130,7 @@ public abstract class Assert {
 	 * 如果断言失败则抛出异常
 	 * 
 	 * @param object 指定对象
-	 * @param msger 异常消息内容
+	 * @param msger  异常消息内容
 	 */
 	public static final void notNull(Object object, final @Nullable Supplier<CharSequence> msger) {
 		if (object == null) {
@@ -145,7 +145,7 @@ public abstract class Assert {
 	 * 断言指定对象的字符串形式为空(若为null、空字符串均属断言成功)<br>
 	 * 如果断言失败则抛出异常
 	 * 
-	 * @param str 指定字符串
+	 * @param str     指定字符串
 	 * @param message 异常消息内容
 	 * @see #isEmpty(Object)
 	 */
@@ -157,7 +157,7 @@ public abstract class Assert {
 	 * 断言指定字符串不为空(若为null、空字符串均属断言失败)<br>
 	 * 如果断言失败则抛出异常
 	 * 
-	 * @param str 指定字符串
+	 * @param str     指定字符串
 	 * @param message 异常消息内容
 	 * @see #isEmpty(Object)
 	 */
@@ -170,7 +170,7 @@ public abstract class Assert {
 	 * 断言指定字符串不为空(若为null、空字符串均属断言失败)<br>
 	 * 如果断言失败则抛出异常
 	 * 
-	 * @param str 指定字符串
+	 * @param str     指定字符串
 	 * @param message 异常消息内容
 	 * @see #isEmpty(Object)
 	 */
@@ -182,7 +182,7 @@ public abstract class Assert {
 	 * 断言指定字符串不为空(若为null、空字符串均属断言失败)<br>
 	 * 如果断言失败则抛出异常
 	 * 
-	 * @param str 指定字符串
+	 * @param str     指定字符串
 	 * @param message 异常消息内容
 	 * @see #isEmpty(Object)
 	 */
@@ -196,7 +196,7 @@ public abstract class Assert {
 	 * 1.字符串对象 == null或者去空格后==空字符串<br>
 	 * 2.其他对象==null
 	 * 
-	 * @param obj 指定对象
+	 * @param obj     指定对象
 	 * @param message 异常消息内容
 	 * @see #isBlank(Object)
 	 */
@@ -210,7 +210,7 @@ public abstract class Assert {
 	 * 1.字符串对象 == null或者去空格后==空字符串<br>
 	 * 2.其他对象==null
 	 * 
-	 * @param obj 指定对象
+	 * @param obj     指定对象
 	 * @param message 异常消息内容
 	 * @see #isBlank(Object)
 	 */
@@ -221,29 +221,29 @@ public abstract class Assert {
 	/**
 	 * 断言两个对象相等(equals)，如果断言失败则抛出异常<br>
 	 * 
-	 * @param obj 指定的对象
+	 * @param obj     指定的对象
 	 * @param another 另一个对象
 	 * @param message 异常消息内容
 	 */
 	public static final void equals(Object obj, Object another, String message) {
-		isTrue((obj == null && another == null) || (obj != null && obj.equals(another)), message);
+		isTrue(obj == another || obj != null && obj.equals(another), message);
 	}
 
 	/**
 	 * 断言两个对象不相等(equals)，如果断言失败则抛出异常<br>
 	 * 
-	 * @param obj 指定的对象
+	 * @param obj     指定的对象
 	 * @param another 另一个对象
 	 * @param message 异常消息内容
 	 */
 	public static final void notEquals(Object obj, Object another, String message) {
-		isTrue((obj == null && another != null) || (obj != null && obj.equals(another)), message);
+		notTrue(obj == another || obj != null && obj.equals(another), message);
 	}
 
 	/**
 	 * 断言两个对象相等(==)，如果断言失败则抛出异常<br>
 	 * 
-	 * @param obj 指定的对象
+	 * @param obj     指定的对象
 	 * @param another 另一个对象
 	 * @param message 异常消息内容
 	 */
@@ -254,11 +254,11 @@ public abstract class Assert {
 	/**
 	 * 断言两个对象不相等(==)，如果断言失败则抛出异常<br>
 	 * 
-	 * @param obj 指定的对象
+	 * @param obj     指定的对象
 	 * @param another 另一个对象
 	 * @param message 异常消息内容
 	 */
 	public static final void notSame(Object obj, Object another, String message) {
-		isTrue(obj != another, message);
+		notTrue(obj == another, message);
 	}
 }

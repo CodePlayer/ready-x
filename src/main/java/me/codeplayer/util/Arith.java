@@ -2,7 +2,7 @@ package me.codeplayer.util;
 
 import java.math.*;
 
-import me.codeplayer.util.ChineseNumber.ChineseNumberStyle;
+import me.codeplayer.util.ChineseNumber.*;
 
 /**
  * 用于商业运算的常用计算工具类
@@ -290,8 +290,8 @@ public class Arith {
 	/**
 	 * 商业除法运算
 	 * 
-	 * @param d 指定的除数
-	 * @param scale 指定的精确位数
+	 * @param d            指定的除数
+	 * @param scale        指定的精确位数
 	 * @param roundingMode 设置应用的舍入模式(四舍五入、向上舍入、向下舍去等)
 	 * @return
 	 */
@@ -303,8 +303,8 @@ public class Arith {
 	/**
 	 * 商业除法运算
 	 * 
-	 * @param d 指定的除数
-	 * @param scale 指定的精确位数
+	 * @param d            指定的除数
+	 * @param scale        指定的精确位数
 	 * @param roundingMode 设置应用的舍入模式(四舍五入、向上舍入、向下舍去等)
 	 * @return
 	 */
@@ -315,8 +315,8 @@ public class Arith {
 	/**
 	 * 商业除法运算
 	 * 
-	 * @param d 指定的除数
-	 * @param scale 指定的精确位数
+	 * @param d            指定的除数
+	 * @param scale        指定的精确位数
 	 * @param roundingMode 设置应用的舍入模式(四舍五入、向上舍入、向下舍去等)
 	 * @return
 	 */
@@ -327,8 +327,8 @@ public class Arith {
 	/**
 	 * 商业除法运算
 	 * 
-	 * @param d 指定的除数
-	 * @param scale 指定的精确位数
+	 * @param d            指定的除数
+	 * @param scale        指定的精确位数
 	 * @param roundingMode 设置应用的舍入模式(四舍五入、向上舍入、向下舍去等)
 	 * @return
 	 */
@@ -339,7 +339,7 @@ public class Arith {
 	/**
 	 * 以四舍五入的舍入方式进行商业除法运算
 	 * 
-	 * @param d 指定的除数
+	 * @param d     指定的除数
 	 * @param scale 指定的精确位数
 	 * @return
 	 */
@@ -350,7 +350,7 @@ public class Arith {
 	/**
 	 * 以四舍五入的舍入方式进行商业除法运算
 	 * 
-	 * @param d 指定的除数
+	 * @param d     指定的除数
 	 * @param scale 指定的精确位数
 	 * @return
 	 */
@@ -361,7 +361,7 @@ public class Arith {
 	/**
 	 * 以四舍五入的舍入方式进行商业除法运算
 	 * 
-	 * @param d 指定的除数
+	 * @param d     指定的除数
 	 * @param scale 指定的精确位数
 	 * @return
 	 */
@@ -372,7 +372,7 @@ public class Arith {
 	/**
 	 * 以四舍五入的舍入方式进行商业除法运算
 	 * 
-	 * @param d 指定的除数
+	 * @param d     指定的除数
 	 * @param scale 指定的精确位数
 	 * @return
 	 */
@@ -383,7 +383,7 @@ public class Arith {
 	/**
 	 * 设置精度(即精确到的小数位数)
 	 * 
-	 * @param newScale 指定的精确位数
+	 * @param newScale     指定的精确位数
 	 * @param roundingMode 设置应用的舍入模式(四舍五入、向上舍入、向下舍去等)
 	 * @return
 	 */
@@ -406,7 +406,7 @@ public class Arith {
 	 * 设置四舍五入的精度(即精确到的小数位数)<br>
 	 * <b>注意：</b>该方法底层直接根据需求自行计算，常规情况下比 {@link #round(int) } 要快 10+倍，但目前尚处于实验性质（不过一般基本上没什么问题）
 	 * 
-	 * @param value 指定的数值
+	 * @param value    指定的数值
 	 * @param newScale 指定的精确位数
 	 * @return
 	 */
@@ -529,8 +529,8 @@ public class Arith {
 	/**
 	 * 商业加法运算
 	 * 
-	 * @param a 加数1
-	 * @param b 加数2
+	 * @param a    加数1
+	 * @param b    加数2
 	 * @param more 更多的其他加数
 	 * @return
 	 */
@@ -563,8 +563,8 @@ public class Arith {
 	/**
 	 * 商业乘法运算
 	 * 
-	 * @param a 乘数1
-	 * @param b 乘数2
+	 * @param a     乘数1
+	 * @param b     乘数2
 	 * @param scale 小数部分的精确位数
 	 * @param 舍入模式
 	 * @return
@@ -576,8 +576,8 @@ public class Arith {
 	/**
 	 * 商业乘法运算(四舍五入)
 	 * 
-	 * @param a 乘数1
-	 * @param b 乘数2
+	 * @param a     乘数1
+	 * @param b     乘数2
 	 * @param scale 小数部分的精确位数
 	 * @return
 	 */
@@ -590,8 +590,8 @@ public class Arith {
 	 * <strong>注意：</strong>此方法的有效位数包含整数部分在内<br>
 	 * 将precision设为long类型只是为了重载的需要
 	 * 
-	 * @param a 乘数1
-	 * @param b 乘数2
+	 * @param a         乘数1
+	 * @param b         乘数2
 	 * @param precision 包含整数部分的有效位数
 	 * @return
 	 */
@@ -603,8 +603,8 @@ public class Arith {
 	/**
 	 * 商业除法运算(四舍五入)
 	 * 
-	 * @param a 被除数
-	 * @param b 除数
+	 * @param a     被除数
+	 * @param b     除数
 	 * @param scale 小数精确度位数
 	 * @return
 	 */
@@ -616,7 +616,7 @@ public class Arith {
 	/**
 	 * 以四舍五入({@link RoundingMode#HALF_UP})的方式使指定小数精确到指定的小数位数
 	 * 
-	 * @param d 指定的小数
+	 * @param d     指定的小数
 	 * @param scale 指定的小数精确位数
 	 * @return
 	 */
@@ -627,7 +627,7 @@ public class Arith {
 	/**
 	 * 以 {@link RoundingMode#HALF_EVEN} 的方式使指定小数精确到指定的小数位数
 	 * 
-	 * @param d 指定的小数
+	 * @param d     指定的小数
 	 * @param scale 指定的小数精确位数
 	 * @return
 	 */
@@ -638,7 +638,7 @@ public class Arith {
 	/**
 	 * 以指定的舍入方式使指定小数精确到指定的小数位数
 	 * 
-	 * @param num 指定的小数
+	 * @param num   指定的小数
 	 * @param scale 指定的小数精确位数
 	 * @return
 	 */
@@ -670,9 +670,9 @@ public class Arith {
 	/**
 	 * 以指定舍入方式使指定小数精确到指定的小数位数
 	 * 
-	 * @param d 指定的小数
+	 * @param d     指定的小数
 	 * @param scale 指定的小数精确位数
-	 * @param mode 指定的舍入模式
+	 * @param mode  指定的舍入模式
 	 * @return
 	 */
 	public static final double truncate(double d, int scale, RoundingMode mode) {
@@ -764,7 +764,7 @@ public class Arith {
 	/**
 	 * 检测数值d能否被divisor整除(即：余数为0)
 	 * 
-	 * @param d 被除数
+	 * @param d       被除数
 	 * @param divisor 除数
 	 * @return
 	 * @version 1.0
@@ -809,9 +809,34 @@ public class Arith {
 
 	/**
 	 * 输出大写中文形式的用于金额(人民币)显示的数值字符串，例如："135000000"->"壹亿叁千伍佰万元整"
-	 * 
 	 */
 	public String toMoneyUpperCase() {
 		return new ChineseNumber(value.setScale(2).toString(), ChineseNumberStyle.MONEY).toString();
+	}
+
+	/**
+	 * 将指定的整数转换为对应的 BigDecimal（内部对于常用数值进行缓存处理）
+	 * 
+	 * @since 2.8
+	 */
+	public static BigDecimal toBigDecimal(int n) {
+		switch (n) {
+		case 0:
+			return BigDecimal.ZERO;
+		case 1:
+			return BigDecimal.ONE;
+		case 10:
+			return BigDecimal.TEN;
+		case 100:
+			return Arith.HANDRED;
+		case 1000:
+			return THOUSAND;
+		case 10000:
+			return MYRIAD;
+		case 100000000:
+			return HANDRED_MILLION;
+		default:
+			return BigDecimal.valueOf(n);
+		}
 	}
 }
