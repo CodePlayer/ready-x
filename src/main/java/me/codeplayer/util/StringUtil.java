@@ -1,6 +1,6 @@
 package me.codeplayer.util;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.*;
 
 /**
  * 用于对字符串类型的数据进行常用处理操作的工具类
@@ -20,16 +20,10 @@ public abstract class StringUtil {
 	 * 此方法返回的编码中，字母均采用大写形式，此外，本方法采用StringBuilder作为字符容器
 	 * 
 	 * @param src 指定字符串不能为null，否则将引发空指针异常
-	 * @return
 	 * @since 0.0.1
 	 */
 	public static String unicode(String src) {
-		byte[] bytes;
-		try {
-			bytes = src.getBytes("UTF-16");// 转为UTF-16字节数组
-		} catch (UnsupportedEncodingException e) {
-			throw new IllegalArgumentException(e);
-		}
+		byte[] bytes = src.getBytes(Charsets.UTF_16);// 转为UTF-16字节数组
 		int length = bytes.length;
 		if (length > 2) {// 由于转换出来的字节数组前两位属于UNICODE固定标记，因此要过滤掉
 			int i = 2;
@@ -53,16 +47,10 @@ public abstract class StringUtil {
 	 * 此方法返回的编码中，字母均采用大写形式，此外，由于编码的长度是已知的，本方法采用char数组作为字符容器，省略了StringBuilder追加时的长度判断以及封装损耗，性能更加优异
 	 * 
 	 * @param src 指定字符串不能为null，否则将引发空指针异常
-	 * @return
 	 * @since 0.0.1
 	 */
 	public static String fastUnicode(String str) {
-		byte[] bytes;
-		try {
-			bytes = str.getBytes("UTF-16"); // 转为UTF-16字节数组
-		} catch (UnsupportedEncodingException e) {
-			throw new IllegalArgumentException(e);
-		}
+		byte[] bytes = str.getBytes(Charsets.UTF_16); // 转为UTF-16字节数组
 		int length = bytes.length;
 		if (length > 2) {
 			int i = 2;
@@ -88,9 +76,8 @@ public abstract class StringUtil {
 	 * 内部采用<code>length << shift </code>来获取设置初始容量<br>
 	 * 并且生成的StringBuilder的最小容量为16(StringBuilder的默认容量)
 	 * 
-	 * @param size 元素个数
+	 * @param size  元素个数
 	 * @param shift 每个元素参与拼接的平均字符数相对于2的位移量
-	 * @return
 	 * @since 0.0.1
 	 */
 	public static final StringBuilder getBuilder(int size, int shift) {
@@ -104,7 +91,6 @@ public abstract class StringUtil {
 	/**
 	 * 获取指定字符序列的字符长度
 	 * 
-	 * @param cs
 	 * @return 对应的字符长度，如果{@code cs}为{@code null}，则返回 0
 	 * @since 0.4.2
 	 */
@@ -116,11 +102,6 @@ public abstract class StringUtil {
 	 * 根据将要追加的多个字符序列获得适当初始容量的 {@code StringBuilder}
 	 * 
 	 * @param extra 除指定的字符序列外应额外预留的字符容量
-	 * @param s1
-	 * @param s2
-	 * @param s3
-	 * @param s4
-	 * @return
 	 * @since 0.4.2
 	 */
 	public static final StringBuilder getBuilder(final int extra, final CharSequence s1, final CharSequence s2, final CharSequence s3, final CharSequence s4) {
@@ -131,10 +112,6 @@ public abstract class StringUtil {
 	 * 根据将要追加的多个字符序列获得适当初始容量的 {@code StringBuilder}
 	 * 
 	 * @param extra 除指定的字符序列外应额外预留的字符容量
-	 * @param s1
-	 * @param s2
-	 * @param s3
-	 * @return
 	 * @since 0.4.2
 	 */
 	public static final StringBuilder getBuilder(final int extra, final CharSequence s1, final CharSequence s2, final CharSequence s3) {
@@ -145,9 +122,6 @@ public abstract class StringUtil {
 	 * 根据将要追加的多个字符序列获得适当初始容量的 {@code StringBuilder}
 	 * 
 	 * @param extra 除指定的字符序列外应额外预留的字符容量
-	 * @param s1
-	 * @param s2
-	 * @return
 	 * @since 0.4.2
 	 */
 	public static final StringBuilder getBuilder(final int extra, final CharSequence s1, final CharSequence s2) {
@@ -158,8 +132,6 @@ public abstract class StringUtil {
 	 * 根据将要追加的多个字符序列获得适当初始容量的 {@code StringBuilder}
 	 * 
 	 * @param extra 除指定的字符序列外应额外预留的字符容量
-	 * @param s1
-	 * @return
 	 * @since 0.4.2
 	 */
 	public static final StringBuilder getBuilder(final int extra, final CharSequence s1) {
@@ -171,8 +143,6 @@ public abstract class StringUtil {
 	 * 如果字符串为null、空字符串，则返回true，否则返回false<br>
 	 * <b>注意：</b>本方法不会去除字符串两边的空格，如果需要对字符串进行去除两边空格后的判断，请使用{@link StringUtil#isBlank(String str)}方法
 	 * 
-	 * @param str
-	 * @return
 	 * @since 0.0.1
 	 */
 	public static final boolean isEmpty(CharSequence str) {
@@ -184,8 +154,6 @@ public abstract class StringUtil {
 	 * 如果指定字符串不为null、空字符串，则返回true，否则返回false<br>
 	 * <b>注意：</b>本方法不会去除字符串两边的空格，如果需要对字符串进行去除两边空格后的判断，请使用 {@link StringUtil#notBlank(String str)}方法
 	 * 
-	 * @param str
-	 * @return
 	 * @since 0.0.1
 	 */
 	public static final boolean notEmpty(CharSequence str) {
@@ -196,8 +164,6 @@ public abstract class StringUtil {
 	 * 判断指定的字符序列数组是否存在不为空的元素<br>
 	 * 如果数组中存在不为null、空字符串的元素，则返回true，否则返回false<br>
 	 * 
-	 * @param css
-	 * @return
 	 * @since 1.0.2
 	 */
 	public static final boolean isAnyNotEmpty(final CharSequence... css) {
@@ -217,7 +183,6 @@ public abstract class StringUtil {
 	 * <b>注意：</b>本方法不会去除字符串两边的空格，如果需要对字符串进行去除两边空格后的判断，请使用isBlank(Object obj)方法
 	 * 
 	 * @param obj 指定的对象
-	 * @return
 	 * @since 0.0.1
 	 */
 	public static final boolean isEmpty(Object obj) {
@@ -230,7 +195,6 @@ public abstract class StringUtil {
 	 * <b>注意：</b>本方法不会去除字符串两边的空格，如果需要对字符串进行去除两边空格后的判断，请使用{@link StringUtil#isBlank(Object obj)}方法
 	 * 
 	 * @param obj 指定的对象
-	 * @return
 	 * @since 0.0.1
 	 */
 	public static final boolean notEmpty(Object obj) {
@@ -242,7 +206,6 @@ public abstract class StringUtil {
 	 * 本方法接受多个参数，如果其中有任意一个为空，就返回true 如果指定的key不存在也返回true
 	 * 
 	 * @param values 指定的数组
-	 * @return
 	 * @see me.codeplayer.util.StringUtil#isEmpty(Object)
 	 */
 	public static final boolean hasEmpty(Object... values) {
@@ -260,8 +223,6 @@ public abstract class StringUtil {
 	 * 如果字符串为null、空字符串、空格字符串，则返回true<br>
 	 * <b>注意：</b>本方法会先去除字符串两边的空格，再判断
 	 * 
-	 * @param str
-	 * @return
 	 * @since 0.0.1
 	 */
 	public static final boolean isBlank(CharSequence str) {
@@ -282,8 +243,6 @@ public abstract class StringUtil {
 	 * 如果字符串不为null、空字符串、空格字符串，则返回true，否则返回false<br>
 	 * <b>注意：</b>本方法会先去除字符串两边的空格，再判断
 	 * 
-	 * @param str
-	 * @return
 	 * @since 0.0.1
 	 */
 	public static final boolean notBlank(String str) {
@@ -296,7 +255,6 @@ public abstract class StringUtil {
 	 * <b>注意：</b>本方法会先去除字符串两边的空格，再判断
 	 * 
 	 * @param obj 指定的对象
-	 * @return
 	 * @since 0.0.1
 	 */
 	public static final boolean isBlank(Object obj) {
@@ -309,7 +267,6 @@ public abstract class StringUtil {
 	 * <b>注意：</b>本方法会先去除字符串两边的空格，再判断
 	 * 
 	 * @param obj 指定的对象
-	 * @return
 	 * @since 0.0.1
 	 */
 	public static final boolean notBlank(Object obj) {
@@ -322,7 +279,6 @@ public abstract class StringUtil {
 	 * 本方法会去除两边的空格后再判断 如果指定的key不存在也返回true
 	 * 
 	 * @param values 指定的数组
-	 * @return
 	 * @since 0.0.1
 	 */
 	public static final boolean hasBlank(Object... values) {
@@ -339,7 +295,6 @@ public abstract class StringUtil {
 	 * 以String的形式返回对象值，如果对象为null，则返回""
 	 * 
 	 * @param obj 指定的对象
-	 * @return
 	 * @since 0.0.1
 	 */
 	public static final String toString(Object obj) {
@@ -350,7 +305,6 @@ public abstract class StringUtil {
 	 * 以去除两边空格的String形式返回对象值，如果对象为null，则返回""
 	 * 
 	 * @param obj 指定的对象
-	 * @return
 	 * @since 0.0.1
 	 */
 	public static final String trim(Object obj) {
@@ -361,7 +315,6 @@ public abstract class StringUtil {
 	 * 以String的形式返回对象值，如果对象为null或空格字符串，则返回"&amp;nbsp;"
 	 * 
 	 * @param obj 指定的对象
-	 * @return
 	 * @since 0.0.1
 	 */
 	public static final String trim4Html(Object obj) {
@@ -374,9 +327,9 @@ public abstract class StringUtil {
 	 * 如果指定字符串==null，则返回空字符串<br>
 	 * 如果字符串超出指定长度，则返回maxLength前面的部分，并在末尾加上后缀<code>suffix</code>
 	 * 
-	 * @param str 指定的字符串
+	 * @param str       指定的字符串
 	 * @param maxLength 最大限制长度
-	 * @param suffix 超出长度时添加的指定后缀,如果不需要，可以为null
+	 * @param suffix    超出长度时添加的指定后缀,如果不需要，可以为null
 	 * @return
 	 * @since 0.0.1
 	 */
@@ -399,7 +352,7 @@ public abstract class StringUtil {
 	 * 如果指定字符串==null，则返回空字符串<br>
 	 * 如果字符串超出指定长度，则返回maxLength前面的部分，并在末尾加上后缀“...”
 	 * 
-	 * @param str 指定的字符串
+	 * @param str       指定的字符串
 	 * @param maxLength 最大限制长度
 	 * @return
 	 * @since 0.0.1
@@ -413,7 +366,7 @@ public abstract class StringUtil {
 	 * 如果字符串=null，则返回空字符串""<br>
 	 * 如果字符串位数大于指定位数，则返回原字符串
 	 * 
-	 * @param str 字符串
+	 * @param str       字符串
 	 * @param maxLength 指定位数，不能小于1
 	 * @return
 	 * @since 0.0.1
@@ -427,10 +380,10 @@ public abstract class StringUtil {
 	 * 如果字符串 = null，则返回空字符串""<br>
 	 * 如果字符串位数大于指定位数，则返回原字符串
 	 * 
-	 * @param str 指定的字符串
-	 * @param ch 指定的字符
+	 * @param str       指定的字符串
+	 * @param ch        指定的字符
 	 * @param maxLength 指定位数，不能小于1
-	 * @param left 是在字符串左侧添加，还是右侧添加。true=左侧，false=右侧
+	 * @param left      是在字符串左侧添加，还是右侧添加。true=左侧，false=右侧
 	 * @return
 	 * @since 0.0.1
 	 */
@@ -465,8 +418,8 @@ public abstract class StringUtil {
 	 * 如果字符串=null，则返回空字符串""<br>
 	 * 如果字符串位数大于指定位数，则返回原字符串
 	 * 
-	 * @param str 字符串
-	 * @param ch 指定的字符
+	 * @param str       字符串
+	 * @param ch        指定的字符
 	 * @param maxLength 指定位数，不能小于1
 	 * @return
 	 * @since 0.0.1
@@ -480,8 +433,8 @@ public abstract class StringUtil {
 	 * 如果字符串=null，则返回空字符串""<br>
 	 * 如果字符串位数大于指定位数，则返回原字符串
 	 * 
-	 * @param str 字符串
-	 * @param ch 指定的字符
+	 * @param str       字符串
+	 * @param ch        指定的字符
 	 * @param maxLength 指定位数，不能小于1
 	 * @return
 	 * @since 0.0.1
@@ -505,10 +458,10 @@ public abstract class StringUtil {
 	/**
 	 * 将指定字符串的 <code>beginIndex</code> 到 <code>endIndex</code> (不包括 <code>endIndex</code> ) 之间的字符全部替换为字符 <code>ch</code>
 	 * 
-	 * @param str 指定的字符串
-	 * @param ch 指定的字符
+	 * @param str        指定的字符串
+	 * @param ch         指定的字符
 	 * @param beginIndex 指定的字符串起始索引(可以为负数，表示 <code>beginIndex + str.length()</code> )
-	 * @param endIndex 指定的字符串结束索引(可以为负数，表示 <code>endIndex + str.length()</code> )
+	 * @param endIndex   指定的字符串结束索引(可以为负数，表示 <code>endIndex + str.length()</code> )
 	 * @return
 	 * @since 0.1.1
 	 */
@@ -533,8 +486,8 @@ public abstract class StringUtil {
 	 * 2、如果 <code>endIndex > length </code> ，则 <code>endIndex = length</code>
 	 * 
 	 * @param beginIndex 起始索引
-	 * @param endIndex 结束索引
-	 * @param length 指定数组、集合或字符串的长度，不能小于0
+	 * @param endIndex   结束索引
+	 * @param length     指定数组、集合或字符串的长度，不能小于0
 	 * @return 如果范围安全则返回对应的范围数组，否则返回null
 	 * @author Ready
 	 * @since 0.4.2
@@ -570,8 +523,8 @@ public abstract class StringUtil {
 	/**
 	 * 将指定字符串的 <code>beginIndex</code> 到末尾之间的字符全部替换为字符 <code>ch</code>
 	 * 
-	 * @param str 指定的字符串
-	 * @param ch 指定的字符
+	 * @param str        指定的字符串
+	 * @param ch         指定的字符
 	 * @param beginIndex 指定的字符串起始索引(可以为负数，表示 <code>beginIndex + str.length()</code> )
 	 * @return
 	 * @since 0.1.1
@@ -583,10 +536,10 @@ public abstract class StringUtil {
 	/**
 	 * 将指定字符串的 <code>beginIndex</code> 到 <code>endIndex</code> (不包括 <code>endIndex</code> ) 之间的子字符串全部替换为指定的字符串 <code>replacement</code>
 	 * 
-	 * @param str 指定的字符串
+	 * @param str         指定的字符串
 	 * @param replacement 指定的字符串
-	 * @param beginIndex 指定的字符串起始索引(可以为负数，表示 <code>beginIndex + str.length()</code> )
-	 * @param endIndex 指定的字符串结束索引(可以为负数，表示 <code>endIndex + str.length()</code> )
+	 * @param beginIndex  指定的字符串起始索引(可以为负数，表示 <code>beginIndex + str.length()</code> )
+	 * @param endIndex    指定的字符串结束索引(可以为负数，表示 <code>endIndex + str.length()</code> )
 	 * @return
 	 * @since 0.1.1
 	 */
@@ -615,9 +568,9 @@ public abstract class StringUtil {
 	/**
 	 * 将指定字符串的 <code>beginIndex</code> 及其后的子字符串全部替换为指定的字符串 <code>replacement</code>
 	 * 
-	 * @param str 指定的字符串
+	 * @param str         指定的字符串
 	 * @param replacement 指定的字符串
-	 * @param beginIndex 指定的字符串起始索引(可以为负数，表示 <code>beginIndex + str.length()</code> )
+	 * @param beginIndex  指定的字符串起始索引(可以为负数，表示 <code>beginIndex + str.length()</code> )
 	 * @return
 	 * @since 0.1.1
 	 */
@@ -628,31 +581,27 @@ public abstract class StringUtil {
 	/**
 	 * 将字符串从指定字符集编码转换为目标字符集编码
 	 * 
-	 * @param str 指定的字符串
+	 * @param str             指定的字符串
 	 * @param originalCharset 原始字符集编码
-	 * @param targetCharset 目标字符集编码
+	 * @param targetCharset   目标字符集编码
 	 * @return
 	 * @since 0.3.9
 	 */
-	public static final String transEncoding(String str, String originalCharset, String targetCharset) {
-		try {
-			return new String(str.getBytes(originalCharset), targetCharset);
-		} catch (UnsupportedEncodingException e) {
-			throw new IllegalArgumentException(e);
-		}
+	public static final String convertCharset(String str, Charset originalCharset, Charset targetCharset) {
+		return new String(str.getBytes(originalCharset), targetCharset);
 	}
 
 	/**
 	 * 将指定的URI参数字符串转换为目标字符集编码<br>
 	 * 本方法实际上是将字符串从ISO-8859-1编码转换为指定的目标编码
 	 * 
-	 * @param str 指定的URI参数字符串
+	 * @param str           指定的URI参数字符串
 	 * @param targetCharset 目标字符集编码
 	 * @return
 	 * @since 0.3.9
 	 */
-	public static final String transEncodingForURI(String str, String targetCharset) {
-		return transEncoding(str, "ISO-8859-1", targetCharset);
+	public static final String convertCharsetForURI(String str, Charset targetCharset) {
+		return convertCharset(str, Charsets.ISO_8859_1, targetCharset);
 	}
 
 	/**
@@ -673,7 +622,7 @@ public abstract class StringUtil {
 	/**
 	 * 判断指定字符串是否以指定的单个字符开头
 	 * 
-	 * @param str 指定的字符串
+	 * @param str       指定的字符串
 	 * @param firstChar 指定的单个字符
 	 * @return
 	 * @since 0.4.2
@@ -685,7 +634,7 @@ public abstract class StringUtil {
 	/**
 	 * 判断指定字符串是否以指定的单个字符结尾
 	 * 
-	 * @param str 指定的字符串
+	 * @param str      指定的字符串
 	 * @param lastChar 指定的单个字符
 	 * @return
 	 * @since 0.4.2
@@ -697,25 +646,27 @@ public abstract class StringUtil {
 	/**
 	 * 使用指定的转义字符对用于LIKE语句的字符串进行转义，以防止SQL语句注入
 	 * 
-	 * @param likeStr 指定的字符串
-	 * @param escapeChar 转义字符
-	 * @param appendLikeWildcard 是否需要在字符串两侧添加通配符'%'
+	 * @param likeStr               指定的字符串
+	 * @param escapeChar            转义字符
+	 * @param appendWildcardAtStart 是否需要在字符串开头添加通配符'%'
+	 * @param appendWildcardAtEnd   是否需要在字符串末尾添加通配符'%'
 	 * @return
-	 * @since 0.3.5
+	 * @since 2.9
 	 */
-	public static final String escapeSQLLike(final String likeStr, final char escapeChar, final boolean appendLikeWildcard) {
+	public static final String escapeSQLLike(final String likeStr, final char escapeChar, final boolean appendWildcardAtStart, final boolean appendWildcardAtEnd) {
 		if (StringUtil.isEmpty(likeStr)) {
 			return "";
 		}
 		boolean modified = false;
 		final char[] strChars = likeStr.toCharArray();
 		int length = strChars.length + 2;
-		if (appendLikeWildcard) {
+		if (appendWildcardAtStart || appendWildcardAtEnd) {
 			length += 2;
 		}
-		StringBuilder sb = new StringBuilder(length);
+		final StringBuilder sb = new StringBuilder(length);
 		String searchChars = "\\\'_%;";
-		if (appendLikeWildcard) {
+		if (appendWildcardAtStart) {
+			modified = true;
 			sb.append('%');
 		}
 		for (int i = 0; i < strChars.length; i++) {
@@ -725,17 +676,44 @@ public abstract class StringUtil {
 			}
 			sb.append(strChars[i]);
 		}
-		if (appendLikeWildcard) {
+		if (appendWildcardAtEnd) {
+			modified = true;
 			sb.append('%');
 		}
-		return appendLikeWildcard || modified ? sb.toString() : likeStr;
+		return modified ? sb.toString() : likeStr;
+	}
+
+	/**
+	 * 使用指定的转义字符对用于LIKE语句的字符串进行转义，以防止SQL语句注入
+	 * 
+	 * @param likeStr               指定的字符串
+	 * @param appendWildcardAtStart 是否需要在字符串开头添加通配符'%'
+	 * @param appendWildcardAtEnd   是否需要在字符串末尾添加通配符'%'
+	 * @return
+	 * @since 2.9
+	 */
+	public static final String escapeSQLLike(final String likeStr, final boolean appendWildcardAtStart, final boolean appendWildcardAtEnd) {
+		return escapeSQLLike(likeStr, '\\', appendWildcardAtStart, appendWildcardAtEnd);
+	}
+
+	/**
+	 * 使用指定的转义字符对用于LIKE语句的字符串进行转义，以防止SQL语句注入
+	 * 
+	 * @param likeStr              指定的字符串
+	 * @param escapeChar           转义字符
+	 * @param appendWildcardAtBoth 是否需要在字符串两侧都添加通配符'%'
+	 * @return
+	 * @since 0.3.5
+	 */
+	public static final String escapeSQLLike(final String likeStr, final char escapeChar, final boolean appendWildcardAtBoth) {
+		return escapeSQLLike(likeStr, escapeChar, appendWildcardAtBoth, appendWildcardAtBoth);
 	}
 
 	/**
 	 * 将指定的用于LIKE语句的字符串转义，以防止SQL语句注入<br>
 	 * 该方法默认使用'\'进行转义操作
 	 * 
-	 * @param likeStr 指定的字符串
+	 * @param likeStr            指定的字符串
 	 * @param appendLikeWildcard 是否需要在字符串两侧添加通配符'%'
 	 * @return
 	 * @since 0.3.5
@@ -759,8 +737,8 @@ public abstract class StringUtil {
 	/**
 	 * 检测指定字符串中是否存在指定的单词
 	 * 
-	 * @param container 待检测的字符串
-	 * @param searchedWord 指定的单词
+	 * @param container      待检测的字符串
+	 * @param searchedWord   指定的单词
 	 * @param seperatorChars 单词两侧必须是指定的字符之一或位于字符串 {@code container }的首/尾位置
 	 * @return
 	 * @author Ready
@@ -794,11 +772,9 @@ public abstract class StringUtil {
 	 * 检测指定字符串中是否存在指定的单词<br>
 	 * 该方法采用快速模式，对于类似 {@code containsWord("abc123,123", "123", ",") } 等特殊情况无法保证100%可靠；如果想要保证可靠性，建议使用 {@link #containsWord(String, String, String, boolean) }
 	 * 
-	 * @param container 待检测的字符串
-	 * @param searchedWord 指定的单词
+	 * @param container      待检测的字符串
+	 * @param searchedWord   指定的单词
 	 * @param seperatorChars 单词两侧必须是指定的字符之一或位于字符串 {@code container }的首/尾位置
-	 * @return
-	 * @author Ready
 	 * @since 0.4.2
 	 * @see {@link StringUtil#containsWord(String, String, String, boolean) }
 	 */
