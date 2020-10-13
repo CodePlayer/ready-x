@@ -6,7 +6,7 @@ import java.util.function.*;
 
 /**
  * 用于对数组类型的数据(字节数组参见NumberUtil类)进行相应处理的工具类
- * 
+ *
  * @author Ready
  * @date 2012-9-29
  */
@@ -31,9 +31,8 @@ public abstract class ArrayUtil {
 
 	/**
 	 * 判断指定对象是否为数组类型
-	 * 
+	 *
 	 * @param obj 指定的对象
-	 * @return
 	 */
 	public static final boolean isArray(Object obj) {
 		return obj != null && obj.getClass().isArray();
@@ -41,9 +40,9 @@ public abstract class ArrayUtil {
 
 	/**
 	 * 以指定的分隔符拼接数组元素，并追加到指定的StringBuilder中
-	 * 
-	 * @param sb 指定的StringBuilder（如果为null，则内部自动创建）
-	 * @param array 指定的数组
+	 *
+	 * @param sb        指定的StringBuilder（如果为null，则内部自动创建）
+	 * @param array     指定的数组
 	 * @param delimiter 指定的分隔符
 	 */
 	public static StringBuilder join(StringBuilder sb, Object array, String delimiter) {
@@ -68,10 +67,9 @@ public abstract class ArrayUtil {
 	/**
 	 * 以指定的分隔符拼接数组元素并返回拼接后的字符串<br>
 	 * 如果数组为空，将会引发异常
-	 * 
-	 * @param array 指定的数组对象
+	 *
+	 * @param array     指定的数组对象
 	 * @param delimiter 指定的分隔符
-	 * @return
 	 */
 	public static String join(Object array, String delimiter) {
 		return join(null, array, delimiter).toString();
@@ -82,24 +80,21 @@ public abstract class ArrayUtil {
 	 * 如果数组为空，将会引发异常<br>
 	 * 如果数组元素只有一个，拼接内容为“=1”或“='1'”<br>
 	 * 如果数组元素有多个，拼接内容为“ IN (1, 2, 5)”或“ IN ('1', '2', '5')”
-	 * 
-	 * @param sb 指定的StringBuilder
-	 * @param array 指定的任意数组
+	 *
+	 * @param sb        指定的StringBuilder
+	 * @param array     指定的任意数组
 	 * @param isInclude 指示IN SQL是包含还是排除查询，如果是包含(true)将返回=、IN，如果是排除(false)将返回!=、NOT IN
-	 * @param isString 指示元素是否以字符串形式参与InSQL语句。如果为true，将会在每个元素两侧加上单引号"'"
+	 * @param isString  指示元素是否以字符串形式参与InSQL语句。如果为true，将会在每个元素两侧加上单引号"'"
 	 */
 	public static StringBuilder getInSQL(StringBuilder sb, Object array, boolean isInclude, boolean isString) {
-		if (array == null) {
-			throw new NullPointerException();
+		final int length = Array.getLength(array);
+		if (length == 0) {
+			throw new IllegalArgumentException("Array can not be empty:" + array);
 		}
-		int length = Array.getLength(array);
-		if (sb == null && length > 0) {
+		if (sb == null) {
 			sb = StringUtil.getBuilder(length, 3);
 		}
-		switch (length) {
-		case 0:
-			throw new IllegalArgumentException("Array can not be empty:" + array);
-		case 1:
+		if (length == 1) {
 			if (!isInclude) {
 				sb.append('!');
 			}
@@ -108,8 +103,7 @@ public abstract class ArrayUtil {
 			} else {
 				sb.append('=').append(Array.get(array, 0));
 			}
-			break;
-		default:
+		} else {
 			sb.append(isInclude ? " IN (" : " NOT IN (");
 			if (isString) {// 如果是字符串格式
 				sb.append('\'');
@@ -119,7 +113,6 @@ public abstract class ArrayUtil {
 				join(sb, array, ", ");
 				sb.append(')');
 			}
-			break;
 		}
 		return sb;
 	}
@@ -129,11 +122,10 @@ public abstract class ArrayUtil {
 	 * 如果数组为空，将会引发异常<br>
 	 * 如果数组元素只有一个，将会返回“=1”或“='1'”<br>
 	 * 如果数组元素有多个，将会返回“ IN (1, 2, 5)”或“ IN ('1', '2', '5')”
-	 * 
-	 * @param array 指定的数组
+	 *
+	 * @param array     指定的数组
 	 * @param isInclude 指示IN SQL是包含还是排除查询，如果是包含(true)将返回=、IN，如果是排除(false)将返回!=、NOT IN
-	 * @param isString 指示元素是否以字符串形式参与InSQL语句。如果为true，将会在每个元素两侧加上单引号"'"
-	 * @return
+	 * @param isString  指示元素是否以字符串形式参与InSQL语句。如果为true，将会在每个元素两侧加上单引号"'"
 	 */
 	public static String getInSQL(Object array, boolean isInclude, boolean isString) {
 		return getInSQL(null, array, isInclude, isString).toString();
@@ -144,10 +136,9 @@ public abstract class ArrayUtil {
 	 * 如果数组为空，将会引发异常<br>
 	 * 如果数组元素只有一个，将会返回“=1”或“='1'”<br>
 	 * 如果数组元素有多个，将会返回“ IN (1, 2, 5)”或“ IN ('1', '2', '5')”
-	 * 
-	 * @param array 指定的数组
+	 *
+	 * @param array    指定的数组
 	 * @param isString 指示元素是否以字符串形式参与InSQL语句。如果为true，将会在每个元素两侧加上单引号"'"
-	 * @return
 	 */
 	public static String getInSQL(Object array, boolean isString) {
 		return getInSQL(null, array, true, isString).toString();
@@ -157,9 +148,6 @@ public abstract class ArrayUtil {
 	 * 返回指定数组对象的字符串形式<br>
 	 * 如果<code>array</code>是一个数组，则迭代其元素返回字符串，如“[e1, e2, e3, e4]”<br>
 	 * 如果<code>array</code>不是一个数组，则直接调用String.valueOf()方法返回
-	 * 
-	 * @param array
-	 * @return
 	 */
 	public static String toString(Object array) {
 		if (array == null || !array.getClass().isArray()) {
@@ -187,10 +175,9 @@ public abstract class ArrayUtil {
 	/**
 	 * 迭代数组元素并将迭代字符串追加至StringBuilder中,追加字符串形如：“[e1, e2, e3, [e4_1, e4_2, e4_3, e4_4]]<br>
 	 * 本方法可以迭代多维数组，内部采用递归算法
-	 * 
-	 * @param sb 指定的StringBuilder
+	 *
+	 * @param sb    指定的StringBuilder
 	 * @param array 指定的数组对象
-	 * @return
 	 */
 	public static StringBuilder toFinalString(StringBuilder sb, Object array) {
 		if (array == null || !array.getClass().isArray()) {
@@ -224,9 +211,8 @@ public abstract class ArrayUtil {
 	/**
 	 * 迭代数组元素并返回迭代字符串，例如：“[e1, e2, e3, [e4_1, e4_2, e4_3, e4_4]]”<br>
 	 * 本方法可以迭代多维数组，内部采用递归算法
-	 * 
+	 *
 	 * @param array 指定的数组对象
-	 * @return
 	 */
 	public static String toFinalString(Object array) {
 		return toFinalString(null, array).toString();
@@ -235,9 +221,8 @@ public abstract class ArrayUtil {
 	/**
 	 * 判断指定数组是否不为null并且数组长度<code>length > 0</code>，如果是，则返回true<br>
 	 * 如果指定参数不为null，也不是数组类型，则引发异常
-	 * 
+	 *
 	 * @param array 指定的数组
-	 * @return
 	 */
 	public static final boolean hasLength(Object array) {
 		return array != null && Array.getLength(array) > 0;
@@ -245,10 +230,9 @@ public abstract class ArrayUtil {
 
 	/**
 	 * 获取指定数组元素的长度，如果数组为null将返回0，如果不是数组类型，将引发异常
-	 * 
-	 * @param array 指定的数组
+	 *
+	 * @param array        指定的数组
 	 * @param triggerError 当数组为null或数组长度为0时，是否触发异常，如果为true，则触发异常
-	 * @return
 	 */
 	public static final int getLength(Object array, boolean triggerError) {
 		int length = getLength(array);
@@ -261,9 +245,8 @@ public abstract class ArrayUtil {
 	/**
 	 * 获取指定数组元素的长度，如果指定的参数为null或长度为0，则返回0<br>
 	 * 如果指定参数不是数组类型，将引发异常
-	 * 
+	 *
 	 * @param array 指定的数组对象
-	 * @return
 	 */
 	public static final int getLength(Object array) {
 		if (array == null) {
@@ -276,9 +259,8 @@ public abstract class ArrayUtil {
 	 * 获取指定数组元素的"维度"，如果数组为普通的一维数组，则返回1；如果为二维数组，则返回2；以此类推...<br>
 	 * 如果不是数组，则返回-1<br>
 	 * <b>注意：</b>Java没有真正意义上的多维数组，只有嵌套数组
-	 * 
+	 *
 	 * @param array 指定的数组对象
-	 * @return
 	 * @author Ready
 	 * @since 0.3.1
 	 */
@@ -300,11 +282,9 @@ public abstract class ArrayUtil {
 
 	/**
 	 * 判断指定对象是否是一个原始类型的数组(例如：int[]、float[]、char[]、double[]等)
-	 * 
+	 *
 	 * @param array 指定的对象
-	 * @return
 	 * @since 0.3.1
-	 * @author Ready
 	 */
 	public static final boolean isPrimitiveArray(Object array) {
 		if (array != null) {
@@ -319,16 +299,12 @@ public abstract class ArrayUtil {
 
 	/**
 	 * 检测指定的整数数组中是否存在指定的整数值
-	 * 
-	 * @param value
-	 * @param array
-	 * @return
+	 *
 	 * @since 0.3.5
-	 * @author Ready
 	 */
 	public static final boolean in(int value, int... array) {
-		for (int i = 0; i < array.length; i++) {
-			if (value == array[i]) {
+		for (int item : array) {
+			if (value == item) {
 				return true;
 			}
 		}
@@ -337,24 +313,20 @@ public abstract class ArrayUtil {
 
 	/**
 	 * 检测指定的数组中是否存在指定的值
-	 * 
-	 * @param value
-	 * @param array
-	 * @return
+	 *
 	 * @since 0.3.5
-	 * @author Ready
 	 */
 	@SuppressWarnings("unchecked")
 	public static final <T> boolean ins(T value, T... array) {
 		if (value == null) {
-			for (int i = 0; i < array.length; i++) {
-				if (array[i] == null) {
+			for (T t : array) {
+				if (t == null) {
 					return true;
 				}
 			}
 		} else {
-			for (int i = 0; i < array.length; i++) {
-				if (value.equals(array[i])) {
+			for (T t : array) {
+				if (value.equals(t)) {
 					return true;
 				}
 			}
@@ -365,17 +337,16 @@ public abstract class ArrayUtil {
 	/**
 	 * 查找指定对象在已经排序好的区间临界值数组中的区间索引。
 	 * <p>
-	 * 数组{@code array }必须预先排序好，可以是升序或降序。例如：{@code [5, 10, 20, 50, 100] }。
-	 * 此时，如果 {@code toCompare = 4 }，则返回 -1；如果 {@code toCompare = 5 }，则返回 0；如果 {@code toCompare = 12 }，则返回 1。
+	 * 数组{@code array }必须预先排序好，可以是升序或降序。例如：{@code [5, 10, 20, 50, 100] }。 此时，如果 {@code toCompare = 4 }，则返回 -1；如果 {@code toCompare = 5 }，则返回 0；如果 {@code toCompare = 12 }，则返回 1。
 	 * <p>
 	 * 如果数组中存在相等的值，则返回最靠近最大值的区间索引。
-	 * 
-	 * @param array 区间临界值数组
+	 *
+	 * @param array     区间临界值数组
 	 * @param toCompare 指定的对象
 	 * @param ascOrDesc 指定区间临界值数组的排序方式： true 表示升序， false 表示 降序；null 则自动根据数组中前两个元素的比较结果智能判断排序方式
-	 * @since 1.0.4
 	 * @return 返回对应的区间索引。如果不满足最小的区间临界值，则返回 -1
 	 * @throws IllegalArgumentException 如果数组前两个元素的大小相等，则抛出该异常
+	 * @since 1.0.4
 	 */
 	public static final <T extends Comparable<T>> int indexOfInterval(T[] array, T toCompare, Boolean ascOrDesc) throws IllegalArgumentException {
 		if (array == null || array.length == 0) {
@@ -418,17 +389,16 @@ public abstract class ArrayUtil {
 	/**
 	 * 查找指定数值在已经排序好的区间临界值数组中的区间索引（本方法主要用于兼容原始数据类型）。
 	 * <p>
-	 * 数组{@code array }必须预先排序好，可以是升序或降序。例如：{@code [5, 10, 20, 50, 100] }。
-	 * 此时，如果 {@code toCompare = 4 }，则返回 -1；如果 {@code toCompare = 5 }，则返回 0；如果 {@code toCompare = 12 }，则返回 1。
+	 * 数组{@code array }必须预先排序好，可以是升序或降序。例如：{@code [5, 10, 20, 50, 100] }。 此时，如果 {@code toCompare = 4 }，则返回 -1；如果 {@code toCompare = 5 }，则返回 0；如果 {@code toCompare = 12 }，则返回 1。
 	 * <p>
 	 * 如果数组中存在相等的值，则返回最靠近最大值的区间索引。
-	 * 
-	 * @param array 区间临界值数组
+	 *
+	 * @param array     区间临界值数组
 	 * @param toCompare 指定的对象
 	 * @param ascOrDesc 指定区间临界值数组的排序方式： true 表示升序， false 表示 降序；null 则自动根据数组中前两个元素的比较结果智能判断排序方式
-	 * @since 1.0.4
 	 * @return 返回对应的区间索引。如果不满足最小的区间临界值，则返回 -1
 	 * @throws IllegalArgumentException 如果数组前两个元素的大小相等，则抛出该异常
+	 * @since 1.0.4
 	 */
 	public static final int indexOfInterval(Object array, double toCompare, Boolean ascOrDesc) throws IllegalArgumentException {
 		if (array == null) {
@@ -475,9 +445,8 @@ public abstract class ArrayUtil {
 	/**
 	 * 移除数组里的重复元素，使其唯一化。如果存在重复的元素，则只保留排序最靠前(索引较小)的那个元素
 	 *
-	 * @param array 指定的数组对象
+	 * @param array        指定的数组对象
 	 * @param forceNewCopy 是否必须返回新的数组副本。如果为 {@code false}，在没有找到重复元素时，将会直接返回原数组 {@code array}
-	 * @return
 	 */
 	public static Object unique(Object array, final boolean forceNewCopy) {
 		final int length = Array.getLength(array);
@@ -513,7 +482,6 @@ public abstract class ArrayUtil {
 	 * 移除数组里的元素唯一化。如果存在重复的元素，则只保留排序最靠前(索引较小)的那个元素
 	 *
 	 * @param array 指定的数组对象
-	 * @return
 	 * @see #unique(Object, boolean)
 	 */
 	public static Object unique(Object array) {
@@ -522,12 +490,8 @@ public abstract class ArrayUtil {
 
 	/**
 	 * 将指定的集合转为对应的数组
-	 * 
-	 * @param collection
-	 * @param type
-	 * @return
 	 */
-	public static final <T> T[] toArray(Collection<? extends T> collection, Class<T> type) {
+	public static final <T> T[] toArray(Collection<T> collection, Class<T> type) {
 		if (collection == null) {
 			return null;
 		}
@@ -540,6 +504,32 @@ public abstract class ArrayUtil {
 	}
 
 	/**
+	 * 将指定的集合中的元素经过 {@code mapper} 转换后，转为对应类型的数组
+	 *
+	 * @since 3.0.0
+	 */
+	public static final <T, R> R[] toArray(Iterable<T> items, Class<R> type, Function<? super T, R> mapper) {
+		if (items == null) {
+			return null;
+		}
+		if (items instanceof Collection) {
+			final int size = ((Collection<T>) items).size();
+			final R[] array = X.castType(Array.newInstance(type, size));
+			int i = 0;
+			for (T item : items) {
+				array[i++] = mapper.apply(item);
+			}
+			return array;
+		} else {
+			List<R> list = new ArrayList<>();
+			for (T item : items) {
+				list.add(mapper.apply(item));
+			}
+			return toArray(list, type);
+		}
+	}
+
+	/**
 	 * 快捷创建 Object 数组
 	 */
 	public static final Object[] of(Object... elements) {
@@ -548,8 +538,8 @@ public abstract class ArrayUtil {
 
 	/**
 	 * 过滤指定的数组，获得符合条件的元素数组
-	 * 
-	 * @param array 指定的数组
+	 *
+	 * @param array   指定的数组
 	 * @param matcher 只有经过该过滤器后返回 true 的元素才符合条件
 	 * @since 2.0.0
 	 */
@@ -570,7 +560,7 @@ public abstract class ArrayUtil {
 
 	/**
 	 * 将单个元素构造成一个仅包含该元素的数组
-	 * 
+	 *
 	 * @param element 指定的元素值
 	 * @return 如果 val == null，则返回 null；否则返回对应类型的数组
 	 * @since 2.1.0
