@@ -1,72 +1,100 @@
 package me.codeplayer.util;
 
-import java.util.Calendar;
-import java.util.TimeZone;
+import static org.junit.Assert.*;
 
-import me.codeplayer.util.Assert;
-import me.codeplayer.util.EasyDate;
+import java.util.*;
 
-import org.junit.Test;
+import org.assertj.core.api.*;
+import org.junit.*;
 
-public class EasyDateTest {
+public class EasyDateTest implements WithAssertions {
 
-	// @Test
-	public void test() {
-		EasyDate d = new EasyDate();
-		System.out.println(d);
-		d.addDay(365);
-		System.err.println(d);
+	@SuppressWarnings("deprecation")
+	@Test
+	public void easyDate() {
+		Date now = new Date();
+		EasyDate d = new EasyDate(now);
+		assertEquals(now.getYear() + 1900, d.getYear());
+		assertEquals(now.getMonth() + 1, d.getMonth());
+		assertEquals(now.getDate(), d.getDay());
+		assertEquals(now.getHours(), d.getHour());
+		assertEquals(now.getMinutes(), d.getMinute());
+		assertEquals(now.getSeconds(), d.getSecond());
+
 		d = new EasyDate(2014, 12, 2, 6);
+		assertEquals(2014, d.getYear());
+		assertEquals(12, d.getMonth());
+		assertEquals(2, d.getDay());
+		assertEquals(6, d.getHour());
 	}
 
-	// @Test
+	@Test
 	public void getLastDayOfMonth() {
 		EasyDate d = new EasyDate(2013, 2, 5);
-		Assert.isTrue(d.getLastDayOfMonth() == 28, "error");
+		assertEquals(28, d.getLastDayOfMonth());
+
 		d = new EasyDate(2014, 11, 5);
-		Assert.isTrue(d.getLastDayOfMonth() == 30, "error");
+		assertEquals(30, d.getLastDayOfMonth());
+
 		d = new EasyDate(2014, 12, 1);
-		Assert.isTrue(d.getLastDayOfMonth() == 31, "error");
+		assertEquals(31, d.getLastDayOfMonth());
+
 		d = new EasyDate(2000, 2, 1);
-		Assert.isTrue(d.getLastDayOfMonth() == 29, "error");
+		assertEquals(29, d.getLastDayOfMonth());
 	}
 
-	// @Test
+	@Test
+	public void beginOf() {
+		EasyDate d = new EasyDate(2013, 2, 5, 23, 12, 55);
+		d.beginOf(Calendar.MONTH);
+		assertEquals(2013, d.getYear());
+		assertEquals(2, d.getMonth());
+		assertEquals(1, d.getDay());
+		assertEquals(0, d.getHour());
+		assertEquals(0, d.getMinute());
+		assertEquals(0, d.getSecond());
+		assertEquals(0, d.getMillisecond());
+	}
+
+	@Test
 	public void endOf() {
 		EasyDate d = new EasyDate(2013, 2, 5);
 		d.endOf(Calendar.MONTH);
-		System.out.println(d.toDateTimeString());
+		assertEquals(2013, d.getYear());
+		assertEquals(2, d.getMonth());
+		assertEquals(28, d.getDay());
+		assertEquals(23, d.getHour());
+		assertEquals(59, d.getMinute());
+		assertEquals(59, d.getSecond());
+		assertEquals(999, d.getMillisecond());
 	}
 
-	// @Test
-	public void beginOf() {
-		EasyDate d = new EasyDate(2013, 2, 5, 23, 12, 55);
-		d.beginOf(Calendar.YEAR);
-		System.out.println(d.toDateTimeString());
-	}
+	@Test
+	public void timeZoneOffset() {
+		TimeZone timeZone = TimeZone.getTimeZone("GMT+8:00");
+		final int localTimeZoneOffset = timeZone.getRawOffset() / 1000 / 60;
 
-	// @Test
-	public void getTimeZoneOffset() {
-		EasyDate d = new EasyDate(2013, 2, 5, 23, 12, 55);
-		System.out.println(d.getTimeZoneOffset());
+		EasyDate d = new EasyDate().setTimeZone(timeZone).resetAs(2013, 2, 5, 23, 12, 55);
+
+		assertThat(d.getTimeZoneOffset()).isEqualTo(localTimeZoneOffset);
+
 		d.setTimeZoneOffset(0);
-		System.out.println(d.getTimeZoneOffset());
-		System.out.println(d.toDateTimeString());
-		System.out.println(d.toLongString());
-		System.out.println(d.toShortString());
-		System.out.println(d.toString());
-		TimeZone timeZone = TimeZone.getDefault();
-		System.out.println(timeZone.getID());
-		TimeZone tz = TimeZone.getTimeZone("GMT+8:00");
-		System.out.println(timeZone.getRawOffset() == tz.getRawOffset());
+		assertEquals(0, d.getTimeZoneOffset());
+
+		assertEquals("2013-02-05 15:12:55", d.toDateTimeString());
+		assertEquals("20130205", d.toShortString());
+		assertEquals("2013-02-05", d.toString());
+
+		d.setTimeZoneOffset(150);
+		assertEquals("2013-02-05 17:42:55.000", d.toLongString());
 	}
 
 	@Test
 	public void isSameAs() {
 		EasyDate a = new EasyDate(2015, 2, 28, 0, 0, 0);
-		System.out.println(a.getTime());
-		System.out.println(a.getTime() % EasyDate.MILLIS_OF_DAY);
 		EasyDate b = new EasyDate(2015, 3, 28, 22, 59, 59);
-		System.out.println(EasyDate.isSameAs(a, b, Calendar.YEAR));
+		assertTrue(a.isSameAs(b, Calendar.YEAR));
+
+		assertFalse(a.isSameAs(b, Calendar.HOUR));
 	}
 }

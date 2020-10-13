@@ -1,24 +1,16 @@
 package me.codeplayer.util.scan;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.JarURLConnection;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.util.Enumeration;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.io.*;
+import java.lang.reflect.*;
+import java.net.*;
+import java.util.*;
 import java.util.function.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.regex.Pattern;
+import java.util.jar.*;
+import java.util.regex.*;
 
-import me.codeplayer.util.X;
+import org.slf4j.*;
 
-import org.slf4j.Logger;
+import me.codeplayer.util.*;
 
 /**
  * 扫描指定包（包括jar）下的class文件 <br>
@@ -26,7 +18,7 @@ import org.slf4j.Logger;
  */
 public class ClassPathScanHandler {
 
-	private static final Logger logger = X.getLogger();
+	static final Logger LOGGER = X.getLogger();
 	/**
 	 * 是否排除内部类： true=是， false=否
 	 */
@@ -50,10 +42,6 @@ public class ClassPathScanHandler {
 	 * excludeInner:是否排除内部类 true->是 false->否<br>
 	 * checkInOrEx：过滤规则适用情况 true—>搜索符合规则的 false->排除符合规则的<br>
 	 * classFilters：自定义过滤规则，如果是null或者空，即全部符合不过滤
-	 * 
-	 * @param excludeInner
-	 * @param checkInOrEx
-	 * @param classNameFilters
 	 */
 	public ClassPathScanHandler(boolean excludeInner, boolean checkInOrEx, List<String> classNameFilters) {
 		this.excludeInner = excludeInner;
@@ -63,13 +51,13 @@ public class ClassPathScanHandler {
 
 	/**
 	 * 扫描包
-	 * 
+	 *
 	 * @param basePackage 基础包
-	 * @param recursive 是否递归搜索子包
+	 * @param recursive   是否递归搜索子包
 	 * @return Set
 	 */
 	public Set<Class<?>> getAllClassesFromPackage(String basePackage, boolean recursive) {
-		Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
+		Set<Class<?>> classes = new LinkedHashSet<>();
 		String packageName = basePackage;
 		if (packageName.endsWith(".")) {
 			packageName = packageName.substring(0, packageName.length() - 1);
@@ -81,31 +69,25 @@ public class ClassPathScanHandler {
 				URL url = dirs.nextElement();
 				String protocol = url.getProtocol();
 				if ("file".equals(protocol)) {
-					logger.debug("Scanning class files in {}", url);
+					LOGGER.debug("Scanning class files in {}", url);
 					String filePath = URLDecoder.decode(url.getFile(), "UTF-8");
 					doScanPackageClassesByFile(classes, packageName, filePath, recursive);
 				} else if ("jar".equals(protocol)) {
-					logger.debug("Scanning class files in {}", url);
+					LOGGER.debug("Scanning class files in {}", url);
 					doScanPackageClassesByJar(packageName, url, recursive, classes);
 				}
 			}
 		} catch (IOException e) {
-			logger.error("An error occurs when scanning class files", e);
+			LOGGER.error("An error occurs when scanning class files", e);
 		}
 		return classes;
 	}
 
 	/**
 	 * 以jar的方式扫描包下的所有Class文件<br>
-	 * 
-	 * @param basePackage
-	 * @param url
-	 * @param recursive
-	 * @param classes
 	 */
 	private void doScanPackageClassesByJar(String basePackage, URL url, final boolean recursive, Set<Class<?>> classes) {
-		String packageName = basePackage;
-		String package2Path = packageName.replace('.', '/');
+		String package2Path = basePackage.replace('.', '/');
 		try {
 			JarFile jar = ((JarURLConnection) url.openConnection()).getJarFile();
 			Enumeration<JarEntry> entries = jar.entries();
@@ -121,7 +103,7 @@ public class ClassPathScanHandler {
 				}
 				// 判断是否过滤 inner class
 				if (this.excludeInner && name.lastIndexOf('$') != -1) {
-					logger.debug("exclude inner class with name: {}", name);
+					LOGGER.debug("exclude inner class with name: {}", name);
 					continue;
 				}
 				String classSimpleName = name.substring(name.lastIndexOf('/') + 1);
@@ -132,22 +114,17 @@ public class ClassPathScanHandler {
 					try {
 						classes.add(Thread.currentThread().getContextClassLoader().loadClass(className));
 					} catch (ClassNotFoundException e) {
-						logger.error("Class.forName() error:", e);
+						LOGGER.error("Class.forName() error:", e);
 					}
 				}
 			}
 		} catch (IOException e) {
-			logger.error("IOException error:", e);
+			LOGGER.error("IOException error:", e);
 		}
 	}
 
 	/**
 	 * 以文件的方式扫描包下的所有Class文件
-	 * 
-	 * @param packageName
-	 * @param packagePath
-	 * @param recursive
-	 * @param classes
 	 */
 	private void doScanPackageClassesByFile(Set<Class<?>> classes, String packageName, String packagePath, final boolean recursive) {
 		File dir = new File(packagePath);
@@ -163,7 +140,7 @@ public class ClassPathScanHandler {
 				}
 				String filename = file.getName();
 				if (excludeInner && filename.indexOf('$') != -1) {
-					logger.debug("exclude inner class with name:{}", filename);
+					LOGGER.debug("exclude inner class with name:{}", filename);
 					return false;
 				}
 				return filterClassName(filename);
@@ -177,7 +154,7 @@ public class ClassPathScanHandler {
 				try {
 					classes.add(Thread.currentThread().getContextClassLoader().loadClass(packageName + '.' + className));
 				} catch (ClassNotFoundException e) {
-					logger.error("IOException error:", e);
+					LOGGER.error("IOException error:", e);
 				}
 			}
 		}
@@ -185,9 +162,6 @@ public class ClassPathScanHandler {
 
 	/**
 	 * 根据过滤规则判断类名
-	 * 
-	 * @param className
-	 * @return
 	 */
 	private boolean filterClassName(String className) {
 		if (!className.endsWith(".class")) {
@@ -211,10 +185,6 @@ public class ClassPathScanHandler {
 
 	/**
 	 * 扫描指定包中符合条件的方法
-	 * 
-	 * @param basePackage
-	 * @param recursive
-	 * @return
 	 */
 	public Set<Method> getMethodsFromPackage(String basePackage, boolean recursive, Predicate<Method> methodMatcher) {
 		Set<Class<?>> classes = getAllClassesFromPackage(basePackage, recursive);
@@ -230,44 +200,26 @@ public class ClassPathScanHandler {
 		return finalMethods;
 	}
 
-	/**
-	 * @return the excludeInner
-	 */
 	public boolean isExcludeInner() {
 		return excludeInner;
 	}
 
-	/**
-	 * @return the checkInOrEx
-	 */
 	public boolean isCheckInOrEx() {
 		return checkInOrEx;
 	}
 
-	/**
-	 * @return the classFilters
-	 */
 	public List<String> getClassNameFilters() {
 		return classNameFilters;
 	}
 
-	/**
-	 * @param pExcludeInner the excludeInner to set
-	 */
 	public void setExcludeInner(boolean pExcludeInner) {
 		excludeInner = pExcludeInner;
 	}
 
-	/**
-	 * @param pCheckInOrEx the checkInOrEx to set
-	 */
 	public void setCheckInOrEx(boolean pCheckInOrEx) {
 		checkInOrEx = pCheckInOrEx;
 	}
 
-	/**
-	 * @param pClassFilters the classFilters to set
-	 */
 	public void setClassNameFilters(List<String> pClassFilters) {
 		classNameFilters = pClassFilters;
 	}

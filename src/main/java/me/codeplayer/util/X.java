@@ -13,16 +13,14 @@ import org.slf4j.*;
  * 此类全为静态方法，请使用静态方法的形式调用<br>
  * 由于均为静态方法，所以类名尽可能地短，以免干扰逻辑可读性<br>
  * 并且工具类会经常被调用，类名短，也方便开发人员编写。
- * 
+ *
  * @author Ready
  */
 public abstract class X {
 
 	/**
 	 * 获取调用此方法的当前类的日志处理器(Logger)<br>
-	 * 该Logger使用slf4j API
-	 * 
-	 * @return
+	 * 该 Logger 使用 slf4j API
 	 */
 	public static final Logger getLogger() {
 		String className = new Throwable().getStackTrace()[1].getClassName();
@@ -33,9 +31,6 @@ public abstract class X {
 	 * 判断指定的字符串是否为空<br>
 	 * 如果字符串为null、空字符串,则返回true<br>
 	 * <b>注意：</b>本方法不会去除字符串两边的空格，如果想去除字符串两边的空格后再进行判断，可以使用isBlank()方法
-	 * 
-	 * @param str
-	 * @return
 	 */
 	public static final boolean isEmpty(String str) {
 		return StringUtil.isEmpty(str); // 后面的表达式相当于"".equals(str)，但比其性能稍好
@@ -45,9 +40,8 @@ public abstract class X {
 	 * 判断指定的对象是否为空<br>
 	 * 如果对象(或其toSring()返回值)为null、空字符串，则返回true<br>
 	 * <b>注意：</b>本方法不会去除字符串两边的空格，如果想去除字符串两边的空格后再进行判断，可以使用isBlank()方法
-	 * 
+	 *
 	 * @param obj 指定的对象
-	 * @return
 	 */
 	public static final boolean isEmpty(Object obj) {
 		return StringUtil.isEmpty(obj); // 后面的表达式相当于"".equals(str)，但比其性能稍好
@@ -55,9 +49,8 @@ public abstract class X {
 
 	/**
 	 * 判断指定的字符串是否为null或去空格后为空字符串，如果是则返回true
-	 * 
+	 *
 	 * @param str 指定的字符串对象
-	 * @return
 	 */
 	public static final boolean isBlank(String str) {
 		return StringUtil.isBlank(str);
@@ -67,10 +60,9 @@ public abstract class X {
 	 * 判断指定的对象是否为空<br>
 	 * 如果对象(或其toSring()返回值)为null、空字符串、空格字符串，则返回true<br>
 	 * <b>注意：</b>本方法会先去除字符串两边的空格，再判断
-	 * 
+	 *
 	 * @param obj 指定的对象
-	 * @return
-	 * @see me.codeplayer.util.StringUtil#isBlank(Object)
+	 * @see StringUtil#isBlank(Object)
 	 */
 	public static final boolean isBlank(Object obj) {
 		return StringUtil.isBlank(obj);
@@ -94,7 +86,7 @@ public abstract class X {
 
 	/**
 	 * 从指定的多个值依次检测并选取第一个不为null的值
-	 * 
+	 *
 	 * @see X#expectNotNull(Object, Object, Object, Object)
 	 */
 	public static final <T> T expectNotNull(T v1, T v2, T v3) {
@@ -142,9 +134,8 @@ public abstract class X {
 
 	/**
 	 * 判断指定Boolean值是否有效。<code>true</code> 即为有效。
-	 * 
+	 *
 	 * @param b 指定的Boolean对象
-	 * @return
 	 */
 	public static final boolean isValid(Boolean b) {
 		return b != null && b;
@@ -152,9 +143,8 @@ public abstract class X {
 
 	/**
 	 * 判断指定的数值对象是否有效。如果参数为 <code>null</code> 或 数值等于0，则为无效；其他均为有效。
-	 * 
+	 *
 	 * @param number 指定的
-	 * @return
 	 */
 	public static final boolean isValid(Number number) {
 		return number != null && number.doubleValue() != 0;
@@ -162,9 +152,8 @@ public abstract class X {
 
 	/**
 	 * 判断指定的字符串序列是否有效。如果参数为 <code>null</code> 或空字符串 <code>""</code> ，则为无效；其他均为有效。
-	 * 
+	 *
 	 * @param sequence 指定的字符串序列对象
-	 * @return
 	 */
 	public static final boolean isValid(CharSequence sequence) {
 		return StringUtil.notEmpty(sequence);
@@ -172,9 +161,8 @@ public abstract class X {
 
 	/**
 	 * 判断指定的Map对象是否有效。如果参数为 <code>null</code> 或 <code>map.size() == 0</code>，则为无效，其他均为有效。
-	 * 
+	 *
 	 * @param map 指定的映射集合对象
-	 * @return
 	 */
 	public static final boolean isValid(Map<?, ?> map) {
 		return map != null && map.size() > 0;
@@ -182,9 +170,8 @@ public abstract class X {
 
 	/**
 	 * 判断指定的Collection对象是否有效。如果参数为 <code>null</code> 或 <code>collection.size() == 0</code>，则为无效，其他均为有效。
-	 * 
+	 *
 	 * @param collection 指定的集合对象
-	 * @return
 	 */
 	public static final boolean isValid(Collection<?> collection) {
 		return collection != null && collection.size() > 0;
@@ -192,9 +179,8 @@ public abstract class X {
 
 	/**
 	 * 判断指定byte数组是否有效。如果参数为 <code>null</code> 或 <code>array.length == 0</code>，则为无效，其他均为有效。
-	 * 
+	 *
 	 * @param array 指定的byte数组
-	 * @return
 	 */
 	public static final boolean isValid(byte[] array) {
 		return array != null && array.length > 0;
@@ -202,9 +188,8 @@ public abstract class X {
 
 	/**
 	 * 判断指定int数组是否有效。如果参数为 <code>null</code> 或 <code>array.length == 0</code>，则为无效，其他均为有效。
-	 * 
+	 *
 	 * @param array 指定的int数组
-	 * @return
 	 */
 	public static final boolean isValid(int[] array) {
 		return array != null && array.length > 0;
@@ -212,9 +197,8 @@ public abstract class X {
 
 	/**
 	 * 判断指定long数组是否有效。如果参数为 <code>null</code> 或 <code>array.length == 0</code>，则为无效，其他均为有效。
-	 * 
+	 *
 	 * @param array 指定的long数组
-	 * @return
 	 */
 	public static final boolean isValid(long[] array) {
 		return array != null && array.length > 0;
@@ -222,9 +206,8 @@ public abstract class X {
 
 	/**
 	 * 判断指定char数组是否有效。如果参数为 <code>null</code> 或 <code>array.length == 0</code>，则为无效，其他均为有效。
-	 * 
+	 *
 	 * @param array 指定的char数组
-	 * @return
 	 */
 	public static final boolean isValid(char[] array) {
 		return array != null && array.length > 0;
@@ -232,9 +215,8 @@ public abstract class X {
 
 	/**
 	 * 判断指定float数组是否有效。如果参数为 <code>null</code> 或 <code>array.length == 0</code>，则为无效，其他均为有效。
-	 * 
+	 *
 	 * @param array 指定的float数组
-	 * @return
 	 */
 	public static final boolean isValid(float[] array) {
 		return array != null && array.length > 0;
@@ -242,9 +224,8 @@ public abstract class X {
 
 	/**
 	 * 判断指定double数组是否有效。如果参数为 <code>null</code> 或 <code>array.length == 0</code>，则为无效，其他均为有效。
-	 * 
+	 *
 	 * @param array 指定的double数组
-	 * @return
 	 */
 	public static final boolean isValid(double[] array) {
 		return array != null && array.length > 0;
@@ -252,9 +233,8 @@ public abstract class X {
 
 	/**
 	 * 判断指定的对象数组是否有效。如果参数为 <code>null</code> 或 <code>array.length == 0</code>，则为无效，其他均为有效。
-	 * 
-	 * @param collection 指定的对象数组
-	 * @return
+	 *
+	 * @param array 指定的对象数组
 	 */
 	public static final boolean isValid(Object[] array) {
 		return array != null && array.length > 0;
@@ -270,8 +250,7 @@ public abstract class X {
 	 * 5.如果<code>arg</code>是集合(Collection)对象，<code>arg.size() == 0</code><br>
 	 * 6.如果<code>arg</code>是数组(Array)对象，<code>arg.length == 0</code><br>
 	 * 7.如果<code>arg</code>是布尔(Boolean)对象，<code>arg 等价于  false</code><br>
-	 * 
-	 * @param arg
+	 *
 	 * @return 上述无效的情况返回 <code>false</code>，其他情况均返回 <code>true</code>
 	 */
 	@SuppressWarnings("rawtypes")
@@ -297,10 +276,10 @@ public abstract class X {
 
 	/**
 	 * 将指定的值根据指定的表达式解析，并返回解析后的结果
-	 * 
+	 *
 	 * @param value       指定的值
 	 * @param expressions 指定的表达式，例如：<code>("1", "男", "0", "女")</code>方法将会将指定属性的值(value)，与表达式进行匹配，形如：
-	 * 
+	 *
 	 *                    <pre>
 	 * <code>
 	 * if(value 等于 "1"){
@@ -312,9 +291,9 @@ public abstract class X {
 	 * }
 	 * </code>
 	 *                    </pre>
-	 * 
+	 *                    <p>
 	 *                    本方法接收的表达式参数个数可以为奇数，例如：<code>(6, "星期六", 7, "星期天", "工作日")</code>，相当于：
-	 * 
+	 *
 	 *                    <pre>
 	 * if(value 等于 6){
 	 * 	return "星期六";
@@ -324,8 +303,6 @@ public abstract class X {
 	 * 	return "工作日";
 	 * }
 	 *                    </pre>
-	 * 
-	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public static final <T> T decode(T value, T... expressions) {
@@ -356,9 +333,6 @@ public abstract class X {
 	/**
 	 * 去除字符串两端的空格<br>
 	 * 如果字符串为null、空字符串""、空白字符串，这返回HTML的空格符"&amp;nbsp;"
-	 * 
-	 * @param str
-	 * @return
 	 */
 	public static final String trim4Html(String str) {
 		return StringUtil.isBlank(str) ? "&nbsp;" : str.trim();
@@ -366,9 +340,8 @@ public abstract class X {
 
 	/**
 	 * 根据需要存储的元素个数确定HashMap等Map接口实现类的初始容量(使用默认的负载因子：0.75)
-	 * 
+	 *
 	 * @param capacity 需要存储的元素个数
-	 * @return
 	 */
 	public static final int getCapacity(int capacity) {
 		return getCapacity(capacity, 0.75f);
@@ -376,10 +349,9 @@ public abstract class X {
 
 	/**
 	 * 根据需要存储的元素个数确定HashMap等Map接口实现类的初始容量
-	 * 
+	 *
 	 * @param capacity   需要存储的元素个数
 	 * @param loadFactor 负载因子，必须介于0-1之间，如果不在此范围，内部也不检测，后果自负
-	 * @return
 	 */
 	public static final int getCapacity(int capacity, float loadFactor) {
 		int initCapacity = 16;
@@ -391,9 +363,6 @@ public abstract class X {
 
 	/**
 	 * 将指定泛型对象进行泛型擦除，并转换为对应的泛型声明
-	 * 
-	 * @param obj
-	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public static final <T> T castType(Object obj) {
@@ -401,8 +370,20 @@ public abstract class X {
 	}
 
 	/**
+	 * 使用 {@code obj} 执行指定的调用
+	 *
+	 * @param obj      指定的对象，可以为 null
+	 * @param consumer 指定的调用，如果 {@code obj} 为 null，则不执行该调用
+	 */
+	public static final <T> void use(@Nullable T obj, Consumer<? super T> consumer) {
+		if (obj != null) {
+			consumer.accept(obj);
+		}
+	}
+
+	/**
 	 * 对指定的对象执行指定的 {@code mapper } 转换，安全地获得期望的转换结果
-	 * 
+	 *
 	 * @param obj    指定的对象，可以为 null
 	 * @param mapper 转换器
 	 * @return 如果 {@code obj == null } 则返回null，否则返回转换后的结果
@@ -417,22 +398,22 @@ public abstract class X {
 	}
 
 	/**
-	 * 对指定的对象执行 {@code mapper }、{@code chainedMapper} 双重转换，安全地获得期望的转换结果
-	 * 
-	 * @param obj           指定的对象，可以为 null
-	 * @param mapper        转换器
-	 * @param chainedMapper 二次转换器
+	 * 对指定的对象执行 {@code mapper }、{@code nestedMapper} 双重转换，安全地获得期望的转换结果
+	 *
+	 * @param obj          指定的对象，可以为 null
+	 * @param mapper       转换器
+	 * @param nestedMapper 嵌套的二次转换器
 	 * @return 如果 {@code obj == null } 则返回 null，否则返回转换后的结果
 	 * @author Ready
 	 * @since 2.6
 	 */
-	public static final <T, R, E> E map(@Nullable T obj, Function<? super T, R> mapper, Function<R, E> chainedMapper) {
-		return map(map(obj, mapper), chainedMapper);
+	public static final <T, R, E> E map(@Nullable T obj, Function<? super T, R> mapper, Function<R, E> nestedMapper) {
+		return map(map(obj, mapper), nestedMapper);
 	}
 
 	/**
 	 * 对指定的对象执行执行的 {@code mapper } 转换，安全地获得期望的转换结果
-	 * 
+	 *
 	 * @param obj    指定的对象，可以为 null
 	 * @param mapper 转换器
 	 * @param other  如果转换后的值为null，则返回该参数值
@@ -447,7 +428,7 @@ public abstract class X {
 
 	/**
 	 * 对指定的对象执行执行的 {@code mapper } 转换，安全地获得期望的转换结果
-	 * 
+	 *
 	 * @param obj    指定的对象，可以为 null
 	 * @param mapper 转换器
 	 * @param other  如果转换后的值为null，则返回该备用对象的返回值
@@ -462,8 +443,7 @@ public abstract class X {
 
 	/**
 	 * 尝试拆箱可能由 {@link Supplier } 接口包装的实体对象
-	 * 
-	 * @param supplier
+	 *
 	 * @return 如果指定参数实现了 {@link Supplier } 接口，则调用 get() 方法 并返回其值；否则直接返回 该对象本身
 	 * @author Ready
 	 * @since 2.3.0
@@ -477,7 +457,7 @@ public abstract class X {
 
 	/**
 	 * 当指定 val 为 null 时，则返回替补 {@code other} 中的返回值，否则返回 val 本身
-	 * 
+	 *
 	 * @since 2.6
 	 */
 	public static <T> T getElse(@Nullable T val, Supplier<T> other) {
@@ -486,11 +466,10 @@ public abstract class X {
 
 	/**
 	 * 检测指定的对象在经过指定的转换后，是否符合指定的条件
-	 * 
+	 *
 	 * @param bean    指定的对象
 	 * @param mapper  转换器
 	 * @param matcher 条件判断器
-	 * @return
 	 * @author Ready
 	 * @since 2.3.0
 	 */
@@ -501,7 +480,7 @@ public abstract class X {
 
 	/**
 	 * 将指定的异常信息封装为运行时异常
-	 * 
+	 *
 	 * @param forceUseMsg 如果指定的异常是运行时异常，且 {@code msg } 不为null；此时是否还需要包装一个 {@link IllegalArgumentException } 来确保强制使用传入的 {@code msg } 作为异常信息
 	 * @return 如果异常 {@code ex } 为 null，或者不是运行时异常，则自动将其封装为 {@link IllegalArgumentException }；否则返回对应的运行时异常
 	 * @since 2.3.0
@@ -520,7 +499,7 @@ public abstract class X {
 	 * 将指定的异常信息封装为运行时异常
 	 * <p>
 	 * 注意：如果指定的异常是运行时异常；此时不会使用传入的 {@code msg }
-	 * 
+	 *
 	 * @return 如果异常 {@code ex } 为 null，或者不是运行时异常，则自动将其封装为 {@link IllegalArgumentException }；否则返回对应的运行时异常
 	 * @since 2.3.0
 	 */
@@ -530,7 +509,7 @@ public abstract class X {
 
 	/**
 	 * 将指定的异常信息封装为运行时异常
-	 * 
+	 *
 	 * @param forceUseMsg 如果指定的异常是运行时异常，且 {@code msg } 不为null；此时是否还需要包装一个 {@link IllegalArgumentException } 来确保强制使用传入的 {@code msg } 作为异常信息
 	 * @return 如果异常 {@code ex } 为 null，或者不是运行时异常，则自动将其封装为 {@link IllegalArgumentException }；否则返回对应的运行时异常
 	 * @since 2.3.0
@@ -541,7 +520,7 @@ public abstract class X {
 
 	/**
 	 * 将指定的异常信息封装为运行时异常
-	 * 
+	 *
 	 * @return 如果异常 {@code ex } 为 null，或者不是运行时异常，则自动将其封装为 {@link IllegalArgumentException }；否则返回对应的运行时异常
 	 * @since 2.3.0
 	 */
@@ -551,7 +530,7 @@ public abstract class X {
 
 	/**
 	 * 递归地调用对象的指定方法，直到返回的对象满足指定条件（如果 {@code root} 对象本身符合条件就返回其本身）
-	 * 
+	 *
 	 * @since 2.8
 	 */
 	public static <T> T getRecursively(T root, Function<T, T> recursion, Predicate<T> untilMatch) {
@@ -639,7 +618,7 @@ public abstract class X {
 
 	/**
 	 * 返回集合的长度，如果参数为null，则返回 0
-	 * 
+	 *
 	 * @since 2.8
 	 */
 	public static int size(final Collection<?> c) {
@@ -648,7 +627,7 @@ public abstract class X {
 
 	/**
 	 * 返回 Map 的长度，如果参数为null，则返回 0
-	 * 
+	 *
 	 * @since 2.8
 	 */
 	public static int size(final Map<?, ?> map) {
@@ -657,7 +636,7 @@ public abstract class X {
 
 	/**
 	 * 返回数组的长度，如果参数为null，则返回 0
-	 * 
+	 *
 	 * @since 2.8
 	 */
 	public static int size(final Object[] array) {
@@ -665,20 +644,22 @@ public abstract class X {
 	}
 
 	/**
+	 * 返回数组的长度，如果参数为 {@code null}，则返回 0
+	 *
+	 * @throws IllegalArgumentException 如果 {@code array} 不是数组（可以为 {@code null}）
+	 * @since 2.8
+	 */
+	public static int sizeOfArray(final Object array) throws IllegalArgumentException {
+		return array == null ? 0 : Array.getLength(array);
+	}
+
+	/**
 	 * 返回字符序列的长度，如果参数为null，则返回 0
-	 * 
+	 *
 	 * @since 2.8
 	 */
 	public static int size(final CharSequence cs) {
 		return cs == null ? 0 : cs.length();
 	}
 
-	/**
-	 * 返回数组的长度，如果参数为null，则返回 0
-	 * 
-	 * @since 2.8
-	 */
-	public static int sizeOfArray(final Object array) {
-		return array == null ? 0 : Array.getLength(array);
-	}
 }

@@ -8,7 +8,7 @@ import javax.crypto.spec.*;
 
 /**
  * 可逆的数据算法工具，实现DES加密算法，利用指定的密钥对字符串或字节数组进行加密或解密
- * 
+ *
  * @author Ready
  * @date 2012-11-30
  */
@@ -18,8 +18,6 @@ public class DES {
 
 	/**
 	 * 利用指定的字符串密钥构造一个DES工具实例
-	 * 
-	 * @param key
 	 */
 	public DES(String key) {
 		setKey(key);
@@ -27,8 +25,6 @@ public class DES {
 
 	/**
 	 * 利用指定的字节数组密钥构造一个DES工具实例
-	 * 
-	 * @param key
 	 */
 	public DES(byte[] key) {
 		setKey(key);
@@ -57,8 +53,6 @@ public class DES {
 
 	/**
 	 * 根据直接数组参数生成KEY
-	 * 
-	 * @param byteKey
 	 */
 	public void setKey(byte[] byteKey) {
 		try {
@@ -70,10 +64,9 @@ public class DES {
 
 	/**
 	 * 输入指定的明文，使用指定的密钥进行加密，并返回加密后的字符串
-	 * 
+	 *
 	 * @param plaintext 指定的明文
-	 * @param encoding 指定的字符编码，例如"UTF-8"、"GBK"
-	 * @return
+	 * @param encoding  指定的字符编码，例如"UTF-8"、"GBK"
 	 */
 	public String encode(String plaintext, String encoding) {
 		try {
@@ -86,9 +79,8 @@ public class DES {
 	/**
 	 * 输入指定的明文，使用指定的密钥进行加密，并返回加密后的字符串<br>
 	 * 内部使用UTF-8编码进行处理
-	 * 
+	 *
 	 * @param plaintext 指定的明文
-	 * @return
 	 */
 	public String encode(String plaintext) {
 		return encode(plaintext, "UTF-8");
@@ -96,10 +88,9 @@ public class DES {
 
 	/**
 	 * 解密指定的密文字符串，并以明文方式返回
-	 * 
+	 *
 	 * @param ciphertext 指定的密文字符串
-	 * @param encoding 指定的字符编码，例如"UTF-8"、"GBK"
-	 * @return
+	 * @param encoding   指定的字符编码，例如"UTF-8"、"GBK"
 	 */
 	public String decode(String ciphertext, String encoding) {
 		try {
@@ -112,9 +103,8 @@ public class DES {
 	/**
 	 * 解密指定的密文字符串，并以明文方式返回<br>
 	 * 内部使用UTF-8编码进行处理
-	 * 
+	 *
 	 * @param ciphertext 指定的密文字符串
-	 * @return
 	 */
 	public String decode(String ciphertext) {
 		return decode(ciphertext, "UTF-8");
@@ -122,9 +112,6 @@ public class DES {
 
 	/**
 	 * 加密指定的字节数组，并返回加密后的字节数组
-	 * 
-	 * @param srcBytes
-	 * @return
 	 */
 	public byte[] encode(byte[] srcBytes) {
 		return process(srcBytes, true);
@@ -132,9 +119,6 @@ public class DES {
 
 	/**
 	 * 解密以byte[]密文输入,以byte[]明文输出
-	 * 
-	 * @param srcBytes
-	 * @return
 	 */
 	public byte[] decode(byte[] srcBytes) {
 		return process(srcBytes, false);
@@ -142,10 +126,9 @@ public class DES {
 
 	/**
 	 * 加密或解密处理指定的字节数组
-	 * 
+	 *
 	 * @param srcBytes 直接数组
-	 * @param encrypt 如果为true表示加密，否则表示解密。
-	 * @return
+	 * @param encrypt  如果为true表示加密，否则表示解密。
 	 */
 	public byte[] process(byte[] srcBytes, boolean encrypt) {
 		try {

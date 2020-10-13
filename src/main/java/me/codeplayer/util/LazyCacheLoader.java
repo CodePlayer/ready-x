@@ -4,11 +4,10 @@ import java.util.function.*;
 
 /**
  * 支持懒加载的缓存数据加载器，一般情况下，数据只会加载一次
- * 
- * @since 2.0
+ *
  * @author Ready
  * @date 2019年3月20日
- * @param <E>
+ * @since 2.0
  */
 public class LazyCacheLoader<E> implements CacheLoader<E> {
 

@@ -2,9 +2,11 @@ package me.codeplayer.util.scan;
 
 import java.lang.reflect.*;
 
+import me.codeplayer.util.scan.MethodMatcher.*;
+
 /**
  * 修饰符方法过滤器
- * 
+ *
  * @author Ready
  * @date 2015年2月4日
  */

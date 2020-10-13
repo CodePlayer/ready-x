@@ -1,12 +1,11 @@
 package me.codeplayer.util;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.math.*;
+import java.util.*;
 
 /**
  * 将阿拉伯数字形式的整数转换为中文大写形式的字符串的工具类
- * 
+ *
  * @author Ready
  * @date 2013-4-20
  */
@@ -17,38 +16,39 @@ public class ChineseNumber {
 	 */
 	private static final char[] CHINESE_BIG_UNITS = new char[] { '亿', '万' };
 	// properties
-	protected String number;
+	protected final String number;
 	/** 为null表示忽略小数；为""表示不忽略小数，但没有小数部分 */
-	protected String fraction;
-	protected ChineseNumberStyle style;
-	protected String text;
+	protected final String fraction;
+	protected final FormatStyle style;
+	protected transient String text;
 
-	protected ChineseNumber(String val, String fraction, ChineseNumberStyle style) {
+	protected ChineseNumber(String val, String fraction, FormatStyle style) {
 		this.number = val;
 		this.fraction = fraction;
 		this.style = style;
 	}
 
-	public ChineseNumber(long val, ChineseNumberStyle style) {
-		this.number = Long.toString(val);
-		this.style = style;
+	public ChineseNumber(long val, FormatStyle style) {
+		this(Long.toString(val), null, style);
 	}
 
-	public ChineseNumber(String fullVal, ChineseNumberStyle style) {
+	public ChineseNumber(String fullVal, FormatStyle style) {
 		int point = fullVal.indexOf('.');
 		this.number = point == -1 ? fullVal : fullVal.substring(0, point);
 		this.fraction = point == -1 ? null : fullVal.substring(point + 1);
 		this.style = style;
 	}
 
-	public ChineseNumber(double val, ChineseNumberStyle style) {
+	public ChineseNumber(double val, FormatStyle style) {
 		this(new BigDecimal(Double.toString(val)).toString(), style);
+	}
+
+	public ChineseNumber(BigDecimal d, FormatStyle style) {
+		this(d.toPlainString(), style);
 	}
 
 	/**
 	 * 追加整数部分的中文数值字符串
-	 * 
-	 * @return
 	 */
 	protected StringBuilder appendIntValue(StringBuilder sb) {
 		if ("0".equals(number)) {
@@ -91,12 +91,10 @@ public class ChineseNumber {
 
 	/**
 	 * 追加整数部分的中文数值字符串
-	 * 
-	 * @return
 	 */
 	protected StringBuilder appendDecimalValue(StringBuilder sb) {
 		int len = fraction == null ? 0 : fraction.length();
-		if (style == ChineseNumberStyle.MONEY) { // 如果是金额
+		if (style == FormatStyle.MONEY) { // 如果是金额
 			sb.append('元');
 			boolean empty = len == 0;
 			if (!empty) {
@@ -144,15 +142,14 @@ public class ChineseNumber {
 
 	/**
 	 * 格式化指定的数值为中文字符串
-	 * 
+	 *
 	 * @param d 指定的数值
 	 * @param ignoreDecimal 是否忽略小数部分
 	 * @param style 指定中文字符串的格式
-	 * @return
-	 * @since 1.0
 	 * @author Ready
+	 * @since 1.0
 	 */
-	public static final String formatNumber(double d, boolean ignoreDecimal, ChineseNumberStyle style) {
+	public static final String formatNumber(double d, boolean ignoreDecimal, FormatStyle style) {
 		if (ignoreDecimal) {
 			return new ChineseNumber((long) d, style).toString();
 		} else {
@@ -162,37 +159,51 @@ public class ChineseNumber {
 
 	/**
 	 * 格式化指定的数值为中文字符串
-	 * 
+	 *
+	 * @param d 指定的数值
+	 * @param ignoreDecimal 是否忽略小数部分
+	 * @param style 指定中文字符串的格式
+	 * @author Ready
+	 * @since 1.0
+	 */
+	public static final String formatNumber(BigDecimal d, boolean ignoreDecimal, FormatStyle style) {
+		if (ignoreDecimal) {
+			return new ChineseNumber(d.longValue(), style).toString();
+		} else {
+			return new ChineseNumber(d, style).toString();
+		}
+	}
+
+	/**
+	 * 格式化指定的数值为中文字符串
+	 *
 	 * @param d 指定的数值
 	 * @param style 指定中文字符串的格式
-	 * @return
-	 * @since 1.0
 	 * @author Ready
+	 * @since 1.0
 	 */
-	public static final String formatNumber(long d, ChineseNumberStyle style) {
+	public static final String formatNumber(long d, FormatStyle style) {
 		return new ChineseNumber(d, style).toString();
 	}
 
 	/**
 	 * 计算单元，接收一个4位以内的阿拉伯数字字符串，并将其转换为对应的中文大写形式
-	 * 
+	 *
 	 * @author Ready
 	 * @date 2013-4-19
 	 */
 	public static class Cell {
 
 		private String chinese = ""; // 中文形式的字符串
-		private String source; // 原阿拉伯数字形式的字符串
-		private ChineseNumberStyle style;
+		private final String source; // 原阿拉伯数字形式的字符串
+		private final FormatStyle style;
 		private boolean startWithZero; // 当前计算单元是否以0开头
 		private boolean endWithZero; // 当前计算单元是否以0结尾
 
 		/**
 		 * 构造函数
-		 * 
-		 * @param moneyCell
 		 */
-		public Cell(String moneyCell, ChineseNumberStyle style) {
+		public Cell(String moneyCell, FormatStyle style) {
 			this.source = moneyCell;
 			this.style = style;
 			init();
@@ -238,12 +249,12 @@ public class ChineseNumber {
 
 	/**
 	 * 表示中文数字的文本表现形式的枚举类
-	 * 
-		 * @date 2015年8月21日
-	 * @since 1.0
+	 *
 	 * @author Ready
+	 * @date 2015年8月21日
+	 * @since 1.0
 	 */
-	public static enum ChineseNumberStyle {
+	public static enum FormatStyle {
 		/**
 		 * 中文数字：'零', '一', '二', '三', '四', '五', '六', '七', '八', '久'<br>
 		 * 中文单位：'亿', '万', '千', '百', '十'
@@ -264,7 +275,7 @@ public class ChineseNumber {
 		final char[] numbersText;
 		final char[] unitsText;
 
-		private ChineseNumberStyle(char[] numbersText, char[] unitsText) {
+		FormatStyle(char[] numbersText, char[] unitsText) {
 			this.numbersText = numbersText;
 			this.unitsText = unitsText;
 		}

@@ -4,10 +4,9 @@ import java.util.function.*;
 
 /**
  * 基于时间间隔进行数据更新的缓存数据加载器
- * 
+ *
  * @date 2017年1月10日
  * @since 2.0
- * @param <E>
  */
 public class TimeBasedCacheLoader<E> extends LazyCacheLoader<E> {
 

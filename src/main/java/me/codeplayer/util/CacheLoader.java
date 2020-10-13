@@ -4,10 +4,9 @@ import java.util.function.*;
 
 /**
  * 缓存数据加载器
- * 
+ *
  * @date 2017年1月10日
  * @since 0.4.3
- * @param <E>
  */
 public interface CacheLoader<E> extends Supplier<E> {
 

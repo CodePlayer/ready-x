@@ -2,17 +2,16 @@ package me.codeplayer.util;
 
 /**
  * 用于辅助URL、URI、资源路径等处理的工具类
- * 
- * @since 1.0
+ *
  * @author Ready
  * @date 2019年4月16日
+ * @since 1.0
  */
 public abstract class ResourceUtil {
 
 	/**
 	 * 解析指定资源路径的定位方式
-	 * 
-	 * @param uri
+	 *
 	 * @return -1=相对（于当前资源路径）定位；0=相对（于当前项目根路径）定位；1=绝对定位
 	 */
 	public static final int parseUriLocator(String uri) {

@@ -9,10 +9,10 @@ import me.codeplayer.util.*;
 
 /**
  * 用于进行 Pipeline 初始化及附属校验器定义的辅助工具类
- * 
- * @since 2.3.0
+ *
  * @author Ready
  * @date 2019-4-24
+ * @since 2.3.0
  */
 public abstract class Validators {
 
@@ -52,12 +52,12 @@ public abstract class Validators {
 	/*
 	 * dynamic group
 	 */
+
 	/**
 	 * 返回字符串长度校验器
-	 * 
+	 *
 	 * @param min 如果 ≤ -1，则表示允许为 null；
 	 * @param max 如果 ≤ -1，则表示不限制最大值
-	 * @return
 	 */
 	public static final Predicate<CharSequence> assertLength(int min, int max) {
 		return val -> val == null && min <= -1

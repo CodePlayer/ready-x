@@ -1,17 +1,17 @@
 package me.codeplayer.util;
 
-import me.codeplayer.util.RandomUtil;
+import org.assertj.core.api.*;
+import org.junit.*;
 
-import org.junit.Test;
-
-public class RandomUtilTest {
+public class RandomUtilTest implements WithAssertions {
 
 	@Test
-	public void getInt() {
-		// for (int i = 0; i < 100; i++) {
-		// System.out.println(RandomUtil.getInt(-17, 17));
-		// }
-		System.out.println(RandomUtil.getIntString(5));
-		System.out.println(RandomUtil.getString("abcdefghijklmnopqrstuvwxyz", 6));
+	public void getString() {
+		assertThat(RandomUtil.getIntString(5))
+				.hasSize(5)
+				.has(new Condition<>(NumberUtil::isNumeric, "must be numeric"));
+
+		assertThat(RandomUtil.getString("abcdefghijklmnopqrstuvwxyz", 6))
+				.hasSize(6);
 	}
 }

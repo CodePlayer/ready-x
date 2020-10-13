@@ -1,13 +1,12 @@
 package me.codeplayer.util;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
+import java.math.*;
 
 import javax.annotation.*;
 
 /**
  * 对数值类型的数据(包含字节)进行相应处理的工具类
- * 
+ *
  * @author Ready
  * @date 2012-10-29
  */
@@ -15,9 +14,6 @@ public abstract class NumberUtil {
 
 	/**
 	 * 将int类型的变量转为二进制字符串
-	 * 
-	 * @param i
-	 * @return
 	 */
 	public static final String int2Byte(int i) {
 		int index = 32;
@@ -32,9 +28,8 @@ public abstract class NumberUtil {
 	/**
 	 * 以byte形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为byte形式，将报错
-	 * 
+	 *
 	 * @param value 指定的对象
-	 * @return
 	 */
 	public static final byte getByte(Object value) {
 		Assert.notNull(value, "将要转换为整数的值不能为null!");
@@ -44,10 +39,9 @@ public abstract class NumberUtil {
 	/**
 	 * 以byte形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为byte形式，将返回指定的<code>defaultValue</code>
-	 * 
+	 *
 	 * @param value 指定的对象
 	 * @param defaultValue 指定的默认值
-	 * @return
 	 */
 	public static final byte getByte(Object value, byte defaultValue) {
 		if (value == null) {
@@ -69,9 +63,8 @@ public abstract class NumberUtil {
 	/**
 	 * 以short形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为short形式，将报错
-	 * 
+	 *
 	 * @param value 指定的对象
-	 * @return
 	 */
 	public static final short getShort(Object value) {
 		Assert.notNull(value, "将要转换为整数的值不能为null!");
@@ -81,10 +74,9 @@ public abstract class NumberUtil {
 	/**
 	 * 以short形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为short形式，将返回指定的<code>defaultValue</code>
-	 * 
+	 *
 	 * @param value 指定的对象
 	 * @param defaultValue 指定的默认值
-	 * @return
 	 */
 	public static final short getShort(Object value, short defaultValue) {
 		if (value == null) {
@@ -106,9 +98,8 @@ public abstract class NumberUtil {
 	/**
 	 * 以int形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为int形式，将报错
-	 * 
+	 *
 	 * @param value 指定的对象
-	 * @return
 	 */
 	public static final int getInt(Object value) {
 		Assert.notNull(value, "将要转换为整数的值不能为null!");
@@ -121,7 +112,6 @@ public abstract class NumberUtil {
 	 *
 	 * @param value 指定的对象
 	 * @param defaultValue 指定的默认值
-	 * @return
 	 */
 	public static final int getInt(Object value, int defaultValue) {
 		if (value == null) {
@@ -143,10 +133,6 @@ public abstract class NumberUtil {
 	/**
 	 * 以Integer形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为Integer形式，将返回指定的<code>defaultValue</code>
-	 *
-	 * @param value
-	 * @param defaultValue
-	 * @return
 	 */
 	public static final Integer getInteger(Object value, Integer defaultValue) {
 		if (value == null) {
@@ -168,9 +154,8 @@ public abstract class NumberUtil {
 	/**
 	 * 以long形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为long形式，将报错
-	 * 
+	 *
 	 * @param value 指定的对象
-	 * @return
 	 */
 	public static final long getLong(Object value) {
 		Assert.notNull(value, "将要转换为整数的值不能为null!");
@@ -183,7 +168,6 @@ public abstract class NumberUtil {
 	 *
 	 * @param value 指定的对象
 	 * @param defaultValue 指定的默认值
-	 * @return
 	 */
 	public static final long getLong(Object value, long defaultValue) {
 		if (value == null) {
@@ -208,7 +192,6 @@ public abstract class NumberUtil {
 	 *
 	 * @param value 指定的对象
 	 * @param defaultValue 指定的默认值
-	 * @return
 	 */
 	public static final Long getLong(Object value, Long defaultValue) {
 		if (value == null) {
@@ -230,9 +213,8 @@ public abstract class NumberUtil {
 	/**
 	 * 以float形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为float形式，将报错
-	 * 
+	 *
 	 * @param value 指定的对象
-	 * @return
 	 */
 	public static final float getFloat(Object value) {
 		Assert.notNull(value, "将要转换为整数或小数的值不能为null!");
@@ -242,10 +224,9 @@ public abstract class NumberUtil {
 	/**
 	 * 以float形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为float形式，将返回指定的<code>defaultValue</code>
-	 * 
+	 *
 	 * @param value 指定的对象
 	 * @param defaultValue 指定的默认值
-	 * @return
 	 */
 	public static final float getFloat(Object value, float defaultValue) {
 		if (value == null) {
@@ -267,9 +248,8 @@ public abstract class NumberUtil {
 	/**
 	 * 以double形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为double形式，将报错
-	 * 
+	 *
 	 * @param value 指定的对象
-	 * @return
 	 */
 	public static final double getDouble(Object value) {
 		Assert.notNull(value, "将要转换为整数或小数的值不能为null!");
@@ -279,10 +259,9 @@ public abstract class NumberUtil {
 	/**
 	 * 以double形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为double形式，将返回指定的<code>defaultValue</code>
-	 * 
+	 *
 	 * @param value 指定的对象
 	 * @param defaultValue 指定的默认值
-	 * @return
 	 */
 	public static final double getDouble(Object value, double defaultValue) {
 		if (value == null) {
@@ -304,9 +283,8 @@ public abstract class NumberUtil {
 	/**
 	 * 以BigDecimal形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为BigDecimal形式，将报错
-	 * 
+	 *
 	 * @param value 指定的对象
-	 * @return
 	 */
 	public static final BigDecimal getBigDecimal(Object value) {
 		if (value instanceof BigDecimal) {
@@ -324,10 +302,9 @@ public abstract class NumberUtil {
 	/**
 	 * 以BigDecimal形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为BigDecimal形式，将返回指定的<code>defaultValue</code>
-	 * 
+	 *
 	 * @param value 指定的对象
 	 * @param defaultValue 指定的默认值
-	 * @return
 	 */
 	public static final BigDecimal getBigDecimal(Object value, Object defaultValue) {
 		if (value == null) {
@@ -345,9 +322,8 @@ public abstract class NumberUtil {
 	 * 前面带0，例如"0012"仍为整数，返回true<br>
 	 * 如果字符串为null，返回false<br>
 	 * 如果字符串前后有空格，请先去除空格后再调用此方法，否则返回false<br>
-	 * 
+	 *
 	 * @param str 指定的字符串
-	 * @return
 	 */
 	public static final boolean isNumber(String str) {
 		if (str == null) { // 为空则返回false
@@ -370,10 +346,8 @@ public abstract class NumberUtil {
 	 * 前面带0，例如"0012"属于4位整数<br>
 	 * 如果字符串为null，返回false<br>
 	 * 如果字符串前后有空格，请先去除空格后再调用此方法，否则返回false
-	 * 
-	 * @param str
+	 *
 	 * @param length 指定位数大小
-	 * @return
 	 */
 	public static boolean isNumber(String str, int length) {
 		if (length < 0) {
@@ -384,9 +358,6 @@ public abstract class NumberUtil {
 
 	/**
 	 * 判断指定对象是否为整数类型或能够转为整数形式
-	 * 
-	 * @param obj
-	 * @return
 	 */
 	public static boolean isNumber(Object obj) {
 		if (obj instanceof Number) {
@@ -399,9 +370,8 @@ public abstract class NumberUtil {
 
 	/**
 	 * 以尽可能快的速度判断指定字符串是否为整数形式(仅限十进制)
-	 * 
+	 *
 	 * @param str 指定的字符串
-	 * @return
 	 */
 	public static final boolean isNumeric(String str) {
 		int length;
@@ -420,9 +390,6 @@ public abstract class NumberUtil {
 
 	/**
 	 * 判断指定对象的字符串形式是否为整数形式
-	 * 
-	 * @param value
-	 * @return
 	 */
 	public static final boolean isInt(Object value) {
 		return value != null && (value instanceof Integer || isNumber(value.toString()));
@@ -434,9 +401,8 @@ public abstract class NumberUtil {
 	 * 如果字符串为null，返回false<br>
 	 * 如果字符串前后有空格，请先去除空格后再调用此方法，否则返回false<br>
 	 * 此方法性能是使用正则表达式验证性能的4-9倍
-	 * 
+	 *
 	 * @param str 需要判断的字符串
-	 * @return
 	 */
 	public static final boolean isDouble(String str) {
 		if (str == null) {
@@ -456,10 +422,9 @@ public abstract class NumberUtil {
 	 * 判断指定对象是否为整数或小数形式<br>
 	 * 前面带0，例如"0012"仍为整数，返回true<br>
 	 * 如果字符串为null，返回false<br>
-	 * 如果字符串前后有空格，请先去除空格后再调用此方法，否则返回false<br>
-	 * 
-	 * @param str 需要判断的字符串
-	 * @return
+	 * 如果字符串前后有空格，请先去除空格后再调用此方法，否则返回 false
+	 *
+	 * @param value 需要判断的对象
 	 */
 	public static final boolean isDouble(Object value) {
 		return value != null && (value instanceof Number || isDouble(value.toString()));
@@ -467,7 +432,7 @@ public abstract class NumberUtil {
 
 	/**
 	 * 指示指定的数字是否是正数
-	 * 
+	 *
 	 * @since 2.3.0
 	 */
 	protected static final boolean isPositive(@Nullable final Number val, final boolean allowZero) {
@@ -485,7 +450,7 @@ public abstract class NumberUtil {
 
 	/**
 	 * 指示指定的数字是否是正数
-	 * 
+	 *
 	 * @since 2.3.0
 	 */
 	public static final boolean isPositive(@Nullable final Number val) {
@@ -494,7 +459,7 @@ public abstract class NumberUtil {
 
 	/**
 	 * 指示指定的数字是否是非负数
-	 * 
+	 *
 	 * @since 2.3.0
 	 */
 	public static final boolean isNonNegative(@Nullable final Number val) {
