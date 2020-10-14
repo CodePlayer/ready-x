@@ -171,11 +171,8 @@ public abstract class CollectionUtil {
 	 * @param valueMapper Map 的 {@code Entry.value} 转换器
 	 */
 	public static <E, K, V, M extends Map<K, V>> M toMap(final IntFunction<M> newMap, final Iterable<E> items, final Function<? super E, K> keyMapper, final Function<? super E, V> valueMapper) {
-		int size = 16;
-		if (items instanceof Collection) {
-			size = ((Collection<E>) items).size();
-		}
-		M map = newMap.apply(mapInitialCapacity(size));
+		int size = items instanceof Collection ? ((Collection<E>) items).size() : 0;
+		M map = newMap.apply(size > 0 ? mapInitialCapacity(size) : 16);
 		if (items != null) {
 			for (E e : items) {
 				map.put(keyMapper.apply(e), valueMapper.apply(e));
