@@ -1,7 +1,6 @@
 package me.codeplayer.util;
 
 import java.util.*;
-import java.util.function.*;
 
 import org.assertj.core.api.*;
 import org.assertj.core.data.*;
@@ -38,10 +37,11 @@ public class CollectionUtilTest implements WithAssertions {
 	@Test
 	public void mapValues() {
 		HashMap<Object, Object> map = CollectionUtil.ofHashMap("name", "Tom", "age", 18, "color", "Yellow");
-		Object[] array = CollectionUtil.mapValues(map, Object.class, "name", "age");
+		Object[] array = CollectionUtil.mapValues(map, Object.class, "name", "age", "haha");
 		assertThat(array)
-				.hasSize(2)
-				.contains("Tom", Index.atIndex(0));
+				.hasSize(3)
+				.contains("Tom", Index.atIndex(0))
+				.contains(null, Index.atIndex(2));
 	}
 
 	@Test
@@ -54,11 +54,9 @@ public class CollectionUtilTest implements WithAssertions {
 	}
 
 	@Test
-	public void test() {
-		ArrayList<Integer> ids = CollectionUtil.ofArrayList(2, 1, 3, 4);
-		HashMap<Integer, Integer> map = CollectionUtil.toHashMap(ids, Function.identity());
-		assertThat(map)
-				.isInstanceOf(HashMap.class);
+	public void ofHashSet() {
+		HashSet<Integer> set = CollectionUtil.ofHashSet(1, 2, 3, 4, 3, 5);
+		assertThat(set).hasSize(5)
+				.contains(1, 2, 3, 4, 5);
 	}
-
 }

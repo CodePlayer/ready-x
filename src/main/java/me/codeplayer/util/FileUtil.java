@@ -301,7 +301,9 @@ public abstract class FileUtil {
 	}
 
 	/**
-	 * 初步检测目标文件是否可写入
+	 * 初步检测目标文件是否可写入（不可写入，将直接报错）
+	 *
+	 * @return <b>注意</b>：该返回值仅指示是否可以调用 {@link File#renameTo(File)} 将其他文件重命名为该文件
 	 */
 	public static final void checkWritable(final File toWrite, final boolean override) {
 		if (toWrite.exists()) {
@@ -335,14 +337,14 @@ public abstract class FileUtil {
 	/**
 	 * 将指定的文件输入流写入到目标文件中
 	 *
-	 * @param is     指定的文件输入流
-	 * @param target 目标文件
+	 * @param is   指定的文件输入流
+	 * @param dest 目标文件
 	 * @since 0.0.1
 	 */
-	static final void copy(InputStream is, File target) {
+	static final void copyInternal(InputStream is, File dest) {
 		FileOutputStream fos = null;
 		try {
-			fos = new FileOutputStream(target);
+			fos = new FileOutputStream(dest);
 			writeStream(is, fos);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
@@ -355,29 +357,34 @@ public abstract class FileUtil {
 	 * 通过文件流复制文件到指定路径
 	 *
 	 * @param is       指定的输入文件流
-	 * @param target   指定的目标文件对象
+	 * @param dest     指定的目标文件对象
 	 * @param override 如果目标文件已存在，是否允许覆盖
 	 * @since 0.0.1
 	 */
-	public static final void copyFile(InputStream is, File target, boolean override) {
-		checkAndPrepareForWrite(target, override);
-		copy(is, target);
+	public static final void copyFile(InputStream is, File dest, boolean override) {
+		checkAndPrepareForWrite(dest, override);
+		copyInternal(is, dest);
 	}
 
 	/**
 	 * 将指定的文件复制到指定文件对象所表示的位置
 	 *
 	 * @param src      源文件对象
-	 * @param target   目标文件对象
+	 * @param dest     目标文件对象
 	 * @param override 如果目标文件已存在，是否允许覆盖
 	 * @since 0.0.1
 	 */
-	public final static void copyFile(File src, File target, boolean override) {
+	public final static void copyFile(File src, File dest, boolean override) {
 		checkReadable(src);
+		checkAndPrepareForWrite(dest, override);
+		copyFileInternal(src, dest);
+	}
+
+	static final void copyFileInternal(File src, File dest) {
 		FileInputStream fis = null;
 		try {
 			fis = new FileInputStream(src);
-			copyFile(fis, target, override);
+			copyInternal(fis, dest);
 		} catch (FileNotFoundException e) {
 			throw new IllegalStateException(e);
 		} finally {
@@ -389,73 +396,56 @@ public abstract class FileUtil {
 	 * 将指定的文件复制到指定文件对象所表示的位置<br>
 	 * 如果目标文件已存在，将引发异常
 	 *
-	 * @param src    源文件对象
-	 * @param target 目标文件对象
+	 * @param src  源文件对象
+	 * @param dest 目标文件对象
 	 * @since 0.0.1
 	 */
-	public final static void copyFile(File src, File target) {
-		copyFile(src, target, false);
+	public final static void copyFile(File src, File dest) {
+		copyFile(src, dest, false);
 	}
 
 	/**
 	 * 将指定的文件复制到指定的目标路径
 	 *
-	 * @param src    源文件对象
-	 * @param target 目标文件对象
+	 * @param src  源文件路径
+	 * @param dest 目标文件路径
 	 * @since 0.0.1
 	 */
-	public final static void copyFile(String src, String target, boolean override) {
-		try {
-			copyFile(new FileInputStream(src), new File(target), override);
-		} catch (FileNotFoundException e) {
-			throw new IllegalStateException(e);
-		}
+	public final static void copyFile(String src, String dest, boolean override) {
+		copyFile(new File(src), new File(dest), override);
 	}
 
 	/**
 	 * 将指定的文件复制到指定的目标路径
 	 *
-	 * @param src    源文件路径
-	 * @param target 目标文件路径
+	 * @param src  源文件路径
+	 * @param dest 目标文件路径
 	 * @since 0.0.1
 	 */
-	public final static void copyFile(String src, String target) {
-		copyFile(src, target, false);
+	public final static void copyFile(String src, String dest) {
+		copyFile(src, dest, false);
 	}
 
 	/**
 	 * 将指定的文件复制到指定的目录，保持其原文件名
 	 *
-	 * @param file      指定的文件
-	 * @param directory 指定的目录
-	 * @param override  如果已存在同名的文件，是否允许覆盖
+	 * @param file         指定的文件
+	 * @param destDiretory 指定的目录
+	 * @param override     如果已存在同名的文件，是否允许覆盖
 	 */
-	public final static void copyFileToDirectory(File file, File directory, boolean override) {
-		File target;
-		if (directory.exists()) {
+	public final static void copyFileToDirectory(File file, File destDiretory, boolean override) {
+		if (destDiretory.exists()) {
 			// 如果目标文件是一个目录
-			if (!directory.isDirectory()) {
-				throw new IllegalStateException("It's not a directory:" + directory);
+			if (!destDiretory.isDirectory()) {
+				throw new IllegalStateException("It's not a directory:" + destDiretory);
 			}
 			// 如果目标文件不可写入数据
-			if (!directory.canWrite()) {
-				throw new IllegalStateException(new AccessDeniedException("Unable to write to file：" + directory));
+			if (!destDiretory.canWrite()) {
+				throw new IllegalStateException(new AccessDeniedException("Unable to write to file：" + destDiretory));
 			}
-			// 如果目标文件不允许被覆盖
-			target = new File(directory, file.getName());
-			if (target.exists() && !override) {
-				throw new IllegalStateException("File already exists:" + target);
-			}
-		} else {
-			// 如果目标文件所在的目录不存在，则创建之
-			/*
-			if (!diretory.mkdirs()) {
-				throw new LogicException("");
-			}
-			*/
-			target = new File(directory, file.getName());
 		}
-		copyFile(file, target, true);
+		// 如果目标文件不允许被覆盖
+		copyFile(file, new File(destDiretory, file.getName()), override);
 	}
 
 	/**
@@ -473,39 +463,39 @@ public abstract class FileUtil {
 	/**
 	 * 将指定的文件复制到指定的目录，保持其原文件名
 	 *
-	 * @param file     指定的文件
-	 * @param diretory 指定的目录
-	 * @param override 如果已存在同名的文件，是否允许覆盖
+	 * @param file         指定的文件
+	 * @param destDiretory 指定的目录
+	 * @param override     如果已存在同名的文件，是否允许覆盖
 	 * @since 0.0.1
 	 */
-	public final static void copyFileToDirectory(String file, String diretory, boolean override) {
-		copyFileToDirectory(new File(file), new File(diretory), override);
+	public final static void copyFileToDirectory(String file, String destDiretory, boolean override) {
+		copyFileToDirectory(new File(file), new File(destDiretory), override);
 	}
 
 	/**
 	 * 将指定的文件复制到指定的目录，保持其原文件名<br>
 	 * 如果目标文件夹已存在同名的文件，则引发异常
 	 *
-	 * @param file     指定的文件
-	 * @param diretory 指定的目录
+	 * @param file         指定的文件
+	 * @param destDiretory 指定的目录
 	 * @since 0.0.1
 	 */
-	public final static void copyFileToDirectory(String file, String diretory) {
-		copyFileToDirectory(file, diretory, false);
+	public final static void copyFileToDirectory(String file, String destDiretory) {
+		copyFileToDirectory(file, destDiretory, false);
 	}
 
 	/**
 	 * 移动指定的文件到目标文件路径
 	 *
-	 * @param file     指定的文件
-	 * @param target   目标文件
+	 * @param src      指定的文件
+	 * @param dest     目标文件
 	 * @param override 如果已存在同名的文件，是否允许覆盖
 	 * @since 0.0.1
 	 */
-	public static final void moveFile(File file, File target, boolean override) {
-		checkReadable(file);
-		checkAndPrepareForWrite(target, override);
-		file.renameTo(target);
+	public static final void moveFile(File src, File dest, boolean override) {
+		checkReadable(src);
+		checkAndPrepareForWrite(dest, override);
+		moveFileInternal(src, dest, override);
 	}
 
 	/**
@@ -524,52 +514,63 @@ public abstract class FileUtil {
 	 * 移动指定的文件到目标文件路径<br>
 	 * 如果目标文件夹已存在同名的文件，则引发异常
 	 *
-	 * @param file   指定的文件
-	 * @param target 目标文件
+	 * @param src  指定的文件
+	 * @param dest 目标文件
 	 * @since 0.0.1
 	 */
-	public static final void moveFile(File file, File target) {
-		moveFile(file, target, false);
+	public static final void moveFile(File src, File dest) {
+		moveFile(src, dest, false);
 	}
 
 	/**
 	 * 移动指定的文件到目标文件路径
 	 *
 	 * @param path     指定的文件
-	 * @param target   目标文件
+	 * @param destPath 目标文件
 	 * @param override 如果已存在同名的文件，是否允许覆盖
 	 * @since 0.0.1
 	 */
-	public static final void moveFile(String path, String target, boolean override) {
-		moveFile(new File(path), new File(target), override);
+	public static final void moveFile(String path, String destPath, boolean override) {
+		moveFile(new File(path), new File(destPath), override);
 	}
 
 	/**
 	 * 移动指定的文件到目标文件路径<br>
 	 * 如果目标文件夹已存在同名的文件，则引发异常
 	 *
-	 * @param path   指定的文件
-	 * @param target 目标文件
+	 * @param path 指定的文件
+	 * @param dest 目标文件
 	 * @since 0.0.1
 	 */
-	public static final void moveFile(String path, String target) {
-		moveFile(new File(path), new File(target), false);
+	public static final void moveFile(String path, String dest) {
+		moveFile(new File(path), new File(dest), false);
 	}
 
 	/**
 	 * 移动指定的文件到目标文件夹
 	 *
-	 * @param file      指定的文件
-	 * @param directory 目标文件夹
-	 * @param override  如果已存在同名的文件，是否允许覆盖
+	 * @param file          指定的文件
+	 * @param destDirectory 目标文件夹
+	 * @param override      如果已存在同名的文件，是否允许覆盖
 	 * @throws IllegalArgumentException 如果指定的文件或目录不可写，或指定的目录不是目录
 	 * @since 0.0.1
 	 */
-	public static final void moveFileToDirectory(File file, File directory, boolean override) throws IllegalArgumentException {
+	public static final void moveFileToDirectory(File file, File destDirectory, boolean override) throws IllegalArgumentException {
 		checkReadable(file);
-		File target = new File(directory, file.getName());
-		checkAndPrepareForWrite(target, override);
-		file.renameTo(target);
+		final File dest = new File(destDirectory, file.getName());
+		checkAndPrepareForWrite(dest, override);
+		moveFileInternal(file, dest, override);
+	}
+
+	static final void moveFileInternal(File src, File dest, boolean override) {
+		if (!src.renameTo(dest)) {
+			if (override) {
+				copyFileInternal(src, dest);
+				src.delete();
+			} else {
+				throw new IllegalArgumentException("Move file failed:[" + src + "] => [" + dest + ']');
+			}
+		}
 	}
 
 	/**
@@ -707,87 +708,87 @@ public abstract class FileUtil {
 	/**
 	 * 将指定文件复制到指定的目录，并且采用随机的文件名，方法内部会尽可能地确保文件名称不会重复
 	 *
-	 * @param file      指定的文件对象
-	 * @param targetDir 目标目录
+	 * @param file    指定的文件对象
+	 * @param destDir 目标目录
 	 * @return 返回复制后的目标文件对象
 	 * @since 0.0.1
 	 */
-	public static final File copyFileToDirectoryWithRandomFileName(File file, String targetDir) {
-		File target = getRandomFile(targetDir, getExtension(file.getName()));
-		copyFile(file, target);
-		return target;
+	public static final File copyFileToDirectoryWithRandomFileName(File file, String destDir) {
+		File dest = getRandomFile(destDir, getExtension(file.getName()));
+		copyFile(file, dest);
+		return dest;
 	}
 
 	/**
 	 * 将指定文件移动到指定的目录，并且采用随机的文件名，方法内部会尽可能地确保文件名称不会重复
 	 *
-	 * @param file      指定的文件对象
-	 * @param targetDir 目标目录
+	 * @param file    指定的文件对象
+	 * @param destDir 目标目录
 	 * @return 返回移动后的目标文件对象
 	 * @since 0.0.1
 	 */
-	public static final File moveFileToDirectoryWithRandomFileName(File file, String targetDir) {
-		File target = getRandomFile(targetDir, getExtension(file.getName()));
-		moveFile(file, target);
-		return target;
+	public static final File moveFileToDirectoryWithRandomFileName(File file, String destDir) {
+		File dest = getRandomFile(destDir, getExtension(file.getName()));
+		moveFile(file, dest);
+		return dest;
 	}
 
 	/**
 	 * 将指定文件复制到指定的目录，并且采用随机的文件名、指定的文件后缀，方法内部会尽可能地确保文件名称不会重复
 	 *
-	 * @param file      指定的文件对象
-	 * @param targetDir 目标目录
-	 * @param prefix    目标文件的文件名前缀(可以为null)
-	 * @param suffix    目标文件的文件后缀。null、""、"gif"、".gif"等形式均可，前两者表示没有后缀，后两者表示指定的后缀。
+	 * @param file    指定的文件对象
+	 * @param destDir 目标目录
+	 * @param prefix  目标文件的文件名前缀(可以为null)
+	 * @param suffix  目标文件的文件后缀。null、""、"gif"、".gif"等形式均可，前两者表示没有后缀，后两者表示指定的后缀。
 	 * @return 返回复制后的目标文件对象
 	 * @since 0.0.1
 	 */
-	public static final File copyFileToDirectoryWithRandomFileName(File file, String targetDir, String prefix, String suffix) {
-		File target = getRandomFile(targetDir, prefix, suffix);
-		copyFile(file, target);
-		return target;
+	public static final File copyFileToDirectoryWithRandomFileName(File file, String destDir, String prefix, String suffix) {
+		File dest = getRandomFile(destDir, prefix, suffix);
+		copyFile(file, dest);
+		return dest;
 	}
 
 	/**
 	 * 将指定文件复制到指定的目录，并且采用随机的文件名、指定的文件后缀，方法内部会尽可能地确保文件名称不会重复
 	 *
-	 * @param file      指定的文件对象
-	 * @param targetDir 目标目录
-	 * @param suffix    目标文件的文件后缀。null、""、"gif"、".gif"等形式均可，前两者表示没有后缀，后两者表示指定的后缀。
+	 * @param file    指定的文件对象
+	 * @param destDir 目标目录
+	 * @param suffix  目标文件的文件后缀。null、""、"gif"、".gif"等形式均可，前两者表示没有后缀，后两者表示指定的后缀。
 	 * @return 返回复制后的目标文件对象
 	 * @since 0.0.1
 	 */
-	public static final File copyFileToDirectoryWithRandomFileName(File file, String targetDir, String suffix) {
-		return copyFileToDirectoryWithRandomFileName(file, targetDir, null, suffix);
+	public static final File copyFileToDirectoryWithRandomFileName(File file, String destDir, String suffix) {
+		return copyFileToDirectoryWithRandomFileName(file, destDir, null, suffix);
 	}
 
 	/**
 	 * 将指定文件移动到指定的目录，并且采用随机的文件名、指定的文件后缀，方法内部会尽可能地确保文件名称不会重复
 	 *
-	 * @param file      指定的文件对象
-	 * @param targetDir 目标目录
-	 * @param prefix    目标文件的文件名前缀(可以为null)
-	 * @param suffix    目标文件的文件后缀。null、""、"gif"、".gif"等形式均可，前两者表示没有后缀，后两者表示指定的后缀。
+	 * @param file    指定的文件对象
+	 * @param destDir 目标目录
+	 * @param prefix  目标文件的文件名前缀(可以为null)
+	 * @param suffix  目标文件的文件后缀。null、""、"gif"、".gif"等形式均可，前两者表示没有后缀，后两者表示指定的后缀。
 	 * @return 返回移动后的目标文件对象
 	 * @since 0.0.1
 	 */
-	public static final File moveFileToDirectoryWithRandomFileName(File file, String targetDir, String prefix, String suffix) {
-		File target = getRandomFile(targetDir, prefix, suffix);
-		moveFile(file, target);
-		return target;
+	public static final File moveFileToDirectoryWithRandomFileName(File file, String destDir, String prefix, String suffix) {
+		File dest = getRandomFile(destDir, prefix, suffix);
+		moveFile(file, dest);
+		return dest;
 	}
 
 	/**
 	 * 将指定文件移动到指定的目录，并且采用随机的文件名、指定的文件后缀，方法内部会尽可能地确保文件名称不会重复
 	 *
-	 * @param file      指定的文件对象
-	 * @param targetDir 目标目录
-	 * @param suffix    目标文件的文件后缀。null、""、"gif"、".gif"等形式均可，前两者表示没有后缀，后两者表示指定的后缀。
+	 * @param file    指定的文件对象
+	 * @param destDir 目标目录
+	 * @param suffix  目标文件的文件后缀。null、""、"gif"、".gif"等形式均可，前两者表示没有后缀，后两者表示指定的后缀。
 	 * @return 返回移动后的目标文件对象
 	 * @since 0.0.1
 	 */
-	public static final File moveFileToDirectoryWithRandomFileName(File file, String targetDir, String suffix) {
-		return moveFileToDirectoryWithRandomFileName(file, targetDir, null, suffix);
+	public static final File moveFileToDirectoryWithRandomFileName(File file, String destDir, String suffix) {
+		return moveFileToDirectoryWithRandomFileName(file, destDir, null, suffix);
 	}
 
 	/**

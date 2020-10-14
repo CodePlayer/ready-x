@@ -21,6 +21,25 @@ public abstract class CollectionUtil {
 	}
 
 	/**
+	 * 根据真实的元素个数和负载因子，计算 Map 集合合理的容量初始值
+	 *
+	 * @param realCapacity 真实的元素个数
+	 * @param loadFactor   负载因子
+	 */
+	public static final int mapInitialCapacity(int realCapacity, float loadFactor) {
+		return (int) (realCapacity / loadFactor) + 1;
+	}
+
+	/**
+	 * 根据真实的元素个数和默认的负载因子，计算 Map 集合合理的容量初始值
+	 *
+	 * @param realCapacity 真实的元素个数
+	 */
+	public static final int mapInitialCapacity(int realCapacity) {
+		return realCapacity * 4 / 3 + 1;
+	}
+
+	/**
 	 * 将可变参数形式的键值数组添加到一个 Map 集合中
 	 *
 	 * @param target   指定的 Collection 集合
@@ -66,13 +85,50 @@ public abstract class CollectionUtil {
 	/**
 	 * 根据可变参数形式的键值数组构造一个集合
 	 *
+	 * @param newList  Collection 构造器，int 类型的参数为 Collection 构造方法的 initialCapacity 参数
 	 * @param elements 可变参数形式的元素数组
 	 */
 	@SuppressWarnings("unchecked")
-	public static final <E, S extends Collection<E>> S of(IntFunction<S> newList, E... elements) {
+	public static final <E, S extends Collection<E>> S ofSize(IntFunction<S> newList, E... elements) {
 		S list = newList.apply(elements.length);
 		addAll(list, elements);
 		return list;
+	}
+
+	/**
+	 * 根据可变参数形式的键值数组构造一个集合
+	 *
+	 * @param newList  Collection 构造器
+	 * @param elements 可变参数形式的元素数组
+	 */
+	@SuppressWarnings("unchecked")
+	public static final <E, S extends Collection<E>> S of(Supplier<S> newList, E... elements) {
+		S list = newList.get();
+		addAll(list, elements);
+		return list;
+	}
+
+	/**
+	 * 根据可变参数形式的键值数组构造一个 Set 集合
+	 *
+	 * @param newSet   Set 构造器，int 类型的参数为 Set 构造方法的 initialCapacity 参数
+	 * @param elements 可变参数形式的元素数组
+	 */
+	@SuppressWarnings("unchecked")
+	public static final <E, S extends Set<E>> S ofSet(IntFunction<S> newSet, E... elements) {
+		S list = newSet.apply(mapInitialCapacity(elements.length));
+		addAll(list, elements);
+		return list;
+	}
+
+	/**
+	 * 根据可变参数形式的键值数组构造一个 HashSet 集合
+	 *
+	 * @param elements 可变参数形式的元素数组
+	 */
+	@SuppressWarnings("unchecked")
+	public static final <E> HashSet<E> ofHashSet(E... elements) {
+		return ofSet(HashSet::new, elements);
 	}
 
 	/**
@@ -82,16 +138,17 @@ public abstract class CollectionUtil {
 	 */
 	@SuppressWarnings("unchecked")
 	public static final <E> ArrayList<E> ofArrayList(E... elements) {
-		return of(ArrayList::new, elements);
+		return ofSize(ArrayList::new, elements);
 	}
 
 	/**
 	 * 根据可变参数形式的键值数组构造一个 Map 集合<br/>
 	 *
+	 * @param newMap   Map 构造器，int 参数为 Map 构造方法的 initialCapacity 参数
 	 * @param elements 可变参数形式的元素数组
 	 */
 	public static final <K, V, M extends Map<K, V>> M toMap(IntFunction<M> newMap, Object... elements) {
-		M map = newMap.apply(elements.length);
+		M map = newMap.apply(mapInitialCapacity(elements.length));
 		addAll(map, elements);
 		return map;
 	}
@@ -105,12 +162,20 @@ public abstract class CollectionUtil {
 		return toMap(HashMap::new, elements);
 	}
 
+	/**
+	 * 将指定的数据集合转为 Map 集合
+	 *
+	 * @param newMap      Map 构造器，int 参数为 Map 构造方法的 initialCapacity 参数
+	 * @param items       需要放入 Map 集合的数据集合
+	 * @param keyMapper   Map 的 {@code Entry.key} 转换器
+	 * @param valueMapper Map 的 {@code Entry.value} 转换器
+	 */
 	public static <E, K, V, M extends Map<K, V>> M toMap(final IntFunction<M> newMap, final Iterable<E> items, final Function<? super E, K> keyMapper, final Function<? super E, V> valueMapper) {
 		int size = 16;
 		if (items instanceof Collection) {
 			size = ((Collection<E>) items).size();
 		}
-		M map = newMap.apply(size);
+		M map = newMap.apply(mapInitialCapacity(size));
 		if (items != null) {
 			for (E e : items) {
 				map.put(keyMapper.apply(e), valueMapper.apply(e));
@@ -119,14 +184,34 @@ public abstract class CollectionUtil {
 		return map;
 	}
 
+	/**
+	 * 将指定的数据集合转为 HashMap 集合
+	 *
+	 * @param items       需要放入 Map 集合的数据集合
+	 * @param keyMapper   Map 的 {@code Entry.key} 转换器
+	 * @param valueMapper Map 的 {@code Entry.value} 转换器
+	 */
 	public static <E, K, V> HashMap<K, V> toHashMap(final Iterable<E> items, final Function<? super E, K> keyMapper, final Function<? super E, V> valueMapper) {
 		return toMap(HashMap::new, items, keyMapper, valueMapper);
 	}
 
+	/**
+	 * 将指定的数据集合转为 Map 集合
+	 *
+	 * @param newMap    Map 构造器，int 参数为 Map 构造方法的 initialCapacity 参数
+	 * @param items     需要放入 Map 集合的数据集合
+	 * @param keyMapper Map 的 {@code Entry.key} 转换器
+	 */
 	public static <K, V, M extends Map<K, V>> M toMap(final IntFunction<M> newMap, final Iterable<V> items, final Function<? super V, K> keyMapper) {
 		return toMap(newMap, items, keyMapper, Function.identity());
 	}
 
+	/**
+	 * 将指定的数据集合转为 HashMap 集合
+	 *
+	 * @param items     需要放入 Map 集合的数据集合
+	 * @param keyMapper Map 的 {@code Entry.key} 转换器
+	 */
 	public static <K, V> HashMap<K, V> toHashMap(final Iterable<V> items, final Function<? super V, K> keyMapper) {
 		return toMap(HashMap::new, items, keyMapper);
 	}
@@ -135,7 +220,7 @@ public abstract class CollectionUtil {
 	 * 获取Map集合中指定的多个键的值，并以数组的形式依次返回。如果集合中没有指定的键，则数组对应位置的值为null
 	 *
 	 * @param map        指定的Map集合
-	 * @param valueClass Map中存储的值的类型
+	 * @param valueClass 数组的组件类型
 	 * @param keys       指定的键数组
 	 * @author Ready
 	 * @since 0.3.1
@@ -150,8 +235,9 @@ public abstract class CollectionUtil {
 	}
 
 	/**
-	 * 遍历集合，并使用指定的过滤器进行检测，返回第一个符合条件的元素
+	 * 遍历集合，并使用指定的过滤器进行检测，返回遍历到的第一个符合条件的元素
 	 *
+	 * @param filter 如果为 null，则默认为 true
 	 * @since 2.8.0
 	 */
 	public static final <T> T findFirst(final Collection<T> range, @Nullable final Predicate<? super T> filter) {
@@ -166,7 +252,7 @@ public abstract class CollectionUtil {
 	}
 
 	/**
-	 * 遍历集合，并使用指定的过滤器进行检测，返回第一个符合条件的元素
+	 * 遍历集合，并使用指定的过滤器进行检测，返回遍历到的第一个元素
 	 *
 	 * @since 3.0.0
 	 */
