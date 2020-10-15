@@ -178,7 +178,7 @@ public abstract class StringUtil {
 	 *
 	 * @since 3.0.0
 	 */
-	public static StringBuilder concats(@Nullable StringBuilder sb, String... strs) {
+	public static StringBuilder append(@Nullable StringBuilder sb, String... strs) {
 		int size = 0;
 		for (int i = 0; i < strs.length; i++) {
 			size += length(strs[i]);
@@ -198,7 +198,7 @@ public abstract class StringUtil {
 	 * @since 3.0.0
 	 */
 	public static String concats(String... strs) {
-		return concats(null, strs).toString();
+		return append(null, strs).toString();
 	}
 
 	/**
