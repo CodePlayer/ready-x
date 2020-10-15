@@ -881,7 +881,9 @@ public abstract class StringUtil {
 	 * @param container      待检测的字符串
 	 * @param search         指定的单词
 	 * @param seperatorChars 单词两侧必须是指定的字符之一或位于字符串 {@code container }的首/尾位置
-	 * @param fastMode       如果发现尚未查找的字符序列长度不够，是否直接快速失败
+	 * @param fastMode       是否启用快速模式。快速模式：如果在 {@code container} 中第一次检索到该单词，就直接在此处进行周边字符的匹配测试，并返回测试结果。 <br>
+	 *                       哪怕后面还会再次出现该单词，也不再继续向后检查。请参考重载方法 {@link #containsWord(String, String, String)} 方法上的注释
+	 * 
 	 * @author Ready
 	 * @since 2.0.0
 	 */
