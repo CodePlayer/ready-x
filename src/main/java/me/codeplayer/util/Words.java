@@ -1,7 +1,6 @@
 package me.codeplayer.util;
 
 import java.util.*;
-import java.util.function.*;
 import java.util.stream.*;
 
 import javax.annotation.*;
@@ -26,34 +25,7 @@ public class Words {
 	}
 
 	public Stream<String> stream() {
-		return StreamSupport.stream(new Spliterator<String>() {
-			int index = 0;
-
-			@Override
-			public boolean tryAdvance(Consumer<? super String> action) {
-				if (index < segments.size()) {
-					int[] seg = segments.get(index++);
-					action.accept(source.substring(seg[0], seg[1]));
-					return true;
-				}
-				return false;
-			}
-
-			@Override
-			public Spliterator<String> trySplit() {
-				return null;
-			}
-
-			@Override
-			public long estimateSize() {
-				return segments.size();
-			}
-
-			@Override
-			public int characteristics() {
-				return Spliterator.ORDERED | Spliterator.IMMUTABLE;
-			}
-		}, false);
+		return segments.stream().map(seg -> source.substring(seg[0], seg[1]));
 	}
 
 	public StringBuilder join(@Nullable StringBuilder sb, CharSequence delimiter) {
@@ -81,7 +53,7 @@ public class Words {
 			int[] seg = segments.get(i);
 			wordCase.formatWord(sb, i, source, seg[0], seg[1]);
 		}
-		return sb.toString();
+		return wordCase.toString(sb);
 	}
 
 	public static Words of(String source, @Nullable FromWordCase fromCase) {
@@ -118,16 +90,6 @@ public class Words {
 		return of(source, null);
 	}
 
-	public static final WordCase SNAKE_CASE = new WordCase('_', -1);
-	public static final WordCase CAMEL_CASE = new WordCase(' ', 1) {
-		@Override
-		protected WordSplitter trySplitSpecial(char ch, String source, int charIndex, WordSplitter ref) {
-			return super.trySplitSpecial(ch, source, charIndex, ref);
-		}
-	};
-	public static final WordCase PASCAL_CASE = new WordCase(' ', 0);
-	public static final WordCase KEBAB_CASE = new WordCase('-', -1);
-
 	public static interface FromWordCase {
 
 		WordSplitter trySplit(char ch, String source, int currentIndex, WordSplitter ref);
@@ -137,6 +99,10 @@ public class Words {
 	public static interface ToWordCase {
 
 		void formatWord(StringBuilder sb, int wordIndex, String source, int beginIndex, int endIndex);
+
+		default String toString(StringBuilder sb) {
+			return sb.toString();
+		}
 	}
 
 	/**
@@ -236,4 +202,26 @@ public class Words {
 			sb.append(source, beginIndex, endIndex);
 		}
 	}
+
+	public static final WordCase SNAKE_CASE = new WordCase('_', -1);
+	public static final WordCase SNAKE_LOWER_CASE = new WordCase('_', -1) {
+
+		@Override
+		public void formatWord(StringBuilder sb, int wordIndex, String source, int beginIndex, int endIndex) {
+			if (wordIndex > 0) {
+				sb.append(sep);
+			}
+			for (int i = beginIndex; i < endIndex; i++) {
+				sb.append(Character.toLowerCase(source.charAt(i)));
+			}
+		}
+	};
+	public static final WordCase CAMEL_CASE = new WordCase(' ', 1) {
+		@Override
+		protected WordSplitter trySplitSpecial(char ch, String source, int charIndex, WordSplitter ref) {
+			return super.trySplitSpecial(ch, source, charIndex, ref);
+		}
+	};
+	public static final WordCase PASCAL_CASE = new WordCase(' ', 0);
+	public static final WordCase KEBAB_CASE = new WordCase('-', -1);
 }

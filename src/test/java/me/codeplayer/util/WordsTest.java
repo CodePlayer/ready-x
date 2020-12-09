@@ -22,9 +22,9 @@ public class WordsTest implements WithAssertions {
 		assertThat(Words.of("java_print_hello_world").join("||"))
 				.isEqualTo("java||print||hello||world");
 
-		assertThat(Words.of("JavaPrintCPUWorld").join("->"))
-				.isEqualTo("Java->Print->CPU->World");
 
-		System.out.println(Words.of("JavaPrintCPUWorld").to(Words.CAMEL_CASE));
+		words = Words.of("JavaPrintCPUWorld");
+		assertThat(words.join("->")).isEqualTo("Java->Print->CPU->World");
+		assertThat(words.to(Words.SNAKE_LOWER_CASE)).isEqualTo("java_print_cpu_world");
 	}
 }
