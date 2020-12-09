@@ -140,7 +140,7 @@ public class Words {
 	}
 
 	/**
-	 * 用于存储拆分单词中途所需的关键标记信息（每次处理时，复用同一对象）
+	 * 用于存储拆分单词中途所需的关键标记信息（循环拆分处理时，务必复用同一对象）
 	 */
 	public static class WordSplitter {
 
