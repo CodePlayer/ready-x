@@ -1,6 +1,7 @@
 package me.codeplayer.util;
 
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import javax.annotation.*;
@@ -13,75 +14,40 @@ public class Words {
 
 	protected final String source;
 	/** [ { startIndex, endIndex ( exclude ) ]... } */
-	protected final List<int[]> segments;
+	protected final List<Segment> segments;
 
-	Words(String source, List<int[]> segments) {
+	Words(String source, List<Segment> segments) {
 		this.source = source;
 		this.segments = segments;
-	}
-
-	public int count() {
-		return segments.size();
-	}
-
-	public Stream<String> stream() {
-		return segments.stream().map(seg -> source.substring(seg[0], seg[1]));
-	}
-
-	public StringBuilder join(@Nullable StringBuilder sb, CharSequence delimiter) {
-		final int size = segments.size();
-		if (sb == null) {
-			sb = new StringBuilder(source.length() + size);
-		}
-		for (int i = 0; i < size; i++) {
-			int[] seg = segments.get(i);
-			if (i > 0) {
-				sb.append(delimiter);
-			}
-			sb.append(source, seg[0], seg[1]);
-		}
-		return sb;
-	}
-
-	public String join(CharSequence delimiter) {
-		return join(null, delimiter).toString();
-	}
-
-	public String to(ToWordCase wordCase) {
-		final StringBuilder sb = new StringBuilder(source.length() + segments.size());
-		for (int i = 0; i < segments.size(); i++) {
-			int[] seg = segments.get(i);
-			wordCase.formatWord(sb, i, source, seg[0], seg[1]);
-		}
-		return wordCase.toString(sb);
 	}
 
 	public static Words of(String source, @Nullable FromWordCase fromCase) {
 		final int len = source.length();
 		// { startIndex, endIndex ( exclude ) }
-		final List<int[]> segments = new ArrayList<>();
-		WordSplitter ref = new WordSplitter();
+		final List<Segment> segments = new ArrayList<>();
+		final WordSplitter ref = new WordSplitter();
 		for (int i = 0; i < len; i++) {
 			char ch = source.charAt(i);
-			WordSplitter splitter;
+			Segment seg;
 			if (fromCase == null) {
 				if (ch == '_' /* snake */ || ch == '-' /* kebab */ || Character.isSpaceChar(ch) /* space */) {
-					splitter = ref.splitAtSep(ref, i);
+					boolean abbr = ref.prevUpperCount > 0;
+					seg = ref.splitAtSep(i, 1).toSegment(abbr);
 				} else {
-					splitter = CAMEL_CASE.trySplitSpecial(ch, source, i, ref);
+					seg = CAMEL_CASE.trySplitSpecial(ch, source, i, ref);
 				}
 			} else {
-				splitter = fromCase.trySplit(ch, source, i, ref);
+				seg = fromCase.trySplit(ch, source, i, ref);
 			}
-			if (splitter != null) {
-				if (splitter.beginIndex < splitter.endIndex) {
-					segments.add(new int[] { splitter.beginIndex, splitter.endIndex });
+			if (seg != null) {
+				if (seg != Segment.EMPTY) {
+					segments.add(seg);
 				}
-				splitter.beginIndex = splitter.nextBeginIndex;
+				ref.begin = ref.nextBegin;
 			}
 		}
-		if (ref.beginIndex < len) {
-			segments.add(new int[] { ref.beginIndex, len });
+		if (ref.begin < len) {
+			segments.add(new Segment(ref.begin, len, ref.prevUpperCount > 0));
 		}
 		return new Words(source, segments);
 	}
@@ -90,15 +56,118 @@ public class Words {
 		return of(source, null);
 	}
 
+	public int count() {
+		return segments.size();
+	}
+
+	public Stream<String> stream() {
+		return segments.stream().map(seg -> source.substring(seg.begin, seg.end));
+	}
+
+	public StringBuilder forEachAppend(@Nullable StringBuilder sb, BiConsumer<StringBuilder, Segment> appender) {
+		final int size = segments.size();
+		if (sb == null) {
+			sb = new StringBuilder(source.length() + size);
+		}
+		for (int i = 0; i < size; i++) {
+			Segment seg = segments.get(i).attach(source, i);
+			appender.accept(sb, seg);
+		}
+		return sb;
+	}
+
+	public StringBuilder join(@Nullable StringBuilder builder, final CharSequence delimiter) {
+		return forEachAppend(builder, (sb, seg) -> {
+			if (seg.wordIndex > 0) {
+				sb.append(delimiter);
+			}
+			sb.append(seg.source, seg.begin, seg.end);
+		});
+	}
+
+	public String join(CharSequence delimiter) {
+		return join(null, delimiter).toString();
+	}
+
+	public String to(ToWordCase wordCase, CharCase preprocessor) {
+		return wordCase.toString(forEachAppend(null, (sb, seg) -> {
+			wordCase.formatWord(sb, seg, preprocessor);
+		}));
+	}
+
+	public String to(ToWordCase wordCase) {
+		return to(wordCase, null);
+	}
+
+	public static class Segment {
+
+		public transient String source;
+		public transient int wordIndex;
+		//
+		public final int begin;
+		public final int end;
+		/** 全部大写的缩略词 */
+		public final boolean abbr;
+
+		public Segment(int begin, int end, boolean abbr) {
+			this.begin = begin;
+			this.end = end;
+			this.abbr = abbr;
+		}
+
+		static final Segment EMPTY = new Segment(-1, -1, false);
+
+		public Segment attach(String source, int wordIndex) {
+			this.source = source;
+			this.wordIndex = wordIndex;
+			return this;
+		}
+
+		public static Segment of(int begin, int end, boolean abbr) {
+			return begin < end ? new Segment(begin, end, abbr) : EMPTY;
+		}
+	}
+
+	public static interface CharCaseConverter {
+		char apply(char ch);
+	}
+
+	public static enum CharCase implements CharCaseConverter {
+		NONE(ch -> ch),
+		UPPER(Character::toUpperCase),
+		LOWER(Character::toLowerCase);
+
+		final CharCaseConverter converter;
+
+		CharCase(CharCaseConverter converter) {
+			this.converter = converter;
+		}
+
+		public char apply(char ch) {
+			return converter.apply(ch);
+		}
+	}
+
 	public static interface FromWordCase {
 
-		WordSplitter trySplit(char ch, String source, int currentIndex, WordSplitter ref);
+		Segment trySplit(char ch, String source, int currentIndex, WordSplitter ref);
 
 	}
 
-	public static interface ToWordCase {
+	public static interface WordCaseDescriptor {
 
-		void formatWord(StringBuilder sb, int wordIndex, String source, int beginIndex, int endIndex);
+		/**
+		 * @param continueFlagRef 只包含一个 boolean 值的数组，该接口方法的实现可以通过该 boolean 值来传达下个字符是否还需要调用该方法来获取 {@code CharCase}。
+		 * @return 如果返回 null，则后续字符不再需要大小写转换处理，直接跳出处理循环。
+		 * 其他情况下：如果 {@code continueFlagRef[0]} 为 true，则将返回对象仅应用于当前字符的转换处理；如果为 false，则后续字符都将应用该 {@code CharCase} 进行转换处理
+		 */
+		CharCase getCharCase(Segment seg, int charIndex, boolean[] continueFlagRef);
+
+	}
+
+	public static interface ToWordCase extends WordCaseDescriptor {
+
+		void formatWord(StringBuilder sb, Segment seg, CharCase preprocessor);
 
 		default String toString(StringBuilder sb) {
 			return sb.toString();
@@ -110,40 +179,49 @@ public class Words {
 	 */
 	public static class WordSplitter {
 
-		private int beginIndex;
-		private int endIndex;
-		private int nextBeginIndex;
+		private int begin;
+		private int end;
+		private int nextBegin;
 		private int prevUpperCount;
 
-		public int getBeginIndex() {
-			return beginIndex;
+		public int getBegin() {
+			return begin;
 		}
 
-		public int getEndIndex() {
-			return endIndex;
+		public int getEnd() {
+			return end;
 		}
 
-		public int getNextBeginIndex() {
-			return nextBeginIndex;
+		public int getNextBegin() {
+			return nextBegin;
 		}
 
 		public int getPrevUpperCount() {
 			return prevUpperCount;
 		}
 
-		public void setBeginIndex(int beginIndex) {
-			this.beginIndex = beginIndex;
+		public void setBegin(int begin) {
+			this.begin = begin;
 		}
 
-		public WordSplitter splitAt(int end, int nextBegin, int prevUpperCount) {
-			this.endIndex = end;
-			this.nextBeginIndex = nextBegin;
+		protected WordSplitter splitAt(int endIndex, int nextBegin, int prevUpperCount) {
+			this.end = endIndex;
+			this.nextBegin = nextBegin;
 			this.prevUpperCount = prevUpperCount;
 			return this;
 		}
 
-		public WordSplitter splitAtSep(WordSplitter prev, int charIndex) {
-			return splitAt(charIndex, charIndex + 1, 0);
+		public WordSplitter splitAt(int endIndex, int prevUpperCount) {
+			return splitAt(endIndex, endIndex, prevUpperCount);
+		}
+
+		public WordSplitter splitAtSep(int charIndex, int sepCharLength) {
+			int nextBegin = charIndex + 1;
+			return splitAt(nextBegin - sepCharLength, nextBegin, 0);
+		}
+
+		public Segment toSegment(boolean abbr) {
+			return Segment.of(begin, end, abbr);
 		}
 
 	}
@@ -155,73 +233,108 @@ public class Words {
 
 		public final char sep;
 		public final boolean hasSep;
-		public final int beginIndexOfWordsToUpperFirstChar;
+		public final WordCaseDescriptor descriptor;
 
-		public WordCase(char sep, boolean hasSep, int beginIndexOfWordsToUpperFirstChar) {
+		public WordCase(char sep, boolean hasSep, WordCaseDescriptor descriptor) {
 			this.sep = sep;
 			this.hasSep = hasSep;
-			this.beginIndexOfWordsToUpperFirstChar = beginIndexOfWordsToUpperFirstChar;
+			this.descriptor = descriptor;
 		}
 
-		public WordCase(char sep, int beginIndexOfWordsToUpperFirstChar) {
-			this(sep, sep != ' ', beginIndexOfWordsToUpperFirstChar);
+		public WordCase(char sep, WordCaseDescriptor descriptor) {
+			this(sep, sep != ' ', descriptor);
 		}
 
-		protected WordSplitter trySplitSpecial(char ch, String source, int charIndex, WordSplitter ref) {
+		protected Segment trySplitSpecial(char ch, String source, int charIndex, WordSplitter ref) {
 			if (Character.isUpperCase(ch)) { // upper
 				if (ref.prevUpperCount == 0) {
-					return ref.splitAt(charIndex, charIndex, 1);
+					return ref.splitAt(charIndex, 1).toSegment(false);
 				}
 				ref.prevUpperCount++;
 			} else { // lower
 				if (ref.prevUpperCount > 1) {
-					return ref.splitAt(charIndex - 1, charIndex - 1, 0);
+					return ref.splitAt(charIndex - 1, 0).toSegment(true);
 				}
 				ref.prevUpperCount = 0;
 			}
 			return null;
 		}
 
-		public WordSplitter trySplit(final char ch, final String source, final int charIndex, WordSplitter ref) {
+		public Segment trySplit(final char ch, final String source, final int charIndex, WordSplitter ref) {
 			if (sep == ch || Character.isSpaceChar(ch)) {
-				return ref.splitAtSep(ref, charIndex);
+				return ref.splitAtSep(charIndex, 1).toSegment(false);
 			}
 			return trySplitSpecial(ch, source, charIndex, ref);
 		}
 
-		public void formatWord(final StringBuilder sb, final int wordIndex, final String source, int beginIndex, int endIndex) {
-			if (hasSep && wordIndex > 0) {
+		@Override
+		public CharCase getCharCase(Segment seg, int charIndex, boolean[] continueFlagRef) {
+			return descriptor == null ? null : descriptor.getCharCase(seg, charIndex, continueFlagRef);
+		}
+
+		public void formatWord(final StringBuilder sb, Segment seg, CharCase preprocessor) {
+			if (hasSep && seg.wordIndex > 0) {
 				sb.append(sep);
 			}
-			if (beginIndexOfWordsToUpperFirstChar != -1) {
-				char first = source.charAt(beginIndex++);
-				sb.append(wordIndex >= beginIndexOfWordsToUpperFirstChar
-						? Character.toUpperCase(first)
-						: Character.toLowerCase(first));
+			CharCase charCase = null;
+			final int end = seg.end;
+			final boolean[] continueFlagRef = new boolean[] { true };
+			int begin = seg.begin;
+			final String source = seg.source;
+			for (int i = 0; begin < end; ) {
+				charCase = getCharCase(seg, i++, continueFlagRef);
+				if (charCase == null) {
+					charCase = preprocessor;
+					break;
+				}
+				if (charCase == CharCase.NONE && preprocessor != null) {
+					charCase = preprocessor;
+				}
+				if (continueFlagRef[0]) {
+					sb.append(charCase.apply(source.charAt(begin++)));
+				} else {
+					break;
+				}
 			}
-			sb.append(source, beginIndex, endIndex);
+			if (begin < end) {
+				if (charCase == null || charCase == CharCase.NONE) {
+					sb.append(source, begin, end);
+				} else {
+					for (int i = begin; i < end; i++) {
+						sb.append(charCase.apply(source.charAt(i)));
+					}
+				}
+			}
 		}
 	}
 
-	public static final WordCase SNAKE_CASE = new WordCase('_', -1);
-	public static final WordCase SNAKE_LOWER_CASE = new WordCase('_', -1) {
+	public static final WordCase SNAKE_CASE = new WordCase('_', (seg, i, ref) -> {
+		ref[0] = false;
+		return CharCase.LOWER;
+	});
 
-		@Override
-		public void formatWord(StringBuilder sb, int wordIndex, String source, int beginIndex, int endIndex) {
-			if (wordIndex > 0) {
-				sb.append(sep);
-			}
-			for (int i = beginIndex; i < endIndex; i++) {
-				sb.append(Character.toLowerCase(source.charAt(i)));
-			}
+	public static final WordCase CAMEL_CASE = new WordCase(' ', (seg, i, ref) -> {
+		if (seg.wordIndex > 0 && i == 0) {
+			return CharCase.UPPER;
 		}
-	};
-	public static final WordCase CAMEL_CASE = new WordCase(' ', 1) {
-		@Override
-		protected WordSplitter trySplitSpecial(char ch, String source, int charIndex, WordSplitter ref) {
-			return super.trySplitSpecial(ch, source, charIndex, ref);
+		if (seg.abbr) {
+			return CharCase.NONE;
 		}
-	};
-	public static final WordCase PASCAL_CASE = new WordCase(' ', 0);
-	public static final WordCase KEBAB_CASE = new WordCase('-', -1);
+		return CharCase.LOWER;
+	});
+
+	public static final WordCase PASCAL_CASE = new WordCase(' ', (seg, i, ref) -> {
+		if (i == 0) {
+			return CharCase.UPPER;
+		}
+		if (seg.abbr) {
+			return CharCase.NONE;
+		}
+		return CharCase.LOWER;
+	});
+
+	public static final WordCase KEBAB_CASE = new WordCase('-', (seg, i, ref) -> {
+		ref[0] = false;
+		return CharCase.LOWER;
+	});
 }
