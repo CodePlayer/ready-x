@@ -20,6 +20,8 @@ public class WordsTest implements WithAssertions {
 		assertEquals("JavaPrintHelloWorld", words.to(Words.PASCAL_CASE));
 		assertEquals("java-print-hello-world", words.to(Words.KEBAB_CASE));
 
+		assertEquals("java_print_hello_world", words.to(Words.SNAKE_CASE, CharCase.UPPER));
+
 		assertThat(Words.of("javaPrintHelloWorld").join("+"))
 				.isEqualTo("java+Print+Hello+World");
 
