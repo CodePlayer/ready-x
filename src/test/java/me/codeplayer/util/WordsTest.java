@@ -11,9 +11,9 @@ public class WordsTest implements WithAssertions {
 
 	@Test
 	public void test() {
-		Words words = Words.of("Java-Print-hello-world");
+		Words words = Words.from("Java-Print-hello-world");
 		// 实现了 stream 接口，可以自行定制
-		words.stream().forEach(System.out::println);
+		// words.stream().forEach(System.out::println);
 
 		assertEquals("java_print_hello_world", words.to(Words.SNAKE_CASE));
 		assertEquals("javaPrintHelloWorld", words.to(Words.CAMEL_CASE));
@@ -22,17 +22,17 @@ public class WordsTest implements WithAssertions {
 
 		assertEquals("java_print_hello_world", words.to(Words.SNAKE_CASE, CharCase.UPPER));
 
-		assertThat(Words.of("javaPrintHelloWorld").join("+"))
+		assertThat(Words.from("javaPrintHelloWorld").join("+"))
 				.isEqualTo("java+Print+Hello+World");
 
-		assertThat(Words.of("java_print_hello_world").join("||"))
+		assertThat(Words.from("java_print_hello_world").join("||"))
 				.isEqualTo("java||print||hello||world");
 
-		words = Words.of("JavaPrintCPUWorld");
+		words = Words.from("JavaPrintCPUWorld");
 		assertEquals("Java->Print->CPU->World", words.join("->"));
 		assertEquals("java_print_cpu_world", words.to(Words.SNAKE_CASE));
 
-		words = Words.of("JAVA IS THE BEST LANGUAGE");
+		words = Words.from("JAVA IS THE BEST LANGUAGE");
 
 		assertEquals("java_is_the_best_language", words.to(Words.SNAKE_CASE));
 		assertEquals("JAVAISTHEBESTLANGUAGE", words.to(Words.PASCAL_CASE));
@@ -40,5 +40,11 @@ public class WordsTest implements WithAssertions {
 		assertEquals("JAVAISTHEBESTLANGUAGE", words.to(Words.CAMEL_CASE));
 		assertEquals("javaIsTheBestLanguage", words.to(Words.CAMEL_CASE, CharCase.LOWER));
 		assertEquals("java-is-the-best-language", words.to(Words.KEBAB_CASE));
+
+		WordCaseDescriptor wcd = (seg, i, continueFlagRef) -> i % 2 == 0 ? CharCase.UPPER : CharCase.LOWER;
+
+		assertEquals("JaVa_Is_ThE_BeSt_LaNgUaGe", words.convertCaseWithSep('_', wcd).toString());
+
+		assertEquals("PhP~~~Is~~~ThE~~~BeSt~~~LaNgUaGe", Words.from("PHP IS THE BEST LANGUAGE").convertCaseWithSep("~~~", wcd).toString());
 	}
 }

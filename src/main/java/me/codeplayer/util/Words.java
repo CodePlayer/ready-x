@@ -21,7 +21,7 @@ public class Words {
 		this.segments = segments;
 	}
 
-	public static Words of(String source, @Nullable FromWordCase fromCase) {
+	public static Words from(String source, @Nullable FromWordCase fromCase) {
 		final int len = source.length();
 		// { startIndex, endIndex ( exclude ) }
 		final List<Segment> segments = new ArrayList<>();
@@ -52,8 +52,8 @@ public class Words {
 		return new Words(source, segments);
 	}
 
-	public static Words of(String source) {
-		return of(source, null);
+	public static Words from(String source) {
+		return from(source, null);
 	}
 
 	public int count() {
@@ -89,13 +89,39 @@ public class Words {
 		return join(null, delimiter).toString();
 	}
 
-	protected StringBuilder convertCase(@Nullable WordSeparator ws, WordCaseDescriptor descriptor, @Nullable CharCase preprocessor) {
+	public StringBuilder convertCase(@Nullable WordSeparator ws, WordCaseDescriptor descriptor, @Nullable CharCase preprocessor) {
 		return forEachAppend(null, (sb, seg) -> {
 			if (ws != null) {
 				ws.appendSeparator(sb, seg);
 			}
 			descriptor.formatWord(sb, seg, preprocessor);
 		});
+	}
+
+	public StringBuilder convertCaseWithSep(char sep, WordCaseDescriptor descriptor, @Nullable CharCase preprocessor) {
+		return forEachAppend(null, (sb, seg) -> {
+			if (seg.wordIndex > 0) {
+				sb.append(sep);
+			}
+			descriptor.formatWord(sb, seg, preprocessor);
+		});
+	}
+
+	public StringBuilder convertCaseWithSep(char sep, WordCaseDescriptor descriptor) {
+		return convertCaseWithSep(sep, descriptor, null);
+	}
+
+	public StringBuilder convertCaseWithSep(String sep, WordCaseDescriptor descriptor, @Nullable CharCase preprocessor) {
+		return forEachAppend(null, (sb, seg) -> {
+			if (seg.wordIndex > 0) {
+				sb.append(sep);
+			}
+			descriptor.formatWord(sb, seg, preprocessor);
+		});
+	}
+
+	public StringBuilder convertCaseWithSep(String sep, WordCaseDescriptor descriptor) {
+		return convertCaseWithSep(sep, descriptor, null);
 	}
 
 	public String to(@Nullable WordSeparator ws, WordCaseDescriptor descriptor, @Nullable CharCase preprocessor) {
@@ -363,4 +389,5 @@ public class Words {
 		ref[0] = false;
 		return CharCase.LOWER;
 	});
+
 }
