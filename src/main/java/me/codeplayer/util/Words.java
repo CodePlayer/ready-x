@@ -6,18 +6,18 @@ import java.util.stream.*;
 
 import javax.annotation.*;
 
+import org.apache.commons.lang3.*;
+
 /**
  * 一组分词（单词）的抽象表示。
  * 其来源于将指定字符串按照特定的断词法进行分词处理。
  */
 public class Words {
 
-	protected final String source;
 	/** [ { startIndex, endIndex ( exclude ) ]... } */
 	protected final List<Segment> segments;
 
-	Words(String source, List<Segment> segments) {
-		this.source = source;
+	Words(List<Segment> segments) {
 		this.segments = segments;
 	}
 
@@ -49,7 +49,23 @@ public class Words {
 		if (splitter.begin < len) {
 			segments.add(new Segment(splitter.begin, len, splitter.prevUpperCount > 0).attach(source, wordIndex++));
 		}
-		return new Words(source, segments);
+		return new Words(segments);
+	}
+
+	public static Words from(Iterable<String> words) {
+		List<Segment> segments = words instanceof Collection ? new ArrayList<>(((Collection<String>) words).size()) : new ArrayList<>();
+		int i = 0;
+		for (String word : words) {
+			if (StringUtil.isEmpty(word)) {
+				continue;
+			}
+			segments.add(new Segment(0, word.length(), StringUtils.isAllUpperCase(word)).attach(word, i++));
+		}
+		return new Words(segments);
+	}
+
+	public static Words from(String... words) {
+		return from(Arrays.asList(words));
 	}
 
 	public static Words from(String source) {
@@ -61,13 +77,16 @@ public class Words {
 	}
 
 	public Stream<String> stream() {
-		return segments.stream().map(seg -> source.substring(seg.begin, seg.end));
+		return segments.stream().map(Segment::toString);
 	}
 
 	public StringBuilder forEachAppend(@Nullable StringBuilder sb, BiConsumer<StringBuilder, Segment> appender) {
 		final int size = segments.size();
+		if (size == 0) {
+			return new StringBuilder(0);
+		}
 		if (sb == null) {
-			sb = new StringBuilder(source.length() + size);
+			sb = new StringBuilder(segments.get(0).source.length() + size);
 		}
 		for (int i = 0; i < size; i++) {
 			Segment seg = segments.get(i);
@@ -162,6 +181,11 @@ public class Words {
 
 		public static Segment of(int begin, int end, boolean abbr) {
 			return begin < end ? new Segment(begin, end, abbr) : EMPTY;
+		}
+
+		@Override
+		public String toString() {
+			return source.substring(begin, end);
 		}
 	}
 

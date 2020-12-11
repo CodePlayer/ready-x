@@ -46,5 +46,7 @@ public class WordsTest implements WithAssertions {
 		assertEquals("JaVa_Is_ThE_BeSt_LaNgUaGe", words.convertCaseWithSep('_', wcd).toString());
 
 		assertEquals("PhP~~~Is~~~ThE~~~BeSt~~~LaNgUaGe", Words.from("PHP IS THE BEST LANGUAGE").convertCaseWithSep("~~~", wcd).toString());
+
+		assertEquals("hello_world_not_word", Words.from("hello", "World", null, "NOT", "worD").to(Words.SNAKE_CASE));
 	}
 }
