@@ -4,7 +4,7 @@
 
 	<groupId>me.codeplayer</groupId>
 	<artifactId>ready-x</artifactId>
-	<version>3.0.1-RELEASE</version>
+	<version>3.1.0</version>
 	<packaging>jar</packaging>
 
 	<name>ready-x</name>

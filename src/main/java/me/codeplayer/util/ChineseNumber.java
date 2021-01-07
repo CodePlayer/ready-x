@@ -11,10 +11,10 @@ import java.util.*;
  */
 public class ChineseNumber {
 
-	/**
-	 * 中文大单位：'亿', '万'
-	 */
-	private static final char[] CHINESE_BIG_UNITS = new char[] { '亿', '万' };
+	/** 中文大单位：'亿', '万' */
+	static final char[] BIG_UNITS = new char[] { '亿', '万' };
+	/** 中文货币单位：'圆', '角', '分' */
+	static final char[] CURRENCY_UNITS = new char[] { '圆', '角', '分' };
 	// properties
 	protected final String number;
 	/** 为null表示忽略小数；为""表示不忽略小数，但没有小数部分 */
@@ -81,7 +81,7 @@ public class ChineseNumber {
 				}
 				sb.append(cell.chinese);
 				if (index > 0) { // 如果不是最后一个单元，并且当前单位不全是0，则追加单位'亿'或'万'
-					sb.append(CHINESE_BIG_UNITS[index & 1]);
+					sb.append(BIG_UNITS[index & 1]);
 				}
 			}
 			leftEndWithZero = cell.endWithZero; // 传递给循环外的变量保存，便于下一个计算单元进行判断
@@ -95,13 +95,13 @@ public class ChineseNumber {
 	protected StringBuilder appendDecimalValue(StringBuilder sb) {
 		int len = fraction == null ? 0 : fraction.length();
 		if (style == FormatStyle.MONEY) { // 如果是金额
-			sb.append('元');
+			sb.append(CURRENCY_UNITS[0]);
 			boolean empty = len == 0;
 			if (!empty) {
 				// 角
 				char ch = fraction.charAt(0);
 				if (ch != '0') {
-					sb.append(style.getNumberChar(ch)).append('角');
+					sb.append(style.getNumberChar(ch)).append(CURRENCY_UNITS[1]);
 				} else {
 					empty = true;
 				}
@@ -113,7 +113,7 @@ public class ChineseNumber {
 							sb.append('零');
 							empty = false;
 						}
-						sb.append(style.getNumberChar(ch)).append('分');
+						sb.append(style.getNumberChar(ch)).append(CURRENCY_UNITS[2]);
 					}
 				}
 			}
@@ -143,9 +143,9 @@ public class ChineseNumber {
 	/**
 	 * 格式化指定的数值为中文字符串
 	 *
-	 * @param d 指定的数值
+	 * @param d             指定的数值
 	 * @param ignoreDecimal 是否忽略小数部分
-	 * @param style 指定中文字符串的格式
+	 * @param style         指定中文字符串的格式
 	 * @author Ready
 	 * @since 1.0
 	 */
@@ -160,9 +160,9 @@ public class ChineseNumber {
 	/**
 	 * 格式化指定的数值为中文字符串
 	 *
-	 * @param d 指定的数值
+	 * @param d             指定的数值
 	 * @param ignoreDecimal 是否忽略小数部分
-	 * @param style 指定中文字符串的格式
+	 * @param style         指定中文字符串的格式
 	 * @author Ready
 	 * @since 1.0
 	 */
@@ -177,7 +177,7 @@ public class ChineseNumber {
 	/**
 	 * 格式化指定的数值为中文字符串
 	 *
-	 * @param d 指定的数值
+	 * @param d     指定的数值
 	 * @param style 指定中文字符串的格式
 	 * @author Ready
 	 * @since 1.0
@@ -256,10 +256,10 @@ public class ChineseNumber {
 	 */
 	public static enum FormatStyle {
 		/**
-		 * 中文数字：'零', '一', '二', '三', '四', '五', '六', '七', '八', '久'<br>
+		 * 中文数字：'零', '一', '二', '三', '四', '五', '六', '七', '八', '九'<br>
 		 * 中文单位：'亿', '万', '千', '百', '十'
 		 */
-		LOWER_CASE(new char[] { '零', '一', '二', '三', '四', '五', '六', '七', '八', '久' }, new char[] { '千', '百', '十' }),
+		LOWER_CASE(new char[] { '零', '一', '二', '三', '四', '五', '六', '七', '八', '九' }, new char[] { '千', '百', '十' }),
 		/**
 		 * 中文数字：'零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'<br>
 		 * 中文单位：'亿', '万', '仟', '佰', '拾'
