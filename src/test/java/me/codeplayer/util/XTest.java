@@ -79,7 +79,7 @@ public class XTest implements WithAssertions {
 
 		assertThat(X.expectNotEmpty(user.getName(), "Hello")).isEqualTo("James");
 
-		assertThat(X.tryUnwrap((Supplier<String>) () -> StringUtil.replaceSubstring("Hello", "+++", 1, -1)))
+		assertThat((String) X.tryUnwrap((Supplier<String>) () -> StringUtil.replaceSubstring("Hello", "+++", 1, -1)))
 				.isEqualTo("H+++o");
 
 		user = Mockito.spy(user);
