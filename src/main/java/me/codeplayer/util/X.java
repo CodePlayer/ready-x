@@ -448,11 +448,12 @@ public abstract class X {
 	 * @author Ready
 	 * @since 2.3.0
 	 */
-	public static final Object tryUnwrap(@Nullable Object supplier) {
+	@SuppressWarnings("unchecked")
+	public static final <E> E tryUnwrap(@Nullable Object supplier) {
 		if (supplier instanceof Supplier) {
-			return ((Supplier<?>) supplier).get();
+			return ((Supplier<E>) supplier).get();
 		}
-		return supplier;
+		return (E) supplier;
 	}
 
 	/**
@@ -577,7 +578,7 @@ public abstract class X {
 	 * @return 返回非空的属性值。如果两个属性值相等，优先返回 {@code current} 的属性值
 	 * @since 2.8
 	 */
-	public static <T, R> R expectEquals(@Nullable T input, @Nullable T current, Function<T, R> getter, BiConsumer<T, R> setIfNull) throws IllegalArgumentException {
+	public static <T, R> R expectEquals(@Nullable T input, @Nullable T current, Function<T, R> getter, BiConsumer<T, R> setIfNull, @Nullable Object error) throws IllegalArgumentException {
 		final R inputVal = X.map(input, getter), currentVal = X.map(current, getter);
 		if (inputVal == currentVal) {
 			return currentVal;
@@ -590,7 +591,18 @@ public abstract class X {
 		} else if (inputVal.equals(currentVal)) {
 			return currentVal;
 		}
-		throw new IllegalArgumentException();
+		String errorMsg = tryUnwrap(error);
+		throw new IllegalArgumentException(errorMsg);
+	}
+
+	/**
+	 * 期望两个实体的指定属性值是相等的，并返回该值。 本方法允许其中一个属性值为 null，并会自动使用另一方的值进行填补。如果两者都不为 null 且不相等，则直接抛出非法参数异常
+	 *
+	 * @return 返回非空的属性值。如果两个属性值相等，优先返回 {@code current} 的属性值
+	 * @since 2.8
+	 */
+	public static <T, R> R expectEquals(@Nullable T input, @Nullable T current, Function<T, R> getter, BiConsumer<T, R> setIfNull) throws IllegalArgumentException {
+		return expectEquals(input, current, getter, setIfNull, null);
 	}
 
 	/**
@@ -599,7 +611,7 @@ public abstract class X {
 	 * @return 返回 {@code old} 的属性值
 	 * @since 2.8
 	 */
-	public static <T, R> R expectEqualsBasedOld(@Nullable T input, @Nullable T old, Function<T, R> getter, Consumer<T> setOldIfInputNull) throws IllegalArgumentException {
+	public static <T, R> R expectEqualsBasedOld(@Nullable T input, @Nullable T old, Function<T, R> getter, Consumer<R> setOldIfInputNull, @Nullable Supplier<String> error) throws IllegalArgumentException {
 		final R currentVal = X.map(old, getter);
 		if (input == old) {
 			return currentVal;
@@ -608,12 +620,23 @@ public abstract class X {
 		if (inputVal == currentVal) {
 			return currentVal;
 		} else if (inputVal == null) {
-			setOldIfInputNull.accept(old);
+			setOldIfInputNull.accept(currentVal);
 			return currentVal;
 		} else if (inputVal.equals(currentVal)) {
 			return currentVal;
 		}
-		throw new IllegalArgumentException();
+		String errorMsg = tryUnwrap(error);
+		throw new IllegalArgumentException(errorMsg);
+	}
+
+	/**
+	 * 期望两个实体的指定属性值是相等的，并返回该值。 如果两者不相等且 {@code input} 为 null，则会自动使用 {@code old} 进行赋值操作。如果两者都不为 null 且不相等，则直接抛出非法参数异常
+	 *
+	 * @return 返回 {@code old} 的属性值
+	 * @since 2.8
+	 */
+	public static <T, R> R expectEqualsBasedOld(@Nullable T input, @Nullable T old, Function<T, R> getter, Consumer<R> setOldIfInputNul) throws IllegalArgumentException {
+		return expectEqualsBasedOld(input, old, getter, setOldIfInputNul, null);
 	}
 
 	/**
