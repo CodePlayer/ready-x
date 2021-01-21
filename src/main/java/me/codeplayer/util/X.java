@@ -611,7 +611,7 @@ public abstract class X {
 	 * @return 返回 {@code old} 的属性值
 	 * @since 2.8
 	 */
-	public static <T, R> R expectEqualsBasedOld(@Nullable T input, @Nullable T old, Function<T, R> getter, Consumer<R> setOldIfInputNull, @Nullable Supplier<String> error) throws IllegalArgumentException {
+	public static <T, R> R expectEqualsBasedOld(@Nullable T input, @Nullable T old, Function<T, R> getter, Consumer<R> setOldIfInputNull, @Nullable Object error) throws IllegalArgumentException {
 		final R currentVal = X.map(old, getter);
 		if (input == old) {
 			return currentVal;
