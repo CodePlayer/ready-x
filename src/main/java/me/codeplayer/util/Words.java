@@ -8,9 +8,10 @@ import javax.annotation.*;
 
 import org.apache.commons.lang3.*;
 
+import me.codeplayer.util.CharConverter.*;
+
 /**
- * 一组分词（单词）的抽象表示。
- * 其来源于将指定字符串按照特定的断词法进行分词处理。
+ * 一组分词（单词）的抽象表示。 其来源于将指定字符串按照特定的断词法进行分词处理。
  */
 public class Words {
 
@@ -189,26 +190,6 @@ public class Words {
 		}
 	}
 
-	public static interface CharCaseConverter {
-		char apply(char ch);
-	}
-
-	public static enum CharCase implements CharCaseConverter {
-		NONE(ch -> ch),
-		UPPER(Character::toUpperCase),
-		LOWER(Character::toLowerCase);
-
-		final CharCaseConverter converter;
-
-		CharCase(CharCaseConverter converter) {
-			this.converter = converter;
-		}
-
-		public char apply(char ch) {
-			return converter.apply(ch);
-		}
-	}
-
 	public static interface FromWordCase {
 		Segment trySplit(char ch, String source, int currentIndex, WordSplitter ref);
 	}
@@ -220,8 +201,7 @@ public class Words {
 	public static interface WordCaseDescriptor {
 		/**
 		 * @param continueFlagRef 只包含一个 boolean 值的数组，该接口方法的实现可以通过该 boolean 值来传达下个字符是否还需要调用该方法来获取 {@code CharCase}。
-		 * @return 如果返回 null，则后续字符不再需要大小写转换处理，直接跳出处理循环。
-		 * 其他情况下：如果 {@code continueFlagRef[0]} 为 true，则将返回对象仅应用于当前字符的转换处理；如果为 false，则后续字符都将应用该 {@code CharCase} 进行转换处理
+		 * @return 如果返回 null，则后续字符不再需要大小写转换处理，直接跳出处理循环。 其他情况下：如果 {@code continueFlagRef[0]} 为 true，则将返回对象仅应用于当前字符的转换处理；如果为 false，则后续字符都将应用该 {@code CharCase} 进行转换处理
 		 */
 		CharCase getCharCase(Segment seg, int charIndex, boolean[] continueFlagRef);
 
@@ -231,7 +211,7 @@ public class Words {
 			final boolean[] continueFlagRef = new boolean[] { true };
 			int begin = seg.begin;
 			final String source = seg.source;
-			for (int i = 0; begin < end; ) {
+			for (int i = 0; begin < end;) {
 				charCase = getCharCase(seg, i++, continueFlagRef);
 				if (charCase == null) {
 					charCase = preprocessor;

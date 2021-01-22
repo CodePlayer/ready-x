@@ -6,6 +6,8 @@ import javax.annotation.*;
 
 import org.apache.commons.lang3.*;
 
+import me.codeplayer.util.CharConverter.*;
+
 /**
  * 用于对字符串类型的数据进行常用处理操作的工具类
  *
@@ -923,5 +925,38 @@ public abstract class StringUtil {
 	 */
 	public static final boolean containsWord(final String container, final String searchedWord, final String seperatorChars) {
 		return containsWord(container, searchedWord, seperatorChars, true);
+	}
+
+	/**
+	 * 将字符串的首字母大写
+	 */
+	public static String capitalize(String str) {
+		return replaceChar(str, 0, CharCase.UPPER);
+	}
+
+	/**
+	 * 将字符串的首字母小写
+	 */
+	public static String decapitalize(String str) {
+		return replaceChar(str, 0, CharCase.LOWER);
+	}
+
+	/**
+	 * 替换字符串中指定位置的字符，并返回替换后的结果
+	 * 
+	 * @throws IndexOutOfBoundsException 索引越界时会抛出该异常。不过请注意：如果 {@code str} 为 null 时，将直接返回 null，而不会抛出 NPE
+	 */
+	public static String replaceChar(String str, int charIndex, CharConverter converter) throws IndexOutOfBoundsException {
+		if (str == null || str.length() == 0) {
+			return str;
+		}
+		char ch = str.charAt(charIndex);
+		char replaced = converter.apply(ch);
+		if (ch == replaced) {
+			return str;
+		}
+		final char[] chars = str.toCharArray();
+		chars[charIndex] = replaced;
+		return new String(chars);
 	}
 }

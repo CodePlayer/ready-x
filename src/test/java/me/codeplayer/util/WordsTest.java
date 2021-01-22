@@ -1,11 +1,12 @@
 package me.codeplayer.util;
 
+import static org.junit.Assert.*;
+
 import org.assertj.core.api.*;
 import org.junit.*;
 
+import me.codeplayer.util.CharConverter.*;
 import me.codeplayer.util.Words.*;
-
-import static org.junit.Assert.*;
 
 public class WordsTest implements WithAssertions {
 
