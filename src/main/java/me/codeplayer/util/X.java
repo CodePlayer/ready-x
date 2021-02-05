@@ -382,6 +382,19 @@ public abstract class X {
 	}
 
 	/**
+	 * 使用 {@code obj} 执行指定的调用
+	 *
+	 * @param obj      指定的对象，可以为 null
+	 * @param filter   过滤器，只有 {code obj} 满足该条件，才会执行 {@code consumer}
+	 * @param consumer 指定的调用，如果 {@code obj} 为 null，则不执行该调用
+	 */
+	public static final <T> void use(@Nullable T obj, Predicate<T> filter, Consumer<? super T> consumer) {
+		if (obj != null && filter.test(obj)) {
+			consumer.accept(obj);
+		}
+	}
+
+	/**
 	 * 对指定的对象执行指定的 {@code mapper } 转换，安全地获得期望的转换结果
 	 *
 	 * @param obj    指定的对象，可以为 null
