@@ -78,10 +78,9 @@ public abstract class X {
 			return v2;
 		} else if (v3 != null) {
 			return v3;
-		} else if (v4 != null) {
+		} else {
 			return v4;
 		}
-		return null;
 	}
 
 	/**
@@ -90,7 +89,7 @@ public abstract class X {
 	 * @see X#expectNotNull(Object, Object, Object, Object)
 	 */
 	public static final <T> T expectNotNull(T v1, T v2, T v3) {
-		return expectNotNull(v1, v2, v3, null);
+		return v1 != null ? v1 : (v2 != null ? v2 : v3);
 	}
 
 	/**
@@ -99,7 +98,7 @@ public abstract class X {
 	 * @see #expectNotNull(Object, Object, Object, Object)
 	 */
 	public static final <T> T expectNotNull(T v1, T v2) {
-		return expectNotNull(v1, v2, null, null);
+		return v1 != null ? v1 : v2;
 	}
 
 	/**
@@ -129,7 +128,10 @@ public abstract class X {
 	 * 从指定的多个字符串依次检测并选取第一个不为空字符串的值，否则返回空字符串""
 	 */
 	public static final String expectNotEmpty(String v1, String v2) {
-		return expectNotEmpty(v1, v2, null, null);
+		if (v1 != null && v1.length() > 0) {
+			return v1;
+		}
+		return StringUtil.notEmpty(v2) ? v2 : "";
 	}
 
 	/**
@@ -277,7 +279,7 @@ public abstract class X {
 	/**
 	 * 将指定的值根据指定的表达式解析，并返回解析后的结果
 	 *
-	 * @param value       指定的值
+	 * @param input       指定的值
 	 * @param expressions 指定的表达式，例如：<code>("1", "男", "0", "女")</code>方法将会将指定属性的值(value)，与表达式进行匹配，形如：
 	 *
 	 *                    <pre>
@@ -305,29 +307,25 @@ public abstract class X {
 	 *                    </pre>
 	 */
 	@SuppressWarnings("unchecked")
-	public static final <T> T decode(T value, T... expressions) {
+	public static final <T> T decode(Object input, Object... expressions) {
 		int length;
 		if (expressions == null || (length = expressions.length) == 0) {
 			throw new IllegalArgumentException("decode的表达式参数个数不能小于1!");
 		}
-		int i = 0;
-		if ((length & 1) == 1) {// 如果是奇数
-			int index = length - 1;
-			while (i < index) {
-				if (value == expressions[i] || value != null && value.equals(expressions[i])) {
-					break;
-				}
-				i += 2;
+		Object val = null;
+		int endIndex = length - 1;
+		for (int i = 0; i < length; i++) {
+			if (i == endIndex) { // 奇数
+				val = expressions[i];
+				break;
 			}
-			return i < index ? expressions[i + 1] : expressions[index];
-		} else {// 如果是偶数
-			do {
-				if (value == expressions[i] || value != null && value.equals(expressions[i])) {
-					break;
-				}
-			} while ((i += 2) < length);
-			return i < length ? expressions[i + 1] : value;
+			Object key = expressions[i++];
+			if (input == key || input != null && input.equals(key)) {
+				val = expressions[i];
+				break;
+			}
 		}
+		return (T) val;
 	}
 
 	/**

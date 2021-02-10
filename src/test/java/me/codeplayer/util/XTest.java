@@ -73,7 +73,7 @@ public class XTest implements WithAssertions {
 		assertThat(X.mapElseGet(user, User::getPassword, () -> StringUtil.replaceChars("18000001234", '*', 3, -4)))
 				.isEqualTo("180****1234");
 
-		assertThat(X.decode(1, 0, "PENDING", 1, "YES", -1, "NO")).isEqualTo("YES");
+		assertThat((Object) X.decode(1, 0, "PENDING", 1, "YES", -1, "NO")).isEqualTo("YES");
 
 		assertThat(X.expectNotEmpty(user.getPassword(), "123")).isEqualTo("123");
 

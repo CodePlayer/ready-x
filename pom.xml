@@ -4,7 +4,7 @@
 
 	<groupId>me.codeplayer</groupId>
 	<artifactId>ready-x</artifactId>
-	<version>3.2.1</version>
+	<version>3.2.2</version>
 	<packaging>jar</packaging>
 
 	<name>ready-x</name>
@@ -20,7 +20,7 @@
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
-			<version>1.2.74</version>
+			<version>1.2.75</version>
 		</dependency>
 
 		<dependency>
