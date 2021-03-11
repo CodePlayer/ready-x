@@ -3,6 +3,7 @@ package me.codeplayer.util;
 import java.util.*;
 
 import com.alibaba.fastjson.*;
+import com.alibaba.fastjson.parser.*;
 import com.alibaba.fastjson.serializer.*;
 
 /**
@@ -20,7 +21,7 @@ public abstract class JSONUtil {
 	 * @param obj 指定的任意对象
 	 */
 	public static final String encode(Object obj) {
-		return JSON.toJSONString(obj, SerializerFeature.DisableCircularReferenceDetect, SerializerFeature.SortField);
+		return JSON.toJSONString(obj, SerializerFeature.DisableCircularReferenceDetect);
 	}
 
 	/**
@@ -36,7 +37,7 @@ public abstract class JSONUtil {
 	/**
 	 * 将Java对象编码为JSON字符串
 	 *
-	 * @param obj 指定的任意对象
+	 * @param obj               指定的任意对象
 	 * @param excludeProperties 需要排除的属性数组
 	 */
 	public static final String encodeWithExclude(Object obj, String... excludeProperties) {
@@ -48,7 +49,7 @@ public abstract class JSONUtil {
 	/**
 	 * 将Java对象编码为JSON字符串
 	 *
-	 * @param obj 指定的任意对象
+	 * @param obj               指定的任意对象
 	 * @param includeProperties 需要排除的属性数组
 	 */
 	public static final String encodeWithInclude(Object obj, String... includeProperties) {
@@ -58,7 +59,7 @@ public abstract class JSONUtil {
 	/**
 	 * 将Java对象编码为JSON字符串，并以指定的格式化模式处理日期类型
 	 *
-	 * @param obj 指定的任意对象
+	 * @param obj     指定的任意对象
 	 * @param pattern 指定的格式化字符串，例如{@code "yyyy-MM-dd"}
 	 */
 	public static final String encodeWithDateFormat(Object obj, String pattern) {
@@ -84,7 +85,7 @@ public abstract class JSONUtil {
 	/**
 	 * 将JSON字符串转为指定类型的Java对象
 	 *
-	 * @param text 指定的JSON字符串
+	 * @param text  指定的JSON字符串
 	 * @param clazz 指定的类型
 	 */
 	public static final <T> T parseObject(String text, Class<T> clazz) {
@@ -92,12 +93,12 @@ public abstract class JSONUtil {
 	}
 
 	/**
-	 * 将JSON字符串转为JSONObject形式的对象(类似于增强型的HashMap)
+	 * 将JSON字符串转为JSONObject形式的对象(类似于增强型的 LinkedHashMap)
 	 *
 	 * @param text 指定的JSON字符串
 	 */
 	public static final JSONObject parseObject(String text) {
-		return JSON.parseObject(text);
+		return JSON.parseObject(text, Feature.OrderedField);
 	}
 
 	/**
@@ -112,7 +113,7 @@ public abstract class JSONUtil {
 	/**
 	 * 将JSON字符串转为List形式的指定类型的对象集合
 	 *
-	 * @param text 指定的JSON字符串
+	 * @param text  指定的JSON字符串
 	 * @param clazz 指定的类型
 	 */
 	public static final <T> List<T> parseArray(String text, Class<T> clazz) {
@@ -126,7 +127,7 @@ public abstract class JSONUtil {
 	 * @since 0.1
 	 */
 	public static final String serialize(Object obj) {
-		return JSON.toJSONString(obj, SerializerFeature.WriteClassName);
+		return JSON.toJSONString(obj, SerializerFeature.DisableCircularReferenceDetect, SerializerFeature.WriteClassName);
 	}
 
 	/**
