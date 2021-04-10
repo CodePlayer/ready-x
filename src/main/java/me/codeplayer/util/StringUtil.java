@@ -924,7 +924,7 @@ public abstract class StringUtil {
 	 * @since 0.4.2
 	 */
 	public static final boolean containsWord(final String container, final String searchedWord, final String seperatorChars) {
-		return containsWord(container, searchedWord, seperatorChars, true);
+		return containsWord(container, searchedWord, seperatorChars, false);
 	}
 
 	/**
