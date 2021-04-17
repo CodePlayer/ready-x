@@ -875,6 +875,35 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	}
 
 	/**
+	 * 将当前实例设置为指定时间字段范围内所能表示的最小值
+	 *
+	 * @param field 该方法支持的字段有{@link Calendar#YEAR}、{@link Calendar#MONTH}、 {@link Calendar#DAY_OF_MONTH}、 {@link Calendar#HOUR_OF_DAY}、 {@link Calendar#MINUTE}、{@link Calendar#SECOND}
+	 * @since 0.3
+	 */
+	@SuppressWarnings("deprecation")
+	public static Date beginOf(Date d, int field) {
+		switch (field) {
+		case Calendar.YEAR:
+			d.setMonth(0);
+		case Calendar.MONTH:
+			d.setDate(1);
+		case Calendar.DAY_OF_MONTH:
+			d.setHours(0);
+		case Calendar.HOUR_OF_DAY:
+		case Calendar.HOUR:
+			d.setMinutes(0);
+		case Calendar.MINUTE:
+			d.setSeconds(0);
+		case Calendar.SECOND:
+			d.setTime(d.getTime() / 1000 * 1000);
+			break;
+		default:
+			throw new IllegalArgumentException(String.valueOf(field));
+		}
+		return d;
+	}
+
+	/**
 	 * 设置时区
 	 *
 	 * @param timeZone 指定的时区
@@ -939,6 +968,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 		case Calendar.DAY_OF_MONTH:
 			calendar.set(Calendar.HOUR_OF_DAY, 23);
 		case Calendar.HOUR_OF_DAY:
+		case Calendar.HOUR:
 			calendar.set(Calendar.MINUTE, 59);
 		case Calendar.MINUTE:
 			calendar.set(Calendar.SECOND, 59);
@@ -949,6 +979,58 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 			throw new IllegalArgumentException(String.valueOf(field));
 		}
 		return this;
+	}
+
+	/**
+	 * 将当前实例设置为指定时间字段所能表示的最大值
+	 *
+	 * @param field 该方法支持的字段有{@link Calendar#YEAR}、{@link Calendar#MONTH}、 {@link Calendar#DAY_OF_MONTH}、 {@link Calendar#HOUR_OF_DAY}、 {@link Calendar#MINUTE}、{@link Calendar#SECOND}
+	 * @since 0.3
+	 */
+	@SuppressWarnings("deprecation")
+	public static Date endOf(Date d, int field) {
+		switch (field) {
+		case Calendar.YEAR:
+			d.setMonth(11);
+		case Calendar.MONTH:
+			d.setDate(getMaxDayOfMonth(d));
+		case Calendar.DAY_OF_MONTH:
+			d.setHours(23);
+		case Calendar.HOUR_OF_DAY:
+		case Calendar.HOUR:
+			d.setMinutes(59);
+		case Calendar.MINUTE:
+			d.setSeconds(59);
+		case Calendar.SECOND:
+			d.setTime(d.getTime() / 1000L * 1000L + 999L);
+			break;
+		default:
+			throw new IllegalArgumentException(String.valueOf(field));
+		}
+		return d;
+	}
+
+	@SuppressWarnings("deprecation")
+	public static int getMaxDayOfMonth(Date d) {
+		final int month = d.getMonth() + 1;
+		switch (month) {
+		case 1:
+		case 3:
+		case 5:
+		case 7:
+		case 8:
+		case 10:
+		case 12:
+			return 31;
+		case 2:
+			int year = d.getYear() + 1900;
+			if (year % 4 == 0 && (year % 400 == 0 || year % 100 != 0)) {
+				return 29;
+			}
+			return 28;
+		default:
+			return 30;
+		}
 	}
 
 	/**
@@ -981,11 +1063,21 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 */
 	@Override
 	public String toString() {
+		return toString(getYear(), getMonth(), getDay());
+	}
+
+	/**
+	 * 返回"yyyy-MM-dd"格式的字符串
+	 */
+	@SuppressWarnings("deprecation")
+	public static String toString(Date d) {
+		return toString(d.getYear() + 1900, d.getMonth() + 1, d.getDate());
+	}
+
+	static String toString(int year, int month, int day) {
 		// "0000-00-00".toCharArray();
 		char[] chars = new char[] { '0', '0', '0', '0', '-', '0', '0', '-', '0', '0' };
-		fillNumberToChars(chars, getYear(), 0, 4);
-		fillNumberToChars(chars, getMonth(), 5, 2);
-		fillNumberToChars(chars, getDay(), 8, 2);
+		formatNormalDate(chars, 0, year, month, day);
 		return new String(chars);
 	}
 
@@ -993,12 +1085,25 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 返回"yyyy年MM月dd日"格式的字符串
 	 */
 	public String toDateString() {
+		return toDateString(getYear(), getMonth(), getDay());
+	}
+
+	/**
+	 * 返回"yyyy年MM月dd日"格式的字符串
+	 */
+	public static String toDateString(int year, int month, int day) {
 		// "0000年00月00日".toCharArray();
 		char[] chars = new char[] { '0', '0', '0', '0', '年', '0', '0', '月', '0', '0', '日' };
-		fillNumberToChars(chars, getYear(), 0, 4);
-		fillNumberToChars(chars, getMonth(), 5, 2);
-		fillNumberToChars(chars, getDay(), 8, 2);
+		formatNormalDate(chars, 0, year, month, day);
 		return new String(chars);
+	}
+
+	/**
+	 * 返回"yyyy年MM月dd日"格式的字符串
+	 */
+	@SuppressWarnings("deprecation")
+	public static String toDateString(Date d) {
+		return toDateString(d.getYear() + 1900, d.getMonth() + 1, d.getDate());
 	}
 
 	/**
@@ -1020,8 +1125,23 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 返回"yyyy-MM-dd HH:mm:ss"格式的字符串
 	 */
 	public String toDateTimeString() {
+		return toDateTimeString(getYear(), getMonth(), getDay(), getHour(), getMinute(), getSecond());
+	}
+
+	/**
+	 * 返回"yyyy-MM-dd HH:mm:ss"格式的字符串
+	 */
+	@SuppressWarnings("deprecation")
+	public static String toDateTimeString(Date d) {
+		return toDateTimeString(d.getYear() + 1900, d.getMonth() + 1, d.getDate(), d.getHours(), d.getMinutes(), d.getSeconds());
+	}
+
+	/**
+	 * 返回"yyyy-MM-dd HH:mm:ss"格式的字符串
+	 */
+	public static String toDateTimeString(int year, int month, int day, int hour, int minute, int second) {
 		final char[] chars = "0000-00-00 00:00:00".toCharArray();
-		formatNormalDateTime(chars);
+		formatNormalDateTime(chars, year, month, day, hour, minute, second);
 		return new String(chars);
 	}
 
@@ -1029,10 +1149,25 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 返回"yyyyMMdd"格式的字符串
 	 */
 	public String toShortString() {
+		return toShortString(getYear(), getMonth(), getDay());
+	}
+
+	/**
+	 * 返回"yyyyMMdd"格式的字符串
+	 */
+	@SuppressWarnings("deprecation")
+	public static String toShortString(Date d) {
+		return toShortString(d.getYear() + 1900, d.getMonth() + 1, d.getDate());
+	}
+
+	/**
+	 * 返回"yyyyMMdd"格式的字符串
+	 */
+	public static String toShortString(int year, int month, int day) {
 		final char[] chars = "00000000".toCharArray();
-		fillNumberToChars(chars, getYear(), 0, 4);
-		fillNumberToChars(chars, getMonth(), 4, 2);
-		fillNumberToChars(chars, getDay(), 6, 2);
+		fillNumberToChars(chars, year, 0, 4);
+		fillNumberToChars(chars, month, 4, 2);
+		fillNumberToChars(chars, day, 6, 2);
 		return new String(chars);
 	}
 
@@ -1040,19 +1175,42 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 返回"yyyy-MM-dd HH:mm:ss sss"格式的字符串
 	 */
 	public String toLongString() {
+		return toLongString(getYear(), getMonth(), getDay(), getHour(), getMinute(), getSecond(), getMillisecond());
+	}
+
+	/**
+	 * 返回"yyyy-MM-dd HH:mm:ss sss"格式的字符串
+	 */
+	@SuppressWarnings("deprecation")
+	public static String toLongString(Date d) {
+		return toLongString(d.getYear() + 1900, d.getMonth() + 1, d.getDate(), d.getHours(), d.getMinutes(), d.getSeconds(), (int) (d.getTime() % 1000));
+	}
+
+	/**
+	 * 返回"yyyy-MM-dd HH:mm:ss sss"格式的字符串
+	 */
+	public static String toLongString(int year, int month, int day, int hour, int minute, int second, int ms) {
 		final char[] chars = "0000-00-00 00:00:00.000".toCharArray();
-		formatNormalDateTime(chars);
-		fillNumberToChars(chars, getMillisecond(), 20, 3);
+		formatNormalDateTime(chars, year, month, day, hour, minute, second);
+		fillNumberToChars(chars, ms, 20, 3);
 		return new String(chars);
 	}
 
-	protected void formatNormalDateTime(char[] chars) {
-		fillNumberToChars(chars, getYear(), 0, 4);
-		fillNumberToChars(chars, getMonth(), 5, 2);
-		fillNumberToChars(chars, getDay(), 8, 2);
-		fillNumberToChars(chars, getHour(), 11, 2);
-		fillNumberToChars(chars, getMinute(), 14, 2);
-		fillNumberToChars(chars, getSecond(), 17, 2);
+	protected static void formatNormalDateTime(char[] chars, int year, int month, int day, int hour, int minute, int second) {
+		formatNormalDate(chars, 0, year, month, day);
+		formatNormalTime(chars, 11, hour, minute, second);
+	}
+
+	public static void formatNormalDate(char[] chars, final int offset, final int year, final int month, final int day) {
+		fillNumberToChars(chars, year, offset, 4);
+		fillNumberToChars(chars, month, offset + 5, 2);
+		fillNumberToChars(chars, day, offset + 8, 2);
+	}
+
+	public static void formatNormalTime(char[] chars, final int offset, final int hour, final int minute, final int second) {
+		fillNumberToChars(chars, hour, offset, 2);
+		fillNumberToChars(chars, minute, offset + 3, 2);
+		fillNumberToChars(chars, second, offset + 6, 2);
 	}
 
 	/**
@@ -1107,11 +1265,23 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * @param start  指定的起始索引
 	 * @param length 指定的长度
 	 */
-	protected static final void fillNumberToChars(char[] chars, int number, int start, int length) {
+	public static final void fillNumberToChars(char[] chars, int number, int start, int length) {
 		int end = start + length;
 		while (number > 0 && length-- > 0) {
 			chars[--end] = (char) ('0' + (number % 10));
 			number /= 10;
 		}
+	}
+
+	/**
+	 * 判断两个日期对象是否是同一天（不考虑时区差异）
+	 */
+	@SuppressWarnings("deprecation")
+	public static boolean isSameDay(final Date a, final Date b) {
+		if (a == null || b == null) {
+			return false;
+		}
+		return a == b || (Math.abs(a.getTime() - b.getTime()) < MILLIS_OF_DAY && a.getYear() == b.getYear()
+				&& a.getMonth() == b.getMonth() && a.getDate() == b.getDate());
 	}
 }

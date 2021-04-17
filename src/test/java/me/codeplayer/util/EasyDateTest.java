@@ -97,4 +97,24 @@ public class EasyDateTest implements WithAssertions {
 
 		assertFalse(a.isSameAs(b, Calendar.HOUR));
 	}
+
+	@Test
+	public void isSameDay() {
+		Date a = new EasyDate(2015, 3, 28, 22, 59, 59).toDate();
+		Date b = new EasyDate(2015, 3, 28).toDate();
+		assertTrue(EasyDate.isSameDay(a, b));
+
+		b = new EasyDate(2015, 3, 29).toDate();
+		assertFalse(EasyDate.isSameDay(a, b));
+	}
+
+	@Test
+	public void toStr() {
+		Date a = new EasyDate(2015, 3, 28, 22, 58, 59).toDate();
+		Date b = new EasyDate(2015, 3, 28).toDate();
+		assertEquals("2015-03-28", EasyDate.toString(a));
+
+		assertEquals("2015-03-31 23:59:59", EasyDate.toDateTimeString(EasyDate.endOf(b, Calendar.MONTH)));
+		assertEquals("2015-03-31 23:59:59.999", EasyDate.toLongString(b));
+	}
 }
