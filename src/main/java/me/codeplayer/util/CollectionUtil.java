@@ -257,4 +257,26 @@ public abstract class CollectionUtil {
 		return findFirst(range, null);
 	}
 
+	/**
+	 * 依次将集合中每个元素进行指定的映射，。并返回映射后的数组
+	 *
+	 * @param list 集合
+	 * @param fieldType 映射后的字段类型
+	 * @param mapper 映射转换器
+	 */
+	public static <T, R> R[] mapField(Collection<T> list, Class<R> fieldType, Function<? super T, ? extends R> mapper) {
+		if (list == null) {
+			return null;
+		}
+		int size = list.size();
+		final R[] arrays = (R[]) Array.newInstance(fieldType, size);
+		if (size > 0) {
+			int index = 0;
+			for (T t : list) {
+				arrays[index++] = mapper.apply(t);
+			}
+		}
+		return arrays;
+	}
+
 }

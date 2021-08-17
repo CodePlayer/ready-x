@@ -1,6 +1,7 @@
 package me.codeplayer.util;
 
 import java.nio.charset.*;
+import java.util.*;
 import java.util.function.*;
 
 import javax.annotation.*;
@@ -987,4 +988,48 @@ public abstract class StringUtil {
 		chars[charIndex] = replaced;
 		return new String(chars);
 	}
+
+	/**
+	 * 将以指定分隔字符分隔字符串，并将拆分后的每个片段文本使用指定的 {@code mapper} 进行转换，并返回转换后的元素集合
+	 *
+	 * @param str 需要被拆分的字符串
+	 * @param sep 分隔符
+	 * @param mapper 转换器
+	 * @param ignoreNull 是否忽略 null 值（如果为 true，则返回的集合中不会包含 null ）
+	 */
+	public static <T> List<T> split(final String str, final String sep, final Function<? super String, T> mapper, final boolean ignoreNull) {
+		if (StringUtil.notEmpty(str)) {
+			final List<T> list = new ArrayList<>();
+			int pos, start = 0;
+			// ",,"
+			while ((pos = str.indexOf(sep, start)) != -1) {
+				addPartToList(str, mapper, ignoreNull, list, start, pos);
+				start = pos + 1;
+			}
+			if (start <= str.length()) {
+				addPartToList(str, mapper, ignoreNull, list, start, str.length());
+			}
+			return list;
+		}
+		return null;
+	}
+
+	/**
+	 * 将以指定分隔字符分隔字符串，并将拆分后的每个片段文本使用指定的 {@code mapper} 进行转换，并返回转换后的元素集合
+	 *
+	 * @param str 需要被拆分的字符串
+	 * @param sep 分隔符
+	 * @param mapper 转换器
+	 */
+	public static <T> List<T> split(final String str, final String sep, final Function<String, T> mapper) {
+		return split(str, sep, mapper, false);
+	}
+
+	private static <T> void addPartToList(String str, Function<? super String, T> mapper, final boolean ignoreNull, List<T> list, int start, int end) {
+		T part = start == end ? null : mapper.apply(str.substring(start, end));
+		if (part != null || !ignoreNull) {
+			list.add(part);
+		}
+	}
+
 }

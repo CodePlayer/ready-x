@@ -583,7 +583,7 @@ public abstract class ArrayUtil {
 	 * @since 3.5.0
 	 */
 	public static <E> E[] ofNull() {
-			return null;
+		return null;
 	}
 
 }
