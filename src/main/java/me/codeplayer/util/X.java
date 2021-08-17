@@ -768,6 +768,7 @@ public abstract class X {
 	/**
 	 * 尝试将数组 args 中的元素依次应用到 mapper 中，并返回第一个符合 {@code matcher } 条件的返回值
 	 */
+	@SuppressWarnings("unchecked")
 	public static <T, R> R mapAny(Function<? super T, ? extends R> mapper, Predicate<R> matcher, T... args) {
 		for (T t : args) {
 			R val = mapper.apply(t);

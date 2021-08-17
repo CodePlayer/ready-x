@@ -264,6 +264,7 @@ public abstract class CollectionUtil {
 	 * @param fieldType 映射后的字段类型
 	 * @param mapper 映射转换器
 	 */
+	@SuppressWarnings("unchecked")
 	public static <T, R> R[] mapField(Collection<T> list, Class<R> fieldType, Function<? super T, ? extends R> mapper) {
 		if (list == null) {
 			return null;
