@@ -149,7 +149,7 @@ public class ChineseNumber {
 	 * @author Ready
 	 * @since 1.0
 	 */
-	public static final String formatNumber(double d, boolean ignoreDecimal, FormatStyle style) {
+	public static String formatNumber(double d, boolean ignoreDecimal, FormatStyle style) {
 		if (ignoreDecimal) {
 			return new ChineseNumber((long) d, style).toString();
 		} else {
@@ -166,7 +166,7 @@ public class ChineseNumber {
 	 * @author Ready
 	 * @since 1.0
 	 */
-	public static final String formatNumber(BigDecimal d, boolean ignoreDecimal, FormatStyle style) {
+	public static String formatNumber(BigDecimal d, boolean ignoreDecimal, FormatStyle style) {
 		if (ignoreDecimal) {
 			return new ChineseNumber(d.longValue(), style).toString();
 		} else {
@@ -182,7 +182,7 @@ public class ChineseNumber {
 	 * @author Ready
 	 * @since 1.0
 	 */
-	public static final String formatNumber(long d, FormatStyle style) {
+	public static String formatNumber(long d, FormatStyle style) {
 		return new ChineseNumber(d, style).toString();
 	}
 

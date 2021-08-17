@@ -13,4 +13,5 @@ public interface CacheLoader<E> extends Supplier<E> {
 	boolean flushRequired();
 
 	E flush(boolean lazy);
+
 }

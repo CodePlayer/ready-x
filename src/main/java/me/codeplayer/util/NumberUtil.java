@@ -15,7 +15,7 @@ public abstract class NumberUtil {
 	/**
 	 * 将int类型的变量转为二进制字符串
 	 */
-	public static final String int2Byte(int i) {
+	public static String int2Byte(int i) {
 		int index = 32;
 		char[] chars = new char[index];
 		do {
@@ -31,7 +31,7 @@ public abstract class NumberUtil {
 	 *
 	 * @param value 指定的对象
 	 */
-	public static final byte getByte(Object value) {
+	public static byte getByte(Object value) {
 		Assert.notNull(value, "将要转换为整数的值不能为null!");
 		return value instanceof Number ? ((Number) value).byteValue() : Byte.parseByte(value.toString());
 	}
@@ -43,7 +43,7 @@ public abstract class NumberUtil {
 	 * @param value 指定的对象
 	 * @param defaultValue 指定的默认值
 	 */
-	public static final byte getByte(Object value, byte defaultValue) {
+	public static byte getByte(Object value, byte defaultValue) {
 		if (value == null) {
 			return defaultValue;
 		}
@@ -66,7 +66,7 @@ public abstract class NumberUtil {
 	 *
 	 * @param value 指定的对象
 	 */
-	public static final short getShort(Object value) {
+	public static short getShort(Object value) {
 		Assert.notNull(value, "将要转换为整数的值不能为null!");
 		return value instanceof Number ? ((Number) value).shortValue() : Short.parseShort(value.toString());
 	}
@@ -78,7 +78,7 @@ public abstract class NumberUtil {
 	 * @param value 指定的对象
 	 * @param defaultValue 指定的默认值
 	 */
-	public static final short getShort(Object value, short defaultValue) {
+	public static short getShort(Object value, short defaultValue) {
 		if (value == null) {
 			return defaultValue;
 		}
@@ -101,19 +101,19 @@ public abstract class NumberUtil {
 	 *
 	 * @param value 指定的对象
 	 */
-	public static final int getInt(Object value) {
+	public static int getInt(Object value) {
 		Assert.notNull(value, "将要转换为整数的值不能为null!");
 		return value instanceof Number ? ((Number) value).intValue() : Integer.parseInt(value.toString());
 	}
 
 	/**
 	 * 以int形式返回指定的值<br>
-	 * 如果指定的值为null或无法转为int形式，将返回指定的<code>defaultValue</code>
+	 * 如果指定的值为 null 或无法转为 int 形式，将返回指定的<code>defaultValue</code>
 	 *
 	 * @param value 指定的对象
 	 * @param defaultValue 指定的默认值
 	 */
-	public static final int getInt(Object value, int defaultValue) {
+	public static int getInt(Object value, int defaultValue) {
 		if (value == null) {
 			return defaultValue;
 		}
@@ -134,7 +134,7 @@ public abstract class NumberUtil {
 	 * 以Integer形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为Integer形式，将返回指定的<code>defaultValue</code>
 	 */
-	public static final Integer getInteger(Object value, Integer defaultValue) {
+	public static Integer getInteger(Object value, Integer defaultValue) {
 		if (value == null) {
 			return defaultValue;
 		}
@@ -157,7 +157,7 @@ public abstract class NumberUtil {
 	 *
 	 * @param value 指定的对象
 	 */
-	public static final long getLong(Object value) {
+	public static long getLong(Object value) {
 		Assert.notNull(value, "将要转换为整数的值不能为null!");
 		return value instanceof Number ? ((Number) value).longValue() : Long.parseLong(value.toString());
 	}
@@ -169,7 +169,7 @@ public abstract class NumberUtil {
 	 * @param value 指定的对象
 	 * @param defaultValue 指定的默认值
 	 */
-	public static final long getLong(Object value, long defaultValue) {
+	public static long getLong(Object value, long defaultValue) {
 		if (value == null) {
 			return defaultValue;
 		}
@@ -193,7 +193,7 @@ public abstract class NumberUtil {
 	 * @param value 指定的对象
 	 * @param defaultValue 指定的默认值
 	 */
-	public static final Long getLong(Object value, Long defaultValue) {
+	public static Long getLong(Object value, Long defaultValue) {
 		if (value == null) {
 			return defaultValue;
 		}
@@ -216,7 +216,7 @@ public abstract class NumberUtil {
 	 *
 	 * @param value 指定的对象
 	 */
-	public static final float getFloat(Object value) {
+	public static float getFloat(Object value) {
 		Assert.notNull(value, "将要转换为整数或小数的值不能为null!");
 		return value instanceof Number ? ((Number) value).floatValue() : Float.parseFloat(value.toString());
 	}
@@ -228,7 +228,7 @@ public abstract class NumberUtil {
 	 * @param value 指定的对象
 	 * @param defaultValue 指定的默认值
 	 */
-	public static final float getFloat(Object value, float defaultValue) {
+	public static float getFloat(Object value, float defaultValue) {
 		if (value == null) {
 			return defaultValue;
 		}
@@ -251,7 +251,7 @@ public abstract class NumberUtil {
 	 *
 	 * @param value 指定的对象
 	 */
-	public static final double getDouble(Object value) {
+	public static double getDouble(Object value) {
 		Assert.notNull(value, "将要转换为整数或小数的值不能为null!");
 		return value instanceof Number ? ((Number) value).doubleValue() : Double.parseDouble(value.toString());
 	}
@@ -263,7 +263,7 @@ public abstract class NumberUtil {
 	 * @param value 指定的对象
 	 * @param defaultValue 指定的默认值
 	 */
-	public static final double getDouble(Object value, double defaultValue) {
+	public static double getDouble(Object value, double defaultValue) {
 		if (value == null) {
 			return defaultValue;
 		}
@@ -286,7 +286,7 @@ public abstract class NumberUtil {
 	 *
 	 * @param value 指定的对象
 	 */
-	public static final BigDecimal getBigDecimal(Object value) {
+	public static BigDecimal getBigDecimal(Object value) {
 		if (value instanceof BigDecimal) {
 			return (BigDecimal) value;
 		}
@@ -306,7 +306,7 @@ public abstract class NumberUtil {
 	 * @param value 指定的对象
 	 * @param defaultValue 指定的默认值
 	 */
-	public static final BigDecimal getBigDecimal(Object value, Object defaultValue) {
+	public static BigDecimal getBigDecimal(Object value, Object defaultValue) {
 		if (value == null) {
 			return defaultValue == null ? null : getBigDecimal(defaultValue);
 		}
@@ -325,7 +325,7 @@ public abstract class NumberUtil {
 	 *
 	 * @param str 指定的字符串
 	 */
-	public static final boolean isNumber(String str) {
+	public static boolean isNumber(String str) {
 		if (str == null) { // 为空则返回false
 			return false;
 		}
@@ -373,7 +373,7 @@ public abstract class NumberUtil {
 	 *
 	 * @param str 指定的字符串
 	 */
-	public static final boolean isNumeric(String str) {
+	public static boolean isNumeric(String str) {
 		int length;
 		if (str == null || (length = str.length()) == 0) {
 			return false;
@@ -391,7 +391,7 @@ public abstract class NumberUtil {
 	/**
 	 * 判断指定对象的字符串形式是否为整数形式
 	 */
-	public static final boolean isInt(Object value) {
+	public static boolean isInt(Object value) {
 		return value != null && (value instanceof Integer || isNumber(value.toString()));
 	}
 
@@ -404,7 +404,7 @@ public abstract class NumberUtil {
 	 *
 	 * @param str 需要判断的字符串
 	 */
-	public static final boolean isDouble(String str) {
+	public static boolean isDouble(String str) {
 		if (str == null) {
 			return false;
 		}
@@ -426,7 +426,7 @@ public abstract class NumberUtil {
 	 *
 	 * @param value 需要判断的对象
 	 */
-	public static final boolean isDouble(Object value) {
+	public static boolean isDouble(Object value) {
 		return value != null && (value instanceof Number || isDouble(value.toString()));
 	}
 
@@ -435,7 +435,7 @@ public abstract class NumberUtil {
 	 *
 	 * @since 2.3.0
 	 */
-	protected static final boolean isPositive(@Nullable final Number val, final boolean allowZero) {
+	protected static boolean isPositive(@Nullable final Number val, final boolean allowZero) {
 		if (val != null) {
 			if (val instanceof Integer) {
 				return allowZero ? val.intValue() >= 0 : val.intValue() > 0;
@@ -453,7 +453,7 @@ public abstract class NumberUtil {
 	 *
 	 * @since 2.3.0
 	 */
-	public static final boolean isPositive(@Nullable final Number val) {
+	public static boolean isPositive(@Nullable final Number val) {
 		return isPositive(val, false);
 	}
 
@@ -462,7 +462,7 @@ public abstract class NumberUtil {
 	 *
 	 * @since 2.3.0
 	 */
-	public static final boolean isNonNegative(@Nullable final Number val) {
+	public static boolean isNonNegative(@Nullable final Number val) {
 		return isPositive(val, true);
 	}
 }

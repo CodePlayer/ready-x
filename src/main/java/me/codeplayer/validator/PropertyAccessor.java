@@ -14,4 +14,5 @@ public interface PropertyAccessor<T, R> {
 	Function<? super T, R> getGetter();
 
 	BiConsumer<? super T, R> getSetter();
+
 }

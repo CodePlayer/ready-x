@@ -20,7 +20,7 @@ public abstract class EnumUtil {
 	 * @return 返回对应的枚举值。如果找不到，则返回 null
 	 */
 	@Nullable
-	public static final <T extends Enum<T>> T of(Class<T> clazz, @Nullable String name) {
+	public static <T extends Enum<T>> T of(Class<T> clazz, @Nullable String name) {
 		if (StringUtil.notEmpty(name)) {
 			try {
 				return Enum.valueOf(clazz, name);
@@ -34,27 +34,28 @@ public abstract class EnumUtil {
 	 * 获取指定枚举类中 匹配指定条件的枚举数组
 	 *
 	 * @param enumClass 枚举类Class
-	 * @param values    指定的枚举范围数组，如果为null，内部将会自动获取所有的枚举值
-	 * @param matcher   枚举匹配器接口实现
+	 * @param values 指定的枚举范围数组，如果为null，内部将会自动获取所有的枚举值
+	 * @param matcher 枚举匹配器接口实现
 	 * @since 2.0.0
 	 */
 	@SuppressWarnings("unchecked")
-	public static final <E extends Enum<?>> E[] getMatched(final Class<E> enumClass, @Nullable final E[] values, final Predicate<E> matcher) {
-		final E[] newAarray = values == null ? enumClass.getEnumConstants() : values.clone();
+	public static <E extends Enum<?>> E[] getMatched(final Class<E> enumClass, @Nullable final E[] values, final Predicate<E> matcher) {
+		final E[] newArray = values == null ? enumClass.getEnumConstants() : values.clone();
 		int count = 0;
-		for (E e : newAarray) {
+		for (E e : newArray) {
 			if (matcher.test(e)) {
-				newAarray[count++] = e;
+				newArray[count++] = e;
 			}
 		}
-		if (count == newAarray.length) {
-			return newAarray;
+		if (count == newArray.length) {
+			return newArray;
 		} else {
 			final E[] result = (E[]) Array.newInstance(enumClass, count);
 			if (count > 0) {
-				System.arraycopy(newAarray, 0, result, 0, count);
+				System.arraycopy(newArray, 0, result, 0, count);
 			}
 			return result;
 		}
 	}
+
 }

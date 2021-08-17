@@ -44,11 +44,7 @@ public class DES {
 	 * 根据字符串参数生成KEY
 	 */
 	public void setKey(String strKey) {
-		try {
-			setKey(strKey.getBytes("UTF-8"));
-		} catch (UnsupportedEncodingException e) {
-			throw new IllegalArgumentException(e);
-		}
+		setKey(strKey.getBytes(Charsets.UTF_8));
 	}
 
 	/**
@@ -66,7 +62,7 @@ public class DES {
 	 * 输入指定的明文，使用指定的密钥进行加密，并返回加密后的字符串
 	 *
 	 * @param plaintext 指定的明文
-	 * @param encoding  指定的字符编码，例如"UTF-8"、"GBK"
+	 * @param encoding 指定的字符编码，例如"UTF-8"、"GBK"
 	 */
 	public String encode(String plaintext, String encoding) {
 		try {
@@ -90,7 +86,7 @@ public class DES {
 	 * 解密指定的密文字符串，并以明文方式返回
 	 *
 	 * @param ciphertext 指定的密文字符串
-	 * @param encoding   指定的字符编码，例如"UTF-8"、"GBK"
+	 * @param encoding 指定的字符编码，例如"UTF-8"、"GBK"
 	 */
 	public String decode(String ciphertext, String encoding) {
 		try {
@@ -128,7 +124,7 @@ public class DES {
 	 * 加密或解密处理指定的字节数组
 	 *
 	 * @param srcBytes 直接数组
-	 * @param encrypt  如果为true表示加密，否则表示解密。
+	 * @param encrypt 如果为true表示加密，否则表示解密。
 	 */
 	public byte[] process(byte[] srcBytes, boolean encrypt) {
 		try {

@@ -14,7 +14,7 @@ import javax.annotation.*;
  */
 public abstract class CollectionUtil {
 
-	protected static final void checkPairs(final Object... pairs) {
+	protected static void checkPairs(final Object... pairs) {
 		if ((pairs.length & 1) != 0) {
 			throw new IllegalArgumentException("The length of the Array must be even:" + pairs.length);
 		}
@@ -24,9 +24,9 @@ public abstract class CollectionUtil {
 	 * 根据真实的元素个数和负载因子，计算 Map 集合合理的容量初始值
 	 *
 	 * @param realCapacity 真实的元素个数
-	 * @param loadFactor   负载因子
+	 * @param loadFactor 负载因子
 	 */
-	public static final int mapInitialCapacity(int realCapacity, float loadFactor) {
+	public static int mapInitialCapacity(int realCapacity, float loadFactor) {
 		return (int) (realCapacity / loadFactor) + 1;
 	}
 
@@ -35,19 +35,19 @@ public abstract class CollectionUtil {
 	 *
 	 * @param realCapacity 真实的元素个数
 	 */
-	public static final int mapInitialCapacity(int realCapacity) {
+	public static int mapInitialCapacity(int realCapacity) {
 		return realCapacity * 4 / 3 + 1;
 	}
 
 	/**
 	 * 将可变参数形式的键值数组添加到一个 Map 集合中
 	 *
-	 * @param target   指定的 Collection 集合
-	 * @param filter   如果指定了该数组元素过滤器，则只有过滤结果为 true 的才会被添加
+	 * @param target 指定的 Collection 集合
+	 * @param filter 如果指定了该数组元素过滤器，则只有过滤结果为 true 的才会被添加
 	 * @param elements 可变参数形式的元素数组
 	 */
 	@SuppressWarnings("unchecked")
-	public static final <E> Collection<E> addAll(Collection<E> target, @Nullable Predicate<? super E> filter, final E... elements) {
+	public static <E> Collection<E> addAll(Collection<E> target, @Nullable Predicate<? super E> filter, final E... elements) {
 		for (E e : elements) {
 			if (filter == null || filter.test(e)) {
 				target.add(e);
@@ -59,24 +59,24 @@ public abstract class CollectionUtil {
 	/**
 	 * 将可变参数形式的键值数组添加到一个Map集合中
 	 *
-	 * @param target   指定的 Collection 集合
+	 * @param target 指定的 Collection 集合
 	 * @param elements 可变参数形式的元素数组
 	 */
 	@SuppressWarnings("unchecked")
-	public static final <E> Collection<E> addAll(Collection<E> target, E... elements) {
+	public static <E> Collection<E> addAll(Collection<E> target, E... elements) {
 		return addAll(target, null, elements);
 	}
 
 	/**
 	 * 将可变参数形式的键值数组添加到一个 Map 集合中
 	 *
-	 * @param map     指定的Map集合
+	 * @param map 指定的Map集合
 	 * @param kvPairs 可变参数形式的键值数组，必须是K1, V1, K2, V2, K3, V3...这种形式
 	 */
-	public static final <K, V> Map<K, V> addAll(final Map<K, V> map, final Object... kvPairs) {
+	public static <K, V> Map<K, V> addAll(final Map<K, V> map, final Object... kvPairs) {
 		checkPairs(kvPairs);
 		Map<Object, Object> m = X.castType(map);
-		for (int i = 0; i < kvPairs.length;) {
+		for (int i = 0; i < kvPairs.length; ) {
 			m.put(kvPairs[i++], kvPairs[i++]);
 		}
 		return map;
@@ -85,11 +85,11 @@ public abstract class CollectionUtil {
 	/**
 	 * 根据可变参数形式的键值数组构造一个集合
 	 *
-	 * @param newList  Collection 构造器，int 类型的参数为 Collection 构造方法的 initialCapacity 参数
+	 * @param newList Collection 构造器，int 类型的参数为 Collection 构造方法的 initialCapacity 参数
 	 * @param elements 可变参数形式的元素数组
 	 */
 	@SuppressWarnings("unchecked")
-	public static final <E, S extends Collection<E>> S ofSize(IntFunction<S> newList, E... elements) {
+	public static <E, S extends Collection<E>> S ofSize(IntFunction<S> newList, E... elements) {
 		S list = newList.apply(elements.length);
 		addAll(list, elements);
 		return list;
@@ -98,11 +98,11 @@ public abstract class CollectionUtil {
 	/**
 	 * 根据可变参数形式的键值数组构造一个集合
 	 *
-	 * @param newList  Collection 构造器
+	 * @param newList Collection 构造器
 	 * @param elements 可变参数形式的元素数组
 	 */
 	@SuppressWarnings("unchecked")
-	public static final <E, S extends Collection<E>> S of(Supplier<S> newList, E... elements) {
+	public static <E, S extends Collection<E>> S of(Supplier<S> newList, E... elements) {
 		S list = newList.get();
 		addAll(list, elements);
 		return list;
@@ -111,11 +111,11 @@ public abstract class CollectionUtil {
 	/**
 	 * 根据可变参数形式的键值数组构造一个 Set 集合
 	 *
-	 * @param newSet   Set 构造器，int 类型的参数为 Set 构造方法的 initialCapacity 参数
+	 * @param newSet Set 构造器，int 类型的参数为 Set 构造方法的 initialCapacity 参数
 	 * @param elements 可变参数形式的元素数组
 	 */
 	@SuppressWarnings("unchecked")
-	public static final <E, S extends Set<E>> S ofSet(IntFunction<S> newSet, E... elements) {
+	public static <E, S extends Set<E>> S ofSet(IntFunction<S> newSet, E... elements) {
 		S list = newSet.apply(mapInitialCapacity(elements.length));
 		addAll(list, elements);
 		return list;
@@ -127,7 +127,7 @@ public abstract class CollectionUtil {
 	 * @param elements 可变参数形式的元素数组
 	 */
 	@SuppressWarnings("unchecked")
-	public static final <E> HashSet<E> ofHashSet(E... elements) {
+	public static <E> HashSet<E> ofHashSet(E... elements) {
 		return ofSet(HashSet::new, elements);
 	}
 
@@ -137,17 +137,17 @@ public abstract class CollectionUtil {
 	 * @param elements 可变参数形式的元素数组
 	 */
 	@SuppressWarnings("unchecked")
-	public static final <E> ArrayList<E> ofArrayList(E... elements) {
+	public static <E> ArrayList<E> ofArrayList(E... elements) {
 		return ofSize(ArrayList::new, elements);
 	}
 
 	/**
 	 * 根据可变参数形式的键值数组构造一个 Map 集合<br/>
 	 *
-	 * @param newMap   Map 构造器，int 参数为 Map 构造方法的 initialCapacity 参数
+	 * @param newMap Map 构造器，int 参数为 Map 构造方法的 initialCapacity 参数
 	 * @param elements 可变参数形式的元素数组
 	 */
-	public static final <K, V, M extends Map<K, V>> M toMap(IntFunction<M> newMap, Object... elements) {
+	public static <K, V, M extends Map<K, V>> M toMap(IntFunction<M> newMap, Object... elements) {
 		M map = newMap.apply(mapInitialCapacity(elements.length));
 		addAll(map, elements);
 		return map;
@@ -158,16 +158,16 @@ public abstract class CollectionUtil {
 	 *
 	 * @param elements 可变参数形式的元素数组
 	 */
-	public static final <K, V> HashMap<K, V> ofHashMap(Object... elements) {
+	public static <K, V> HashMap<K, V> ofHashMap(Object... elements) {
 		return toMap(HashMap::new, elements);
 	}
 
 	/**
 	 * 将指定的数据集合转为 Map 集合
 	 *
-	 * @param newMap      Map 构造器，int 参数为 Map 构造方法的 initialCapacity 参数
-	 * @param items       需要放入 Map 集合的数据集合
-	 * @param keyMapper   Map 的 {@code Entry.key} 转换器
+	 * @param newMap Map 构造器，int 参数为 Map 构造方法的 initialCapacity 参数
+	 * @param items 需要放入 Map 集合的数据集合
+	 * @param keyMapper Map 的 {@code Entry.key} 转换器
 	 * @param valueMapper Map 的 {@code Entry.value} 转换器
 	 */
 	public static <E, K, V, M extends Map<K, V>> M toMap(final IntFunction<M> newMap, final Iterable<E> items, final Function<? super E, K> keyMapper, final Function<? super E, V> valueMapper) {
@@ -184,8 +184,8 @@ public abstract class CollectionUtil {
 	/**
 	 * 将指定的数据集合转为 HashMap 集合
 	 *
-	 * @param items       需要放入 Map 集合的数据集合
-	 * @param keyMapper   Map 的 {@code Entry.key} 转换器
+	 * @param items 需要放入 Map 集合的数据集合
+	 * @param keyMapper Map 的 {@code Entry.key} 转换器
 	 * @param valueMapper Map 的 {@code Entry.value} 转换器
 	 */
 	public static <E, K, V> HashMap<K, V> toHashMap(final Iterable<E> items, final Function<? super E, K> keyMapper, final Function<? super E, V> valueMapper) {
@@ -195,8 +195,8 @@ public abstract class CollectionUtil {
 	/**
 	 * 将指定的数据集合转为 Map 集合
 	 *
-	 * @param newMap    Map 构造器，int 参数为 Map 构造方法的 initialCapacity 参数
-	 * @param items     需要放入 Map 集合的数据集合
+	 * @param newMap Map 构造器，int 参数为 Map 构造方法的 initialCapacity 参数
+	 * @param items 需要放入 Map 集合的数据集合
 	 * @param keyMapper Map 的 {@code Entry.key} 转换器
 	 */
 	public static <K, V, M extends Map<K, V>> M toMap(final IntFunction<M> newMap, final Iterable<V> items, final Function<? super V, K> keyMapper) {
@@ -206,7 +206,7 @@ public abstract class CollectionUtil {
 	/**
 	 * 将指定的数据集合转为 HashMap 集合
 	 *
-	 * @param items     需要放入 Map 集合的数据集合
+	 * @param items 需要放入 Map 集合的数据集合
 	 * @param keyMapper Map 的 {@code Entry.key} 转换器
 	 */
 	public static <K, V> HashMap<K, V> toHashMap(final Iterable<V> items, final Function<? super V, K> keyMapper) {
@@ -216,14 +216,14 @@ public abstract class CollectionUtil {
 	/**
 	 * 获取Map集合中指定的多个键的值，并以数组的形式依次返回。如果集合中没有指定的键，则数组对应位置的值为null
 	 *
-	 * @param map        指定的Map集合
+	 * @param map 指定的Map集合
 	 * @param valueClass 数组的组件类型
-	 * @param keys       指定的键数组
+	 * @param keys 指定的键数组
 	 * @author Ready
 	 * @since 0.3.1
 	 */
 	@SuppressWarnings("unchecked")
-	public static final <K, V> V[] mapValues(Map<K, V> map, Class<V> valueClass, K... keys) {
+	public static <K, V> V[] mapValues(Map<K, V> map, Class<V> valueClass, K... keys) {
 		V[] results = X.castType(Array.newInstance(valueClass, keys.length));
 		for (int i = 0; i < keys.length; i++) {
 			results[i] = map.get(keys[i]);
@@ -237,7 +237,7 @@ public abstract class CollectionUtil {
 	 * @param filter 如果为 null，则默认为 true
 	 * @since 2.8.0
 	 */
-	public static final <T> T findFirst(final Collection<T> range, @Nullable final Predicate<? super T> filter) {
+	public static <T> T findFirst(final Collection<T> range, @Nullable final Predicate<? super T> filter) {
 		if (range != null && !range.isEmpty()) {
 			for (T t : range) {
 				if (filter == null || filter.test(t)) {
@@ -253,7 +253,7 @@ public abstract class CollectionUtil {
 	 *
 	 * @since 3.0.0
 	 */
-	public static final <T> T getAny(final Collection<T> range) {
+	public static <T> T getAny(final Collection<T> range) {
 		return findFirst(range, null);
 	}
 

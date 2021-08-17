@@ -49,4 +49,5 @@ public abstract class ResourceUtil {
 		}
 		return -1;
 	}
+
 }

@@ -48,10 +48,7 @@ public class Arith {
 	 * 构造一个为指定double值的商业计算数
 	 */
 	public Arith(BigDecimal d) {
-		if (d == null) {
-			throw new NullPointerException();
-		}
-		value = d;
+		value = Assert.notNull(d);
 	}
 
 	/**
@@ -182,7 +179,7 @@ public class Arith {
 	 * 商业乘法运算
 	 *
 	 * @param d 指定的乘数
-	 * @throws ArithmeticException 如果无法除尽或除数为0则会抛出该异常，无法除尽时请使用{@code Arith#divide(BigDecimal, int, RoundingMode)}替代
+	 * @throws ArithmeticException 如果无法除尽或除数为0则会抛出该异常，无法除尽时请使用{@link #divide(BigDecimal, int, RoundingMode)}替代
 	 */
 	public Arith multiply(BigDecimal d) throws ArithmeticException {
 		value = value.multiply(d);
@@ -220,7 +217,7 @@ public class Arith {
 	 * 商业除法运算
 	 *
 	 * @param d 指定的除数
-	 * @throws ArithmeticException 如果无法除尽或除数为0则会抛出该异常，无法除尽时请使用{@code Arith#divide(BigDecimal, int, RoundingMode)}替代
+	 * @throws ArithmeticException 如果无法除尽或除数为0则会抛出该异常，无法除尽时请使用{@link #divide(BigDecimal, int, RoundingMode)}替代
 	 */
 	public Arith divide(BigDecimal d) throws ArithmeticException {
 		value = value.divide(d);
@@ -231,7 +228,7 @@ public class Arith {
 	 * 商业除法运算
 	 *
 	 * @param d 指定的除数
-	 * @throws ArithmeticException 如果无法除尽或除数为0则会抛出该异常，无法除尽时请使用{@code Arith#divide(String, int, RoundingMode)}替代
+	 * @throws ArithmeticException 如果无法除尽或除数为0则会抛出该异常，无法除尽时请使用{@link #divide(String, int, RoundingMode)}替代
 	 */
 	public Arith divide(String d) throws ArithmeticException {
 		return divide(new BigDecimal(d));
@@ -241,7 +238,7 @@ public class Arith {
 	 * 商业除法运算
 	 *
 	 * @param d 指定的除数
-	 * @throws ArithmeticException 如果无法除尽或除数为0则会抛出该异常，无法除尽时请使用{@code Arith#divide(double, int, RoundingMode)}替代
+	 * @throws ArithmeticException 如果无法除尽或除数为0则会抛出该异常，无法除尽时请使用{@link #divide(double, int, RoundingMode)}替代
 	 */
 	public Arith divide(double d) {
 		return divide(Double.toString(d));
@@ -251,7 +248,7 @@ public class Arith {
 	 * 商业除法运算
 	 *
 	 * @param d 指定的除数
-	 * @throws ArithmeticException 如果无法除尽或除数为0则会抛出该异常，无法除尽时请使用{@code Arith#divide(long, int, RoundingMode)}替代
+	 * @throws ArithmeticException 如果无法除尽或除数为0则会抛出该异常，无法除尽时请使用{@link #divide(long, int, RoundingMode)}替代
 	 */
 	public Arith divide(long d) {
 		return divide(BigDecimal.valueOf(d));
@@ -366,10 +363,10 @@ public class Arith {
 	 * 设置四舍五入的精度(即精确到的小数位数)<br>
 	 * <b>注意：</b>该方法底层直接根据需求自行计算，常规情况下比 {@link #round(int) } 要快 10+倍，但目前尚处于实验性质（不过一般基本上没什么问题）
 	 *
-	 * @param value    指定的数值
+	 * @param value 指定的数值
 	 * @param newScale 指定的精确位数
 	 */
-	public static final double roundFast(final double value, final int newScale) {
+	public static double roundFast(final double value, final int newScale) {
 		final double factor = Math.pow(10, newScale + 1);
 		final double target = value * factor;
 		if (newScale > 10 || target < Long.MIN_VALUE || target > Long.MAX_VALUE || Math.abs(target) > Double.MAX_VALUE) {
@@ -469,7 +466,7 @@ public class Arith {
 	 * @param a 加数1
 	 * @param b 加数2
 	 */
-	public static final double add(double a, double b) {
+	public static double add(double a, double b) {
 		return new BigDecimal(Double.toString(a)).add(new BigDecimal(Double.toString(b))).doubleValue();
 	}
 
@@ -479,7 +476,7 @@ public class Arith {
 	 * @param a 被减数
 	 * @param b 减数
 	 */
-	public static final double minus(double a, double b) {
+	public static double minus(double a, double b) {
 		return new BigDecimal(Double.toString(a)).add(new BigDecimal(Double.toString(-b))).doubleValue();
 	}
 
@@ -489,29 +486,29 @@ public class Arith {
 	 * @param a 乘数1
 	 * @param b 乘数2
 	 */
-	public static final double multiply(double a, double b) {
+	public static double multiply(double a, double b) {
 		return new BigDecimal(Double.toString(a)).multiply(new BigDecimal(Double.toString(b))).doubleValue();
 	}
 
 	/**
 	 * 商业乘法运算
 	 *
-	 * @param a     乘数1
-	 * @param b     乘数2
+	 * @param a 乘数1
+	 * @param b 乘数2
 	 * @param scale 小数部分的精确位数
 	 */
-	public static final double multiply(double a, double b, int scale, RoundingMode roundingMode) {
+	public static double multiply(double a, double b, int scale, RoundingMode roundingMode) {
 		return new BigDecimal(Double.toString(a)).multiply(new BigDecimal(Double.toString(b))).setScale(scale, roundingMode).doubleValue();
 	}
 
 	/**
 	 * 商业乘法运算(四舍五入)
 	 *
-	 * @param a     乘数1
-	 * @param b     乘数2
+	 * @param a 乘数1
+	 * @param b 乘数2
 	 * @param scale 小数部分的精确位数
 	 */
-	public static final double multiply(double a, double b, int scale) {
+	public static double multiply(double a, double b, int scale) {
 		return multiply(a, b, scale, RoundingMode.HALF_UP);
 	}
 
@@ -520,11 +517,11 @@ public class Arith {
 	 * <strong>注意：</strong>此方法的有效位数包含整数部分在内<br>
 	 * 将precision设为long类型只是为了重载的需要
 	 *
-	 * @param a         乘数1
-	 * @param b         乘数2
+	 * @param a 乘数1
+	 * @param b 乘数2
 	 * @param precision 包含整数部分的有效位数
 	 */
-	public static final double multiply(double a, double b, long precision) {
+	public static double multiply(double a, double b, long precision) {
 		MathContext context = new MathContext((int) precision, RoundingMode.HALF_UP);
 		return new BigDecimal(Double.toString(a)).multiply(new BigDecimal(Double.toString(b)), context).doubleValue();
 	}
@@ -532,11 +529,11 @@ public class Arith {
 	/**
 	 * 商业除法运算(四舍五入)
 	 *
-	 * @param a     被除数
-	 * @param b     除数
+	 * @param a 被除数
+	 * @param b 除数
 	 * @param scale 小数精确度位数
 	 */
-	public static final double divide(double a, double b, int scale) {
+	public static double divide(double a, double b, int scale) {
 		checkScale(scale);
 		return new BigDecimal(Double.toString(a)).divide(new BigDecimal(Double.toString(b)), scale, RoundingMode.HALF_UP).doubleValue();
 	}
@@ -547,7 +544,7 @@ public class Arith {
 	 * @param d     指定的小数
 	 * @param scale 指定的小数精确位数
 	 */
-	public static final double round(double d, int scale) {
+	public static double round(double d, int scale) {
 		return scale(d, scale, RoundingMode.HALF_UP);
 	}
 
@@ -557,17 +554,17 @@ public class Arith {
 	 * @param d     指定的小数
 	 * @param scale 指定的小数精确位数
 	 */
-	public static final double even(double d, int scale) {
+	public static double even(double d, int scale) {
 		return scale(d, scale, RoundingMode.HALF_EVEN);
 	}
 
 	/**
 	 * 以指定的舍入方式使指定小数精确到指定的小数位数
 	 *
-	 * @param d     指定的小数
+	 * @param d 指定的小数
 	 * @param scale 指定的小数精确位数
 	 */
-	public static final double scale(double d, int scale, RoundingMode mode) {
+	public static double scale(double d, int scale, RoundingMode mode) {
 		checkScale(scale);
 		return new BigDecimal(Double.toString(d)).setScale(scale, mode).doubleValue();
 	}
@@ -577,7 +574,7 @@ public class Arith {
 	 *
 	 * @param d 指定的数值
 	 */
-	public static final long ceil(double d) {
+	public static long ceil(double d) {
 		return (long) Math.ceil(d);
 	}
 
@@ -586,23 +583,23 @@ public class Arith {
 	 *
 	 * @param d 指定的数值
 	 */
-	public static final long floor(double d) {
+	public static long floor(double d) {
 		return (long) Math.floor(d);
 	}
 
 	/**
 	 * 以指定舍入方式使指定小数精确到指定的小数位数
 	 *
-	 * @param d     指定的小数
+	 * @param d 指定的小数
 	 * @param scale 指定的小数精确位数
-	 * @param mode  指定的舍入模式
+	 * @param mode 指定的舍入模式
 	 */
-	public static final double truncate(double d, int scale, RoundingMode mode) {
+	public static double truncate(double d, int scale, RoundingMode mode) {
 		checkScale(scale);
 		return new BigDecimal(Double.toString(d)).setScale(scale, mode).doubleValue();
 	}
 
-	static final void checkScale(int scale) {
+	static void checkScale(int scale) {
 		if (scale < 0) {
 			throw new IllegalArgumentException("Argument 'scale' can not less than 0:" + scale);
 		}
@@ -612,13 +609,13 @@ public class Arith {
 	 * 判断两个数值a和b的大小
 	 *
 	 * @return 如果：
-	 *         <ul>
-	 *         <li>a > b ，则返回 1</li>
-	 *         <li>a == b ，则返回 0</li>
-	 *         <li>a < b ，则返回 -1</li>
-	 *         </ul>
+	 *   <ul>
+	 *       <li>a > b ，则返回 1</li>
+	 *       <li>a == b ，则返回 0</li>
+	 *       <li>a < b ，则返回 -1</li>
+	 *   </ul>
 	 */
-	public static final int compareTo(BigDecimal a, BigDecimal b) {
+	public static int compareTo(BigDecimal a, BigDecimal b) {
 		return a == b ? 0 : a.compareTo(b);
 	}
 
@@ -632,7 +629,7 @@ public class Arith {
 	 *         <li>a < b ，则返回 -1</li>
 	 *         </ul>
 	 */
-	public static final int compareTo(BigDecimal a, double b) {
+	public static int compareTo(BigDecimal a, double b) {
 		return a.compareTo(BigDecimal.valueOf(b));
 	}
 
@@ -646,7 +643,7 @@ public class Arith {
 	 *         <li>a < b ，则返回 -1</li>
 	 *         </ul>
 	 */
-	public static final int compareTo(BigDecimal a, long b) {
+	public static int compareTo(BigDecimal a, long b) {
 		return a.compareTo(BigDecimal.valueOf(b));
 	}
 
@@ -660,7 +657,7 @@ public class Arith {
 	 *         <li>a < b ，则返回 -1</li>
 	 *         </ul>
 	 */
-	public static final int compareTo(BigDecimal a, String b) {
+	public static int compareTo(BigDecimal a, String b) {
 		return a.compareTo(new BigDecimal(b));
 	}
 
@@ -669,19 +666,19 @@ public class Arith {
 	 *
 	 * @author Ready
 	 */
-	public static final boolean isIntegral(BigDecimal d) {
+	public static boolean isIntegral(BigDecimal d) {
 		return d != null && (d.scale() == 0 || d.setScale(0, RoundingMode.FLOOR).compareTo(d) == 0);
 	}
 
 	/**
 	 * 检测数值d能否被divisor整除(即：余数为0)
 	 *
-	 * @param d       被除数
+	 * @param d 被除数
 	 * @param divisor 除数
-	 * @version 1.0
 	 * @author Ready
+	 * @since 1.0
 	 */
-	public static final boolean canDivideExactly(BigDecimal d, BigDecimal divisor) {
+	public static boolean canDivideExactly(BigDecimal d, BigDecimal divisor) {
 		return divisor.compareTo(BigDecimal.ZERO) != 0 && d.remainder(divisor).compareTo(BigDecimal.ZERO) == 0;
 	}
 

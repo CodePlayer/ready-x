@@ -48,7 +48,7 @@ public class Words {
 			}
 		}
 		if (splitter.begin < len) {
-			segments.add(new Segment(splitter.begin, len, splitter.prevUpperCount > 0).attach(source, wordIndex++));
+			segments.add(new Segment(splitter.begin, len, splitter.prevUpperCount > 0).attach(source, wordIndex));
 		}
 		return new Words(segments);
 	}
@@ -89,8 +89,7 @@ public class Words {
 		if (sb == null) {
 			sb = new StringBuilder(segments.get(0).source.length() + size);
 		}
-		for (int i = 0; i < size; i++) {
-			Segment seg = segments.get(i);
+		for (Segment seg : segments) {
 			appender.accept(sb, seg);
 		}
 		return sb;

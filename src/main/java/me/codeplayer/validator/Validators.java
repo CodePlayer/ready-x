@@ -36,7 +36,7 @@ public abstract class Validators {
 	 * format group
 	 */
 	public static final Function<Object, String> trim = StringUtil::trim;
-	public static final Function<Object, String> toSring = StringUtil::toString;
+	public static final Function<Object, String> toString = StringUtil::toString;
 	public static final Function<String, String> lower = String::toLowerCase;
 	public static final Function<String, String> upper = String::toUpperCase;
 	/*
@@ -59,25 +59,26 @@ public abstract class Validators {
 	 * @param min 如果 ≤ -1，则表示允许为 null；
 	 * @param max 如果 ≤ -1，则表示不限制最大值
 	 */
-	public static final Predicate<CharSequence> assertLength(int min, int max) {
+	public static Predicate<CharSequence> assertLength(int min, int max) {
 		return val -> val == null && min <= -1
 				||
 				val != null && val.length() >= min && (max <= -1 || max >= val.length());
 	}
 
-	public static final Predicate<Integer> assertRange(int min, int max) {
+	public static Predicate<Integer> assertRange(int min, int max) {
 		return val -> val != null && val >= min && val <= max;
 	}
 
-	public static final Predicate<Long> assertRange(long min, long max) {
+	public static Predicate<Long> assertRange(long min, long max) {
 		return val -> val != null && val >= min && val <= max;
 	}
 
-	public static final Predicate<Double> assertRange(double min, double max) {
+	public static Predicate<Double> assertRange(double min, double max) {
 		return val -> val != null && val >= min && val <= max;
 	}
 
-	public static final Predicate<BigDecimal> assertRange(@Nullable BigDecimal min, @Nullable BigDecimal max) {
+	public static Predicate<BigDecimal> assertRange(@Nullable BigDecimal min, @Nullable BigDecimal max) {
 		return val -> val != null && (min == null || val.compareTo(min) >= 0) && (max == null || max.compareTo(val) >= 0);
 	}
+
 }

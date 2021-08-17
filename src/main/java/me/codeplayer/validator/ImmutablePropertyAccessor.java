@@ -26,4 +26,5 @@ public class ImmutablePropertyAccessor<T, R> implements PropertyAccessor<T, R> {
 	public BiConsumer<? super T, R> getSetter() {
 		return setter;
 	}
+
 }

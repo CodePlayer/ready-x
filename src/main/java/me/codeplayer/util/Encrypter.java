@@ -1,6 +1,5 @@
 package me.codeplayer.util;
 
-import java.io.*;
 import java.security.*;
 
 /**
@@ -18,7 +17,7 @@ public abstract class Encrypter {
 	/**
 	 * 获取对应的摘要算法
 	 */
-	public static final MessageDigest getMessageDigest(String algorithm) {
+	public static MessageDigest getMessageDigest(String algorithm) {
 		try {
 			return MessageDigest.getInstance(algorithm);
 		} catch (NoSuchAlgorithmException e) {
@@ -30,7 +29,7 @@ public abstract class Encrypter {
 	 * 将指定的字符串通过MD5加密算法进行加密，并返回加密后32位的MD5值<br>
 	 * 如果字符串为null，将引发空指针异常
 	 */
-	public static final String md5(String input) {
+	public static String md5(String input) {
 		return encode(input, "MD5");
 	}
 
@@ -39,13 +38,8 @@ public abstract class Encrypter {
 	 * 为了保持一致，内部统一使用UTF-8编码获取字符串的字节数组<br>
 	 * 如果字符串为null，将引发空指针异常
 	 */
-	public static final String md5For16(String input) {
-		byte[] bytes;
-		try {
-			bytes = encode(input.getBytes("UTF-8"), "MD5");
-		} catch (UnsupportedEncodingException e) {
-			throw new IllegalArgumentException(e);
-		}
+	public static String md5For16(String input) {
+		byte[] bytes = encode(input.getBytes(Charsets.UTF_8), "MD5");
 		return bytes2Hex(bytes, 4, 12);
 	}
 
@@ -53,7 +47,7 @@ public abstract class Encrypter {
 	 * 将指定的字节数组通过MD5加密算法进行加密，并返回加密后的32位MD5值<br>
 	 * 如果数组为null，则引发空指针异常
 	 */
-	public static final byte[] md5(final byte[] buf) {
+	public static byte[] md5(final byte[] buf) {
 		return encode(buf, "MD5");
 	}
 
@@ -62,7 +56,7 @@ public abstract class Encrypter {
 	 * 为了保持一致，内部统一使用UTF-8编码获取字符串的字节数组<br>
 	 * 如果字符串为null，将引发空指针异常
 	 */
-	public static final String sha1(String input) {
+	public static String sha1(String input) {
 		return encode(input, "SHA");
 	}
 
@@ -70,7 +64,7 @@ public abstract class Encrypter {
 	 * 将指定的字节数组通过SHA-1加密算法进行加密，并返回加密后的字节数组<br>
 	 * 如果数组为null，则引发空指针异常
 	 */
-	public static final byte[] sha1(final byte[] buf) {
+	public static byte[] sha1(final byte[] buf) {
 		return encode(buf, "SHA");
 	}
 
@@ -81,7 +75,7 @@ public abstract class Encrypter {
 	 * @param key 指定的密钥字符串
 	 * @param input 需要加密的字符串
 	 */
-	public static final String desEncode(String key, String input) {
+	public static String desEncode(String key, String input) {
 		DES des = new DES(key);
 		return des.encode(input);
 	}
@@ -93,7 +87,7 @@ public abstract class Encrypter {
 	 * @param key 指定的密钥字符串
 	 * @param dest 需要加密的字符串
 	 */
-	public static final String desDecode(String key, String dest) {
+	public static String desDecode(String key, String dest) {
 		DES des = new DES(key);
 		return des.decode(dest);
 	}
@@ -105,7 +99,7 @@ public abstract class Encrypter {
 	 * @param key 指定的密钥字符串
 	 * @param input 需要加密的字节数组
 	 */
-	public static final byte[] desEncode(String key, final byte[] input) {
+	public static byte[] desEncode(String key, final byte[] input) {
 		DES des = new DES(key);
 		return des.encode(input);
 	}
@@ -117,7 +111,7 @@ public abstract class Encrypter {
 	 * @param key 指定的密钥字符串
 	 * @param dest 需要解密的字节数组
 	 */
-	public static final byte[] desDecode(String key, final byte[] dest) {
+	public static byte[] desDecode(String key, final byte[] dest) {
 		DES des = new DES(key);
 		return des.decode(dest);
 	}
@@ -129,7 +123,7 @@ public abstract class Encrypter {
 	 * @param buf 指定的字节数组
 	 * @param algorithm 算法名称
 	 */
-	public static final byte[] encode(final byte[] buf, String algorithm) {
+	public static byte[] encode(final byte[] buf, String algorithm) {
 		return getMessageDigest(algorithm).digest(buf);
 	}
 
@@ -140,19 +134,15 @@ public abstract class Encrypter {
 	 * @param input 指定的字符串
 	 * @param algorithm 算法名称，如“MD5”、“SHA”、“SHA-256”、“SHA-384”、“SHA-512”。
 	 */
-	public static final String encode(String input, String algorithm) {
-		try {
-			return bytes2Hex(getMessageDigest(algorithm).digest(input.getBytes("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			throw new IllegalArgumentException(e);
-		}
+	public static String encode(String input, String algorithm) {
+		return bytes2Hex(getMessageDigest(algorithm).digest(input.getBytes(Charsets.UTF_8)));
 	}
 
 	/**
 	 * 将指定字节数组转为十六进制形式的字符串<br>
 	 * 数组不能为null，否则引发空指针异常
 	 */
-	public static final String bytes2Hex(final byte[] bytes) {
+	public static String bytes2Hex(final byte[] bytes) {
 		return bytes2Hex(bytes, 0, bytes.length);
 	}
 
@@ -164,7 +154,7 @@ public abstract class Encrypter {
 	 * @param start 开始转换的索引
 	 * @param end 结束转换的索引
 	 */
-	public static final String bytes2Hex(final byte[] bytes, final int start, final int end) {
+	public static String bytes2Hex(final byte[] bytes, final int start, final int end) {
 		final int length = end - start;
 		if (start < 0 || end > bytes.length || length < 0) {
 			// 如果结尾索引或截取长度大于数组长度
@@ -178,4 +168,5 @@ public abstract class Encrypter {
 		}
 		return new String(chars);
 	}
+
 }
