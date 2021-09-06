@@ -486,7 +486,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 10=2012-01-02(年-月-日)<br>
 	 * 19=2012-01-02 13:22:56(年-月-日 时:分:秒)
 	 */
-	public static EasyDate smartParse(String date) {
+	public static Date smartParseDate(String date) {
 		if (date == null) {
 			throw new NullPointerException();
 		}
@@ -508,7 +508,19 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 		default:
 			throw new IllegalArgumentException("Unable to parse the date string because of unexpected format:" + date);
 		}
-		return parse(format, date);
+		return parseDate(format, date);
+	}
+
+	/**
+	 * 根据日期字符串的长度智能转换为对应的日期实例对象<br>
+	 * 长度和格式对应如下(找不到对应格式将报错)：<br>
+	 * 6=201206(年月)<br>
+	 * 8=20120126(年月日)<br>
+	 * 10=2012-01-02(年-月-日)<br>
+	 * 19=2012-01-02 13:22:56(年-月-日 时:分:秒)
+	 */
+	public static EasyDate smartParse(String date) {
+		return new EasyDate(smartParseDate(date));
 	}
 
 	/**
@@ -544,7 +556,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 */
 	public static EasyDate parse(DateFormat format, String date) {
 		try {
-			return new EasyDate(format.parse(date).getTime());
+			return new EasyDate(format.parse(date));
 		} catch (ParseException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -556,7 +568,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * @param format 指定的格式字符串，例如“yyyy-MM-dd”，内部将使用 {@link FastDateFormat} 进行转换
 	 * @param dateStr 日期字符串
 	 */
-	public static EasyDate parse(String format, String dateStr) {
+	public static Date parseDate(String format, String dateStr) {
 		FastDateFormat formatter = FastDateFormat.getInstance(format);
 		final Date date;
 		try {
@@ -564,7 +576,17 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 		} catch (ParseException e) {
 			throw new IllegalArgumentException(e);
 		}
-		return new EasyDate(date);
+		return date;
+	}
+
+	/**
+	 * 将指定格式的字符串转为对应的日期实例对象
+	 *
+	 * @param format 指定的格式字符串，例如“yyyy-MM-dd”，内部将使用 {@link FastDateFormat} 进行转换
+	 * @param dateStr 日期字符串
+	 */
+	public static EasyDate parse(String format, String dateStr) {
+		return new EasyDate(parseDate(format, dateStr));
 	}
 
 	/**
