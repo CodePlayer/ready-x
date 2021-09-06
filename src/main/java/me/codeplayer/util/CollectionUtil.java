@@ -254,7 +254,15 @@ public abstract class CollectionUtil {
 	 * @since 3.0.0
 	 */
 	public static <T> T getAny(final Collection<T> range) {
-		return findFirst(range, null);
+		if (range != null && !range.isEmpty()) {
+			if (range instanceof List) {
+				return ((List<T>) range).get(0);
+			}
+			for (T t : range) {
+				return t;
+			}
+		}
+		return null;
 	}
 
 	/**
