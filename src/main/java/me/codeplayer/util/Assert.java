@@ -4,6 +4,8 @@ import java.util.function.*;
 
 import javax.annotation.*;
 
+import static me.codeplayer.util.StringUtil.*;
+
 /**
  * 项目中的通用断言类，用于处理异常，如果断言失败将会抛出异常<br>
  * 断言方法均以is开头，相反的方法均以not开头<br>
@@ -20,7 +22,7 @@ public abstract class Assert {
 	 *
 	 * @param expression boolean表达式
 	 */
-	public static final void isTrue(final boolean expression) {
+	public static void isTrue(final boolean expression) {
 		if (!expression) {
 			throw new IllegalArgumentException();
 		}
@@ -31,11 +33,11 @@ public abstract class Assert {
 	 * 如果断言失败则抛出异常
 	 *
 	 * @param expression boolean表达式
-	 * @param errorMsg   异常消息内容
+	 * @param errorMsg 异常消息内容
 	 */
-	public static final void isTrue(final boolean expression, final @Nullable CharSequence errorMsg) {
+	public static void isTrue(final boolean expression, final @Nullable CharSequence errorMsg) {
 		if (!expression) {
-			throw new IllegalArgumentException(X.map(errorMsg, CharSequence::toString));
+			throw new IllegalArgumentException(nullSafeGet(errorMsg));
 		}
 	}
 
@@ -44,14 +46,49 @@ public abstract class Assert {
 	 * 如果断言失败则抛出异常
 	 *
 	 * @param expression boolean表达式
-	 * @param msger      异常消息内容
+	 * @param msger 异常消息内容
 	 */
-	public static final void isTrue(final boolean expression, final @Nullable Supplier<CharSequence> msger) {
+	public static void isTrue(final boolean expression, final @Nullable Supplier<? extends CharSequence> msger) {
 		if (!expression) {
-			if (msger != null) {
-				throw new IllegalArgumentException(X.map(msger.get(), CharSequence::toString));
-			}
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException(nullSafeGet(msger));
+		}
+	}
+
+	/**
+	 * 断言布尔表达式结果为true<br>
+	 * 如果断言失败则抛出异常
+	 *
+	 * @param expression boolean表达式
+	 */
+	public static void state(final boolean expression) {
+		if (!expression) {
+			throw new IllegalStateException();
+		}
+	}
+
+	/**
+	 * 断言布尔表达式结果为true<br>
+	 * 如果断言失败则抛出异常
+	 *
+	 * @param expression boolean表达式
+	 * @param errorMsg 异常消息内容
+	 */
+	public static void state(final boolean expression, final @Nullable CharSequence errorMsg) {
+		if (!expression) {
+			throw new IllegalStateException(nullSafeGet(errorMsg));
+		}
+	}
+
+	/**
+	 * 断言布尔表达式结果为true<br>
+	 * 如果断言失败则抛出异常
+	 *
+	 * @param expression boolean表达式
+	 * @param msger 异常消息内容
+	 */
+	public static void state(final boolean expression, final @Nullable Supplier<? extends CharSequence> msger) {
+		if (!expression) {
+			throw new IllegalStateException(nullSafeGet(msger));
 		}
 	}
 
@@ -60,9 +97,9 @@ public abstract class Assert {
 	 * 如果断言失败则抛出异常
 	 *
 	 * @param expression boolean表达式
-	 * @param errorMsg   异常消息内容
+	 * @param errorMsg 异常消息内容
 	 */
-	public static final void notTrue(final boolean expression, final @Nullable CharSequence errorMsg) {
+	public static void notTrue(final boolean expression, final @Nullable CharSequence errorMsg) {
 		isTrue(!expression, errorMsg);
 	}
 
@@ -71,9 +108,9 @@ public abstract class Assert {
 	 * 如果断言失败则抛出异常
 	 *
 	 * @param expression boolean表达式
-	 * @param msger      异常消息内容
+	 * @param msger 异常消息内容
 	 */
-	public static final void notTrue(boolean expression, final @Nullable Supplier<CharSequence> msger) {
+	public static void notTrue(boolean expression, final @Nullable Supplier<? extends CharSequence> msger) {
 		isTrue(!expression, msger);
 	}
 
@@ -83,7 +120,7 @@ public abstract class Assert {
 	 *
 	 * @param object 指定对象
 	 */
-	public static final void isNull(Object object) {
+	public static void isNull(Object object) {
 		isTrue(object == null);
 	}
 
@@ -91,10 +128,10 @@ public abstract class Assert {
 	 * 断言指定对象为null<br>
 	 * 如果断言失败则抛出异常
 	 *
-	 * @param object   指定对象
+	 * @param object 指定对象
 	 * @param errorMsg 异常消息内容
 	 */
-	public static final void isNull(Object object, @Nullable CharSequence errorMsg) {
+	public static void isNull(@Nullable Object object, @Nullable CharSequence errorMsg) {
 		isTrue(object == null, errorMsg);
 	}
 
@@ -104,7 +141,8 @@ public abstract class Assert {
 	 *
 	 * @param object 指定对象
 	 */
-	public static final <T> T notNull(T object) {
+	@Nonnull
+	public static <T> T notNull(@Nullable T object) throws NullPointerException {
 		if (object == null) {
 			throw new NullPointerException();
 		}
@@ -115,12 +153,13 @@ public abstract class Assert {
 	 * 断言指定对象不为null<br>
 	 * 如果断言失败则抛出异常
 	 *
-	 * @param obj      指定对象
+	 * @param obj 指定对象
 	 * @param errorMsg 异常消息内容
 	 */
-	public static final <T> T notNull(final T obj, final @Nullable CharSequence errorMsg) {
+	@Nonnull
+	public static <T> T notNull(final @Nullable T obj, final @Nullable CharSequence errorMsg) throws NullPointerException {
 		if (obj == null) {
-			throw new NullPointerException(X.map(errorMsg, CharSequence::toString));
+			throw new NullPointerException(nullSafeGet(errorMsg));
 		}
 		return obj;
 	}
@@ -129,15 +168,13 @@ public abstract class Assert {
 	 * 断言指定对象不为null<br>
 	 * 如果断言失败则抛出异常
 	 *
-	 * @param obj   指定对象
+	 * @param obj 指定对象
 	 * @param msger 异常消息内容
 	 */
-	public static final <T> T notNull(final T obj, final @Nullable Supplier<CharSequence> msger) {
+	@Nonnull
+	public static <T> T notNull(final @Nullable T obj, final @Nullable Supplier<? extends CharSequence> msger) throws NullPointerException {
 		if (obj == null) {
-			if (msger != null) {
-				throw new NullPointerException(X.map(msger.get(), CharSequence::toString));
-			}
-			throw new NullPointerException();
+			throw new NullPointerException(nullSafeGet(msger));
 		}
 		return obj;
 	}
@@ -146,10 +183,10 @@ public abstract class Assert {
 	 * 断言指定对象的字符串形式为空(若为null、空字符串均属断言成功)<br>
 	 * 如果断言失败则抛出异常
 	 *
-	 * @param str      指定字符串
+	 * @param str 指定字符串
 	 * @param errorMsg 异常消息内容
 	 */
-	public static final <T> T isEmpty(final T str, final @Nullable CharSequence errorMsg) {
+	public static <T> T isEmpty(final @Nullable T str, final @Nullable CharSequence errorMsg) {
 		isTrue(StringUtil.isEmpty(str), errorMsg);
 		return str;
 	}
@@ -160,7 +197,7 @@ public abstract class Assert {
 	 *
 	 * @param str 指定字符串
 	 */
-	public static final <T> T isEmpty(T str) {
+	public static <T> T isEmpty(T str) {
 		isTrue(StringUtil.isEmpty(str));
 		return str;
 	}
@@ -171,7 +208,8 @@ public abstract class Assert {
 	 *
 	 * @param str 指定字符串
 	 */
-	public static final <T> T notEmpty(T str) {
+	@Nonnull
+	public static <T> T notEmpty(@Nullable T str) {
 		isTrue(StringUtil.notEmpty(str));
 		return str;
 	}
@@ -180,11 +218,11 @@ public abstract class Assert {
 	 * 断言指定字符串不为空(若为null、空字符串均属断言失败)<br>
 	 * 如果断言失败则抛出异常
 	 *
-	 * @param str      指定字符串
+	 * @param str 指定字符串
 	 * @param errorMsg 异常消息内容
 	 * @see StringUtil#notEmpty(Object)
 	 */
-	public static final void notEmpty(Object str, final @Nullable CharSequence errorMsg) {
+	public static void notEmpty(@Nullable Object str, final @Nullable CharSequence errorMsg) {
 		isTrue(StringUtil.notEmpty(str), errorMsg);
 	}
 
@@ -192,11 +230,11 @@ public abstract class Assert {
 	 * 断言指定字符串不为空(若为null、空字符串均属断言失败)<br>
 	 * 如果断言失败则抛出异常
 	 *
-	 * @param str      指定字符串
+	 * @param str 指定字符串
 	 * @param errorMsg 异常消息内容
 	 * @see StringUtil#notEmpty(Object)
 	 */
-	public static final void notEmpty(Object str, final @Nullable Supplier<CharSequence> errorMsg) {
+	public static void notEmpty(@Nullable Object str, final @Nullable Supplier<? extends CharSequence> errorMsg) {
 		isTrue(StringUtil.notEmpty(str), errorMsg);
 	}
 
@@ -206,11 +244,11 @@ public abstract class Assert {
 	 * 1.字符串对象 == null或者去空格后==空字符串<br>
 	 * 2.其他对象==null
 	 *
-	 * @param obj      指定对象
+	 * @param obj 指定对象
 	 * @param errorMsg 异常消息内容
 	 * @see StringUtil#isBlank(Object)
 	 */
-	public static final <T> T isBlank(T obj, String errorMsg) {
+	public static <T> T isBlank(T obj, String errorMsg) {
 		isTrue(StringUtil.isBlank(obj), errorMsg);
 		return obj;
 	}
@@ -224,7 +262,8 @@ public abstract class Assert {
 	 * @param obj 指定对象
 	 * @see StringUtil#notBlank(Object)
 	 */
-	public static final <T> T notBlank(T obj) {
+	@Nonnull
+	public static <T> T notBlank(@Nullable T obj) {
 		isTrue(StringUtil.notBlank(obj));
 		return obj;
 	}
@@ -235,11 +274,12 @@ public abstract class Assert {
 	 * 1.字符串对象 == null或者去空格后==空字符串<br>
 	 * 2.其他对象==null
 	 *
-	 * @param obj      指定对象
+	 * @param obj 指定对象
 	 * @param errorMsg 异常消息内容
 	 * @see StringUtil#notBlank(Object)
 	 */
-	public static final <T> T notBlank(T obj, String errorMsg) {
+	@Nonnull
+	public static <T> T notBlank(@Nullable T obj, @Nullable CharSequence errorMsg) {
 		isTrue(StringUtil.notBlank(obj), errorMsg);
 		return obj;
 	}
@@ -247,44 +287,45 @@ public abstract class Assert {
 	/**
 	 * 断言两个对象相等(equals)，如果断言失败则抛出异常<br>
 	 *
-	 * @param obj      指定的对象
-	 * @param another  另一个对象
+	 * @param obj 指定的对象
+	 * @param another 另一个对象
 	 * @param errorMsg 异常消息内容
 	 */
-	public static final void equals(Object obj, Object another, String errorMsg) {
+	public static void equals(@Nullable Object obj, @Nullable Object another, @Nullable CharSequence errorMsg) {
 		isTrue(obj == another || obj != null && obj.equals(another), errorMsg);
 	}
 
 	/**
 	 * 断言两个对象不相等(equals)，如果断言失败则抛出异常<br>
 	 *
-	 * @param obj      指定的对象
-	 * @param another  另一个对象
+	 * @param obj 指定的对象
+	 * @param another 另一个对象
 	 * @param errorMsg 异常消息内容
 	 */
-	public static final void notEquals(Object obj, Object another, String errorMsg) {
+	public static void notEquals(@Nullable Object obj, @Nullable Object another, @Nullable CharSequence errorMsg) {
 		notTrue(obj == another || obj != null && obj.equals(another), errorMsg);
 	}
 
 	/**
 	 * 断言两个对象相等(==)，如果断言失败则抛出异常<br>
 	 *
-	 * @param obj      指定的对象
-	 * @param another  另一个对象
+	 * @param obj 指定的对象
+	 * @param another 另一个对象
 	 * @param errorMsg 异常消息内容
 	 */
-	public static final void isSame(Object obj, Object another, String errorMsg) {
+	public static void isSame(Object obj, Object another, CharSequence errorMsg) {
 		isTrue(obj == another, errorMsg);
 	}
 
 	/**
 	 * 断言两个对象不相等(==)，如果断言失败则抛出异常<br>
 	 *
-	 * @param obj      指定的对象
-	 * @param another  另一个对象
+	 * @param obj 指定的对象
+	 * @param another 另一个对象
 	 * @param errorMsg 异常消息内容
 	 */
-	public static final void notSame(Object obj, Object another, String errorMsg) {
+	public static void notSame(Object obj, Object another, CharSequence errorMsg) {
 		notTrue(obj == another, errorMsg);
 	}
+
 }
