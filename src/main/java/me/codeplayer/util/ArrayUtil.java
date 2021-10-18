@@ -6,6 +6,8 @@ import java.util.function.*;
 
 import javax.annotation.*;
 
+import org.apache.commons.lang3.*;
+
 /**
  * 用于对数组类型的数据(字节数组参见NumberUtil类)进行相应处理的工具类
  *
@@ -58,9 +60,32 @@ public abstract class ArrayUtil {
 		if (length == 0) {
 			return sb;
 		}
-		sb.append(Array.get(array, 0));
-		for (int i = 1; i < length; i++) {
-			sb.append(delimiter).append(Array.get(array, i));
+		// 如果是 int、long 及其包装类型时，需调用特定的 append 方法，避免循环装箱及调用 String.valueOf 的开销
+		Class<?> type = array.getClass().getComponentType();
+		boolean appendSep = false;
+		for (int i = 0; i < length; i++) {
+			if (appendSep) {
+				sb.append(delimiter);
+			} else {
+				appendSep = true;
+			}
+			if (type == int.class) {
+				sb.append(Array.getInt(array, i));
+			} else if (type == long.class) {
+				sb.append(Array.getLong(array, i));
+			} else {
+				Object val = Array.get(array, i);
+				if (val != null) {
+					if (type == Integer.class) {
+						sb.append(((Integer) val).intValue());
+						continue;
+					} else if (type == Long.class) {
+						sb.append(((Long) val).longValue());
+						continue;
+					}
+				}
+				sb.append(val);
+			}
 		}
 		return sb;
 	}
