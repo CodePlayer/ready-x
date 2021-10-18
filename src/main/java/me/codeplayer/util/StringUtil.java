@@ -27,17 +27,18 @@ public abstract class StringUtil {
 	 * 获取指定字符串的Unicode编码，例如：“中国”将返回“\u4E2D\u56FD”<br>
 	 * 此方法返回的编码中，字母均采用大写形式，此外，本方法采用 {@link StringBuilder} 作为字符容器
 	 *
-	 * @param src 指定字符串不能为 null，否则将引发空指针异常
+	 * @param source 指定字符串不能为 null，否则将引发空指针异常
 	 * @since 0.0.1
 	 */
-	public static String unicode(String src) {
-		byte[] bytes = src.getBytes(Charsets.UTF_16);// 转为UTF-16字节数组
+	public static String unicode(String source) {
+		byte[] bytes = source.getBytes(Charsets.UTF_16);// 转为UTF-16字节数组
 		int length = bytes.length;
 		if (length > 2) {// 由于转换出来的字节数组前两位属于UNICODE固定标记，因此要过滤掉
 			int i = 2;
 			StringBuilder sb = new StringBuilder((length - i) * 3);
 			boolean isOdd = false;
 			for (; i < length; i++) {
+				//noinspection AssignmentUsedAsCondition
 				if (isOdd = !isOdd) {
 					sb.append("\\u");
 				}
@@ -45,20 +46,19 @@ public abstract class StringUtil {
 				sb.append(digits[bytes[i] & 0xf]);
 			}
 			return sb.toString();
-		} else {
-			return "";
 		}
+		return source;
 	}
 
 	/**
 	 * 获取指定字符串的Unicode编码，例如："中国"将返回"\u4E2D\u56FD"<br>
 	 * 此方法返回的编码中，字母均采用大写形式，此外，由于编码的长度是已知的，本方法采用char数组作为字符容器，省略了StringBuilder追加时的长度判断以及封装损耗，性能更加优异
 	 *
-	 * @param str 指定字符串不能为null，否则将引发空指针异常
+	 * @param source 指定字符串不能为null，否则将引发空指针异常
 	 * @since 0.0.1
 	 */
-	public static String fastUnicode(String str) {
-		byte[] bytes = str.getBytes(Charsets.UTF_16); // 转为UTF-16字节数组
+	public static String fastUnicode(String source) {
+		byte[] bytes = source.getBytes(Charsets.UTF_16); // 转为UTF-16字节数组
 		int length = bytes.length;
 		if (length > 2) {
 			int i = 2;
@@ -66,6 +66,7 @@ public abstract class StringUtil {
 			int index = 0;
 			boolean isOdd = false;
 			for (; i < length; i++) {
+				//noinspection AssignmentUsedAsCondition
 				if (isOdd = !isOdd) {
 					chars[index++] = '\\';
 					chars[index++] = 'u';
@@ -74,9 +75,8 @@ public abstract class StringUtil {
 				chars[index++] = digits[bytes[i] & 0xf];
 			}
 			return new String(chars);
-		} else {
-			return "";
 		}
+		return "";
 	}
 
 	/**
@@ -102,48 +102,48 @@ public abstract class StringUtil {
 	 * @return 对应的字符长度，如果 {@code cs} 为 {@code null}，则返回 0
 	 * @since 0.4.2
 	 */
-	public static int length(final CharSequence cs) {
+	public static int length(@Nullable CharSequence cs) {
 		return cs == null ? 0 : cs.length();
 	}
 
 	/**
 	 * 根据将要追加的多个字符序列获得适当初始容量的 {@code StringBuilder}
 	 *
-	 * @param extra 除指定的字符序列外应额外预留的字符容量
+	 * @param extraCapacity 除指定的字符序列外应额外预留的字符容量
 	 * @since 0.4.2
 	 */
-	public static StringBuilder getBuilder(final int extra, final CharSequence s1, final CharSequence s2, final CharSequence s3, final CharSequence s4) {
-		return new StringBuilder(extra + length(s1) + length(s2) + length(s3) + length(s4));
+	public static StringBuilder getBuilder(final int extraCapacity, @Nullable CharSequence s1, @Nullable CharSequence s2, @Nullable CharSequence s3, @Nullable CharSequence s4) {
+		return new StringBuilder(extraCapacity + length(s1) + length(s2) + length(s3) + length(s4));
 	}
 
 	/**
 	 * 根据将要追加的多个字符序列获得适当初始容量的 {@code StringBuilder}
 	 *
-	 * @param extra 除指定的字符序列外应额外预留的字符容量
+	 * @param extraCapacity 除指定的字符序列外应额外预留的字符容量
 	 * @since 0.4.2
 	 */
-	public static StringBuilder getBuilder(final int extra, final CharSequence s1, final CharSequence s2, final CharSequence s3) {
-		return new StringBuilder(extra + length(s1) + length(s2) + length(s3));
+	public static StringBuilder getBuilder(final int extraCapacity, @Nullable CharSequence s1, @Nullable CharSequence s2, @Nullable CharSequence s3) {
+		return new StringBuilder(extraCapacity + length(s1) + length(s2) + length(s3));
 	}
 
 	/**
 	 * 根据将要追加的多个字符序列获得适当初始容量的 {@code StringBuilder}
 	 *
-	 * @param extra 除指定的字符序列外应额外预留的字符容量
+	 * @param extraCapacity 除指定的字符序列外应额外预留的字符容量
 	 * @since 0.4.2
 	 */
-	public static StringBuilder getBuilder(final int extra, final CharSequence s1, final CharSequence s2) {
-		return new StringBuilder(extra + length(s1) + length(s2));
+	public static StringBuilder getBuilder(final int extraCapacity, @Nullable CharSequence s1, @Nullable CharSequence s2) {
+		return new StringBuilder(extraCapacity + length(s1) + length(s2));
 	}
 
 	/**
 	 * 根据将要追加的多个字符序列获得适当初始容量的 {@code StringBuilder}
 	 *
-	 * @param extra 除指定的字符序列外应额外预留的字符容量
+	 * @param extraCapacity 除指定的字符序列外应额外预留的字符容量
 	 * @since 0.4.2
 	 */
-	public static StringBuilder getBuilder(final int extra, final CharSequence s1) {
-		return new StringBuilder(extra + length(s1));
+	public static StringBuilder getBuilder(final int extraCapacity, @Nullable CharSequence s1) {
+		return new StringBuilder(extraCapacity + length(s1));
 	}
 
 	/**
@@ -157,6 +157,8 @@ public abstract class StringUtil {
 			return b;
 		if (b == null)
 			return a;
+		if (a.isEmpty())
+			return b;
 		return a.concat(b);
 	}
 
@@ -182,13 +184,13 @@ public abstract class StringUtil {
 	 *
 	 * @since 3.0.0
 	 */
-	public static StringBuilder append(@Nullable StringBuilder sb, String... strs) {
+	public static StringBuilder append(@Nullable StringBuilder sb, String... parts) {
 		int size = 0;
-		for (String str : strs) {
+		for (String str : parts) {
 			size += length(str);
 		}
 		sb = initBuilder(sb, size);
-		for (String str : strs) {
+		for (String str : parts) {
 			if (str != null) {
 				sb.append(str);
 			}
@@ -201,8 +203,8 @@ public abstract class StringUtil {
 	 *
 	 * @since 3.0.0
 	 */
-	public static String concats(String... strs) {
-		return append(null, strs).toString();
+	public static String concats(String... parts) {
+		return append(null, parts).toString();
 	}
 
 	/**
@@ -228,7 +230,7 @@ public abstract class StringUtil {
 	 *
 	 * @since 0.0.1
 	 */
-	public static boolean isEmpty(final CharSequence cs) {
+	public static boolean isEmpty(@Nullable CharSequence cs) {
 		return cs == null || cs.length() == 0; // 后面的表达式相当于"".equals(cs)，但比其性能稍好
 	}
 
@@ -239,7 +241,7 @@ public abstract class StringUtil {
 	 *
 	 * @since 0.0.1
 	 */
-	public static boolean notEmpty(final CharSequence cs) {
+	public static boolean notEmpty(@Nullable CharSequence cs) {
 		return cs != null && cs.length() > 0;
 	}
 
@@ -249,7 +251,7 @@ public abstract class StringUtil {
 	 *
 	 * @since 1.0.2
 	 */
-	public static boolean isAnyNotEmpty(final CharSequence... css) {
+	public static boolean isAnyNotEmpty(@Nullable CharSequence... css) {
 		if (css != null && css.length > 0) {
 			for (final CharSequence cs : css) {
 				if (notEmpty(cs)) {
@@ -268,7 +270,7 @@ public abstract class StringUtil {
 	 * @param obj 指定的对象
 	 * @since 0.0.1
 	 */
-	public static boolean isEmpty(Object obj) {
+	public static boolean isEmpty(@Nullable Object obj) {
 		return obj == null || obj.toString().length() == 0; // 后面的表达式相当于"".equals(str)，但比其性能稍好
 	}
 
@@ -280,7 +282,7 @@ public abstract class StringUtil {
 	 * @param obj 指定的对象
 	 * @since 0.0.1
 	 */
-	public static boolean notEmpty(Object obj) {
+	public static boolean notEmpty(@Nullable Object obj) {
 		return obj != null && obj.toString().length() > 0;
 	}
 
@@ -462,7 +464,7 @@ public abstract class StringUtil {
 	 * 如果指定字符串==null，则返回空字符串<br>
 	 * 如果字符串超出指定长度，则返回maxLength前面的部分，并在末尾加上后缀“...”
 	 *
-	 * @param str       指定的字符串
+	 * @param str 指定的字符串
 	 * @param maxLength 最大限制长度
 	 * @since 0.0.1
 	 */
@@ -539,8 +541,8 @@ public abstract class StringUtil {
 	 * 如果字符串=null，则返回空字符串""<br>
 	 * 如果字符串位数大于指定位数，则返回原字符串
 	 *
-	 * @param str       字符串
-	 * @param ch        指定的字符
+	 * @param str 字符串
+	 * @param ch 指定的字符
 	 * @param maxLength 指定位数，不能小于1
 	 * @since 0.0.1
 	 */
@@ -729,7 +731,7 @@ public abstract class StringUtil {
 	/**
 	 * 判断指定字符串是否以指定的单个字符结尾
 	 *
-	 * @param str      指定的字符串
+	 * @param str 指定的字符串
 	 * @param lastChar 指定的单个字符
 	 * @since 0.4.2
 	 */
@@ -740,9 +742,9 @@ public abstract class StringUtil {
 	/**
 	 * 使用转义字符转义字符串中指定的字符
 	 *
-	 * @param sb           用于字符拼接的 StringBuilder
-	 * @param str          需要转义的字符串
-	 * @param escapeChar   转义字符
+	 * @param sb 用于字符拼接的 StringBuilder
+	 * @param str 需要转义的字符串
+	 * @param escapeChar 转义字符
 	 * @param escapedChars 需要被转义的字符的数组
 	 */
 	public static StringBuilder escape(@Nullable StringBuilder sb, final String str, final char escapeChar, final char[] escapedChars) {
@@ -761,8 +763,8 @@ public abstract class StringUtil {
 	/**
 	 * 使用转义字符转义字符串中指定的字符
 	 *
-	 * @param str          需要转义的字符串
-	 * @param escapeChar   转义字符
+	 * @param str 需要转义的字符串
+	 * @param escapeChar 转义字符
 	 * @param escapedChars 需要被转义的字符的数组
 	 */
 	public static String escape(final String str, final char escapeChar, final char[] escapedChars) {
@@ -912,13 +914,13 @@ public abstract class StringUtil {
 	 *
 	 * @param container 待检测的字符串
 	 * @param search 指定的单词
-	 * @param seperatorChars 单词两侧必须是指定的字符之一或位于字符串 {@code container }的首/尾位置
+	 * @param separatorChars 单词两侧必须是指定的字符之一或位于字符串 {@code container }的首/尾位置
 	 * @param fastMode 是否启用快速模式。快速模式：如果在 {@code container} 中第一次检索到该单词，就直接在此处进行周边字符的匹配测试，并返回测试结果。 <br>
 	 * 哪怕后面还会再次出现该单词，也不再继续向后检查。请参考重载方法 {@link #containsWord(String, String, String)} 方法上的注释
 	 * @author Ready
 	 * @since 2.0.0
 	 */
-	public static boolean containsWord(final String container, final String search, final String seperatorChars, final boolean fastMode) {
+	public static boolean containsWord(final String container, final String search, final String separatorChars, final boolean fastMode) {
 		if (container == null || search == null)
 			return false;
 		final int cLength = container.length(), sLength = search.length();
@@ -930,8 +932,8 @@ public abstract class StringUtil {
 			// 需要考虑 containsWord("12123,123", "123", ",") 这种特殊情况
 			while ((startIndex = container.indexOf(search, fromIndex)) != -1) {
 				fromIndex = startIndex + sLength; // as endIndex
-				if ((startIndex == 0 || seperatorChars.indexOf(container.charAt(startIndex - 1)) != -1)
-						&& (fromIndex == cLength || seperatorChars.indexOf(container.charAt(fromIndex)) != -1)) {
+				if ((startIndex == 0 || separatorChars.indexOf(container.charAt(startIndex - 1)) != -1)
+						&& (fromIndex == cLength || separatorChars.indexOf(container.charAt(fromIndex)) != -1)) {
 					return true;
 				}
 				if (fastMode || fromIndex + sLength > cLength) {
@@ -946,14 +948,14 @@ public abstract class StringUtil {
 	 * 检测指定字符串中是否存在指定的单词<br>
 	 * 该方法采用快速模式，对于类似 {@code containsWord("abc123,123", "123", ",") } 等特殊情况无法保证100%可靠；如果想要保证可靠性，建议使用 {@link #containsWord(String, String, String, boolean) }
 	 *
-	 * @param container      待检测的字符串
-	 * @param searchedWord   指定的单词
-	 * @param seperatorChars 单词两侧必须是指定的字符之一或位于字符串 {@code container }的首/尾位置
+	 * @param container 待检测的字符串
+	 * @param searchedWord 指定的单词
+	 * @param separatorChars 单词两侧必须是指定的字符之一或位于字符串 {@code container }的首/尾位置
 	 * @see #containsWord(String, String, String, boolean)
 	 * @since 0.4.2
 	 */
-	public static boolean containsWord(final String container, final String searchedWord, final String seperatorChars) {
-		return containsWord(container, searchedWord, seperatorChars, false);
+	public static boolean containsWord(final String container, final String searchedWord, final String separatorChars) {
+		return containsWord(container, searchedWord, separatorChars, false);
 	}
 
 	/**
@@ -990,24 +992,105 @@ public abstract class StringUtil {
 	}
 
 	/**
+	 * 将集合的指定属性或输出拼接为字符串
+	 *
+	 * @param delimiter 分隔符
+	 */
+	public static <E> StringBuilder joinAppend(@Nonnull StringBuilder sb, Collection<E> items, BiConsumer<StringBuilder, E> itemAppender, String delimiter) {
+		if (X.isValid(items)) {
+			final int size = items.size();
+			sb.ensureCapacity(sb.length() + size * (6 + delimiter.length()) + 4);
+			boolean appendSep = false;
+			for (E e : items) {
+				if (appendSep) {
+					sb.append(delimiter);
+				} else {
+					appendSep = true;
+				}
+				itemAppender.accept(sb, e);
+			}
+		}
+		return sb;
+	}
+
+	/**
+	 * 将集合的指定属性或输出拼接为字符串
+	 *
+	 * @param delimiter 分隔符
+	 */
+	public static <E> String join(Collection<E> items, BiConsumer<StringBuilder, E> itemAppender, String delimiter) {
+		if (X.isValid(items)) {
+			final int size = items.size();
+			final StringBuilder sb = new StringBuilder(size * (6 + delimiter.length()) + 4);
+			boolean appendSep = false;
+			for (E e : items) {
+				if (appendSep) {
+					sb.append(delimiter);
+				} else {
+					appendSep = true;
+				}
+				itemAppender.accept(sb, e);
+			}
+			return sb.toString();
+		}
+		return "";
+	}
+
+	/**
+	 * 将集合的指定属性或输出拼接为字符串
+	 *
+	 * @param delimiter 分隔符
+	 */
+	public static <E> String join(Collection<E> c, Function<? super E, Object> getter, String delimiter) {
+		return join(c, (sb, t) -> sb.append(getter.apply(t)), delimiter);
+	}
+
+	/**
+	 * 将集合的指定整数（Long 或 Integer）属性或输出拼接为字符串
+	 *
+	 * @param delimiter 分隔符
+	 */
+	public static <T> String joinNumber(Collection<T> c, Function<? super T, Number> mapper, String delimiter) {
+		return join(c, (sb, t) -> sb.append(mapper.apply(t).longValue()), delimiter);
+	}
+
+	/**
+	 * 将集合的指定整数（Long）属性或输出拼接为字符串
+	 *
+	 * @param delimiter 分隔符
+	 */
+	public static <T> String joinLong(Collection<T> c, ToLongFunction<? super T> mapper, String delimiter) {
+		return join(c, (sb, t) -> sb.append(mapper.applyAsLong(t)), delimiter);
+	}
+
+	/**
+	 * 将集合的指定整数（Integer）属性或输出拼接为字符串
+	 *
+	 * @param delimiter 分隔符
+	 */
+	public static <T> String joinInt(Collection<T> c, ToIntFunction<? super T> mapper, String delimiter) {
+		return join(c, (sb, t) -> sb.append(mapper.applyAsInt(t)), delimiter);
+	}
+
+	/**
 	 * 将以指定分隔字符分隔字符串，并将拆分后的每个片段文本使用指定的 {@code mapper} 进行转换，并返回转换后的元素集合
 	 *
 	 * @param str 需要被拆分的字符串
 	 * @param sep 分隔符
 	 * @param mapper 转换器
-	 * @param ignoreNull 是否忽略 null 值（如果为 true，则返回的集合中不会包含 null ）
+	 * @param filter 过滤器（如果应用到对应的元素返回 false，则返回的集合中不会包含该元素 ）
 	 */
-	public static <T> List<T> split(final String str, final String sep, final Function<? super String, T> mapper, final boolean ignoreNull) {
+	public static <T> List<T> split(final String str, final String sep, @Nullable Predicate<? super String> filter, final Function<? super String, T> mapper) {
 		if (StringUtil.notEmpty(str)) {
 			final List<T> list = new ArrayList<>();
 			int pos, start = 0;
 			// ",,"
 			while ((pos = str.indexOf(sep, start)) != -1) {
-				addPartToList(str, mapper, ignoreNull, list, start, pos);
+				addPartToList(str, mapper, filter, list, start, pos);
 				start = pos + 1;
 			}
 			if (start <= str.length()) {
-				addPartToList(str, mapper, ignoreNull, list, start, str.length());
+				addPartToList(str, mapper, filter, list, start, str.length());
 			}
 			return list;
 		}
@@ -1017,18 +1100,35 @@ public abstract class StringUtil {
 	/**
 	 * 将以指定分隔字符分隔字符串，并将拆分后的每个片段文本使用指定的 {@code mapper} 进行转换，并返回转换后的元素集合
 	 *
-	 * @param str 需要被拆分的字符串
+	 * @param toSplit 需要被拆分的字符串
+	 * @param sep 分隔符
+	 * @param mapper 转换器
+	 * @param ignoreEmpty 是否忽略空子字符串（如果为 true，则忽略空字符串 ）
+	 */
+	public static <T> List<T> split(final String toSplit, final String sep, final Function<? super String, T> mapper, final boolean ignoreEmpty) {
+		if (StringUtil.notEmpty(toSplit)) {
+			final Predicate<String> filter = ignoreEmpty ? StringUtil::notEmpty : null;
+			return split(toSplit, sep, filter, mapper);
+		}
+		return null;
+	}
+
+	/**
+	 * 将以指定分隔字符分隔字符串，并将拆分后的每个片段文本使用指定的 {@code mapper} 进行转换，并返回转换后的元素集合
+	 *
+	 * @param toSplit 需要被拆分的字符串
 	 * @param sep 分隔符
 	 * @param mapper 转换器
 	 */
-	public static <T> List<T> split(final String str, final String sep, final Function<String, T> mapper) {
-		return split(str, sep, mapper, false);
+	public static <T> List<T> split(final String toSplit, final String sep, final Function<String, T> mapper) {
+		return split(toSplit, sep, mapper, true);
 	}
 
-	private static <T> void addPartToList(String str, Function<? super String, T> mapper, final boolean ignoreNull, List<T> list, int start, int end) {
-		T part = start == end ? null : mapper.apply(str.substring(start, end));
-		if (part != null || !ignoreNull) {
-			list.add(part);
+	private static <T> void addPartToList(String str, Function<? super String, T> mapper, @Nullable Predicate<? super String> filter, List<T> toList, int start, int end) {
+		String substr = start == end ? "" : str.substring(start, end);
+		if (filter == null || filter.test(substr)) {
+			T part = mapper.apply(str.substring(start, end));
+			toList.add(part);
 		}
 	}
 
