@@ -20,7 +20,7 @@ public class Arith {
 	/** 表示数值 10(一十) 的BigDecimal */
 	public static final BigDecimal TEN = BigDecimal.TEN;
 	/** 表示数值 100(一百) 的BigDecimal */
-	public static final BigDecimal HANDRED = new BigDecimal(100);
+	public static final BigDecimal HUNDRED = new BigDecimal(100);
 	/** 表示数值 1000(一千) 的BigDecimal */
 	public static final BigDecimal THOUSAND = new BigDecimal(1000);
 	/** 表示数值 10 000(一万) 的BigDecimal */
@@ -719,7 +719,7 @@ public class Arith {
 	 * 输出大写中文形式的用于金额(人民币)显示的数值字符串，例如："135000000"->"壹亿叁千伍佰万元整"
 	 */
 	public String toMoneyUpperCase() {
-		return new ChineseNumber(value.setScale(2).toString(), FormatStyle.MONEY).toString();
+		return new ChineseNumber(value.setScale(2, RoundingMode.UNNECESSARY).toString(), FormatStyle.MONEY).toString();
 	}
 
 	/**
@@ -736,7 +736,7 @@ public class Arith {
 		case 10:
 			return BigDecimal.TEN;
 		case 100:
-			return Arith.HANDRED;
+			return Arith.HUNDRED;
 		case 1000:
 			return THOUSAND;
 		case 10000:
