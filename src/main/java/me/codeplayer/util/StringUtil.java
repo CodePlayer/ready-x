@@ -425,17 +425,6 @@ public abstract class StringUtil {
 	}
 
 	/**
-	 * 以String的形式返回对象值，如果对象为null或空格字符串，则返回"&amp;nbsp;"
-	 *
-	 * @param obj 指定的对象
-	 * @since 0.0.1
-	 */
-	public static String trim4Html(Object obj) {
-		String str;
-		return obj != null && (str = obj.toString().trim()).length() > 0 ? str : "&nbsp;";
-	}
-
-	/**
 	 * 如果指定字符串超过限制长度<code>maxLength</code>,则返回限制长度前面的部分字符串<br>
 	 * 如果指定字符串==null，则返回空字符串<br>
 	 * 如果字符串超出指定长度，则返回maxLength前面的部分，并在末尾加上后缀<code>suffix</code>
@@ -558,6 +547,39 @@ public abstract class StringUtil {
 	 */
 	public static String trim(String str) {
 		return str == null ? "" : str.trim();
+	}
+
+	/**
+	 * 以去除两边空格的String形式返回对象值，如果对象为null，则返回""
+	 *
+	 * @param str 指定的字符串
+	 * @since 3.7.0
+	 */
+	public static String trimAll(String str) {
+		if (isEmpty(str)) {
+			return "";
+		}
+		final int len = str.length();
+		char[] chars = null;
+		int count = 0;
+		for (int i = 0; i < len; i++) {
+			char ch = str.charAt(i);
+			if (Character.isWhitespace(ch)) {
+				if (chars == null) {
+					chars = new char[len - 1];
+					str.getChars(0, i, chars, 0);
+				}
+			} else if (chars != null) {
+				chars[count++] = ch;
+			}
+		}
+		if (count == len) {
+			return str;
+		}
+		if (count == 0) {
+			return "";
+		}
+		return new String(chars, 0, count);
 	}
 
 	/**
