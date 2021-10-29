@@ -550,10 +550,11 @@ public abstract class StringUtil {
 	}
 
 	/**
-	 * 以去除两边空格的String形式返回对象值，如果对象为null，则返回""
+	 * 去除字符串中所有的空白字符并返回处理后的字符串<br>
+	 * 如果为null则返回空字符串 ""
 	 *
 	 * @param str 指定的字符串
-	 * @since 3.7.0
+	 * @since 3.8.0
 	 */
 	public static String trimAll(String str) {
 		if (isEmpty(str)) {
