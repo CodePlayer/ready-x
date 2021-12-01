@@ -151,14 +151,11 @@ public abstract class StringUtil {
 	 *
 	 * @since 3.0.0
 	 */
-	@Nullable
 	public static String concat(@Nullable String a, @Nullable String b) {
-		if (a == null)
-			return b;
-		if (b == null)
+		if (a == null || a.isEmpty())
+			return b == null ? "" : b;
+		if (b == null || b.isEmpty())
 			return a;
-		if (a.isEmpty())
-			return b;
 		return a.concat(b);
 	}
 
@@ -168,15 +165,16 @@ public abstract class StringUtil {
 	 * @since 3.0.0
 	 */
 	public static String concat(@Nullable String a, @Nullable String b, @Nullable String c) {
-		final int aSize = length(a), bSize = length(b), cSize = length(c);
-		final StringBuilder sb = new StringBuilder(aSize + bSize + cSize);
-		if (aSize > 0)
-			sb.append(a);
-		if (bSize > 0)
-			sb.append(b);
-		if (cSize > 0)
-			sb.append(c);
-		return sb.toString();
+		int aSize = length(a), bSize, cSize;
+		if (aSize == 0) {
+			return concat(b, c);
+		} else if ((bSize = length(b)) == 0) {
+			return concat(a, c);
+		} else if ((cSize = length(c)) == 0) {
+			return concat(a, b);
+		}
+		//noinspection StringBufferReplaceableByString
+		return new StringBuilder(aSize + bSize + cSize).append(a).append(b).append(c).toString();
 	}
 
 	/**
