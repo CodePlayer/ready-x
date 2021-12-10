@@ -649,8 +649,13 @@ public abstract class FileUtil {
 	public static void writeStream(FileInputStream fis, FileOutputStream fos) throws IOException {
 		FileChannel inChannel = fis.getChannel();
 		FileChannel outChannel = fos.getChannel();
+		final long total = inChannel.size();
+		long copied = 0;
 		try {
-			inChannel.transferTo(0, Long.MAX_VALUE, outChannel);
+			do {
+				// 复制超大文件时，可能无法一次性复制完毕，所以需要完善分段传输检测
+				copied += inChannel.transferTo(copied, total, outChannel);
+			} while (copied < total);
 		} finally {
 			closeSilently(outChannel);
 			closeSilently(inChannel);
