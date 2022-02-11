@@ -289,7 +289,7 @@ public abstract class StringUtil {
 	 * 本方法接受多个参数，如果其中有任意一个为空，就返回true 如果指定的key不存在也返回true
 	 *
 	 * @param values 指定的数组
-	 * @see me.codeplayer.util.StringUtil#isEmpty(Object)
+	 * @see #isEmpty(Object)
 	 */
 	public static boolean hasEmpty(Object... values) {
 		int length = ArrayUtil.getLength(values, true);
@@ -465,11 +465,11 @@ public abstract class StringUtil {
 	 * 如果字符串位数大于指定位数，则返回原字符串
 	 *
 	 * @param str 字符串
-	 * @param maxLength 指定位数，不能小于1
+	 * @param minLength 期望的最小字符数，不能小于1
 	 * @since 0.0.1
 	 */
-	public static String zeroFill(String str, int maxLength) {
-		return pad(str, '0', maxLength, true);
+	public static String zeroFill(String str, int minLength) {
+		return pad(str, '0', minLength, true);
 	}
 
 	/**
@@ -479,27 +479,27 @@ public abstract class StringUtil {
 	 *
 	 * @param str 指定的字符串
 	 * @param ch 指定的字符
-	 * @param maxLength 指定位数，不能小于1
-	 * @param left 是在字符串左侧添加，还是右侧添加。true=左侧，false=右侧
+	 * @param minLength 期望的最小字符数，不能小于1
+	 * @param leftOrRight 是在字符串左侧添加，还是右侧添加。true=左侧，false=右侧
 	 * @since 0.0.1
 	 */
-	static String pad(String str, char ch, int maxLength, boolean left) {
+	static String pad(String str, char ch, int minLength, boolean leftOrRight) {
 		if (str == null)
 			return "";
-		if (maxLength < 1)
-			throw new IllegalArgumentException("Argument 'maxLength' can not be less than 1:" + maxLength);
+		if (minLength < 1)
+			throw new IllegalArgumentException("Argument 'minLength' can not be less than 1:" + minLength);
 		int length = str.length();
-		if (maxLength > length) {
-			int diffSize = maxLength - length;
-			char[] chars = new char[maxLength]; // 直接采用高效的char数组形式构建字符串
+		if (minLength > length) {
+			int diffSize = minLength - length;
+			char[] chars = new char[minLength]; // 直接采用高效的char数组形式构建字符串
 			// Arrays.fill(chars, '0'); //内部也是循环赋值，直接循环赋值效率更高
-			if (left) {
+			if (leftOrRight) {
 				for (int i = 0; i < diffSize; i++) {
 					chars[i] = ch;
 				}
 				System.arraycopy(str.toCharArray(), 0, chars, diffSize, length); // 此方法由JVM底层实现，因此效率相对较高
 			} else {
-				for (int i = diffSize; i < maxLength; i++) {
+				for (int i = diffSize; i < minLength; i++) {
 					chars[i] = ch;
 				}
 				System.arraycopy(str.toCharArray(), 0, chars, 0, length);
@@ -510,27 +510,73 @@ public abstract class StringUtil {
 	}
 
 	/**
-	 * 如果字符串不足指定位数，则在前面补充指定的字符，直到指定位数<br>
-	 * 如果字符串=null，则返回空字符串""<br>
-	 * 如果字符串位数大于指定位数，则返回原字符串
+	 * 将指定数值追加到指定不足 {@code StringBuilder} 中指定位数，如果指定数值的位数不足，则在前面补0，直到达到期望的最小位数为止。
 	 *
-	 * @param str 字符串
-	 * @param ch 指定的字符
-	 * @param maxLength 指定位数，不能小于1
-	 * @since 0.0.1
+	 * @param sb 用于拼接字符串的 {@code StringBuilder} 对象，如果为 null 则内部自动新建
+	 * @param val 数值
+	 * @param minLength 期望的最小位数，不应小于1
+	 * @since 3.9.0
 	 */
-	public static String leftPad(String str, char ch, int maxLength) {
-		return pad(str, ch, maxLength, true);
+	public static StringBuilder zeroFill(@Nullable StringBuilder sb, long val, int minLength) {
+		if (sb == null) {
+			sb = new StringBuilder(Math.max(minLength, 16));
+		}
+		int before = sb.length();
+		sb.append(val);
+		int len = sb.length() - before;
+		if (len < minLength) {
+			sb.ensureCapacity(before + minLength);
+			do {
+				sb.append('0');
+			} while (++len < minLength);
+		}
+		return sb;
 	}
 
 	/**
-	 * 如果字符串不足指定位数，则在后面补充指定的字符，直到指定位数<br>
+	 * 将指定 long 数值转为字符串，如果位数不足，则在前面补0，直到满足期望的最小位数{@code minLength}。
+	 *
+	 * @param val 数值
+	 * @param minLength 期望的最小位数，不应小于1
+	 * @since 3.9.0
+	 */
+	public static String zeroFill(long val, int minLength) {
+		return zeroFill(null, val, minLength).toString();
+	}
+
+	/**
+	 * 将指定 int 数值转为字符串。如果位数不足，则在前面补0，直到满足期望的最小位数{@code minLength}。
+	 *
+	 * @param val 数值
+	 * @param minLength 期望的最小位数，不应小于1
+	 * @since 3.9.0
+	 */
+	public static String zeroFill(int val, int minLength) {
+		return zeroFill(null, val, minLength).toString();
+	}
+
+	/**
+	 * 如果字符串不足指定位数，则在前面补充指定的字符，直到期望的最小位数<br>
 	 * 如果字符串=null，则返回空字符串""<br>
 	 * 如果字符串位数大于指定位数，则返回原字符串
 	 *
 	 * @param str 字符串
 	 * @param ch 指定的字符
-	 * @param maxLength 指定位数，不能小于1
+	 * @param minLength 期望的最小位数，不能小于1
+	 * @since 0.0.1
+	 */
+	public static String leftPad(String str, char ch, int minLength) {
+		return pad(str, ch, minLength, true);
+	}
+
+	/**
+	 * 如果字符串不足指定位数，则在后面补充指定的字符，直到期望的最小位数<br>
+	 * 如果字符串=null，则返回空字符串""<br>
+	 * 如果字符串位数大于指定位数，则返回原字符串
+	 *
+	 * @param str 字符串
+	 * @param ch 指定的字符
+	 * @param maxLength 期望的最小位数，不能小于1
 	 * @since 0.0.1
 	 */
 	public static String rightPad(String str, char ch, int maxLength) {
