@@ -4,7 +4,7 @@
 
 	<groupId>me.codeplayer</groupId>
 	<artifactId>ready-x</artifactId>
-	<version>3.8.1</version>
+	<version>3.9.0</version>
 	<packaging>jar</packaging>
 
 	<name>ready-x</name>
@@ -23,7 +23,7 @@
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
-			<version>1.2.78</version>
+			<version>1.2.79</version>
 			<optional>true</optional>
 		</dependency>
 
@@ -42,7 +42,7 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.7.32</version>
+			<version>1.7.36</version>
 		</dependency>
 
 		<dependency>
@@ -69,7 +69,7 @@
 		<dependency>
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>
-			<version>3.21.0</version>
+			<version>3.22.0</version>
 			<scope>test</scope>
 		</dependency>
 
