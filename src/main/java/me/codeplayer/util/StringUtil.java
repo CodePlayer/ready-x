@@ -519,7 +519,8 @@ public abstract class StringUtil {
 	 */
 	public static StringBuilder zeroFill(@Nullable StringBuilder sb, long val, int minLength) {
 		if (sb == null) {
-			sb = new StringBuilder(Math.max(minLength, 16));
+			// 为常规的 2、4 等位数进行专项优化
+			sb = new StringBuilder(val < 0L ? 16 : Math.max(minLength, val < 100L ? 2 : val < 10000L ? 4 : 8));
 		}
 		int before = sb.length();
 		sb.append(val);
