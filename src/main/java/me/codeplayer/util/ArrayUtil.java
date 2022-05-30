@@ -580,7 +580,7 @@ public abstract class ArrayUtil {
 		if (count == newAarray.length) {
 			return newAarray;
 		} else {
-			return Arrays.copyOf(array, count);
+			return Arrays.copyOf(newAarray, count);
 		}
 	}
 
