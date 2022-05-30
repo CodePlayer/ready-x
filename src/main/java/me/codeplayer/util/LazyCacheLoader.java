@@ -31,15 +31,20 @@ public class LazyCacheLoader<E> implements CacheLoader<E> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public E get() {
-		if (flushRequired()) {
-			value = loader.get();
+		Object val = value;
+		if (isUninitialized(val)) {
+			value = val = loader.get();
 		}
-		return (E) value;
+		return (E) val;
 	}
 
 	@Override
 	public boolean flushRequired() {
-		return value == uninitialized;
+		return isUninitialized(value);
+	}
+
+	protected boolean isUninitialized(final Object val) {
+		return val == uninitialized;
 	}
 
 	@Override
