@@ -1196,14 +1196,14 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	}
 
 	/**
-	 * 返回"yyyy-MM-dd HH:mm:ss sss"格式的字符串
+	 * 返回"yyyy-MM-dd HH:mm:ss.SSS"格式的字符串
 	 */
 	public String toLongString() {
 		return toLongString(getYear(), getMonth(), getDay(), getHour(), getMinute(), getSecond(), getMillisecond());
 	}
 
 	/**
-	 * 返回"yyyy-MM-dd HH:mm:ss sss"格式的字符串
+	 * 返回"yyyy-MM-dd HH:mm:ss.SSS"格式的字符串
 	 */
 	@SuppressWarnings("deprecation")
 	public static String toLongString(Date d) {
@@ -1211,7 +1211,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	}
 
 	/**
-	 * 返回"yyyy-MM-dd HH:mm:ss sss"格式的字符串
+	 * 返回"yyyy-MM-dd HH:mm:ss.SSS"格式的字符串
 	 */
 	public static String toLongString(int year, int month, int day, int hour, int minute, int second, int ms) {
 		final char[] chars = "0000-00-00 00:00:00.000".toCharArray();
