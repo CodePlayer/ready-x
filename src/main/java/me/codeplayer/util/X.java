@@ -715,7 +715,7 @@ public abstract class X {
 	 * 指示两个等价于 boolean 值的条件是否互斥（若一个为 true，则另一个必定为 false）
 	 */
 	public static boolean isMutex(boolean a, boolean b) {
-		return a && !b || !a && b;
+		return a ^ b;
 	}
 
 	/**
