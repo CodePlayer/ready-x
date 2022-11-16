@@ -27,7 +27,8 @@ public abstract class CollectionUtil {
 	 * @param loadFactor 负载因子
 	 */
 	public static int mapInitialCapacity(int realCapacity, float loadFactor) {
-		return (int) (realCapacity / loadFactor) + 1;
+		float size = realCapacity / loadFactor;
+		return size > (int) size ? (int) size + 1 : (int) size;
 	}
 
 	/**
@@ -36,7 +37,7 @@ public abstract class CollectionUtil {
 	 * @param realCapacity 真实的元素个数
 	 */
 	public static int mapInitialCapacity(int realCapacity) {
-		return realCapacity * 4 / 3 + 1;
+		return realCapacity * 4 / 3 + (realCapacity % 3 == 0 ? 0 : 1);
 	}
 
 	/**
