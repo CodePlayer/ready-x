@@ -158,6 +158,6 @@ public abstract class JSONUtil {
 	 * @since 0.1
 	 */
 	public static <T> T deserialize(String text) {
-		return X.castType(JSON.parse(text));
+		return X.castType(JSON.parse(text, Feature.SupportAutoType));
 	}
 }
