@@ -698,17 +698,17 @@ public abstract class X {
 	/**
 	 * 指示两个条件是否都成立，或者都不成立
 	 *
-	 * @return {@code a && b || !a && !b }
+	 * @return {@code a == b }
 	 */
 	public static boolean matchAllOrNone(final boolean a, final boolean b) {
-		return a && b || !a && !b;
+		return a == b;
 	}
 
 	/**
 	 * 指示3个等价于 boolean 值的条件要么都成立，要么都不成立
 	 */
 	public static boolean matchAllOrNone(boolean a, boolean b, boolean c) {
-		return a && b && c || !a && !b && !c;
+		return a == b && a == c;
 	}
 
 	/**
