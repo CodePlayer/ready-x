@@ -1,10 +1,9 @@
 package me.codeplayer.util;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.*;
-
-import javax.annotation.*;
+import javax.annotation.Nullable;
 
 /**
  * List、Set、Map等常见集合数据操作的工具类
@@ -143,6 +142,26 @@ public abstract class CollectionUtil {
 	}
 
 	/**
+	 * 过滤指定的集合，并返回获得符合条件的新集合
+	 *
+	 * @param c 指定的集合
+	 * @param matcher 只有经过该过滤器后返回 true 的元素才符合条件
+	 * @since 3.10.0
+	 */
+	public static <E> List<E> filter(final Collection<E> c, final Predicate<? super E> matcher) {
+		int size = c.size();
+		final List<E> list = new ArrayList<>(size);
+		if (size > 0) {
+			for (E e : c) {
+				if (matcher.test(e)) {
+					list.add(e);
+				}
+			}
+		}
+		return list;
+	}
+
+	/**
 	 * 根据可变参数形式的键值数组构造一个 Map 集合<br/>
 	 *
 	 * @param newMap Map 构造器，int 参数为 Map 构造方法的 initialCapacity 参数
@@ -191,6 +210,24 @@ public abstract class CollectionUtil {
 	 */
 	public static <E, K, V> HashMap<K, V> toHashMap(final Iterable<E> items, final Function<? super E, K> keyMapper, final Function<? super E, V> valueMapper) {
 		return toMap(HashMap::new, items, keyMapper, valueMapper);
+	}
+
+	/**
+	 * 构造一个可以实际存储指定容量的 HashMap
+	 *
+	 * @param size 预期的实际存储容量
+	 */
+	public static <K, V> HashMap<K, V> newHashMap(int size) {
+		return new HashMap<>(mapInitialCapacity(size));
+	}
+
+	/**
+	 * 构造一个可以实际存储指定容量的 HashSet
+	 *
+	 * @param size 预期的实际存储容量
+	 */
+	public static <K> HashSet<K> newHashSet(int size) {
+		return new HashSet<>(mapInitialCapacity(size));
 	}
 
 	/**
