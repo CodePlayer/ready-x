@@ -32,7 +32,7 @@ public abstract class NumberUtil {
 	 * @param value 指定的对象
 	 */
 	public static byte getByte(Object value) {
-		Assert.notNull(value, "将要转换为整数的值不能为null!");
+		Assert.notNull(value);
 		return value instanceof Number ? ((Number) value).byteValue() : Byte.parseByte(value.toString());
 	}
 
@@ -49,15 +49,15 @@ public abstract class NumberUtil {
 		}
 		if (value instanceof Number) {
 			return ((Number) value).byteValue();
-		} else if ("".equals(value)) {
-			return defaultValue;
-		} else {
-			try {
-				return Byte.parseByte(value.toString());
-			} catch (Exception e) {
+		}
+		if (value instanceof CharSequence) {
+			final CharSequence cs = (CharSequence) value;
+			if (cs.length() == 0) {
 				return defaultValue;
 			}
+			return Byte.parseByte(value.toString());
 		}
+		throw new IllegalArgumentException("Unexpected byte value:" + value);
 	}
 
 	/**
@@ -67,7 +67,7 @@ public abstract class NumberUtil {
 	 * @param value 指定的对象
 	 */
 	public static short getShort(Object value) {
-		Assert.notNull(value, "将要转换为整数的值不能为null!");
+		Assert.notNull(value);
 		return value instanceof Number ? ((Number) value).shortValue() : Short.parseShort(value.toString());
 	}
 
@@ -84,15 +84,15 @@ public abstract class NumberUtil {
 		}
 		if (value instanceof Number) {
 			return ((Number) value).shortValue();
-		} else if ("".equals(value)) {
-			return defaultValue;
-		} else {
-			try {
-				return Short.parseShort(value.toString());
-			} catch (Exception e) {
+		}
+		if (value instanceof CharSequence) {
+			final CharSequence cs = (CharSequence) value;
+			if (cs.length() == 0) {
 				return defaultValue;
 			}
+			return Short.parseShort(value.toString());
 		}
+		throw new IllegalArgumentException("Unexpected short value:" + value);
 	}
 
 	/**
@@ -102,7 +102,7 @@ public abstract class NumberUtil {
 	 * @param value 指定的对象
 	 */
 	public static int getInt(Object value) {
-		Assert.notNull(value, "将要转换为整数的值不能为null!");
+		Assert.notNull(value);
 		return value instanceof Number ? ((Number) value).intValue() : Integer.parseInt(value.toString());
 	}
 
@@ -119,15 +119,15 @@ public abstract class NumberUtil {
 		}
 		if (value instanceof Number) {
 			return ((Number) value).intValue();
-		} else if (value instanceof CharSequence && ((CharSequence) value).length() == 0) {
-			return defaultValue;
-		} else {
-			try {
-				return Integer.parseInt(value.toString());
-			} catch (Exception e) {
+		}
+		if (value instanceof CharSequence) {
+			final CharSequence cs = (CharSequence) value;
+			if (cs.length() == 0) {
 				return defaultValue;
 			}
+			return Integer.parseInt(value.toString());
 		}
+		throw new IllegalArgumentException("Unexpected int value:" + value);
 	}
 
 	/**
@@ -140,15 +140,15 @@ public abstract class NumberUtil {
 		}
 		if (value instanceof Number) {
 			return value.getClass() == Integer.class ? (Integer) value : ((Number) value).intValue();
-		} else if (value instanceof CharSequence && ((CharSequence) value).length() == 0) {
-			return defaultValue;
-		} else {
-			try {
-				return Integer.valueOf(value.toString());
-			} catch (Exception e) {
+		}
+		if (value instanceof CharSequence) {
+			final CharSequence cs = (CharSequence) value;
+			if (cs.length() == 0) {
 				return defaultValue;
 			}
+			return Integer.parseInt(value.toString());
 		}
+		throw new IllegalArgumentException("Unexpected int value:" + value);
 	}
 
 	/**
@@ -158,7 +158,7 @@ public abstract class NumberUtil {
 	 * @param value 指定的对象
 	 */
 	public static long getLong(Object value) {
-		Assert.notNull(value, "将要转换为整数的值不能为null!");
+		Assert.notNull(value);
 		return value instanceof Number ? ((Number) value).longValue() : Long.parseLong(value.toString());
 	}
 
@@ -175,15 +175,15 @@ public abstract class NumberUtil {
 		}
 		if (value instanceof Number) {
 			return ((Number) value).longValue();
-		} else if (value instanceof CharSequence && ((CharSequence) value).length() == 0) {
-			return defaultValue;
-		} else {
-			try {
-				return Long.parseLong(value.toString());
-			} catch (Exception e) {
+		}
+		if (value instanceof CharSequence) {
+			final CharSequence cs = (CharSequence) value;
+			if (cs.length() == 0) {
 				return defaultValue;
 			}
+			return Long.parseLong(value.toString());
 		}
+		throw new IllegalArgumentException("Unexpected long value:" + value);
 	}
 
 	/**
@@ -199,15 +199,15 @@ public abstract class NumberUtil {
 		}
 		if (value instanceof Number) {
 			return Long.class == value.getClass() ? (Long) value : ((Number) value).longValue();
-		} else if (value instanceof CharSequence && ((CharSequence) value).length() == 0) {
-			return defaultValue;
-		} else {
-			try {
-				return Long.valueOf(value.toString());
-			} catch (Exception e) {
+		}
+		if (value instanceof CharSequence) {
+			final CharSequence cs = (CharSequence) value;
+			if (cs.length() == 0) {
 				return defaultValue;
 			}
+			return Long.parseLong(value.toString());
 		}
+		throw new IllegalArgumentException("Unexpected long value:" + value);
 	}
 
 	/**
@@ -217,7 +217,7 @@ public abstract class NumberUtil {
 	 * @param value 指定的对象
 	 */
 	public static float getFloat(Object value) {
-		Assert.notNull(value, "将要转换为整数或小数的值不能为null!");
+		Assert.notNull(value);
 		return value instanceof Number ? ((Number) value).floatValue() : Float.parseFloat(value.toString());
 	}
 
@@ -234,15 +234,15 @@ public abstract class NumberUtil {
 		}
 		if (value instanceof Number) {
 			return ((Number) value).floatValue();
-		} else if ("".equals(value)) {
-			return defaultValue;
-		} else {
-			try {
-				return Float.parseFloat(value.toString());
-			} catch (Exception e) {
+		}
+		if (value instanceof CharSequence) {
+			final CharSequence cs = (CharSequence) value;
+			if (cs.length() == 0) {
 				return defaultValue;
 			}
+			return Float.parseFloat(value.toString());
 		}
+		throw new IllegalArgumentException("Unexpected float value:" + value);
 	}
 
 	/**
@@ -252,7 +252,7 @@ public abstract class NumberUtil {
 	 * @param value 指定的对象
 	 */
 	public static double getDouble(Object value) {
-		Assert.notNull(value, "将要转换为整数或小数的值不能为null!");
+		Assert.notNull(value);
 		return value instanceof Number ? ((Number) value).doubleValue() : Double.parseDouble(value.toString());
 	}
 
@@ -269,15 +269,15 @@ public abstract class NumberUtil {
 		}
 		if (value instanceof Number) {
 			return ((Number) value).doubleValue();
-		} else if ("".equals(value)) {
-			return defaultValue;
-		} else {
-			try {
-				return Double.parseDouble(value.toString());
-			} catch (Exception e) {
+		}
+		if (value instanceof CharSequence) {
+			final CharSequence cs = (CharSequence) value;
+			if (cs.length() == 0) {
 				return defaultValue;
 			}
+			return Double.parseDouble(value.toString());
 		}
+		throw new IllegalArgumentException("Unexpected double value:" + value);
 	}
 
 	/**
@@ -310,11 +310,10 @@ public abstract class NumberUtil {
 		if (value == null) {
 			return defaultValue == null ? null : getBigDecimal(defaultValue);
 		}
-		try {
+		if (value instanceof Number || value instanceof CharSequence) {
 			return getBigDecimal(value);
-		} catch (Exception e) {
-			return defaultValue == null ? null : getBigDecimal(defaultValue);
 		}
+		throw new IllegalArgumentException("Unexpected decimal value:" + value);
 	}
 
 	/**
@@ -465,4 +464,5 @@ public abstract class NumberUtil {
 	public static boolean isNonNegative(@Nullable final Number val) {
 		return isPositive(val, true);
 	}
+
 }
