@@ -510,6 +510,27 @@ public abstract class StringUtil {
 	}
 
 	/**
+	 * 返回整数的字符数
+	 *
+	 * @see Long#stringSize(long)
+	 */
+	public static int stringSize(long x) {
+		int d = 1;
+		if (x >= 0) {
+			d = 0;
+			x = -x;
+		}
+		long p = -10;
+		for (int i = 1; i < 19; i++) {
+			if (x > p) {
+				return i + d;
+			}
+			p = 10 * p;
+		}
+		return 19 + d;
+	}
+
+	/**
 	 * 将指定数值追加到指定不足 {@code StringBuilder} 中指定位数，如果指定数值的位数不足，则在前面补0，直到达到期望的最小位数为止。
 	 *
 	 * @param sb 用于拼接字符串的 {@code StringBuilder} 对象，如果为 null 则内部自动新建
@@ -518,19 +539,19 @@ public abstract class StringUtil {
 	 * @since 3.9.0
 	 */
 	public static StringBuilder zeroFill(@Nullable StringBuilder sb, long val, int minLength) {
+		int size = stringSize(val), expected = Math.max(minLength, size);
 		if (sb == null) {
 			// 为常规的 2、4 等位数进行专项优化
-			sb = new StringBuilder(val < 0L ? 16 : Math.max(minLength, val < 100L ? 2 : val < 10000L ? 4 : 8));
+			sb = new StringBuilder(expected);
+		} else {
+			sb.ensureCapacity(sb.length() + expected);
 		}
-		int before = sb.length();
+
+		for (int i = minLength - size; i > 0; i--) {
+			sb.append('0');
+		}
+
 		sb.append(val);
-		int len = sb.length() - before;
-		if (len < minLength) {
-			sb.ensureCapacity(before + minLength);
-			do {
-				sb.append('0');
-			} while (++len < minLength);
-		}
 		return sb;
 	}
 
@@ -542,7 +563,15 @@ public abstract class StringUtil {
 	 * @since 3.9.0
 	 */
 	public static String zeroFill(long val, int minLength) {
-		return zeroFill(null, val, minLength).toString();
+		final int length = stringSize(val);
+		if (length >= minLength) {
+			return Long.toString(val);
+		}
+		final StringBuilder sb = new StringBuilder(minLength);
+		for (int i = minLength - length; i > 0; i--) {
+			sb.append('0');
+		}
+		return sb.append(val).toString();
 	}
 
 	/**
@@ -553,7 +582,7 @@ public abstract class StringUtil {
 	 * @since 3.9.0
 	 */
 	public static String zeroFill(int val, int minLength) {
-		return zeroFill(null, val, minLength).toString();
+		return zeroFill((long) val, minLength);
 	}
 
 	/**
