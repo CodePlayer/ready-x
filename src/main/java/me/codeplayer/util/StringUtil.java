@@ -1,20 +1,19 @@
 package me.codeplayer.util;
 
-import java.nio.charset.*;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.function.*;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-import javax.annotation.*;
-
-import org.apache.commons.lang3.*;
-
-import me.codeplayer.util.CharConverter.*;
+import me.codeplayer.util.CharConverter.CharCase;
+import org.apache.commons.lang3.ArrayUtils;
 
 /**
  * 用于对字符串类型的数据进行常用处理操作的工具类
  *
  * @author Ready
- * @date 2012-10-29
+ * @since 2012-10-29
  */
 public abstract class StringUtil {
 
@@ -642,13 +641,13 @@ public abstract class StringUtil {
 			if (Character.isWhitespace(ch)) {
 				if (chars == null) {
 					chars = new char[len - 1];
-					str.getChars(0, i, chars, 0);
+					str.getChars(0, count = i, chars, 0);
 				}
 			} else if (chars != null) {
 				chars[count++] = ch;
 			}
 		}
-		if (count == len) {
+		if (chars == null) {
 			return str;
 		}
 		if (count == 0) {
@@ -672,11 +671,17 @@ public abstract class StringUtil {
 		if (range == null) {
 			return str;
 		}
-		final char[] chars = str.toCharArray();
-		for (int i = range[0]; i < range[1]; i++) {
-			chars[i] = ch;
+		final StringBuilder sb = new StringBuilder(length);
+		if (range[0] > 0) {
+			sb.append(str, 0, range[0]);
 		}
-		return new String(chars);
+		for (int i = range[0]; i < range[1]; i++) {
+			sb.append(ch);
+		}
+		if (range[1] < length) {
+			sb.append(str, range[1], length);
+		}
+		return sb.toString();
 	}
 
 	/**
