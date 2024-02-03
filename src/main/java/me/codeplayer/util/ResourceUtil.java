@@ -4,7 +4,7 @@ package me.codeplayer.util;
  * 用于辅助URL、URI、资源路径等处理的工具类
  *
  * @author Ready
- * @date 2019年4月16日
+ * @since 2019年4月16日
  * @since 1.0
  */
 public abstract class ResourceUtil {
@@ -14,7 +14,7 @@ public abstract class ResourceUtil {
 	 *
 	 * @return -1=相对（于当前资源路径）定位；0=相对（于当前项目根路径）定位；1=绝对定位
 	 */
-	public static final int parseUriLocator(String uri) {
+	public static int parseUriLocator(String uri) {
 		// 如果是"/path/of/file" => "${root}/path/of/file"
 		final int len = uri.length();
 		if (len > 0) {

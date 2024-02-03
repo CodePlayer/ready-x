@@ -7,7 +7,7 @@ import java.util.*;
  * 将阿拉伯数字形式的整数转换为中文大写形式的字符串的工具类
  *
  * @author Ready
- * @date 2013-4-20
+ * @since 2013-4-20
  */
 public class ChineseNumber {
 
@@ -190,7 +190,7 @@ public class ChineseNumber {
 	 * 计算单元，接收一个4位以内的阿拉伯数字字符串，并将其转换为对应的中文大写形式
 	 *
 	 * @author Ready
-	 * @date 2013-4-19
+	 * @since 2013-4-19
 	 */
 	public static class Cell {
 
@@ -251,7 +251,7 @@ public class ChineseNumber {
 	 * 表示中文数字的文本表现形式的枚举类
 	 *
 	 * @author Ready
-	 * @date 2015年8月21日
+	 * @since 2015年8月21日
 	 * @since 1.0
 	 */
 	public static enum FormatStyle {

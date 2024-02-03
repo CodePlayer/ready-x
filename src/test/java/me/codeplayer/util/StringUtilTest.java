@@ -1,9 +1,9 @@
 package me.codeplayer.util;
 
-import static org.junit.Assert.*;
+import org.assertj.core.api.WithAssertions;
+import org.junit.Test;
 
-import org.assertj.core.api.*;
-import org.junit.*;
+import static org.junit.Assert.*;
 
 public class StringUtilTest implements WithAssertions {
 
@@ -41,6 +41,9 @@ public class StringUtilTest implements WithAssertions {
 		// 将倒数第3~6的字符替换为*
 		assertThat(StringUtil.replaceChars("511622199141566456", '*', -6, -2))
 				.isEqualTo("511622199141****56");
+		// 将倒数第3~7的字符替换为*
+		assertThat(StringUtil.replaceChars("511622199141566456", '*', -6, -1))
+				.isEqualTo("511622199141*****6");
 	}
 
 	@Test
@@ -136,4 +139,14 @@ public class StringUtilTest implements WithAssertions {
 		assertTrue(StringUtil.containsWord("edit,view submit", "submit", ", "));
 		assertFalse(StringUtil.containsWord("edit,viewsubmit ", "submit", ", "));
 	}
+
+	@Test
+	public void trimAll() {
+		assertEquals("", StringUtil.trimAll(null));
+		assertEquals("", StringUtil.trimAll("    "));
+		assertEquals("codeplayer", StringUtil.trimAll("  code player"));
+		assertEquals("codeplayer", StringUtil.trimAll("code  player  "));
+		assertEquals("codeplayer", StringUtil.trimAll(" code player "));
+	}
+
 }

@@ -14,7 +14,7 @@ import org.apache.commons.lang3.time.*;
  * 用于文件操作的公共工具类
  *
  * @author Ready
- * @date 2013-4-9
+ * @since 2013-4-9
  */
 public abstract class FileUtil {
 

@@ -12,7 +12,7 @@ import org.apache.commons.lang3.*;
  * 用于对数组类型的数据(字节数组参见NumberUtil类)进行相应处理的工具类
  *
  * @author Ready
- * @date 2012-9-29
+ * @since 2012-9-29
  */
 public abstract class ArrayUtil {
 

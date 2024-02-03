@@ -12,7 +12,7 @@ import static com.alibaba.fastjson.serializer.SerializerFeature.*;
  * JSON字符串序列化转换工具类
  *
  * @author Ready
- * @date 2014-10-13
+ * @since 2014-10-13
  */
 public abstract class JSONUtil {
 

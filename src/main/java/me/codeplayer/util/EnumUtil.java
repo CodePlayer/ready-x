@@ -9,7 +9,7 @@ import javax.annotation.*;
  * 枚举工具类
  *
  * @author Ready
- * @date 2019年4月16日
+ * @since 2019年4月16日
  * @since 1.0
  */
 public abstract class EnumUtil {

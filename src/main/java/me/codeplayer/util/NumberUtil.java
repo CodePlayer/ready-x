@@ -8,7 +8,7 @@ import javax.annotation.*;
  * 对数值类型的数据(包含字节)进行相应处理的工具类
  *
  * @author Ready
- * @date 2012-10-29
+ * @since 2012-10-29
  */
 public abstract class NumberUtil {
 

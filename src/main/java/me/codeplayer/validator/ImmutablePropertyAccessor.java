@@ -6,7 +6,7 @@ import java.util.function.*;
  * 不可变的属性访问器封装实体
  *
  * @author Ready
- * @date 2019-4-24
+ * @since 2019-4-24
  * @since 2.3.0
  */
 public class ImmutablePropertyAccessor<T, R> implements PropertyAccessor<T, R> {

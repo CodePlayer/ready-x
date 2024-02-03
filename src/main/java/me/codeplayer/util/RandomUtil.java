@@ -6,7 +6,7 @@ import java.util.*;
  * 用于协助处理与随机生成有关的工具类
  *
  * @author Ready
- * @date 2014-10-15
+ * @since 2014-10-15
  */
 public abstract class RandomUtil {
 

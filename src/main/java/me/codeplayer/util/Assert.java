@@ -12,7 +12,7 @@ import static me.codeplayer.util.StringUtil.*;
  * 例如：isTrue和notTrue、isNull和notNull、isEmpty和notEmpty、isBlank和notBlank
  *
  * @author Ready
- * @date 2012-4-23
+ * @since 2012-4-23
  */
 public abstract class Assert {
 

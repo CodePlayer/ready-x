@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
  * List、Set、Map等常见集合数据操作的工具类
  *
  * @author Ready
- * @date 2014-10-21
+ * @since 2014-10-21
  */
 public abstract class CollectionUtil {
 

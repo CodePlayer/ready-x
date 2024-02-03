@@ -10,7 +10,7 @@ import javax.crypto.spec.*;
  * 可逆的数据算法工具，实现DES加密算法，利用指定的密钥对字符串或字节数组进行加密或解密
  *
  * @author Ready
- * @date 2012-11-30
+ * @since 2012-11-30
  */
 public class DES {
 

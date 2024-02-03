@@ -10,7 +10,7 @@ import java.security.*;
  * 相对的，在同样的硬件上，SHA-1比MD5的运行速度要稍慢
  *
  * @author Ready
- * @date 2012-10-21
+ * @since 2012-10-21
  */
 public abstract class Encrypter {
 

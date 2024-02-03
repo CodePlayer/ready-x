@@ -8,7 +8,7 @@ import me.codeplayer.util.ChineseNumber.*;
  * 用于商业运算的常用计算工具类
  *
  * @author Ready
- * @date 2012-9-27
+ * @since 2012-9-27
  */
 public class Arith {
 

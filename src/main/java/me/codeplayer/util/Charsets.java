@@ -6,7 +6,7 @@ import java.nio.charset.*;
  * 常用的字符集常量
  *
  * @author Ready
- * @date 2014-10-23
+ * @since 2014-10-23
  */
 public abstract class Charsets {
 

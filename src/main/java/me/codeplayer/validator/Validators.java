@@ -11,7 +11,7 @@ import me.codeplayer.util.*;
  * 用于进行 Pipeline 初始化及附属校验器定义的辅助工具类
  *
  * @author Ready
- * @date 2019-4-24
+ * @since 2019-4-24
  * @since 2.3.0
  */
 public abstract class Validators {

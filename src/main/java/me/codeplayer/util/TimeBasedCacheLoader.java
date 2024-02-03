@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 /**
  * 基于时间间隔进行数据更新的缓存数据加载器
  *
- * @date 2017年1月10日
+ * @since 2017-1-10
  * @since 2.0
  */
 public class TimeBasedCacheLoader<E> extends LazyCacheLoader<E> {

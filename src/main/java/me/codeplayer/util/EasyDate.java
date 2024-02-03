@@ -17,7 +17,7 @@ import static java.util.Calendar.*;
  * 实现常用日期扩展方法的日期工具类(实现Comparable可比较接口、Cloneable可复制接口)
  *
  * @author Ready
- * @date 2012-9-24
+ * @since 2012-9-24
  */
 public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 
