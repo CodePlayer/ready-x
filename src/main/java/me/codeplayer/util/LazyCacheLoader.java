@@ -33,7 +33,11 @@ public class LazyCacheLoader<E> implements CacheLoader<E> {
 	public E get() {
 		Object val = value;
 		if (isUninitialized(val)) {
-			value = val = loader.get();
+			synchronized (this) {
+				if (isUninitialized(val = value)) {
+					value = val = loader.get();
+				}
+			}
 		}
 		return (E) val;
 	}

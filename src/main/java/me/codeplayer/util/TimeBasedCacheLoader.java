@@ -43,10 +43,13 @@ public class TimeBasedCacheLoader<E> extends LazyCacheLoader<E> {
 		final long now = System.currentTimeMillis();
 		Object val = value;
 		if (flushRequired(val, now)) {
-			return load(now);
-		} else {
-			return (E) val;
+			synchronized (this) {
+				if (flushRequired(val = value, now)) {
+					return load(now);
+				}
+			}
 		}
+		return (E) val;
 	}
 
 	protected E load(final long now) {
