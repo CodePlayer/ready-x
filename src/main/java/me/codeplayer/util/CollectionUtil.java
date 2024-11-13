@@ -150,7 +150,7 @@ public abstract class CollectionUtil {
 	 */
 	public static <E> List<E> filter(final Collection<E> c, final Predicate<? super E> matcher) {
 		int size = c.size();
-		final List<E> list = new ArrayList<>(size);
+		final List<E> list = new ArrayList<>();
 		if (size > 0) {
 			for (E e : c) {
 				if (matcher.test(e)) {
