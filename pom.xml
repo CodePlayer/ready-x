@@ -4,7 +4,7 @@
 
 	<groupId>me.codeplayer</groupId>
 	<artifactId>ready-x</artifactId>
-	<version>3.11.4</version>
+	<version>4.0.0-Beta</version>
 	<packaging>jar</packaging>
 
 	<name>ready-x</name>
@@ -36,7 +36,7 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>3.14.0</version>
+			<version>3.17.0</version>
 		</dependency>
 
 		<dependency>
@@ -119,7 +119,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-deploy-plugin</artifactId>
-						<version>3.1.1</version>
+						<version>3.1.3</version>
 						<executions>
 							<execution>
 								<id>default-deploy</id>
@@ -134,7 +134,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<version>3.1.0</version>
+						<version>3.2.7</version>
 						<configuration>
 							<executable>gpg</executable>
 						</configuration>
@@ -152,7 +152,7 @@
 					<plugin>
 						<groupId>org.sonatype.plugins</groupId>
 						<artifactId>nexus-staging-maven-plugin</artifactId>
-						<version>1.6.13</version>
+						<version>1.7.0</version>
 						<extensions>true</extensions>
 						<configuration>
 							<serverId>ossrh</serverId>
@@ -191,7 +191,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.12.1</version>
+				<version>3.13.0</version>
 				<configuration>
 					<debuglevel>lines,vars,source</debuglevel>
 				</configuration>
@@ -200,7 +200,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>3.3.0</version>
+				<version>3.3.1</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>
@@ -214,7 +214,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.6.3</version>
+				<version>3.11.1</version>
 				<configuration>
 					<encoding>UTF-8</encoding>
 					<doclint>none</doclint>
