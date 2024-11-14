@@ -1,6 +1,7 @@
 package me.codeplayer.util;
 
-import java.security.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * 封装常用数据加密算法的加密器<br>
@@ -66,54 +67,6 @@ public abstract class Encrypter {
 	 */
 	public static byte[] sha1(final byte[] buf) {
 		return encode(buf, "SHA");
-	}
-
-	/**
-	 * 使用DES可逆算法以指定的密钥字符串对指定字符串进行加密，并返回加密后的字符串<br>
-	 * <b>注意：</b>本方法每次都产生一个新的DES实例，如果密钥是固定的或者加密、解密都是成对使用，建议直接使用easymapping.util.DES
-	 *
-	 * @param key 指定的密钥字符串
-	 * @param input 需要加密的字符串
-	 */
-	public static String desEncode(String key, String input) {
-		DES des = new DES(key);
-		return des.encode(input);
-	}
-
-	/**
-	 * 使用DES可逆算法以指定的密钥字符串对指定字符串进行解密，并返回解密后的字符串<br>
-	 * <b>注意：</b>本方法每次都产生一个新的DES实例，如果密钥是固定的或者加密、解密都是成对使用，建议直接使用easymapping.util.DES
-	 *
-	 * @param key 指定的密钥字符串
-	 * @param dest 需要加密的字符串
-	 */
-	public static String desDecode(String key, String dest) {
-		DES des = new DES(key);
-		return des.decode(dest);
-	}
-
-	/**
-	 * 使用DES可逆算法以指定的密钥字符串对指定字节数组进行加密，并返回加密后的字节数组<br>
-	 * <b>注意：</b>本方法每次都产生一个新的DES实例，如果密钥是固定的或者加密、解密都是成对使用，建议直接使用easymapping.util.DES
-	 *
-	 * @param key 指定的密钥字符串
-	 * @param input 需要加密的字节数组
-	 */
-	public static byte[] desEncode(String key, final byte[] input) {
-		DES des = new DES(key);
-		return des.encode(input);
-	}
-
-	/**
-	 * 使用DES可逆算法以指定的密钥字符串对指定字节数组进行解密，并返回解密后的字节数组<br>
-	 * <b>注意：</b>本方法每次都产生一个新的DES实例，如果密钥是固定的或者加密、解密都是成对使用，建议直接使用easymapping.util.DES
-	 *
-	 * @param key 指定的密钥字符串
-	 * @param dest 需要解密的字节数组
-	 */
-	public static byte[] desDecode(String key, final byte[] dest) {
-		DES des = new DES(key);
-		return des.decode(dest);
 	}
 
 	/**
