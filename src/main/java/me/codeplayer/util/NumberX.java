@@ -10,7 +10,7 @@ import javax.annotation.*;
  * @author Ready
  * @since 2012-10-29
  */
-public abstract class NumberUtil {
+public abstract class NumberX {
 
 	/**
 	 * 将int类型的变量转为二进制字符串
@@ -19,7 +19,7 @@ public abstract class NumberUtil {
 		int index = 32;
 		char[] chars = new char[index];
 		do {
-			chars[--index] = StringUtil.digits[(i & 1)];
+			chars[--index] = StringX.DIGITS[(i & 1)];
 			i >>>= 1;
 		} while (i != 0);
 		return new String(chars, index, 32 - index);

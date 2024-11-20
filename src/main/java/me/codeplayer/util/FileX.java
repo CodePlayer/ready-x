@@ -16,7 +16,7 @@ import org.apache.commons.lang3.time.*;
  * @author Ready
  * @since 2013-4-9
  */
-public abstract class FileUtil {
+public abstract class FileX {
 
 	/**
 	 * 用于表示文件大小的单位
@@ -130,7 +130,7 @@ public abstract class FileUtil {
 		}
 		if (suffix == null) {
 			suffix = "";
-		} else if (suffix.length() > 0) { // 如果有后缀就+"."
+		} else if (!suffix.isEmpty()) { // 如果有后缀就+"."
 			if (suffix.charAt(0) != '.') {
 				suffix = '.' + suffix;
 			}
@@ -138,7 +138,7 @@ public abstract class FileUtil {
 		String destFileName = fileName + suffix;
 		File file = new File(path, destFileName);
 		while (file.exists()) {
-			destFileName = fileName + '-' + RandomUtil.getIntString(4) + suffix;
+			destFileName = fileName + '-' + RandomX.getIntString(4) + suffix;
 			file = new File(path, destFileName);
 		}
 		return file;
@@ -814,7 +814,7 @@ public abstract class FileUtil {
 		if (char0 != '/' && char0 != '\\') {
 			pathname = '/' + pathname;
 		}
-		return new File(FileUtil.class.getResource(pathname).getPath());
+		return new File(FileX.class.getResource(pathname).getPath());
 	}
 
 	/**
@@ -955,6 +955,6 @@ public abstract class FileUtil {
 	 * @since 0.3.1
 	 */
 	public static Map<String, String> readProperties(String pathname, boolean inClassPath) {
-		return readProperties(FileUtil.getFile(pathname, inClassPath));
+		return readProperties(FileX.getFile(pathname, inClassPath));
 	}
 }

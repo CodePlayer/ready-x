@@ -35,19 +35,19 @@ public abstract class Validators {
 	/*
 	 * format group
 	 */
-	public static final Function<Object, String> trim = StringUtil::trim;
-	public static final Function<Object, String> toString = StringUtil::toString;
+	public static final Function<Object, String> trim = StringX::trim;
+	public static final Function<Object, String> toString = StringX::toString;
 	public static final Function<String, String> lower = String::toLowerCase;
 	public static final Function<String, String> upper = String::toUpperCase;
 	/*
 	 * assert group
 	 */
-	public static final Predicate<Object> assertNotEmpty = StringUtil::notEmpty;
-	public static final Predicate<Object> assertNotBlank = StringUtil::notBlank;
-	public static final Predicate<Object> assertIsNumber = NumberUtil::isNumber;
-	public static final Predicate<String> assertIsNonNegative = NumberUtil::isNumeric;
-	public static final Predicate<Number> assertPositive = NumberUtil::isPositive;
-	public static final Predicate<Number> assertNonNegative = NumberUtil::isNonNegative;
+	public static final Predicate<Object> assertNotEmpty = StringX::notEmpty;
+	public static final Predicate<Object> assertNotBlank = StringX::notBlank;
+	public static final Predicate<Object> assertIsNumber = NumberX::isNumber;
+	public static final Predicate<String> assertIsNonNegative = NumberX::isNumeric;
+	public static final Predicate<Number> assertPositive = NumberX::isPositive;
+	public static final Predicate<Number> assertNonNegative = NumberX::isNonNegative;
 
 	/*
 	 * dynamic group

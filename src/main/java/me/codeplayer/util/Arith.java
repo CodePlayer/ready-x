@@ -2,7 +2,7 @@ package me.codeplayer.util;
 
 import java.math.*;
 
-import me.codeplayer.util.ChineseNumber.*;
+import me.codeplayer.util.ChineseNumber.FormatStyle;
 
 /**
  * 用于商业运算的常用计算工具类
@@ -55,21 +55,21 @@ public class Arith {
 	 * 构造一个指定long值的商业计算数
 	 */
 	public Arith(long d) {
-		value = new BigDecimal(d);
+		value = BigDecimal.valueOf(d);
 	}
 
 	/**
 	 * 构造一个指定int值的商业计算数
 	 */
 	public Arith(int d) {
-		value = new BigDecimal(d);
+		value = BigDecimal.valueOf(d);
 	}
 
 	/**
 	 * 构造一个指定boolean值的商业计算数。 boolean值true=1，false=0
 	 */
-	public Arith(boolean d) {
-		this(d ? 1 : 0);
+	public Arith(boolean b) {
+		this.value = b ? BigDecimal.ONE : BigDecimal.ZERO;
 	}
 
 	/**
@@ -257,8 +257,8 @@ public class Arith {
 	/**
 	 * 商业除法运算
 	 *
-	 * @param d            指定的除数
-	 * @param scale        指定的精确位数
+	 * @param d 指定的除数
+	 * @param scale 指定的精确位数
 	 * @param roundingMode 设置应用的舍入模式(四舍五入、向上舍入、向下舍去等)
 	 */
 	public Arith divide(BigDecimal d, int scale, RoundingMode roundingMode) {
@@ -269,8 +269,8 @@ public class Arith {
 	/**
 	 * 商业除法运算
 	 *
-	 * @param d            指定的除数
-	 * @param scale        指定的精确位数
+	 * @param d 指定的除数
+	 * @param scale 指定的精确位数
 	 * @param roundingMode 设置应用的舍入模式(四舍五入、向上舍入、向下舍去等)
 	 */
 	public Arith divide(String d, int scale, RoundingMode roundingMode) {
@@ -280,8 +280,8 @@ public class Arith {
 	/**
 	 * 商业除法运算
 	 *
-	 * @param d            指定的除数
-	 * @param scale        指定的精确位数
+	 * @param d 指定的除数
+	 * @param scale 指定的精确位数
 	 * @param roundingMode 设置应用的舍入模式(四舍五入、向上舍入、向下舍去等)
 	 */
 	public Arith divide(double d, int scale, RoundingMode roundingMode) {
@@ -291,8 +291,8 @@ public class Arith {
 	/**
 	 * 商业除法运算
 	 *
-	 * @param d            指定的除数
-	 * @param scale        指定的精确位数
+	 * @param d 指定的除数
+	 * @param scale 指定的精确位数
 	 * @param roundingMode 设置应用的舍入模式(四舍五入、向上舍入、向下舍去等)
 	 */
 	public Arith divide(long d, int scale, RoundingMode roundingMode) {
@@ -302,7 +302,7 @@ public class Arith {
 	/**
 	 * 以四舍五入的舍入方式进行商业除法运算
 	 *
-	 * @param d     指定的除数
+	 * @param d 指定的除数
 	 * @param scale 指定的精确位数
 	 */
 	public Arith divideRound(BigDecimal d, int scale) {
@@ -312,7 +312,7 @@ public class Arith {
 	/**
 	 * 以四舍五入的舍入方式进行商业除法运算
 	 *
-	 * @param d     指定的除数
+	 * @param d 指定的除数
 	 * @param scale 指定的精确位数
 	 */
 	public Arith divideRound(String d, int scale) {
@@ -322,7 +322,7 @@ public class Arith {
 	/**
 	 * 以四舍五入的舍入方式进行商业除法运算
 	 *
-	 * @param d     指定的除数
+	 * @param d 指定的除数
 	 * @param scale 指定的精确位数
 	 */
 	public Arith divideRound(double d, int scale) {
@@ -332,7 +332,7 @@ public class Arith {
 	/**
 	 * 以四舍五入的舍入方式进行商业除法运算
 	 *
-	 * @param d     指定的除数
+	 * @param d 指定的除数
 	 * @param scale 指定的精确位数
 	 */
 	public Arith divideRound(long d, int scale) {
@@ -342,7 +342,7 @@ public class Arith {
 	/**
 	 * 设置精度(即精确到的小数位数)
 	 *
-	 * @param newScale     指定的精确位数
+	 * @param newScale 指定的精确位数
 	 * @param roundingMode 设置应用的舍入模式(四舍五入、向上舍入、向下舍去等)
 	 */
 	public Arith setScale(int newScale, RoundingMode roundingMode) {
@@ -541,7 +541,7 @@ public class Arith {
 	/**
 	 * 以四舍五入({@link RoundingMode#HALF_UP})的方式使指定小数精确到指定的小数位数
 	 *
-	 * @param d     指定的小数
+	 * @param d 指定的小数
 	 * @param scale 指定的小数精确位数
 	 */
 	public static double round(double d, int scale) {
@@ -551,7 +551,7 @@ public class Arith {
 	/**
 	 * 以 {@link RoundingMode#HALF_EVEN} 的方式使指定小数精确到指定的小数位数
 	 *
-	 * @param d     指定的小数
+	 * @param d 指定的小数
 	 * @param scale 指定的小数精确位数
 	 */
 	public static double even(double d, int scale) {
@@ -609,11 +609,11 @@ public class Arith {
 	 * 判断两个数值a和b的大小
 	 *
 	 * @return 如果：
-	 *   <ul>
-	 *       <li>a > b ，则返回 1</li>
-	 *       <li>a == b ，则返回 0</li>
-	 *       <li>a < b ，则返回 -1</li>
-	 *   </ul>
+	 * <ul>
+	 *     <li>a > b ，则返回 1</li>
+	 *     <li>a == b ，则返回 0</li>
+	 *     <li>a < b ，则返回 -1</li>
+	 * </ul>
 	 */
 	public static int compareTo(BigDecimal a, BigDecimal b) {
 		return a == b ? 0 : a.compareTo(b);
@@ -623,11 +623,11 @@ public class Arith {
 	 * 判断两个数值a和b的大小
 	 *
 	 * @return 如果：
-	 *         <ul>
-	 *         <li>a > b ，则返回 1</li>
-	 *         <li>a == b ，则返回 0</li>
-	 *         <li>a < b ，则返回 -1</li>
-	 *         </ul>
+	 * <ul>
+	 * <li>a > b ，则返回 1</li>
+	 * <li>a == b ，则返回 0</li>
+	 * <li>a < b ，则返回 -1</li>
+	 * </ul>
 	 */
 	public static int compareTo(BigDecimal a, double b) {
 		return a.compareTo(BigDecimal.valueOf(b));
@@ -637,11 +637,11 @@ public class Arith {
 	 * 判断两个数值a和b的大小
 	 *
 	 * @return 如果：
-	 *         <ul>
-	 *         <li>a > b ，则返回 1</li>
-	 *         <li>a == b ，则返回 0</li>
-	 *         <li>a < b ，则返回 -1</li>
-	 *         </ul>
+	 * <ul>
+	 * <li>a > b ，则返回 1</li>
+	 * <li>a == b ，则返回 0</li>
+	 * <li>a < b ，则返回 -1</li>
+	 * </ul>
 	 */
 	public static int compareTo(BigDecimal a, long b) {
 		return a.compareTo(BigDecimal.valueOf(b));
@@ -651,11 +651,11 @@ public class Arith {
 	 * 判断两个数值a和b的大小
 	 *
 	 * @return 如果：
-	 *         <ul>
-	 *         <li>a > b ，则返回 1</li>
-	 *         <li>a == b ，则返回 0</li>
-	 *         <li>a < b ，则返回 -1</li>
-	 *         </ul>
+	 * <ul>
+	 * <li>a > b ，则返回 1</li>
+	 * <li>a == b ，则返回 0</li>
+	 * <li>a < b ，则返回 -1</li>
+	 * </ul>
 	 */
 	public static int compareTo(BigDecimal a, String b) {
 		return a.compareTo(new BigDecimal(b));
@@ -729,22 +729,23 @@ public class Arith {
 	 */
 	public static BigDecimal toBigDecimal(int n) {
 		switch (n) {
-		case 0:
-			return BigDecimal.ZERO;
-		case 1:
-			return BigDecimal.ONE;
-		case 10:
-			return BigDecimal.TEN;
-		case 100:
-			return Arith.HUNDRED;
-		case 1000:
-			return THOUSAND;
-		case 10000:
-			return MYRIAD;
-		case 100000000:
-			return HANDRED_MILLION;
-		default:
-			return BigDecimal.valueOf(n);
+			case 0:
+				return ZERO;
+			case 1:
+				return ONE;
+			case 10:
+				return TEN;
+			case 100:
+				return HUNDRED;
+			case 1000:
+				return THOUSAND;
+			case 10000:
+				return MYRIAD;
+			case 100000000:
+				return HANDRED_MILLION;
+			default:
+				return BigDecimal.valueOf(n);
 		}
 	}
+
 }

@@ -1,11 +1,11 @@
 package me.codeplayer.util;
 
-import static org.junit.Assert.*;
-
 import java.util.*;
 
-import org.assertj.core.api.*;
-import org.junit.*;
+import org.assertj.core.api.WithAssertions;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 public class EasyDateTest implements WithAssertions {
 
@@ -117,4 +117,5 @@ public class EasyDateTest implements WithAssertions {
 		assertEquals("2015-03-31 23:59:59", EasyDate.toDateTimeString(EasyDate.endOf(b, Calendar.MONTH)));
 		assertEquals("2015-03-31 23:59:59.999", EasyDate.toLongString(b));
 	}
+
 }

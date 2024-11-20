@@ -9,7 +9,7 @@ import org.assertj.core.api.*;
 import org.junit.*;
 import org.mockito.*;
 
-import me.codeplayer.util.JSONUtilTest.*;
+import me.codeplayer.util.JsonXTest.*;
 
 public class XTest implements WithAssertions {
 
@@ -37,7 +37,7 @@ public class XTest implements WithAssertions {
 		assertTrue(X.isValid(list));
 		assertFalse(X.isValid(Collections.emptyList()));
 
-		HashMap<Object, Object> map = CollectionUtil.ofHashMap("name", "James", "age", 18);
+		HashMap<Object, Object> map = CollectionX.asHashMap("name", "James", "age", 18);
 		assertTrue(X.isValid(map));
 		assertFalse(X.isValid(Collections.emptyMap()));
 	}
@@ -58,7 +58,7 @@ public class XTest implements WithAssertions {
 
 		assertThat(X.map(user, User::getName, String::length)).isEqualTo(5);
 
-		assertThat(X.isMatch(user, User::getName, StringUtil::notEmpty)).isTrue();
+		assertThat(X.isMatch(user, User::getName, StringX::notEmpty)).isTrue();
 
 		assertThat(X.eqLax(nullUser, user)).isEqualTo(0);
 
@@ -70,7 +70,7 @@ public class XTest implements WithAssertions {
 
 		assertThat(X.mapElse(user, User::getPassword, "Hello")).isEqualTo("Hello");
 
-		assertThat(X.mapElseGet(user, User::getPassword, () -> StringUtil.replaceChars("18000001234", '*', 3, -4)))
+		assertThat(X.mapElseGet(user, User::getPassword, () -> StringX.replaceChars("18000001234", '*', 3, -4)))
 				.isEqualTo("180****1234");
 
 		assertThat((Object) X.decode(1, 0, "PENDING", 1, "YES", -1, "NO")).isEqualTo("YES");
@@ -79,12 +79,12 @@ public class XTest implements WithAssertions {
 
 		assertThat(X.expectNotEmpty(user.getName(), "Hello")).isEqualTo("James");
 
-		assertThat((String) X.tryUnwrap((Supplier<String>) () -> StringUtil.replaceSubstring("Hello", "+++", 1, -1)))
+		assertThat((String) X.tryUnwrap((Supplier<String>) () -> StringX.replaceSubstring("Hello", "+++", 1, -1)))
 				.isEqualTo("H+++o");
 
 		user = Mockito.spy(user);
 
-		X.use(user, User::getName);
+		X.with(user, User::getName);
 
 		Mockito.verify(user).getName();
 	}

@@ -1,5 +1,6 @@
 package me.codeplayer.util;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -40,7 +41,7 @@ public abstract class Encrypter {
 	 * 如果字符串为null，将引发空指针异常
 	 */
 	public static String md5For16(String input) {
-		byte[] bytes = encode(input.getBytes(Charsets.UTF_8), "MD5");
+		byte[] bytes = encode(input.getBytes(StandardCharsets.UTF_8), "MD5");
 		return bytes2Hex(bytes, 4, 12);
 	}
 
@@ -88,7 +89,7 @@ public abstract class Encrypter {
 	 * @param algorithm 算法名称，如“MD5”、“SHA”、“SHA-256”、“SHA-384”、“SHA-512”。
 	 */
 	public static String encode(String input, String algorithm) {
-		return bytes2Hex(getMessageDigest(algorithm).digest(input.getBytes(Charsets.UTF_8)));
+		return bytes2Hex(getMessageDigest(algorithm).digest(input.getBytes(StandardCharsets.UTF_8)));
 	}
 
 	/**
@@ -107,7 +108,7 @@ public abstract class Encrypter {
 	 * @param start 开始转换的索引
 	 * @param end 结束转换的索引
 	 */
-	public static String bytes2Hex(final byte[] bytes, final int start, final int end) {
+	public static String bytes2Hex(final byte[] bytes, final int start, final int end, final char[] toDigits) {
 		final int length = end - start;
 		if (start < 0 || end > bytes.length || length < 0) {
 			// 如果结尾索引或截取长度大于数组长度
@@ -116,10 +117,22 @@ public abstract class Encrypter {
 		final char[] chars = new char[length << 1];
 		int c = 0;
 		for (int i = start; i < end; i++) {
-			chars[c++] = Character.forDigit((bytes[i] >> 4) & 0xf, 16);
-			chars[c++] = Character.forDigit(bytes[i] & 0xf, 16);
+			chars[c++] = toDigits[bytes[i] >> 4 & 0xf];
+			chars[c++] = toDigits[bytes[i] & 0xf];
 		}
 		return new String(chars);
+	}
+
+	/**
+	 * 将指定字节数组转为十六进制形式的字符串<br>
+	 * 数组不能为null，否则引发空指针异常
+	 *
+	 * @param bytes 指定的字节数组
+	 * @param start 开始转换的索引
+	 * @param end 结束转换的索引
+	 */
+	public static String bytes2Hex(final byte[] bytes, final int start, final int end) {
+		return bytes2Hex(bytes, start, end, StringX.digits);
 	}
 
 }

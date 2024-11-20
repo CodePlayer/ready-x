@@ -8,7 +8,7 @@ import java.util.*;
  * @author Ready
  * @since 2014-10-15
  */
-public abstract class RandomUtil {
+public abstract class RandomX {
 
 	/**
 	 * 返回min(包括)和max(包括)之间的一个随机整数
@@ -27,6 +27,7 @@ public abstract class RandomUtil {
 		if (length <= 0) {
 			return "";
 		}
+		new Random().nextInt();
 		String str = Double.toString(Math.random()).substring(2);
 		int realLen = str.length();
 		if (length > realLen) {

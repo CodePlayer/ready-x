@@ -1,6 +1,7 @@
 package me.codeplayer.util;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.*;
 import javax.annotation.Nonnull;
@@ -15,22 +16,26 @@ import org.apache.commons.lang3.ArrayUtils;
  * @author Ready
  * @since 2012-10-29
  */
-public abstract class StringUtil {
+public abstract class StringX {
 
 	/**
-	 * 用于在2-16进制之间进行转换的映射字符数组
+	 * 用于在2-16进制之间进行转换的【大写形式】映射字符数组
 	 */
-	protected static final char[] digits = "0123456789ABCDEF".toCharArray();
+	protected static final char[] DIGITS = "0123456789ABCDEF".toCharArray();
+	/**
+	 * 用于在2-16进制之间进行转换的【小写形式】映射字符数组
+	 */
+	protected static final char[] digits = "0123456789abcdef".toCharArray();
 
 	/**
-	 * 获取指定字符串的Unicode编码，例如：“中国”将返回“\u4E2D\u56FD”<br>
+	 * 获取指定字符串的Unicode编码，例如：“中国”将返回 <code>"\u4E2D\u56FD"</code><br>
 	 * 此方法返回的编码中，字母均采用大写形式，此外，本方法采用 {@link StringBuilder} 作为字符容器
 	 *
 	 * @param source 指定字符串不能为 null，否则将引发空指针异常
 	 * @since 0.0.1
 	 */
 	public static String unicode(String source) {
-		byte[] bytes = source.getBytes(Charsets.UTF_16);// 转为UTF-16字节数组
+		byte[] bytes = source.getBytes(StandardCharsets.UTF_16);// 转为UTF-16字节数组
 		int length = bytes.length;
 		if (length > 2) {// 由于转换出来的字节数组前两位属于UNICODE固定标记，因此要过滤掉
 			int i = 2;
@@ -41,8 +46,8 @@ public abstract class StringUtil {
 				if (isOdd = !isOdd) {
 					sb.append("\\u");
 				}
-				sb.append(digits[bytes[i] >> 4 & 0xf]);
-				sb.append(digits[bytes[i] & 0xf]);
+				sb.append(DIGITS[bytes[i] >> 4 & 0xf]);
+				sb.append(DIGITS[bytes[i] & 0xf]);
 			}
 			return sb.toString();
 		}
@@ -57,7 +62,7 @@ public abstract class StringUtil {
 	 * @since 0.0.1
 	 */
 	public static String fastUnicode(String source) {
-		byte[] bytes = source.getBytes(Charsets.UTF_16); // 转为UTF-16字节数组
+		byte[] bytes = source.getBytes(StandardCharsets.UTF_16); // 转为UTF-16字节数组
 		int length = bytes.length;
 		if (length > 2) {
 			int i = 2;
@@ -70,8 +75,8 @@ public abstract class StringUtil {
 					chars[index++] = '\\';
 					chars[index++] = 'u';
 				}
-				chars[index++] = digits[bytes[i] >> 4 & 0xf];
-				chars[index++] = digits[bytes[i] & 0xf];
+				chars[index++] = DIGITS[bytes[i] >> 4 & 0xf];
+				chars[index++] = DIGITS[bytes[i] & 0xf];
 			}
 			return new String(chars);
 		}
@@ -151,10 +156,12 @@ public abstract class StringUtil {
 	 * @since 3.0.0
 	 */
 	public static String concat(@Nullable String a, @Nullable String b) {
-		if (a == null || a.isEmpty())
+		if (a == null || a.isEmpty()) {
 			return b == null ? "" : b;
-		if (b == null || b.isEmpty())
+		}
+		if (b == null || b.isEmpty()) {
 			return a;
+		}
 		return a.concat(b);
 	}
 
@@ -249,7 +256,7 @@ public abstract class StringUtil {
 	 * @since 1.0.2
 	 */
 	public static boolean isAnyNotEmpty(@Nullable CharSequence... css) {
-		if (css != null && css.length > 0) {
+		if (css != null) {
 			for (final CharSequence cs : css) {
 				if (notEmpty(cs)) {
 					return true;
@@ -268,19 +275,19 @@ public abstract class StringUtil {
 	 * @since 0.0.1
 	 */
 	public static boolean isEmpty(@Nullable Object obj) {
-		return obj == null || obj.toString().length() == 0; // 后面的表达式相当于"".equals(str)，但比其性能稍好
+		return obj == null || obj.toString().isEmpty(); // 后面的表达式相当于"".equals(str)，但比其性能稍好
 	}
 
 	/**
 	 * 判断指定的对象是否不为空<br>
 	 * 如果对象(或其 toString() 返回值)不为null、空字符串，则返回true，否则返回false<br>
-	 * <b>注意：</b>本方法不会去除字符串两边的空格，如果需要对字符串进行去除两边空格后的判断，请使用{@link StringUtil#isBlank(Object obj)}方法
+	 * <b>注意：</b>本方法不会去除字符串两边的空格，如果需要对字符串进行去除两边空格后的判断，请使用{@link StringX#isBlank(Object obj)}方法
 	 *
 	 * @param obj 指定的对象
 	 * @since 0.0.1
 	 */
 	public static boolean notEmpty(@Nullable Object obj) {
-		return obj != null && obj.toString().length() > 0;
+		return obj != null && !obj.toString().isEmpty();
 	}
 
 	/**
@@ -291,7 +298,7 @@ public abstract class StringUtil {
 	 * @see #isEmpty(Object)
 	 */
 	public static boolean hasEmpty(Object... values) {
-		int length = ArrayUtil.getLength(values, true);
+		int length = ArrayX.getLength(values, true);
 		do {
 			if (isEmpty(values[--length])) {
 				return true;
@@ -364,7 +371,7 @@ public abstract class StringUtil {
 	 * @since 0.0.1
 	 */
 	public static boolean hasBlank(Object... values) {
-		int length = ArrayUtil.getLength(values, true);
+		int length = ArrayX.getLength(values, true);
 		do {
 			if (isBlank(values[--length])) {
 				return true;
@@ -483,10 +490,12 @@ public abstract class StringUtil {
 	 * @since 0.0.1
 	 */
 	static String pad(String str, char ch, int minLength, boolean leftOrRight) {
-		if (str == null)
+		if (str == null) {
 			return "";
-		if (minLength < 1)
+		}
+		if (minLength < 1) {
 			throw new IllegalArgumentException("Argument 'minLength' can not be less than 1:" + minLength);
+		}
 		int length = str.length();
 		if (minLength > length) {
 			int diffSize = minLength - length;
@@ -538,7 +547,7 @@ public abstract class StringUtil {
 	 * @since 3.9.0
 	 */
 	public static StringBuilder zeroFill(@Nullable StringBuilder sb, long val, int minLength) {
-		int size = stringSize(val), expected = Math.max(minLength, size);
+		final int size = stringSize(val), expected = Math.max(minLength, size);
 		if (sb == null) {
 			// 为常规的 2、4 等位数进行专项优化
 			sb = new StringBuilder(expected);
@@ -748,7 +757,7 @@ public abstract class StringUtil {
 	 * @since 0.1.1
 	 */
 	public static String replaceSubstring(String str, String replacement, int beginIndex, int endIndex) {
-		if (replacement == null || replacement.length() == 0) {
+		if (replacement == null || replacement.isEmpty()) {
 			return str;
 		}
 		final int length = str.length();
@@ -802,7 +811,7 @@ public abstract class StringUtil {
 	 * @since 0.3.9
 	 */
 	public static String convertCharsetForURI(String str, Charset targetCharset) {
-		return convertCharset(str, Charsets.ISO_8859_1, targetCharset);
+		return convertCharset(str, StandardCharsets.ISO_8859_1, targetCharset);
 	}
 
 	/**
@@ -827,7 +836,7 @@ public abstract class StringUtil {
 	 * @since 0.4.2
 	 */
 	public static boolean startsWith(final String str, final char firstChar) {
-		return str != null && str.length() > 0 && str.charAt(0) == firstChar;
+		return str != null && !str.isEmpty() && str.charAt(0) == firstChar;
 	}
 
 	/**
@@ -838,7 +847,7 @@ public abstract class StringUtil {
 	 * @since 0.4.2
 	 */
 	public static boolean endsWith(final String str, final char lastChar) {
-		return str != null && str.length() > 0 && str.charAt(str.length() - 1) == lastChar;
+		return str != null && !str.isEmpty() && str.charAt(str.length() - 1) == lastChar;
 	}
 
 	/**
@@ -922,7 +931,7 @@ public abstract class StringUtil {
 	 */
 	@Nullable
 	public static StringBuilder escapeSQLLike(@Nullable StringBuilder sb, final String likeStr, final char escapeChar, final boolean appendWildcardAtStart, final boolean appendWildcardAtEnd) {
-		if (StringUtil.isEmpty(likeStr)) {
+		if (StringX.isEmpty(likeStr)) {
 			return sb;
 		}
 		final char[] strChars = likeStr.toCharArray();
@@ -1023,8 +1032,9 @@ public abstract class StringUtil {
 	 * @since 2.0.0
 	 */
 	public static boolean containsWord(final String container, final String search, final String separatorChars, final boolean fastMode) {
-		if (container == null || search == null)
+		if (container == null || search == null) {
 			return false;
+		}
 		final int cLength = container.length(), sLength = search.length();
 		if (cLength == sLength) {
 			return container.equals(search);
@@ -1080,7 +1090,7 @@ public abstract class StringUtil {
 	 * @throws IndexOutOfBoundsException 索引越界时会抛出该异常。不过请注意：如果 {@code str} 为 null 时，将直接返回 null，而不会抛出 NPE
 	 */
 	public static String replaceChar(String str, int charIndex, CharConverter converter) throws IndexOutOfBoundsException {
-		if (str == null || str.length() == 0) {
+		if (str == null || str.isEmpty()) {
 			return str;
 		}
 		char ch = str.charAt(charIndex);
@@ -1143,6 +1153,33 @@ public abstract class StringUtil {
 	 *
 	 * @param delimiter 分隔符
 	 */
+	public static <E> String joins(Collection<E> c, String delimiter) {
+		return join(c, StringBuilder::append, delimiter);
+	}
+
+	/**
+	 * 将集合的指定属性或输出拼接为字符串
+	 *
+	 * @param delimiter 分隔符
+	 */
+	public static <E> String join(@Nullable E[] array, String delimiter) {
+		return array == null || array.length == 0 ? "" : joins(Arrays.asList(array), delimiter);
+	}
+
+	/**
+	 * 将 整数集合 拼接为字符串
+	 *
+	 * @param delimiter 分隔符
+	 */
+	public static String join(Collection<? extends Number> c, String delimiter) {
+		return join(c, (sb, t) -> sb.append(t.longValue()), delimiter);
+	}
+
+	/**
+	 * 将集合的指定属性或输出拼接为字符串
+	 *
+	 * @param delimiter 分隔符
+	 */
 	public static <E> String join(Collection<E> c, Function<? super E, Object> getter, String delimiter) {
 		return join(c, (sb, t) -> sb.append(getter.apply(t)), delimiter);
 	}
@@ -1183,7 +1220,7 @@ public abstract class StringUtil {
 	 * @param filter 过滤器（如果应用到对应的元素返回 false，则返回的集合中不会包含该元素 ）
 	 */
 	public static <T> List<T> split(final String str, final String sep, @Nullable Predicate<? super String> filter, final Function<? super String, T> mapper) {
-		if (StringUtil.notEmpty(str)) {
+		if (StringX.notEmpty(str)) {
 			final List<T> list = new ArrayList<>();
 			int pos, start = 0;
 			// ",,"
@@ -1208,8 +1245,8 @@ public abstract class StringUtil {
 	 * @param ignoreEmpty 是否忽略空子字符串（如果为 true，则忽略空字符串 ）
 	 */
 	public static <T> List<T> split(final String toSplit, final String sep, final Function<? super String, T> mapper, final boolean ignoreEmpty) {
-		if (StringUtil.notEmpty(toSplit)) {
-			final Predicate<String> filter = ignoreEmpty ? StringUtil::notEmpty : null;
+		if (StringX.notEmpty(toSplit)) {
+			final Predicate<String> filter = ignoreEmpty ? StringX::notEmpty : null;
 			return split(toSplit, sep, filter, mapper);
 		}
 		return null;

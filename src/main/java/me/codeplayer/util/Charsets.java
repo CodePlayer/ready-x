@@ -1,13 +1,16 @@
 package me.codeplayer.util;
 
-import java.nio.charset.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * 常用的字符集常量
  *
  * @author Ready
  * @since 2014-10-23
+ * @deprecated please use <code>java.nio.charset.StandardCharsets</code> instead
  */
+@Deprecated
 public abstract class Charsets {
 
 	/**

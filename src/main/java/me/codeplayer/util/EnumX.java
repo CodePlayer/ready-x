@@ -1,9 +1,8 @@
 package me.codeplayer.util;
 
-import java.lang.reflect.*;
-import java.util.function.*;
-
-import javax.annotation.*;
+import java.lang.reflect.Array;
+import java.util.function.Predicate;
+import javax.annotation.Nullable;
 
 /**
  * 枚举工具类
@@ -12,7 +11,23 @@ import javax.annotation.*;
  * @since 2019年4月16日
  * @since 1.0
  */
-public abstract class EnumUtil {
+public abstract class EnumX {
+
+	/**
+	 * 根据枚举类型和名称，构建对应的枚举实例
+	 *
+	 * @return 返回对应的枚举值。如果找不到，则返回 {@code defaultValue}
+	 */
+	@Nullable
+	public static <T extends Enum<T>> T of(Class<T> clazz, @Nullable String name, T defaultValue) {
+		if (StringX.notEmpty(name)) {
+			try {
+				return Enum.valueOf(clazz, name);
+			} catch (IllegalArgumentException ignored) {
+			}
+		}
+		return defaultValue;
+	}
 
 	/**
 	 * 根据枚举类型和名称，构建对应的枚举实例
@@ -21,13 +36,7 @@ public abstract class EnumUtil {
 	 */
 	@Nullable
 	public static <T extends Enum<T>> T of(Class<T> clazz, @Nullable String name) {
-		if (StringUtil.notEmpty(name)) {
-			try {
-				return Enum.valueOf(clazz, name);
-			} catch (Exception ignore) {
-			}
-		}
-		return null;
+		return of(clazz, name, null);
 	}
 
 	/**
@@ -49,13 +58,12 @@ public abstract class EnumUtil {
 		}
 		if (count == newArray.length) {
 			return newArray;
-		} else {
-			final E[] result = (E[]) Array.newInstance(enumClass, count);
-			if (count > 0) {
-				System.arraycopy(newArray, 0, result, 0, count);
-			}
-			return result;
 		}
+		final E[] result = (E[]) Array.newInstance(enumClass, count);
+		if (count > 0) {
+			System.arraycopy(newArray, 0, result, 0, count);
+		}
+		return result;
 	}
 
 }

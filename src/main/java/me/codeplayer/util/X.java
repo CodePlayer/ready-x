@@ -1,12 +1,12 @@
 package me.codeplayer.util;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.*;
+import javax.annotation.Nullable;
 
-import javax.annotation.*;
-
-import org.slf4j.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 通用公共工具类<br>
@@ -21,7 +21,10 @@ public abstract class X {
 	/**
 	 * 获取调用此方法的当前类的日志处理器(Logger)<br>
 	 * 该 Logger 使用 slf4j API
+	 *
+	 * @deprecated please use <code>@lombok.extern.slf4j.Slf4j</code> annotation instead
 	 */
+	@Deprecated
 	public static Logger getLogger() {
 		String className = new Throwable().getStackTrace()[1].getClassName();
 		return LoggerFactory.getLogger(className);
@@ -32,19 +35,8 @@ public abstract class X {
 	 * 如果字符串为null、空字符串,则返回true<br>
 	 * <b>注意：</b>本方法不会去除字符串两边的空格，如果想去除字符串两边的空格后再进行判断，可以使用isBlank()方法
 	 */
-	public static boolean isEmpty(String str) {
-		return StringUtil.isEmpty(str); // 后面的表达式相当于"".equals(str)，但比其性能稍好
-	}
-
-	/**
-	 * 判断指定的对象是否为空<br>
-	 * 如果对象(或其 toString() 返回值)为 null、空字符串，则返回 true <br>
-	 * <b>注意：</b>本方法不会去除字符串两边的空格，如果想去除字符串两边的空格后再进行判断，可以使用 isBlank() 方法
-	 *
-	 * @param obj 指定的对象
-	 */
-	public static boolean isEmpty(Object obj) {
-		return StringUtil.isEmpty(obj); // 后面的表达式相当于"".equals(str)，但比其性能稍好
+	public static boolean isEmpty(@Nullable CharSequence str) {
+		return StringX.isEmpty(str); // 后面的表达式相当于"".equals(str)，但比其性能稍好
 	}
 
 	/**
@@ -52,20 +44,8 @@ public abstract class X {
 	 *
 	 * @param str 指定的字符串对象
 	 */
-	public static boolean isBlank(String str) {
-		return StringUtil.isBlank(str);
-	}
-
-	/**
-	 * 判断指定的对象是否为空<br>
-	 * 如果对象(或其 toString() 返回值)为null、空字符串、空格字符串，则返回true<br>
-	 * <b>注意：</b>本方法会先去除字符串两边的空格，再判断
-	 *
-	 * @param obj 指定的对象
-	 * @see StringUtil#isBlank(Object)
-	 */
-	public static boolean isBlank(Object obj) {
-		return StringUtil.isBlank(obj);
+	public static boolean isBlank(@Nullable CharSequence str) {
+		return StringX.isBlank(str);
 	}
 
 	/**
@@ -105,13 +85,13 @@ public abstract class X {
 	 * 从指定的多个字符串依次检测并选取第一个不为空字符串的值，否则返回空字符串""
 	 */
 	public static String expectNotEmpty(String v1, String v2, String v3, String v4) {
-		if (v1 != null && v1.length() > 0) {
+		if (v1 != null && !v1.isEmpty()) {
 			return v1;
-		} else if (v2 != null && v2.length() > 0) {
+		} else if (v2 != null && !v2.isEmpty()) {
 			return v2;
-		} else if (v3 != null && v3.length() > 0) {
+		} else if (v3 != null && !v3.isEmpty()) {
 			return v3;
-		} else if (v4 != null && v4.length() > 0) {
+		} else if (v4 != null && !v4.isEmpty()) {
 			return v4;
 		}
 		return "";
@@ -128,10 +108,7 @@ public abstract class X {
 	 * 从指定的多个字符串依次检测并选取第一个不为空字符串的值，否则返回空字符串""
 	 */
 	public static String expectNotEmpty(String v1, String v2) {
-		if (v1 != null && v1.length() > 0) {
-			return v1;
-		}
-		return StringUtil.notEmpty(v2) ? v2 : "";
+		return StringX.notEmpty(v1) ? v1 : StringX.toString(v2);
 	}
 
 	/**
@@ -158,7 +135,7 @@ public abstract class X {
 	 * @param sequence 指定的字符串序列对象
 	 */
 	public static boolean isValid(CharSequence sequence) {
-		return StringUtil.notEmpty(sequence);
+		return StringX.notEmpty(sequence);
 	}
 
 	/**
@@ -167,7 +144,7 @@ public abstract class X {
 	 * @param map 指定的映射集合对象
 	 */
 	public static boolean isValid(Map<?, ?> map) {
-		return map != null && map.size() > 0;
+		return map != null && !map.isEmpty();
 	}
 
 	/**
@@ -176,7 +153,7 @@ public abstract class X {
 	 * @param collection 指定的集合对象
 	 */
 	public static boolean isValid(Collection<?> collection) {
-		return collection != null && collection.size() > 0;
+		return collection != null && !collection.isEmpty();
 	}
 
 	/**
@@ -245,13 +222,13 @@ public abstract class X {
 	/**
 	 * 判断指定对象是否无效。只有以下情况视为无效，其他均为有效。<br>
 	 * 无效的参数对象arg的定义如下(按照判断顺序排序)： <br>
-	 * 1.<code>arg == null</code><br>
-	 * 2.如果<code>arg</code>是字符序列对象，去空格后，<code>arg.length() == 0</code><br>
-	 * 3.如果<code>arg</code>是数值对象，去空格后，<code>值  == 0</code><br>
-	 * 4.如果<code>arg</code>是映射集合(Map)对象，<code>arg.size() == 0</code><br>
-	 * 5.如果<code>arg</code>是集合(Collection)对象，<code>arg.size() == 0</code><br>
-	 * 6.如果<code>arg</code>是数组(Array)对象，<code>arg.length == 0</code><br>
-	 * 7.如果<code>arg</code>是布尔(Boolean)对象，<code>arg 等价于  false</code><br>
+	 * 1. <code>arg == null</code><br>
+	 * 2. 如果<code>arg</code>是字符序列对象，去空格后，<code>arg.length() == 0</code><br>
+	 * 3. 如果<code>arg</code>是数值对象，去空格后，<code>值  == 0</code><br>
+	 * 4. 如果<code>arg</code>是映射集合(Map)对象，<code>arg.size() == 0</code><br>
+	 * 5. 如果<code>arg</code>是集合(Collection)对象，<code>arg.size() == 0</code><br>
+	 * 6. 如果<code>arg</code>是数组(Array)对象，<code>arg.length == 0</code><br>
+	 * 7. 如果<code>arg</code>是布尔(Boolean)对象，<code>arg 等价于  false</code><br>
 	 *
 	 * @return 上述无效的情况返回 <code>false</code>，其他情况均返回 <code>true</code>
 	 */
@@ -264,16 +241,15 @@ public abstract class X {
 		} else if (arg instanceof Number) {
 			return ((Number) arg).doubleValue() != 0;
 		} else if (arg instanceof Map) {
-			return ((Map) arg).size() > 0;
+			return !((Map) arg).isEmpty();
 		} else if (arg instanceof Collection) {
-			return ((Collection) arg).size() > 0;
+			return !((Collection) arg).isEmpty();
 		} else if (arg.getClass().isArray()) {
 			return Array.getLength(arg) > 0;
 		} else if (arg instanceof Boolean) {
 			return (Boolean) arg;
-		} else {
-			return true;
 		}
+		return true;
 	}
 
 	/**
@@ -319,43 +295,12 @@ public abstract class X {
 				break;
 			}
 			Object key = expressions[i++];
-			if (input == key || input != null && input.equals(key)) {
+			if (Objects.equals(input, key)) {
 				val = expressions[i];
 				break;
 			}
 		}
 		return (T) val;
-	}
-
-	/**
-	 * 去除字符串两端的空格<br>
-	 * 如果字符串为null、空字符串""、空白字符串，这返回HTML的空格符"&amp;nbsp;"
-	 */
-	public static String trim4Html(String str) {
-		return StringUtil.isBlank(str) ? "&nbsp;" : str.trim();
-	}
-
-	/**
-	 * 根据需要存储的元素个数确定HashMap等Map接口实现类的初始容量(使用默认的负载因子：0.75)
-	 *
-	 * @param capacity 需要存储的元素个数
-	 */
-	public static int getCapacity(int capacity) {
-		return getCapacity(capacity, 0.75f);
-	}
-
-	/**
-	 * 根据需要存储的元素个数确定HashMap等Map接口实现类的初始容量
-	 *
-	 * @param capacity 需要存储的元素个数
-	 * @param loadFactor 负载因子，必须介于0-1之间，如果不在此范围，内部也不检测，后果自负
-	 */
-	public static int getCapacity(int capacity, float loadFactor) {
-		int initCapacity = 16;
-		while (capacity > initCapacity * loadFactor) {
-			initCapacity <<= 1;// 如果默认容量小于指定的期望，则扩大一倍
-		}
-		return initCapacity;
 	}
 
 	/**
@@ -372,7 +317,7 @@ public abstract class X {
 	 * @param obj 指定的对象，可以为 null
 	 * @param consumer 指定的调用，如果 {@code obj} 为 null，则不执行该调用
 	 */
-	public static <T> void use(@Nullable T obj, Consumer<? super T> consumer) {
+	public static <T> void with(@Nullable T obj, Consumer<? super T> consumer) {
 		if (obj != null) {
 			consumer.accept(obj);
 		}
@@ -385,7 +330,7 @@ public abstract class X {
 	 * @param filter 过滤器，只有 {code obj} 满足该条件，才会执行 {@code consumer}
 	 * @param consumer 指定的调用，如果 {@code obj} 为 null，则不执行该调用
 	 */
-	public static <T> void use(@Nullable T obj, Predicate<T> filter, Consumer<? super T> consumer) {
+	public static <T> void with(@Nullable T obj, Predicate<T> filter, Consumer<? super T> consumer) {
 		if (obj != null && filter.test(obj)) {
 			consumer.accept(obj);
 		}
@@ -397,7 +342,6 @@ public abstract class X {
 	 * @param obj 指定的对象，可以为 null
 	 * @param mapper 转换器
 	 * @return 如果 {@code obj == null } 则返回null，否则返回转换后的结果
-	 * @author Ready
 	 * @since 2.3.0
 	 */
 	public static <T, R> R map(@Nullable T obj, Function<? super T, R> mapper) {
@@ -414,7 +358,6 @@ public abstract class X {
 	 * @param mapper 转换器
 	 * @param nestedMapper 嵌套的二次转换器
 	 * @return 如果 {@code obj == null } 则返回 null，否则返回转换后的结果
-	 * @author Ready
 	 * @since 2.6
 	 */
 	public static <T, R, E> E map(@Nullable T obj, Function<? super T, R> mapper, Function<R, E> nestedMapper) {
@@ -428,7 +371,6 @@ public abstract class X {
 	 * @param mapper 转换器
 	 * @param other 如果转换后的值为null，则返回该参数值
 	 * @return 如果 {@code obj == null } 则返回null，否则返回转换后的结果
-	 * @author Ready
 	 * @since 2.6
 	 */
 	public static <T, R> R mapElse(@Nullable T obj, Function<? super T, R> mapper, R other) {
@@ -443,7 +385,6 @@ public abstract class X {
 	 * @param mapper 转换器
 	 * @param other 如果转换后的值为null，则返回该备用对象的返回值
 	 * @return 如果 {@code obj == null } 则返回null，否则返回转换后的结果
-	 * @author Ready
 	 * @since 2.6
 	 */
 	public static <T, R> R mapElseGet(@Nullable T obj, Function<? super T, R> mapper, Supplier<R> other) {
@@ -455,7 +396,6 @@ public abstract class X {
 	 * 尝试拆箱可能由 {@link Supplier } 接口包装的实体对象
 	 *
 	 * @return 如果指定参数实现了 {@link Supplier } 接口，则调用 get() 方法 并返回其值；否则直接返回 该对象本身
-	 * @author Ready
 	 * @since 2.3.0
 	 */
 	@SuppressWarnings("unchecked")
@@ -481,7 +421,6 @@ public abstract class X {
 	 * @param bean 指定的对象
 	 * @param mapper 转换器
 	 * @param matcher 条件判断器
-	 * @author Ready
 	 * @since 2.3.0
 	 */
 	public static <T, R> boolean isMatch(@Nullable T bean, final Function<? super T, R> mapper, final Predicate<? super R> matcher) {
@@ -498,12 +437,11 @@ public abstract class X {
 	 */
 	public static RuntimeException wrapException(final @Nullable String msg, final boolean forceUseMsg, final @Nullable Throwable ex, final @Nullable Throwable cause) {
 		if (ex == null) {
-			return cause == null ? new IllegalArgumentException(msg) : new IllegalArgumentException(msg, cause);
+			return new IllegalArgumentException(msg, cause);
 		} else if (ex instanceof RuntimeException) {
 			return forceUseMsg && msg != null ? new IllegalArgumentException(msg, ex) : (RuntimeException) ex;
-		} else {
-			return msg == null ? new IllegalArgumentException(ex) : new IllegalArgumentException(msg, ex);
 		}
+		return msg == null ? new IllegalArgumentException(ex) : new IllegalArgumentException(msg, ex);
 	}
 
 	/**

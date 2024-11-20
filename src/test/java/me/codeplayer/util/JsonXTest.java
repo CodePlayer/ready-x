@@ -2,72 +2,63 @@ package me.codeplayer.util;
 
 import java.util.*;
 
-import org.assertj.core.api.*;
-import org.junit.*;
+import com.alibaba.fastjson2.JSONObject;
+import org.assertj.core.api.WithAssertions;
+import org.junit.Test;
 
-import com.alibaba.fastjson.*;
-
-public class JSONUtilTest implements WithAssertions {
+public class JsonXTest implements WithAssertions {
 
 	User user = new User(1, "张三", "123456", true);
 
-	Map<Object, Object> map = CollectionUtil.toMap(LinkedHashMap::new, "name", "张三", "age", 18, "gender", null);
+	Map<Object, Object> map = CollectionX.toMap(LinkedHashMap::new, "name", "张三", "age", 18, "gender", null);
 
 	Object[] array = new Object[] { "Hello", "CodePlayer", true, user };
 
-	List<User> users = CollectionUtil.ofArrayList(user, user);
+	List<User> users = CollectionX.asArrayList(user, user);
 
 	@Test
 	public void encode() {
 		// map
-		String jsonStr = JSONUtil.encode(map);
+		String jsonStr = JsonX.encode(map);
 		assertThat(jsonStr).isEqualTo("{\"name\":\"张三\",\"age\":18}");
 		// keep null fields
-		assertThat(JSONUtil.encodeKeepNull(map))
+		assertThat(JsonX.encodeKeepNull(map))
 				.isEqualTo("{\"name\":\"张三\",\"age\":18,\"gender\":null}");
 
 		// POJO
-		JSONObject json = JSONUtil.parseObject(jsonStr);
+		JSONObject json = JsonX.parseObject(jsonStr);
 		assertThat(json)
 				.containsEntry("name", "张三")
 				.containsEntry("age", 18);
 
-		assertThat(JSONUtil.encode(user)).isEqualTo("{\"gender\":true,\"id\":1,\"name\":\"张三\",\"password\":\"123456\"}");
+		assertThat(JsonX.encode(user)).isEqualTo("{\"gender\":true,\"id\":1,\"name\":\"张三\",\"password\":\"123456\"}");
 		// array
 		// ["Hello","CodePlayer",true,{"gender":true,"id":1,"name":"张三","password":"123456"}]
-		assertThat(JSONUtil.encode(array))
+		assertThat(JsonX.encode(array))
 				.isEqualTo("[\"Hello\",\"CodePlayer\",true,{\"gender\":true,\"id\":1,\"name\":\"张三\",\"password\":\"123456\"}]");
 		// ArrayList
 		// 由于集合中存在重复的引用，请注意比较它与下面的encodeWithReferenceDetect()的输出区别
-		assertThat(JSONUtil.encode(users)) // [{"gender":true,"id":1,"name":"张三","password":"123456"},{"gender":true,"id":1,"name":"张三","password":"123456"}]
+		assertThat(JsonX.encode(users)) // [{"gender":true,"id":1,"name":"张三","password":"123456"},{"gender":true,"id":1,"name":"张三","password":"123456"}]
 				.isEqualTo("[{\"gender\":true,\"id\":1,\"name\":\"张三\",\"password\":\"123456\"},{\"gender\":true,\"id\":1,\"name\":\"张三\",\"password\":\"123456\"}]");
 
 	}
 
 	@Test
-	public void encodeWithReferenceDetect() {
-		// ArrayList
-		// [{"gender":true,"id":1,"name":"张三","password":"123456"},{"$ref":"$[0]"}]
-		assertThat(JSONUtil.encodeWithReferenceDetect(users))
-				.isEqualTo("[{\"gender\":true,\"id\":1,\"name\":\"张三\",\"password\":\"123456\"},{\"$ref\":\"$[0]\"}]");
-	}
-
-	@Test
 	public void parseObject() {
-		JSONObject jsonObj = JSONUtil.parseObject("{\"name\":\"张三\",\"age\":18}");
+		JSONObject jsonObj = JsonX.parseObject("{\"name\":\"张三\",\"age\":18}");
 		assertThat(jsonObj).isInstanceOf(Map.class)
 				.hasSize(2)
 				.containsEntry("name", "张三")
 				.containsEntry("age", 18);
 
 		String text = "{\"gender\":true,\"id\":1,\"name\":\"张三\",\"password\":\"123456\"}";
-		User user = JSONUtil.parseObject(text, User.class);
+		User user = JsonX.parseObject(text, User.class);
 		assertThat(user)
 				.extracting("name", "password", "id", "gender")
 				.containsExactly("张三", "123456", 1, true);
 
 		text = "{\"name\":\"张三\",\"password\":\"123456\"}";
-		user = JSONUtil.parseObject(text, User.class);
+		user = JsonX.parseObject(text, User.class);
 		assertThat(user)
 				.extracting("name", "password", "id", "gender")
 				.containsExactly("张三", "123456", 0, false);
@@ -75,7 +66,7 @@ public class JSONUtilTest implements WithAssertions {
 
 	@Test
 	public void parseArray() {
-		List<Object> list = JSONUtil.parseArray("['大家好',1,true,null]");
+		List<Object> list = JsonX.parseArray("['大家好',1,true,null]");
 		assertThat(list)
 				.hasSize(4)
 				.contains("大家好", 1, true, null);
@@ -129,5 +120,7 @@ public class JSONUtilTest implements WithAssertions {
 		public void setGender(boolean gender) {
 			this.gender = gender;
 		}
+
 	}
+
 }

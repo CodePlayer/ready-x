@@ -12,7 +12,7 @@ import com.alibaba.fastjson2.filter.*;
  * @author Ready
  * @since 2014-10-13
  */
-public abstract class JSONUtil {
+public abstract class JsonX {
 
 	static String dateFormat = "millis";   // 日期时间类型默认输出为 毫秒级时间戳
 	static JSONWriter.Context encodeContext, encodeRawContext, serializeContext;
@@ -30,7 +30,7 @@ public abstract class JSONUtil {
 		}
 		encodeRawContext = defaultEncodeContext(null);
 		if (dateFormat != null) {
-			JSONUtil.dateFormat = dateFormat;
+			JsonX.dateFormat = dateFormat;
 			encodeContext.setDateFormat(dateFormat);
 			encodeRawContext.setDateFormat(dateFormat);
 		}
@@ -40,7 +40,7 @@ public abstract class JSONUtil {
 	}
 
 	public static void setEncodeContext(JSONWriter.Context encodeContext) {
-		JSONUtil.encodeContext = Objects.requireNonNull(encodeContext);
+		JsonX.encodeContext = Objects.requireNonNull(encodeContext);
 	}
 
 	public static void setDateFormat(String dateFormat) {

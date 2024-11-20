@@ -1,12 +1,10 @@
 package me.codeplayer.util;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Array;
 import java.util.*;
-import java.util.function.*;
-
-import javax.annotation.*;
-
-import org.apache.commons.lang3.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import javax.annotation.Nullable;
 
 /**
  * 用于对数组类型的数据(字节数组参见NumberUtil类)进行相应处理的工具类
@@ -14,24 +12,7 @@ import org.apache.commons.lang3.*;
  * @author Ready
  * @since 2012-9-29
  */
-public abstract class ArrayUtil {
-
-	/**
-	 * 长度为0的对象数组
-	 */
-	public static final Object[] EMPTY_OBJECTS = new Object[0];
-	/**
-	 * 长度为0的字符串数组
-	 */
-	public static final String[] EMPTY_STRINGS = new String[0];
-	/**
-	 * 长度为0的int数组
-	 */
-	public static final int[] EMPTY_INTS = new int[0];
-	/**
-	 * 长度为0的Integer数组
-	 */
-	public static final Integer[] EMPTY_INTEGERS = new Integer[0];
+public abstract class ArrayX {
 
 	/**
 	 * 判断指定对象是否为数组类型
@@ -118,7 +99,7 @@ public abstract class ArrayUtil {
 			throw new IllegalArgumentException("Array can not be empty:" + array);
 		}
 		if (sb == null) {
-			sb = StringUtil.getBuilder(length, 3);
+			sb = new StringBuilder(length << 3);
 		}
 		if (length == 1) {
 			if (!isInclude) {
@@ -220,7 +201,7 @@ public abstract class ArrayUtil {
 				sb.append("[]");
 			} else {
 				if (sb == null) {
-					sb = StringUtil.getBuilder(length, 3);
+					sb = new StringBuilder(length << 3);
 				}
 				sb.append('[');
 				toFinalString(sb, Array.get(array, 0));
@@ -258,11 +239,11 @@ public abstract class ArrayUtil {
 	 * 获取指定数组元素的长度，如果数组为null将返回0，如果不是数组类型，将引发异常
 	 *
 	 * @param array 指定的数组
-	 * @param triggerError 当数组为null或数组长度为0时，是否触发异常，如果为true，则触发异常
+	 * @param assertNotEmpty 当数组为null或数组长度为0时，是否触发异常，如果为true，则触发异常
 	 */
-	public static int getLength(Object array, boolean triggerError) {
+	public static int getLength(Object array, boolean assertNotEmpty) {
 		int length = getLength(array);
-		if (length == 0 && triggerError) {
+		if (length == 0 && assertNotEmpty) {
 			throw new IllegalArgumentException("Array can not be empty:" + array);
 		}
 		return length;
@@ -274,11 +255,8 @@ public abstract class ArrayUtil {
 	 *
 	 * @param array 指定的数组对象
 	 */
-	public static int getLength(Object array) {
-		if (array == null) {
-			return 0;
-		}
-		return Array.getLength(array);
+	public static int getLength(@Nullable Object array) {
+		return array == null ? 0 : Array.getLength(array);
 	}
 
 	/**
@@ -485,7 +463,7 @@ public abstract class ArrayUtil {
 		if (length < 2) {
 			return copy;
 		}
-		final Map<Object, Object> map = new HashMap<Object, Object>(length * 4 / 3 + 1);
+		final Map<Object, Object> map = new HashMap<>(length * 4 / 3 + 1);
 		int size = 0;
 		for (int i = 0; i < length; i++) {
 			Object ele = Array.get(array, i);
@@ -517,14 +495,15 @@ public abstract class ArrayUtil {
 	/**
 	 * 将指定的集合转为对应的数组
 	 */
-	public static <T> T[] toArray(Collection<T> collection, Class<T> type) {
-		if (collection == null) {
+	@SuppressWarnings("unchecked")
+	public static <T> T[] toArray(final Collection<T> c, Class<T> type) {
+		if (c == null) {
 			return null;
 		}
-		final int size = collection.size();
-		final T[] array = X.castType(Array.newInstance(type, size));
+		final int size = c.size();
+		final T[] array = (T[]) Array.newInstance(type, size);
 		if (size > 0) {
-			collection.toArray(array);
+			c.toArray(array);
 		}
 		return array;
 	}
@@ -577,11 +556,7 @@ public abstract class ArrayUtil {
 				newAarray[count++] = e;
 			}
 		}
-		if (count == newAarray.length) {
-			return newAarray;
-		} else {
-			return Arrays.copyOf(newAarray, count);
-		}
+		return count == newAarray.length ? newAarray : Arrays.copyOf(newAarray, count);
 	}
 
 	/**
