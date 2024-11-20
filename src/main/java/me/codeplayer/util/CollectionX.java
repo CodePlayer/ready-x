@@ -382,27 +382,27 @@ public abstract class CollectionX {
 	/**
 	 * 依次将集合中每个元素进行指定的映射，。并返回映射后的数组
 	 *
-	 * @param list 集合
+	 * @param c 集合
 	 * @param fieldType 映射后的字段类型
 	 * @param mapper 映射转换器
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T, R> R[] mapField(Collection<T> list, Class<R> fieldType, Function<? super T, ? extends R> mapper) {
-		if (list == null) {
+	public static <T, R> R[] mapField(Collection<T> c, Class<R> fieldType, Function<? super T, ? extends R> mapper) {
+		if (c == null) {
 			return null;
 		}
-		int size = list.size();
+		int size = c.size();
 		final R[] arrays = (R[]) Array.newInstance(fieldType, size);
 		if (size > 0) {
 			int index = 0;
-			for (T t : list) {
+			for (T t : c) {
 				arrays[index++] = mapper.apply(t);
 			}
 		}
 		return arrays;
 	}
 
-	public static <E> String[] toStrArray(Collection<E> c, @Nullable Function<E, String> converter) {
+	public static <E> String[] toStrArray(Collection<E> c, @Nullable Function<? super E, String> converter) {
 		if (c == null) {
 			return null;
 		}

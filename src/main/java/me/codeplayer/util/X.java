@@ -634,55 +634,6 @@ public abstract class X {
 	}
 
 	/**
-	 * 指示两个条件是否都成立，或者都不成立
-	 *
-	 * @return {@code a == b }
-	 */
-	public static boolean matchAllOrNone(final boolean a, final boolean b) {
-		return a == b;
-	}
-
-	/**
-	 * 指示3个等价于 boolean 值的条件要么都成立，要么都不成立
-	 */
-	public static boolean matchAllOrNone(boolean a, boolean b, boolean c) {
-		return a == b && a == c;
-	}
-
-	/**
-	 * 指示两个等价于 boolean 值的条件是否互斥（若一个为 true，则另一个必定为 false）
-	 */
-	public static boolean isMutex(boolean a, boolean b) {
-		return a ^ b;
-	}
-
-	/**
-	 * 指示指定的参数是否至少有一个符合指定的 {@code matcher} 条件
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> boolean matchAny(Predicate<T> matcher, T... values) {
-		for (T val : values) {
-			if (matcher.test(val)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * 指示指定的参数是否都符合指定的 {@code matcher} 条件
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> boolean matchAll(Predicate<T> matcher, T... values) {
-		for (T val : values) {
-			if (!matcher.test(val)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
 	 * 尝试将空数组转为 null
 	 */
 	public static <T> T[] emptyToNull(T[] array) {

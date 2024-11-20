@@ -260,6 +260,15 @@ public abstract class ArrayX {
 	}
 
 	/**
+	 * 获取指定数组元素的长度，如果指定的参数为null或长度为0，则返回0
+	 *
+	 * @param array 指定的数组对象
+	 */
+	public static int getLength(@Nullable Object[] array) {
+		return array == null ? 0 : array.length;
+	}
+
+	/**
 	 * 获取指定数组元素的"维度"，如果数组为普通的一维数组，则返回1；如果为二维数组，则返回2；以此类推...<br>
 	 * 如果不是数组，则返回-1<br>
 	 * <b>注意：</b>Java没有真正意义上的多维数组，只有嵌套数组
@@ -584,6 +593,32 @@ public abstract class ArrayX {
 	 */
 	public static <E> E[] ofNull() {
 		return null;
+	}
+
+	/**
+	 * 指示指定的参数是否至少有一个符合指定的 {@code matcher} 条件
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> boolean matchAny(Predicate<T> matcher, T... values) {
+		for (T val : values) {
+			if (matcher.test(val)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * 指示指定的参数是否都符合指定的 {@code matcher} 条件
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> boolean matchAll(Predicate<T> matcher, T... values) {
+		for (T val : values) {
+			if (!matcher.test(val)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 }
