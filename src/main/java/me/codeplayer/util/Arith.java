@@ -2,8 +2,6 @@ package me.codeplayer.util;
 
 import java.math.*;
 
-import me.codeplayer.util.ChineseNumber.FormatStyle;
-
 /**
  * 用于商业运算的常用计算工具类
  *
@@ -695,31 +693,6 @@ public class Arith {
 	public String toString(int scale) {
 		return value.setScale(scale, RoundingMode.HALF_UP).toString();
 		// return value.divide(BigDecimal.ONE, scale, RoundingMode.HALF_UP).toString();
-	}
-
-	/**
-	 * 输出中文形式的数值字符串，例如："135000000"->"一亿三千五百万"
-	 *
-	 * @param ignoreFractionalPart 是否忽略小数部分
-	 */
-	public String toChineseString(boolean ignoreFractionalPart, boolean upperCase) {
-		return new ChineseNumber(ignoreFractionalPart ? value.setScale(0).toString() : value.toString(), upperCase ? FormatStyle.UPPER_CASE : FormatStyle.LOWER_CASE).toString();
-	}
-
-	/**
-	 * 输出大写中文形式的数值字符串，例如："135000000"->"壹亿叁千伍佰万"
-	 *
-	 * @param ignoreFractionalPart 是否忽略小数部分
-	 */
-	public String toChineseUpperCase(boolean ignoreFractionalPart) {
-		return toChineseString(ignoreFractionalPart, true);
-	}
-
-	/**
-	 * 输出大写中文形式的用于金额(人民币)显示的数值字符串，例如："135000000"->"壹亿叁千伍佰万元整"
-	 */
-	public String toMoneyUpperCase() {
-		return new ChineseNumber(value.setScale(2, RoundingMode.UNNECESSARY).toString(), FormatStyle.MONEY).toString();
 	}
 
 	/**
