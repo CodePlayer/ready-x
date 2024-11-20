@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import static java.lang.invoke.MethodType.methodType;
 
-public class Unsafes {
+public class JavaX {
 
 	public static final int javaVersion = parseJavaVersion(System.getProperty("java.version"));
 
