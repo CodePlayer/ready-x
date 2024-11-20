@@ -147,7 +147,6 @@ public class ChineseNumber {
 	 * @param d 指定的数值
 	 * @param ignoreDecimal 是否忽略小数部分
 	 * @param style 指定中文字符串的格式
-	 * @author Ready
 	 * @since 1.0
 	 */
 	public static String formatNumber(double d, boolean ignoreDecimal, FormatStyle style) {
@@ -164,7 +163,6 @@ public class ChineseNumber {
 	 * @param d 指定的数值
 	 * @param ignoreDecimal 是否忽略小数部分
 	 * @param style 指定中文字符串的格式
-	 * @author Ready
 	 * @since 1.0
 	 */
 	public static String formatNumber(BigDecimal d, boolean ignoreDecimal, FormatStyle style) {
@@ -180,7 +178,6 @@ public class ChineseNumber {
 	 *
 	 * @param d 指定的数值
 	 * @param style 指定中文字符串的格式
-	 * @author Ready
 	 * @since 1.0
 	 */
 	public static String formatNumber(long d, FormatStyle style) {
@@ -256,7 +253,7 @@ public class ChineseNumber {
 	 * @since 2015年8月21日
 	 * @since 1.0
 	 */
-	public static enum FormatStyle {
+	public enum FormatStyle {
 		/**
 		 * 中文数字：'零', '一', '二', '三', '四', '五', '六', '七', '八', '九'<br>
 		 * 中文单位：'亿', '万', '千', '百', '十'
