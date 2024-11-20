@@ -1,6 +1,7 @@
 package me.codeplayer.util;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * 用于协助处理与随机生成有关的工具类
@@ -17,7 +18,7 @@ public abstract class RandomX {
 	 * @param max 返回的最大值
 	 */
 	public static int getInt(int min, int max) {
-		return new Random().nextInt(max - min + 1) + min;
+		return ThreadLocalRandom.current().nextInt(min, max + 1);
 	}
 
 	/**
@@ -27,40 +28,31 @@ public abstract class RandomX {
 		if (length <= 0) {
 			return "";
 		}
-		new Random().nextInt();
-		String str = Double.toString(Math.random()).substring(2);
-		int realLen = str.length();
-		if (length > realLen) {
-			StringBuilder sb = new StringBuilder(length).append(str);
-			int remain = length - realLen;
-			while (remain > 0) {
-				str = Double.toString(Math.random()).substring(2);
-				realLen = str.length();
-				if (remain >= realLen) {
-					sb.append(str);
-				} else {
-					sb.append(str, 0, remain);
-				}
-				remain -= realLen;
-			}
-			return sb.toString();
-		} else {
-			return str.substring(0, length);
-		}
+		final StringBuilder sb = new StringBuilder(length);
+		final int batch = 15; // 不可超过15
+		int remain = length;
+		final ThreadLocalRandom random = ThreadLocalRandom.current();
+		do {
+			final int expect = Math.min(batch, remain);
+			final long val = random.nextLong(0L, (long) Math.pow(10, expect));
+			StringX.zeroFill(sb, val, expect);
+			remain -= batch;
+		} while (remain > 0);
+		return sb.toString();
 	}
 
 	/**
 	 * 随机返回0 ~ 1之间(不包括1)的双精度浮点数
 	 */
 	public static double getDouble() {
-		return Math.random();
+		return ThreadLocalRandom.current().nextDouble();
 	}
 
 	/**
 	 * 随机返回0 ~ 1之间(不包括1)的单精度浮点数
 	 */
 	public static float getFloat() {
-		return new Random().nextFloat();
+		return ThreadLocalRandom.current().nextFloat();
 	}
 
 	/**
@@ -68,14 +60,14 @@ public abstract class RandomX {
 	 * 因为 <code>java.util.Random</code> 类使用只以 48 位表示的种子，所以此算法不会返回所有可能的 long值。
 	 */
 	public static long getLong() {
-		return new Random().nextLong();
+		return ThreadLocalRandom.current().nextLong();
 	}
 
 	/**
 	 * 随机返回一个boolean值
 	 */
 	public static boolean getBoolean() {
-		return new Random().nextBoolean();
+		return ThreadLocalRandom.current().nextBoolean();
 	}
 
 	/**
@@ -84,12 +76,12 @@ public abstract class RandomX {
 	 */
 	public static char getChar(char[] chars) {
 		switch (chars.length) {
-		case 0:
-			return ' ';
-		case 1:
-			return chars[0];
-		default:
-			return chars[new Random().nextInt(chars.length)];
+			case 0:
+				return ' ';
+			case 1:
+				return chars[0];
+			default:
+				return chars[ThreadLocalRandom.current().nextInt(0, chars.length)];
 		}
 	}
 
@@ -98,7 +90,15 @@ public abstract class RandomX {
 	 * 如果为空字符串，则默认返回一个空格字符<code>' '</code>
 	 */
 	public static char getChar(String str) {
-		return getChar(str.toCharArray());
+		final int length = str.length();
+		switch (length) {
+			case 0:
+				return ' ';
+			case 1:
+				return str.charAt(0);
+			default:
+				return str.charAt(ThreadLocalRandom.current().nextInt(0, length));
+		}
 	}
 
 	/**
@@ -107,7 +107,7 @@ public abstract class RandomX {
 	 * @param chars 用于提供字符来源的字符数组
 	 * @param length 生成的字符串的长度。如果长度小于1，则返回空字符串
 	 */
-	public static String getString(char[] chars, int length) {
+	public static String getString(final char[] chars, final int length) {
 		if (length < 1) {
 			return "";
 		}
@@ -115,7 +115,7 @@ public abstract class RandomX {
 		if (chars.length == 1) {
 			Arrays.fill(newChars, chars[0]);
 		} else {
-			Random random = new Random();
+			final ThreadLocalRandom random = ThreadLocalRandom.current();
 			for (int i = 0; i < length; i++) {
 				newChars[i] = chars[random.nextInt(chars.length)];
 			}
@@ -129,8 +129,21 @@ public abstract class RandomX {
 	 * @param str 用于提供字符来源的字符串
 	 * @param length 生成的字符串的长度。如果长度小于1，则返回空字符串
 	 */
-	public static String getString(String str, int length) {
-		return getString(str.toCharArray(), length);
+	public static String getString(final String str, final int length) {
+		if (length < 1) {
+			return "";
+		}
+		final char[] newChars = new char[length];
+		final int max = str.length();
+		if (max == 1) {
+			Arrays.fill(newChars, str.charAt(0));
+		} else {
+			final ThreadLocalRandom random = ThreadLocalRandom.current();
+			for (int i = 0; i < length; i++) {
+				newChars[i] = str.charAt(random.nextInt(max));
+			}
+		}
+		return new String(newChars);
 	}
 
 }
