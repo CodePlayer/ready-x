@@ -4,7 +4,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.*;
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import me.codeplayer.util.CharConverter.CharCase;
@@ -281,7 +280,7 @@ public abstract class StringX {
 	/**
 	 * 判断指定的对象是否不为空<br>
 	 * 如果对象(或其 toString() 返回值)不为null、空字符串，则返回true，否则返回false<br>
-	 * <b>注意：</b>本方法不会去除字符串两边的空格，如果需要对字符串进行去除两边空格后的判断，请使用{@link StringX#isBlank(Object obj)}方法
+	 * <b>注意：</b>本方法不会去除字符串两边的空格，如果需要对字符串进行去除两边空格后的判断，请使用{@link #isBlank(Object obj)}方法
 	 *
 	 * @param obj 指定的对象
 	 * @since 0.0.1
@@ -674,8 +673,8 @@ public abstract class StringX {
 	 * @param endIndex 指定的字符串结束索引(可以为负数，表示 <code>endIndex + str.length()</code> )
 	 * @since 0.1.1
 	 */
-	public static String replaceChars(String str, char ch, int beginIndex, int endIndex) {
-		final int length = str.length();
+	public static String replaceChars(@Nullable String str, char ch, int beginIndex, int endIndex) {
+		final int length = length(str);
 		int[] range = ensureRangeSafe(beginIndex, endIndex, length);
 		if (range == null) {
 			return str;
@@ -756,11 +755,11 @@ public abstract class StringX {
 	 * @param endIndex 指定的字符串结束索引(可以为负数，表示 <code>endIndex + str.length()</code> )
 	 * @since 0.1.1
 	 */
-	public static String replaceSubstring(String str, String replacement, int beginIndex, int endIndex) {
+	public static String replaceSubstring(@Nullable String str, String replacement, int beginIndex, int endIndex) {
 		if (replacement == null || replacement.isEmpty()) {
 			return str;
 		}
-		final int length = str.length();
+		final int length = length(str);
 		int[] range = ensureRangeSafe(beginIndex, endIndex, length);
 		if (range == null) {
 			return str;
@@ -859,8 +858,8 @@ public abstract class StringX {
 	 * @param escapedChars 需要被转义的字符的数组
 	 */
 	public static StringBuilder escape(@Nullable StringBuilder sb, final String str, final char escapeChar, final char[] escapedChars) {
-		sb = initBuilder(sb, str.length() + 4);
-		final int length = str.length();
+		final int length = length(str);
+		sb = initBuilder(sb, length + 4);
 		for (int i = 0; i < length; i++) {
 			char ch = str.charAt(i);
 			if (ch == escapeChar || ArrayUtils.contains(escapedChars, ch)) {
@@ -890,7 +889,7 @@ public abstract class StringX {
 	 * @param escapedChars 已经被转义过的字符的数组
 	 */
 	public static StringBuilder unescape(@Nullable StringBuilder sb, final String escapedStr, final char escapeChar, final char[] escapedChars) {
-		final int length = escapedStr.length();
+		final int length = length(escapedStr);
 		sb = initBuilder(sb, length);
 		for (int i = 0; i < length; ) {
 			char ch = escapedStr.charAt(i++);
@@ -931,7 +930,7 @@ public abstract class StringX {
 	 */
 	@Nullable
 	public static StringBuilder escapeSQLLike(@Nullable StringBuilder sb, final String likeStr, final char escapeChar, final boolean appendWildcardAtStart, final boolean appendWildcardAtEnd) {
-		if (StringX.isEmpty(likeStr)) {
+		if (isEmpty(likeStr)) {
 			return sb;
 		}
 		final char[] strChars = likeStr.toCharArray();
@@ -1108,10 +1107,10 @@ public abstract class StringX {
 	 *
 	 * @param delimiter 分隔符
 	 */
-	public static <E> StringBuilder joinAppend(@Nonnull StringBuilder sb, Collection<E> items, BiConsumer<StringBuilder, E> itemAppender, String delimiter) {
+	public static <E> StringBuilder joinAppend(@Nullable StringBuilder sb, Collection<E> items, BiConsumer<StringBuilder, E> itemAppender, String delimiter) {
 		if (X.isValid(items)) {
 			final int size = items.size();
-			sb.ensureCapacity(sb.length() + size * (6 + delimiter.length()) + 4);
+			sb = initBuilder(sb, size * (6 + delimiter.length()) + 4);
 			boolean appendSep = false;
 			for (E e : items) {
 				if (appendSep) {
@@ -1130,22 +1129,9 @@ public abstract class StringX {
 	 *
 	 * @param delimiter 分隔符
 	 */
-	public static <E> String join(Collection<E> items, BiConsumer<StringBuilder, E> itemAppender, String delimiter) {
-		if (X.isValid(items)) {
-			final int size = items.size();
-			final StringBuilder sb = new StringBuilder(size * (6 + delimiter.length()) + 4);
-			boolean appendSep = false;
-			for (E e : items) {
-				if (appendSep) {
-					sb.append(delimiter);
-				} else {
-					appendSep = true;
-				}
-				itemAppender.accept(sb, e);
-			}
-			return sb.toString();
-		}
-		return "";
+	public static <E> String joinAppend(Collection<E> items, BiConsumer<StringBuilder, E> itemAppender, String delimiter) {
+		final StringBuilder sb = joinAppend(null, items, itemAppender, delimiter);
+		return sb == null ? "" : sb.toString();
 	}
 
 	/**
@@ -1154,7 +1140,7 @@ public abstract class StringX {
 	 * @param delimiter 分隔符
 	 */
 	public static <E> String joins(Collection<E> c, String delimiter) {
-		return join(c, StringBuilder::append, delimiter);
+		return joinAppend(c, StringBuilder::append, delimiter);
 	}
 
 	/**
@@ -1172,7 +1158,7 @@ public abstract class StringX {
 	 * @param delimiter 分隔符
 	 */
 	public static String join(Collection<? extends Number> c, String delimiter) {
-		return join(c, (sb, t) -> sb.append(t.longValue()), delimiter);
+		return joinAppend(c, (sb, t) -> sb.append(t.longValue()), delimiter);
 	}
 
 	/**
@@ -1181,7 +1167,7 @@ public abstract class StringX {
 	 * @param delimiter 分隔符
 	 */
 	public static <E> String join(Collection<E> c, Function<? super E, Object> getter, String delimiter) {
-		return join(c, (sb, t) -> sb.append(getter.apply(t)), delimiter);
+		return joinAppend(c, (sb, t) -> sb.append(getter.apply(t)), delimiter);
 	}
 
 	/**
@@ -1189,8 +1175,8 @@ public abstract class StringX {
 	 *
 	 * @param delimiter 分隔符
 	 */
-	public static <T> String joinNumber(Collection<T> c, Function<? super T, Number> mapper, String delimiter) {
-		return join(c, (sb, t) -> sb.append(mapper.apply(t).longValue()), delimiter);
+	public static <T> String joinLong(Collection<T> c, Function<? super T, Number> mapper, String delimiter) {
+		return joinAppend(c, (sb, t) -> sb.append(mapper.apply(t).longValue()), delimiter);
 	}
 
 	/**
@@ -1198,8 +1184,8 @@ public abstract class StringX {
 	 *
 	 * @param delimiter 分隔符
 	 */
-	public static <T> String joinLong(Collection<T> c, ToLongFunction<? super T> mapper, String delimiter) {
-		return join(c, (sb, t) -> sb.append(mapper.applyAsLong(t)), delimiter);
+	public static <T> String joinLongValue(Collection<T> c, ToLongFunction<? super T> mapper, String delimiter) {
+		return joinAppend(c, (sb, t) -> sb.append(mapper.applyAsLong(t)), delimiter);
 	}
 
 	/**
@@ -1207,8 +1193,8 @@ public abstract class StringX {
 	 *
 	 * @param delimiter 分隔符
 	 */
-	public static <T> String joinInt(Collection<T> c, ToIntFunction<? super T> mapper, String delimiter) {
-		return join(c, (sb, t) -> sb.append(mapper.applyAsInt(t)), delimiter);
+	public static <T> String joinIntValue(Collection<T> c, ToIntFunction<? super T> mapper, String delimiter) {
+		return joinAppend(c, (sb, t) -> sb.append(mapper.applyAsInt(t)), delimiter);
 	}
 
 	/**
@@ -1220,7 +1206,7 @@ public abstract class StringX {
 	 * @param filter 过滤器（如果应用到对应的元素返回 false，则返回的集合中不会包含该元素 ）
 	 */
 	public static <T> List<T> split(final String str, final String sep, @Nullable Predicate<? super String> filter, final Function<? super String, T> mapper) {
-		if (StringX.notEmpty(str)) {
+		if (notEmpty(str)) {
 			final List<T> list = new ArrayList<>();
 			int pos, start = 0;
 			// ",,"
@@ -1245,7 +1231,7 @@ public abstract class StringX {
 	 * @param ignoreEmpty 是否忽略空子字符串（如果为 true，则忽略空字符串 ）
 	 */
 	public static <T> List<T> split(final String toSplit, final String sep, final Function<? super String, T> mapper, final boolean ignoreEmpty) {
-		if (StringX.notEmpty(toSplit)) {
+		if (notEmpty(toSplit)) {
 			final Predicate<String> filter = ignoreEmpty ? StringX::notEmpty : null;
 			return split(toSplit, sep, filter, mapper);
 		}
