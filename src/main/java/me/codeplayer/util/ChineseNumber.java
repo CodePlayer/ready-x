@@ -62,7 +62,7 @@ public class ChineseNumber {
 			size++;
 		}
 		// 循环截取4位数字字符串组装成cell，放入List中
-		List<Cell> cells = new ArrayList<Cell>(size);
+		List<Cell> cells = new ArrayList<>(size);
 		do {
 			int startIndex = length - 4;
 			if (startIndex < 0) { // 如果开始索引小于0，重置为0
