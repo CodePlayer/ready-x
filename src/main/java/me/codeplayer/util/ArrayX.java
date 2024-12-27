@@ -58,10 +58,10 @@ public abstract class ArrayX {
 				Object val = Array.get(array, i);
 				if (val != null) {
 					if (type == Integer.class) {
-						sb.append(((Integer) val).intValue());
+						sb.append((int) val);
 						continue;
 					} else if (type == Long.class) {
-						sb.append(((Long) val).longValue());
+						sb.append((long) val);
 						continue;
 					}
 				}

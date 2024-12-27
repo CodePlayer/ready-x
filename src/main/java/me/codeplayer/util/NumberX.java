@@ -1,8 +1,8 @@
 package me.codeplayer.util;
 
-import java.math.*;
-
-import javax.annotation.*;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import javax.annotation.Nullable;
 
 /**
  * 对数值类型的数据(包含字节)进行相应处理的工具类
@@ -32,7 +32,6 @@ public abstract class NumberX {
 	 * @param value 指定的对象
 	 */
 	public static byte getByte(Object value) {
-		Assert.notNull(value);
 		return value instanceof Number ? ((Number) value).byteValue() : Byte.parseByte(value.toString());
 	}
 
@@ -67,7 +66,6 @@ public abstract class NumberX {
 	 * @param value 指定的对象
 	 */
 	public static short getShort(Object value) {
-		Assert.notNull(value);
 		return value instanceof Number ? ((Number) value).shortValue() : Short.parseShort(value.toString());
 	}
 
@@ -102,7 +100,6 @@ public abstract class NumberX {
 	 * @param value 指定的对象
 	 */
 	public static int getInt(Object value) {
-		Assert.notNull(value);
 		return value instanceof Number ? ((Number) value).intValue() : Integer.parseInt(value.toString());
 	}
 
@@ -158,7 +155,6 @@ public abstract class NumberX {
 	 * @param value 指定的对象
 	 */
 	public static long getLong(Object value) {
-		Assert.notNull(value);
 		return value instanceof Number ? ((Number) value).longValue() : Long.parseLong(value.toString());
 	}
 
@@ -217,7 +213,6 @@ public abstract class NumberX {
 	 * @param value 指定的对象
 	 */
 	public static float getFloat(Object value) {
-		Assert.notNull(value);
 		return value instanceof Number ? ((Number) value).floatValue() : Float.parseFloat(value.toString());
 	}
 
@@ -252,7 +247,6 @@ public abstract class NumberX {
 	 * @param value 指定的对象
 	 */
 	public static double getDouble(Object value) {
-		Assert.notNull(value);
 		return value instanceof Number ? ((Number) value).doubleValue() : Double.parseDouble(value.toString());
 	}
 
