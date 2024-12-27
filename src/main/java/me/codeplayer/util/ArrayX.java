@@ -505,7 +505,7 @@ public abstract class ArrayX {
 	 * 将指定的集合转为对应的数组
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T[] toArray(final Collection<T> c, Class<T> type) {
+	public static <T> T[] toArray(@Nullable final Collection<T> c, Class<T> type) {
 		if (c == null) {
 			return null;
 		}
@@ -520,9 +520,10 @@ public abstract class ArrayX {
 	/**
 	 * 将指定的集合中的元素经过 {@code mapper} 转换后，转为对应类型的数组
 	 *
+	 * @return 只有 {@code items} 是 {@code null} 时，才返回 {@code null}
 	 * @since 3.0.0
 	 */
-	public static <T, R> R[] toArray(Iterable<T> items, Class<R> type, Function<? super T, R> mapper) {
+	public static <T, R> R[] toArray(@Nullable Iterable<T> items, Class<R> type, Function<? super T, R> mapper) {
 		if (items == null) {
 			return null;
 		}
