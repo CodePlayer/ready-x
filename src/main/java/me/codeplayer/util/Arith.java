@@ -564,7 +564,19 @@ public class Arith {
 	 */
 	public static double scale(double d, int scale, RoundingMode mode) {
 		checkScale(scale);
-		return new BigDecimal(Double.toString(d)).setScale(scale, mode).doubleValue();
+		return new BigDecimal(d).setScale(scale, mode).doubleValue();
+	}
+
+	/**
+	 * 以指定的舍入方式使指定小数精确到指定的小数位数
+	 *
+	 * @param val 指定的小数
+	 * @param scale 指定的小数精确位数
+	 */
+	public static BigDecimal fastScale(double val, int scale, RoundingMode mode) {
+		checkScale(scale);
+		BigDecimal d = new BigDecimal(val);
+		return d.scale() <= scale ? d : d.setScale(scale, mode);
 	}
 
 	/**
@@ -583,18 +595,6 @@ public class Arith {
 	 */
 	public static long floor(double d) {
 		return (long) Math.floor(d);
-	}
-
-	/**
-	 * 以指定舍入方式使指定小数精确到指定的小数位数
-	 *
-	 * @param d 指定的小数
-	 * @param scale 指定的小数精确位数
-	 * @param mode 指定的舍入模式
-	 */
-	public static double truncate(double d, int scale, RoundingMode mode) {
-		checkScale(scale);
-		return new BigDecimal(Double.toString(d)).setScale(scale, mode).doubleValue();
 	}
 
 	static void checkScale(int scale) {
