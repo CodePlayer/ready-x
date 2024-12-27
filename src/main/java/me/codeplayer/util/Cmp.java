@@ -234,6 +234,15 @@ public class Cmp {
 	}
 
 	/**
+	 * 指示 指定的 {@code val} 是否在 {@code min} 和 {@code max} 之间（闭区间）
+	 *
+	 * @return 如果 {@code val} 为 null，则返回 false
+	 */
+	public static boolean between(@Nullable Long val, long min, long max) {
+		return val != null && val >= min && val <= max;
+	}
+
+	/**
 	 * 将 long 转换为 int 类型，并检查数据范围不会发生数据截断，否则抛出异常
 	 */
 	public static int castAsInt(long val) throws IllegalArgumentException {
