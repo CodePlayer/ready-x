@@ -567,7 +567,7 @@ public abstract class CollectionX {
 	 *
 	 * @param sb 用于拼接参数的 StringBuilder。如果为 {@code null}，则内部会在必要时创建一个新的 StringBuilder 对象
 	 * @param hasParam 之前是否已拼接了参数，如果为 {@code true}，则会在后续拼接的第一个参数前追加 '&' 符号。如果为 {@code null} 表示内部自动根据 {@code sb} 中的内容进行识别
-	 * @param urlSafeRequired 是否需要对参数值进行 URL 预编码（只有明确不会出现非安全字符时，才建议为  {@code true} ）
+	 * @param urlSafeRequired 是否需要对参数值进行 URL 预编码（只有明确不会出现非安全字符时，才建议为  {@code false} ）
 	 * @param converter 对集合元素进行预处理的转换器，如果为 null 则表示无需预处理。如果转换后的结果为 {@code null}，则表示跳过该参数（不对其进行参数拼接）
 	 * @return 如果传入的 sb 为 {@code null} 且 {@code params} 为空，就会返回 {@code null}
 	 */
