@@ -2,7 +2,6 @@ package me.codeplayer.util;
 
 import java.lang.invoke.*;
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.function.BiFunction;
 
 import org.apache.commons.lang3.StringUtils;
@@ -59,7 +58,6 @@ public class JavaX {
 	public static String sharedString(final char[] chars) {
 		if (newSharedString != null) {
 			try {
-				System.out.println(Arrays.toString(chars));
 				return newSharedString.apply(chars, true);
 			} catch (Throwable e) {
 				throw new RuntimeException(e);

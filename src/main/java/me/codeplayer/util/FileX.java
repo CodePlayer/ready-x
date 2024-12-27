@@ -1,14 +1,14 @@
 package me.codeplayer.util;
 
 import java.io.*;
-import java.math.*;
-import java.nio.channels.*;
-import java.nio.file.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.nio.channels.FileChannel;
+import java.nio.file.AccessDeniedException;
 import java.util.*;
+import javax.annotation.Nullable;
 
-import javax.annotation.*;
-
-import org.apache.commons.lang3.time.*;
+import org.apache.commons.lang3.time.FastDateFormat;
 
 /**
  * 用于文件操作的公共工具类
@@ -167,15 +167,15 @@ public abstract class FileX {
 	 * 根据文件的字节数量计算出改文件为多少"Byte"/"KB"/"MB"/"GB"/"TB"/"PB"<br>
 	 * 如果unit为 UNIT_AUTO(0)，则根据文件大小自动选择单位，如果存在小数均保留<code>scale</code>位小数<br>
 	 *
-	 * @param fileSize     指定的文件大小
-	 * @param unit         指定的文件单位
-	 * @param scale        保留的小数位数
+	 * @param fileSize 指定的文件大小
+	 * @param unit 指定的文件单位
+	 * @param scale 保留的小数位数
 	 * @param roundingMode 舍入模式
 	 * @since 0.0.1
 	 */
 	public static String calcFileSize(long fileSize, int unit, int scale, RoundingMode roundingMode) {
 		if (fileSize < 0) {
-			throw new IllegalArgumentException("Argument 'fileSize' can not less than 0:" + fileSize);
+			throw new IllegalArgumentException("Argument 'fileSize' can not less than 0: " + fileSize);
 		}
 		if (unit < UNIT_AUTO || unit > UNIT_PB) {
 			throw new IllegalArgumentException(String.valueOf(unit));
@@ -201,8 +201,8 @@ public abstract class FileX {
 	 * 如果unit为 UNIT_AUTO(0)，则根据文件大小自动选择单位，如果存在小数均保留<code>scale</code>位小数<br>
 	 *
 	 * @param fileSize 指定的文件大小
-	 * @param unit     指定的文件单位
-	 * @param scale    保留的小数位数
+	 * @param unit 指定的文件单位
+	 * @param scale 保留的小数位数
 	 * @since 0.0.1
 	 */
 	public static String calcFileSize(long fileSize, int unit, int scale) {
@@ -214,7 +214,7 @@ public abstract class FileX {
 	 * 如果unit为UNIT_AUTO(0)，则根据文件大小自动选择单位，如果存在小数均保留两位小数<br>
 	 *
 	 * @param fileSize 指定的文件大小
-	 * @param unit     指定的文件单位
+	 * @param unit 指定的文件单位
 	 * @since 0.0.1
 	 */
 	public static String calcFileSize(long fileSize, int unit) {
@@ -224,9 +224,9 @@ public abstract class FileX {
 	/**
 	 * 文件大小除以指定度量，返回保留scale位小数的值
 	 *
-	 * @param fileSize     文件大小
-	 * @param divisor      指定文件单位的字节数
-	 * @param scale        保留的小数位数
+	 * @param fileSize 文件大小
+	 * @param divisor 指定文件单位的字节数
+	 * @param scale 保留的小数位数
 	 * @param roundingMode 舍入模式
 	 * @since 3.0.0
 	 */
@@ -238,8 +238,8 @@ public abstract class FileX {
 	 * 文件大小除以指定度量，返回保留scale位小数的值
 	 *
 	 * @param fileSize 文件大小
-	 * @param divisor  指定文件单位的字节数
-	 * @param scale    保留的小数位数
+	 * @param divisor 指定文件单位的字节数
+	 * @param scale 保留的小数位数
 	 * @since 0.0.1
 	 */
 	public static String divide(long fileSize, long divisor, int scale) {
@@ -266,7 +266,7 @@ public abstract class FileX {
 	 * 其他情况(例如没有删除权限)返回-1
 	 *
 	 * @param directoryPath 文件所在的文件夹路径
-	 * @param fileName      文件名
+	 * @param fileName 文件名
 	 * @since 0.0.1
 	 */
 	public static int deleteFile(String directoryPath, String fileName) {
@@ -364,8 +364,8 @@ public abstract class FileX {
 	/**
 	 * 通过文件流复制文件到指定路径
 	 *
-	 * @param is       指定的输入文件流
-	 * @param dest     指定的目标文件对象
+	 * @param is 指定的输入文件流
+	 * @param dest 指定的目标文件对象
 	 * @param override 如果目标文件已存在，是否允许覆盖
 	 * @since 0.0.1
 	 */
@@ -404,7 +404,7 @@ public abstract class FileX {
 	 * 将指定的文件复制到指定文件对象所表示的位置<br>
 	 * 如果目标文件已存在，将引发异常
 	 *
-	 * @param src  源文件对象
+	 * @param src 源文件对象
 	 * @param dest 目标文件对象
 	 * @since 0.0.1
 	 */
@@ -415,7 +415,7 @@ public abstract class FileX {
 	/**
 	 * 将指定的文件复制到指定的目标路径
 	 *
-	 * @param src  源文件路径
+	 * @param src 源文件路径
 	 * @param dest 目标文件路径
 	 * @since 0.0.1
 	 */
@@ -460,7 +460,7 @@ public abstract class FileX {
 	 * 将指定的文件复制到指定的目录，保持其原文件名<br>
 	 * 如果目标文件夹已存在同名的文件，则引发异常
 	 *
-	 * @param file     指定的文件
+	 * @param file 指定的文件
 	 * @param diretory 指定的目录
 	 * @since 0.0.1
 	 */
@@ -471,9 +471,9 @@ public abstract class FileX {
 	/**
 	 * 将指定的文件复制到指定的目录，保持其原文件名
 	 *
-	 * @param file         指定的文件
+	 * @param file 指定的文件
 	 * @param destDiretory 指定的目录
-	 * @param override     如果已存在同名的文件，是否允许覆盖
+	 * @param override 如果已存在同名的文件，是否允许覆盖
 	 * @since 0.0.1
 	 */
 	public static void copyFileToDirectory(String file, String destDiretory, boolean override) {
@@ -484,7 +484,7 @@ public abstract class FileX {
 	 * 将指定的文件复制到指定的目录，保持其原文件名<br>
 	 * 如果目标文件夹已存在同名的文件，则引发异常
 	 *
-	 * @param file         指定的文件
+	 * @param file 指定的文件
 	 * @param destDiretory 指定的目录
 	 * @since 0.0.1
 	 */
@@ -495,8 +495,8 @@ public abstract class FileX {
 	/**
 	 * 移动指定的文件到目标文件路径
 	 *
-	 * @param src      指定的文件
-	 * @param dest     目标文件
+	 * @param src 指定的文件
+	 * @param dest 目标文件
 	 * @param override 如果已存在同名的文件，是否允许覆盖
 	 * @since 0.0.1
 	 */
@@ -533,7 +533,7 @@ public abstract class FileX {
 	/**
 	 * 移动指定的文件到目标文件路径
 	 *
-	 * @param path     指定的文件
+	 * @param path 指定的文件
 	 * @param destPath 目标文件
 	 * @param override 如果已存在同名的文件，是否允许覆盖
 	 * @since 0.0.1
@@ -666,7 +666,7 @@ public abstract class FileX {
 	 * 关闭指定的输入输出流<br>
 	 * 内部会先关闭输出流，再关闭输入流
 	 *
-	 * @param in  输入流
+	 * @param in 输入流
 	 * @param out 输出流
 	 * @since 3.0.0
 	 */
@@ -749,10 +749,10 @@ public abstract class FileX {
 	/**
 	 * 将指定文件复制到指定的目录，并且采用随机的文件名、指定的文件后缀，方法内部会尽可能地确保文件名称不会重复
 	 *
-	 * @param file    指定的文件对象
+	 * @param file 指定的文件对象
 	 * @param destDir 目标目录
-	 * @param prefix  目标文件的文件名前缀(可以为null)
-	 * @param suffix  目标文件的文件后缀。null、""、"gif"、".gif"等形式均可，前两者表示没有后缀，后两者表示指定的后缀。
+	 * @param prefix 目标文件的文件名前缀(可以为null)
+	 * @param suffix 目标文件的文件后缀。null、""、"gif"、".gif"等形式均可，前两者表示没有后缀，后两者表示指定的后缀。
 	 * @return 返回复制后的目标文件对象
 	 * @since 0.0.1
 	 */
@@ -794,9 +794,9 @@ public abstract class FileX {
 	/**
 	 * 将指定文件移动到指定的目录，并且采用随机的文件名、指定的文件后缀，方法内部会尽可能地确保文件名称不会重复
 	 *
-	 * @param file    指定的文件对象
+	 * @param file 指定的文件对象
 	 * @param destDir 目标目录
-	 * @param suffix  目标文件的文件后缀。null、""、"gif"、".gif"等形式均可，前两者表示没有后缀，后两者表示指定的后缀。
+	 * @param suffix 目标文件的文件后缀。null、""、"gif"、".gif"等形式均可，前两者表示没有后缀，后两者表示指定的后缀。
 	 * @return 返回移动后的目标文件对象
 	 * @since 0.0.1
 	 */
@@ -948,7 +948,7 @@ public abstract class FileX {
 	/**
 	 * 读取指定名称的".properties"文件
 	 *
-	 * @param pathname    指定的文件路径
+	 * @param pathname 指定的文件路径
 	 * @param inClassPath 是否相对于classpath类路径下
 	 * @return 对应的Properties对象(出于泛型兼容考虑 ， 以Map & lt ; String, String & gt ; 形式返回)。如果指定的文件不存在，则返回null
 	 * @author Ready
@@ -957,4 +957,5 @@ public abstract class FileX {
 	public static Map<String, String> readProperties(String pathname, boolean inClassPath) {
 		return readProperties(FileX.getFile(pathname, inClassPath));
 	}
+
 }
