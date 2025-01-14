@@ -10,6 +10,7 @@ public class StringXTest implements WithAssertions {
 	@Test
 	public void unicode() {
 		// 将字符串转为Unicode码
+		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> StringX.unicode(null));
 		assertThat(StringX.unicode("中国")).isEqualTo("\\u4E2D\\u56FD");
 		assertThat(StringX.unicode("张三丰")).isEqualTo("\\u5F20\\u4E09\\u4E30");
 		assertThat(StringX.unicode("ABCD")).isEqualTo("\\u0041\\u0042\\u0043\\u0044");
@@ -19,6 +20,7 @@ public class StringXTest implements WithAssertions {
 	@Test
 	public void fastUnicode() {
 		// 将字符串转为Unicode码，与unicode()相比，性能更优异
+		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> StringX.fastUnicode(null));
 		assertThat(StringX.fastUnicode("中国")).isEqualTo("\\u4E2D\\u56FD");
 		assertThat(StringX.fastUnicode("张三丰")).isEqualTo("\\u5F20\\u4E09\\u4E30");
 		assertThat(StringX.fastUnicode("ABCD")).isEqualTo("\\u0041\\u0042\\u0043\\u0044");
@@ -27,6 +29,12 @@ public class StringXTest implements WithAssertions {
 
 	@Test
 	public void replaceChars() {
+		assertThat(StringX.replaceChars(null, '*', 5))
+				.isNull();
+		assertThat(StringX.replaceChars("", '*', 5))
+				.isEqualTo("");
+		assertThat(StringX.replaceChars("abc", '*', 5))
+				.isEqualTo("abc");
 		// 将第6个及其后的字符替换为*
 		assertThat(StringX.replaceChars("helloworld", '*', 5))
 				.isEqualTo("hello*****");
@@ -48,6 +56,12 @@ public class StringXTest implements WithAssertions {
 
 	@Test
 	public void replaceSubstring() {
+		assertThat(StringX.replaceSubstring(null, "***", 2))
+				.isNull();
+
+		assertThat(StringX.replaceSubstring("", "***", 2))
+				.isEqualTo("");
+
 		// 将第3个及其后的字符替换为"***"
 		assertThat(StringX.replaceSubstring("helloworld", "***", 2))
 				.isEqualTo("he***");
@@ -59,10 +73,16 @@ public class StringXTest implements WithAssertions {
 		// 将第3~倒数第二个字符替换为"***"
 		assertThat(StringX.replaceSubstring("helloworld", "***", 2, -1))
 				.isEqualTo("he***d");
+
+		// 将倒数第二个~倒数第二个字符替换为"***"
+		assertThat(StringX.replaceSubstring("helloworld", "***", -2, -1))
+				.isEqualTo("hellowor***d");
 	}
 
 	@Test
 	public void limitChars() {
+		assertThat(StringX.limitChars(null, 15))
+				.isEqualTo("");
 		// 限制字符串的长度最大为15个字符，并默认附加三个句点表示省略(长度不足15，直接返回原字符串)
 		assertThat(StringX.limitChars("张三李四王五", 15))
 				.isEqualTo("张三李四王五");
@@ -109,6 +129,7 @@ public class StringXTest implements WithAssertions {
 
 	@Test
 	public void concat() {
+		assertEquals("", StringX.concat(null, null));
 		assertEquals("ab", StringX.concat("a", "b"));
 		assertSame("b", StringX.concat(null, "b"));
 		assertSame("a", StringX.concat("a", null));
@@ -133,6 +154,11 @@ public class StringXTest implements WithAssertions {
 
 	@Test
 	public void containsWord() {
+		assertFalse(StringX.containsWord(null, "view", " "));
+		assertFalse(StringX.containsWord("", "view", " "));
+		assertFalse(StringX.containsWord("", null, " "));
+		assertTrue(StringX.containsWord("", "", " "));
+		assertFalse(StringX.containsWord(null, "", " "));
 		assertTrue(StringX.containsWord("edit view submit", "view", " "));
 		assertFalse(StringX.containsWord("edit,view,submit", "view", " "));
 

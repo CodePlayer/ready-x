@@ -4,6 +4,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.*;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import me.codeplayer.util.CharConverter.CharCase;
@@ -420,18 +421,16 @@ public abstract class StringX {
 	 * @param suffix 超出长度时添加的指定后缀,如果不需要，可以为null
 	 * @since 0.0.1
 	 */
-	public static String limitChars(String str, int maxLength, String suffix) {
+	@Nonnull
+	public static String limitChars(@Nullable String str, int maxLength, String suffix) {
 		if (str == null) {
 			return "";
 		}
-		str = str.trim();
-		int length = str.length();
-		if (length <= maxLength) {
+		if (str.length() <= maxLength) {
 			return str;
-		} else {
-			str = str.substring(0, maxLength);
-			return suffix == null ? str : str.concat(suffix);
 		}
+		str = str.substring(0, maxLength);
+		return isEmpty(suffix) ? str : str.concat(suffix);
 	}
 
 	/**
@@ -443,7 +442,8 @@ public abstract class StringX {
 	 * @param maxLength 最大限制长度
 	 * @since 0.0.1
 	 */
-	public static String limitChars(String str, int maxLength) {
+	@Nonnull
+	public static String limitChars(@Nullable String str, int maxLength) {
 		return limitChars(str, maxLength, "...");
 	}
 
@@ -471,7 +471,7 @@ public abstract class StringX {
 	 * @param leftOrRight 是在字符串左侧添加，还是右侧添加。true=左侧，false=右侧
 	 * @since 0.0.1
 	 */
-	static String pad(String str, char ch, int minLength, boolean leftOrRight) {
+	static String pad(@Nullable String str, char ch, int minLength, boolean leftOrRight) {
 		if (str == null) {
 			return "";
 		}
@@ -480,19 +480,18 @@ public abstract class StringX {
 		}
 		int length = str.length();
 		if (minLength > length) {
-			int diffSize = minLength - length;
-			char[] chars = new char[minLength]; // 直接采用高效的char数组形式构建字符串
-			// Arrays.fill(chars, '0'); //内部也是循环赋值，直接循环赋值效率更高
+			final char[] chars = new char[minLength]; // 直接采用高效的char数组形式构建字符串
 			if (leftOrRight) {
-				for (int i = 0; i < diffSize; i++) {
+				final int offset = minLength - length;
+				for (int i = 0; i < offset; i++) {
 					chars[i] = ch;
 				}
-				System.arraycopy(str.toCharArray(), 0, chars, diffSize, length); // 此方法由JVM底层实现，因此效率相对较高
+				str.getChars(0, length, chars, offset);
 			} else {
-				for (int i = diffSize; i < minLength; i++) {
-					chars[i] = ch;
-				}
-				System.arraycopy(str.toCharArray(), 0, chars, 0, length);
+				str.getChars(0, length, chars, 0);
+				do {
+					chars[length++] = ch;
+				} while (length < minLength);
 			}
 			str = new String(chars);
 		}
@@ -725,8 +724,8 @@ public abstract class StringX {
 	 * @param beginIndex 指定的字符串起始索引(可以为负数，表示 <code>beginIndex + str.length()</code> )
 	 * @since 0.1.1
 	 */
-	public static String replaceChars(String str, char ch, int beginIndex) {
-		return replaceChars(str, ch, beginIndex, str.length());
+	public static String replaceChars(@Nullable String str, char ch, int beginIndex) {
+		return str == null ? null : replaceChars(str, ch, beginIndex, str.length());
 	}
 
 	/**
@@ -768,8 +767,8 @@ public abstract class StringX {
 	 * @param beginIndex 指定的字符串起始索引(可以为负数，表示 <code>beginIndex + str.length()</code> )
 	 * @since 0.1.1
 	 */
-	public static String replaceSubstring(String str, String replacement, int beginIndex) {
-		return replaceSubstring(str, replacement, beginIndex, str.length());
+	public static String replaceSubstring(@Nullable String str, String replacement, int beginIndex) {
+		return str == null ? null : replaceSubstring(str, replacement, beginIndex, str.length());
 	}
 
 	/**
@@ -912,7 +911,7 @@ public abstract class StringX {
 	 * @since 3.0.0
 	 */
 	@Nullable
-	public static StringBuilder escapeSQLLike(@Nullable StringBuilder sb, final String likeStr, final char escapeChar, final boolean appendWildcardAtStart, final boolean appendWildcardAtEnd) {
+	public static StringBuilder escapeSQLLike(@Nullable StringBuilder sb, @Nullable final String likeStr, final char escapeChar, final boolean appendWildcardAtStart, final boolean appendWildcardAtEnd) {
 		if (isEmpty(likeStr)) {
 			return sb;
 		}
@@ -947,9 +946,9 @@ public abstract class StringX {
 	 * @param appendWildcardAtEnd 是否需要在字符串末尾添加通配符'%'
 	 * @since 2.9
 	 */
-	public static String escapeSQLLike(final String likeStr, final char escapeChar, final boolean appendWildcardAtStart, final boolean appendWildcardAtEnd) {
+	public static String escapeSQLLike(@Nullable final String likeStr, final char escapeChar, final boolean appendWildcardAtStart, final boolean appendWildcardAtEnd) {
 		final StringBuilder sb = escapeSQLLike(null, likeStr, escapeChar, appendWildcardAtStart, appendWildcardAtEnd);
-		if (sb == null || sb.length() == likeStr.length()) { // modified
+		if (sb == null || sb.length() == length(likeStr)) { // modified
 			return likeStr;
 		}
 		return sb.toString();
@@ -963,7 +962,7 @@ public abstract class StringX {
 	 * @param appendWildcardAtEnd 是否需要在字符串末尾添加通配符'%'
 	 * @since 2.9
 	 */
-	public static String escapeSQLLike(final String likeStr, final boolean appendWildcardAtStart, final boolean appendWildcardAtEnd) {
+	public static String escapeSQLLike(@Nullable final String likeStr, final boolean appendWildcardAtStart, final boolean appendWildcardAtEnd) {
 		return escapeSQLLike(likeStr, '\\', appendWildcardAtStart, appendWildcardAtEnd);
 	}
 
@@ -975,7 +974,7 @@ public abstract class StringX {
 	 * @param appendWildcardAtBoth 是否需要在字符串两侧都添加通配符'%'
 	 * @since 0.3.5
 	 */
-	public static String escapeSQLLike(final String likeStr, final char escapeChar, final boolean appendWildcardAtBoth) {
+	public static String escapeSQLLike(@Nullable final String likeStr, final char escapeChar, final boolean appendWildcardAtBoth) {
 		return escapeSQLLike(likeStr, escapeChar, appendWildcardAtBoth, appendWildcardAtBoth);
 	}
 
@@ -987,7 +986,7 @@ public abstract class StringX {
 	 * @param appendLikeWildcard 是否需要在字符串两侧添加通配符'%'
 	 * @since 0.3.5
 	 */
-	public static String escapeSQLLike(final String likeStr, final boolean appendLikeWildcard) {
+	public static String escapeSQLLike(@Nullable final String likeStr, final boolean appendLikeWildcard) {
 		return escapeSQLLike(likeStr, '\\', appendLikeWildcard);
 	}
 
@@ -998,7 +997,7 @@ public abstract class StringX {
 	 * @param likeStr 指定的字符串
 	 * @since 0.3.5
 	 */
-	public static String escapeSQLLike(final String likeStr) {
+	public static String escapeSQLLike(@Nullable final String likeStr) {
 		return escapeSQLLike(likeStr, '\\', false);
 	}
 
@@ -1008,12 +1007,12 @@ public abstract class StringX {
 	 * @param container 待检测的字符串
 	 * @param search 指定的单词
 	 * @param separatorChars 单词两侧必须是指定的字符之一或位于字符串 {@code container }的首/尾位置
-	 * @param fastMode 是否启用快速模式。快速模式：如果在 {@code container} 中第一次检索到该单词，就直接在此处进行周边字符的匹配测试，并返回测试结果。 <br>
-	 * 哪怕后面还会再次出现该单词，也不再继续向后检查。请参考重载方法 {@link #containsWord(String, String, String)} 方法上的注释
+	 * @param fastFail 是否启用快速失败模式。快速模式：如果在 {@code container} 中第一次检索到该单词，就直接在此处进行周边字符的匹配测试，并立即返回测试结果。 <br>
+	 * 在快速失败模式下，对于类似 {@code containsWord("abc123,123", "123", ",") } 的特殊情况将返回 <code>false</code>。哪怕后面还会再次出现该单词，也不再继续向后检查。
 	 * @author Ready
 	 * @since 2.0.0
 	 */
-	public static boolean containsWord(final String container, final String search, final String separatorChars, final boolean fastMode) {
+	public static boolean containsWord(@Nullable final String container, @Nullable final String search, final String separatorChars, final boolean fastFail) {
 		if (container == null || search == null) {
 			return false;
 		}
@@ -1030,7 +1029,7 @@ public abstract class StringX {
 						&& (fromIndex == cLength || separatorChars.indexOf(container.charAt(fromIndex)) != -1)) {
 					return true;
 				}
-				if (fastMode || fromIndex + sLength > cLength) {
+				if (fastFail || fromIndex + sLength > cLength) {
 					break;
 				}
 			}
@@ -1039,8 +1038,7 @@ public abstract class StringX {
 	}
 
 	/**
-	 * 检测指定字符串中是否存在指定的单词<br>
-	 * 该方法采用快速模式，对于类似 {@code containsWord("abc123,123", "123", ",") } 等特殊情况无法保证100%可靠；如果想要保证可靠性，建议使用 {@link #containsWord(String, String, String, boolean) }
+	 * 检测指定字符串中是否存在指定的单词
 	 *
 	 * @param container 待检测的字符串
 	 * @param searchedWord 指定的单词
@@ -1048,21 +1046,21 @@ public abstract class StringX {
 	 * @see #containsWord(String, String, String, boolean)
 	 * @since 0.4.2
 	 */
-	public static boolean containsWord(final String container, final String searchedWord, final String separatorChars) {
+	public static boolean containsWord(@Nullable final String container, final String searchedWord, final String separatorChars) {
 		return containsWord(container, searchedWord, separatorChars, false);
 	}
 
 	/**
 	 * 将字符串的首字母大写
 	 */
-	public static String capitalize(String str) {
+	public static String capitalize(@Nullable String str) {
 		return replaceChar(str, 0, CharCase.UPPER);
 	}
 
 	/**
 	 * 将字符串的首字母小写
 	 */
-	public static String decapitalize(String str) {
+	public static String decapitalize(@Nullable String str) {
 		return replaceChar(str, 0, CharCase.LOWER);
 	}
 
@@ -1071,7 +1069,7 @@ public abstract class StringX {
 	 *
 	 * @throws IndexOutOfBoundsException 索引越界时会抛出该异常。不过请注意：如果 {@code str} 为 null 时，将直接返回 null，而不会抛出 NPE
 	 */
-	public static String replaceChar(String str, int charIndex, CharConverter converter) throws IndexOutOfBoundsException {
+	public static String replaceChar(@Nullable String str, int charIndex, CharConverter converter) throws IndexOutOfBoundsException {
 		if (str == null || str.isEmpty()) {
 			return str;
 		}
@@ -1112,7 +1110,7 @@ public abstract class StringX {
 	 *
 	 * @param delimiter 分隔符
 	 */
-	public static <E> String joinAppend(Collection<E> items, BiConsumer<StringBuilder, E> itemAppender, String delimiter) {
+	public static <E> String joinAppend(@Nullable Collection<E> items, BiConsumer<StringBuilder, E> itemAppender, String delimiter) {
 		final StringBuilder sb = joinAppend(null, items, itemAppender, delimiter);
 		return sb == null ? "" : sb.toString();
 	}
@@ -1122,7 +1120,7 @@ public abstract class StringX {
 	 *
 	 * @param delimiter 分隔符
 	 */
-	public static <E> String joins(Collection<E> c, String delimiter) {
+	public static <E> String joins(@Nullable Collection<E> c, String delimiter) {
 		return joinAppend(c, StringBuilder::append, delimiter);
 	}
 
@@ -1140,7 +1138,7 @@ public abstract class StringX {
 	 *
 	 * @param delimiter 分隔符
 	 */
-	public static String join(Collection<? extends Number> c, String delimiter) {
+	public static String join(@Nullable Collection<? extends Number> c, String delimiter) {
 		return joinAppend(c, (sb, t) -> sb.append(t.longValue()), delimiter);
 	}
 
@@ -1149,7 +1147,7 @@ public abstract class StringX {
 	 *
 	 * @param delimiter 分隔符
 	 */
-	public static <E> String join(Collection<E> c, Function<? super E, Object> getter, String delimiter) {
+	public static <E> String join(@Nullable Collection<E> c, Function<? super E, Object> getter, String delimiter) {
 		return joinAppend(c, (sb, t) -> sb.append(getter.apply(t)), delimiter);
 	}
 
@@ -1158,7 +1156,7 @@ public abstract class StringX {
 	 *
 	 * @param delimiter 分隔符
 	 */
-	public static <T> String joinLong(Collection<T> c, Function<? super T, Number> mapper, String delimiter) {
+	public static <T> String joinLong(@Nullable Collection<T> c, Function<? super T, Number> mapper, String delimiter) {
 		return joinAppend(c, (sb, t) -> sb.append(mapper.apply(t).longValue()), delimiter);
 	}
 
@@ -1167,7 +1165,7 @@ public abstract class StringX {
 	 *
 	 * @param delimiter 分隔符
 	 */
-	public static <T> String joinLongValue(Collection<T> c, ToLongFunction<? super T> mapper, String delimiter) {
+	public static <T> String joinLongValue(@Nullable Collection<T> c, ToLongFunction<? super T> mapper, String delimiter) {
 		return joinAppend(c, (sb, t) -> sb.append(mapper.applyAsLong(t)), delimiter);
 	}
 
@@ -1176,7 +1174,7 @@ public abstract class StringX {
 	 *
 	 * @param delimiter 分隔符
 	 */
-	public static <T> String joinIntValue(Collection<T> c, ToIntFunction<? super T> mapper, String delimiter) {
+	public static <T> String joinIntValue(@Nullable Collection<T> c, ToIntFunction<? super T> mapper, String delimiter) {
 		return joinAppend(c, (sb, t) -> sb.append(mapper.applyAsInt(t)), delimiter);
 	}
 
@@ -1188,7 +1186,7 @@ public abstract class StringX {
 	 * @param mapper 转换器
 	 * @param filter 过滤器（如果应用到对应的元素返回 false，则返回的集合中不会包含该元素 ）
 	 */
-	public static <T> List<T> split(final String str, final String sep, @Nullable Predicate<? super String> filter, final Function<? super String, T> mapper) {
+	public static <T> List<T> split(@Nullable final String str, final String sep, @Nullable Predicate<? super String> filter, final Function<? super String, T> mapper) {
 		if (notEmpty(str)) {
 			final List<T> list = new ArrayList<>();
 			int pos, start = 0;
