@@ -98,10 +98,47 @@ public class StringXTest implements WithAssertions {
 	}
 
 	@Test
+	public void zeroFill() {
+		assertThat(StringX.zeroFill(123, 5))
+				.isEqualTo("00123");
+		assertThat(StringX.zeroFill(123456, 5))
+				.isEqualTo("123456");
+		assertThat(StringX.zeroFill(12345, 5))
+				.isEqualTo("12345");
+
+		assertThat(StringX.zeroFill("023", 2))
+				.isEqualTo("023");
+		assertThat(StringX.zeroFill("023", 5))
+				.isEqualTo("00023");
+	}
+
+	@Test
+	public void pad() {
+		assertThat(StringX.pad(null, '*', 5, true))
+				.isEqualTo("");
+		assertThat(StringX.pad("abc", '*', 5, true))
+				.isEqualTo("**abc");
+		assertThat(StringX.pad("abc", '*', 5, false))
+				.isEqualTo("abc**");
+
+		assertThat(StringX.pad("", '*', 5, false))
+				.isEqualTo("*****");
+
+		assertThat(StringX.pad("abcde", '*', 5, true))
+				.isEqualTo("abcde");
+		assertThat(StringX.pad("abcde", '*', 5, false))
+				.isEqualTo("abcde");
+	}
+
+	@Test
 	public void isEmpty() {
 		assertTrue(StringX.isEmpty(""));
 		assertTrue(StringX.isEmpty(null));
 		assertFalse(StringX.isEmpty("   "));
+		assertFalse(StringX.isEmpty("\t"));
+		assertFalse(StringX.isEmpty("\t\n"));
+		assertFalse(StringX.isEmpty("China"));
+		assertFalse(StringX.isEmpty("A "));
 	}
 
 	@Test
@@ -113,16 +150,18 @@ public class StringXTest implements WithAssertions {
 
 	@Test
 	public void isBlank() {
-		assertTrue(StringX.isBlank(""));
 		assertTrue(StringX.isBlank(null));
+		assertTrue(StringX.isBlank(""));
 		assertTrue(StringX.isBlank("   "));
+		assertTrue(StringX.isBlank("\t"));
+		assertTrue(StringX.isBlank("\t\n"));
 		assertFalse(StringX.isBlank(" y  "));
 	}
 
 	@Test
 	public void notBlank() {
-		assertFalse(StringX.notBlank(""));
 		assertFalse(StringX.notBlank(null));
+		assertFalse(StringX.notBlank(""));
 		assertFalse(StringX.notBlank("   "));
 		assertTrue(StringX.notBlank(" x  "));
 	}
