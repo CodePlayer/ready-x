@@ -45,8 +45,19 @@ public abstract class FileX {
 	 * @author Ready
 	 */
 	public static int indexOfExtension(String filename) {
-		int pos = filename.lastIndexOf('.');
-		if (pos != -1) {
+		return indexOfExtension(filename, true);
+	}
+
+	/**
+	 * 根据文件名称返回对应的扩展名在字符串中的索引值
+	 *
+	 * @param filename 指定的文件名
+	 * @return 返回扩展名分隔符'.'对应的索引值，如果不存在则返回 -1
+	 * @author Ready
+	 */
+	public static int indexOfExtension(String filename, boolean backScanDirSeparator) {
+		final int pos = filename.lastIndexOf('.');
+		if (backScanDirSeparator && pos != -1) {
 			if (filename.indexOf('/', pos + 1) != -1) {
 				return -1;
 			}
@@ -108,12 +119,18 @@ public abstract class FileX {
 	 */
 	public static String getFileName(String path, boolean withoutExt) {
 		String str = new File(path).getName();
-		int pos = str.lastIndexOf(File.separatorChar);
+		int pos = str.lastIndexOf('/');
 		if (pos != -1) {
-			str = str.substring(pos + 1);
+			int pos2 = str.indexOf('\\', pos + 1);
+			str = str.substring(Math.max(pos, pos2) + 1);
+		} else {
+			pos = str.lastIndexOf('\\');
+			if (pos != -1) {
+				str = str.substring(pos + 1);
+			}
 		}
 		if (withoutExt) {
-			pos = indexOfExtension(str);
+			pos = indexOfExtension(str, false);
 			if (pos > -1) {
 				str = str.substring(0, pos);
 			}
