@@ -114,8 +114,9 @@ public class EasyDateTest implements WithAssertions {
 		Date b = new EasyDate(2015, 3, 28).toDate();
 		assertEquals("2015-03-28", EasyDate.toString(a));
 
-		assertEquals("2015-03-31 23:59:59", EasyDate.toDateTimeString(EasyDate.endOf(b, Calendar.MONTH)));
-		assertEquals("2015-03-31 23:59:59.999", EasyDate.toLongString(b));
+		final Date endOf = EasyDate.endOf(b, Calendar.MONTH);
+		assertEquals("2015-03-31 23:59:59", EasyDate.toDateTimeString(endOf));
+		assertEquals("2015-03-31 23:59:59.999", EasyDate.toLongString(endOf));
 	}
 
 }
