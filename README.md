@@ -1,3 +1,10 @@
+[![Java CI](https://img.shields.io/github/actions/workflow/status/CodePlayer/ready-x/ci.yaml?branch=master&logo=github&logoColor=white)](https://github.com/CodePlayer/ready-x/actions/workflows/ci.yaml)
+[![Codecov](https://img.shields.io/codecov/c/github/CodePlayer/ready-x/master?logo=codecov&logoColor=white)](https://codecov.io/gh/CodePlayer/ready-x/branch/master)
+[![Maven Central](https://img.shields.io/maven-central/v/me.codeplayer/ready-x?logo=apache-maven&logoColor=white)](https://mvnrepository.com/artifact/me.codeplayer/ready-x)
+[![GitHub release](https://img.shields.io/github/v/release/CodePlayer/ready-x)](https://github.com/CodePlayer/ready-x/releases)
+[![Java support](https://img.shields.io/badge/Java-8+-green?logo=java&logoColor=white)](https://openjdk.java.net/)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 # 关于 ready-x
 ready-x ***3.x*** 是一个基于Java 8（ ***1.x*** 基于 Java 5） 编写的基础工具库，其中包含了常见的文本(字符串)、数组、集合、文件、商业计算、随机数、参数验证、日期等方面的处理工具类。
 
