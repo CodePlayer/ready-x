@@ -244,7 +244,10 @@ public class Cmp {
 
 	/**
 	 * 将 long 转换为 int 类型，并检查数据范围不会发生数据截断，否则抛出异常
+	 *
+	 * @deprecated 请使用 {@link Math#toIntExact(long)} 替代
 	 */
+	@Deprecated
 	public static int castAsInt(long val) throws IllegalArgumentException {
 		// 确保数据转换时不会发生整数数据截断
 		checkInt(val);
@@ -256,7 +259,7 @@ public class Cmp {
 	 */
 	public static void checkInt(long val) throws IllegalArgumentException {
 		// 确保数据转换时不会发生整数数据截断
-		Assert.isTrue(val >= Integer.MIN_VALUE && val <= Integer.MAX_VALUE, "数值超过范围，请减少后再试！");
+		Assert.isTrue(val >= Integer.MIN_VALUE && val <= Integer.MAX_VALUE, "integer overflow");
 	}
 
 }
