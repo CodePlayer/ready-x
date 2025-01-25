@@ -108,8 +108,12 @@ public abstract class FileX {
 	 */
 	public static String getFileName(String path, boolean withoutExt) {
 		String str = new File(path).getName();
+		int pos = str.lastIndexOf(File.separatorChar);
+		if (pos != -1) {
+			str = str.substring(pos + 1);
+		}
 		if (withoutExt) {
-			int pos = indexOfExtension(path);
+			pos = indexOfExtension(str);
 			if (pos > -1) {
 				str = str.substring(0, pos);
 			}
