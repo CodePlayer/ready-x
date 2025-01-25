@@ -36,7 +36,7 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: maven
       - name: Build with Maven and generate code coverage
-        run: ./mvnw -V --no-transfer-progress -Pgen-javadoc -Pgen-dokka clean package
+        run: ./mvnw -V --no-transfer-progress clean package
         env:
           JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Duser.timezone=Asia/Shanghai
       # https://github.com/marketplace/actions/codecov
