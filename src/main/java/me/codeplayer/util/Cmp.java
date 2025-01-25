@@ -242,24 +242,4 @@ public class Cmp {
 		return val != null && val >= min && val <= max;
 	}
 
-	/**
-	 * 将 long 转换为 int 类型，并检查数据范围不会发生数据截断，否则抛出异常
-	 *
-	 * @deprecated 请使用 {@link Math#toIntExact(long)} 替代
-	 */
-	@Deprecated
-	public static int castAsInt(long val) throws IllegalArgumentException {
-		// 确保数据转换时不会发生整数数据截断
-		checkInt(val);
-		return (int) val;
-	}
-
-	/**
-	 * 检查指定的 long 型整数是否在 int 类型范围内，如果超出则抛出异常
-	 */
-	public static void checkInt(long val) throws IllegalArgumentException {
-		// 确保数据转换时不会发生整数数据截断
-		Assert.isTrue(val >= Integer.MIN_VALUE && val <= Integer.MAX_VALUE, "integer overflow");
-	}
-
 }

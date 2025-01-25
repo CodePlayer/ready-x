@@ -19,18 +19,6 @@ import org.slf4j.LoggerFactory;
 public abstract class X {
 
 	/**
-	 * 获取调用此方法的当前类的日志处理器(Logger)<br>
-	 * 该 Logger 使用 slf4j API
-	 *
-	 * @deprecated please use <code>@lombok.extern.slf4j.Slf4j</code> annotation instead
-	 */
-	@Deprecated
-	public static Logger getLogger() {
-		String className = new Throwable().getStackTrace()[1].getClassName();
-		return LoggerFactory.getLogger(className);
-	}
-
-	/**
 	 * 判断指定的字符串是否为空<br>
 	 * 如果字符串为null、空字符串,则返回true<br>
 	 * <b>注意：</b>本方法不会去除字符串两边的空格，如果想去除字符串两边的空格后再进行判断，可以使用isBlank()方法
