@@ -115,18 +115,24 @@ public static Map<Integer, User> toMap(List<User> list) {
 
 ```
 
-**示例三：从缓存中获取指定用户的ID（没有就返回 null ）**
+**示例三：从 "a,b,c,d"（多个片段以","分隔） 格式的字符串中检测是否存在片段 "a"**
 ```java
 // ① 常规版本
-public static Integer mapUserId(String cacheKey) {
-  return Optional.ofNullable(cache.get(cacheKey)).map(User::getId).orElse(null);
+public boolean contains0(String segments, String part) {
+  String[] parts = segments.split(",");
+  return Arrays.asList(parts).contains(part);
 }
 
-// ② 直接使用封装好的工具方法
-public static Integer mapUserId(String cacheKey) {
-  return X.map(cache.get(cacheKey), User::getId);
-  // 如果没有就返回 0，可以使用如下代码，此外还有支持 else 懒加载的工具方法
-  // return X.mapElse(cache.get(cacheKey), User::getId, 0);
+// ② 升级版本 1
+public boolean contains1(String segments, String part) {
+  String[] parts = segments.split(",");
+  return ArrayUtils.contains(parts, part); // 避免new ArrayList
+}
+
+// ③ 直接使用封装好的工具方法（并且是 null 安全的）
+public boolean contains(String segments, String part) {
+  // 无需预先 split，直接通过一次性 indexOf + 临界字符判断，避免多次遍历、生成多个中间字符串/集合对象的开销
+  return StringX.containsWord(segments, part, ",");
 }
 ```
 
