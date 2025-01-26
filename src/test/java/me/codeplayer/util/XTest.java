@@ -1,15 +1,14 @@
 package me.codeplayer.util;
 
-import static org.junit.Assert.*;
-
 import java.util.*;
-import java.util.function.*;
+import java.util.function.Supplier;
 
-import org.assertj.core.api.*;
-import org.junit.*;
-import org.mockito.*;
+import me.codeplayer.util.JsonXTest.User;
+import org.assertj.core.api.WithAssertions;
+import org.junit.Test;
+import org.mockito.Mockito;
 
-import me.codeplayer.util.JsonXTest.*;
+import static org.junit.Assert.*;
 
 public class XTest implements WithAssertions {
 
@@ -88,4 +87,102 @@ public class XTest implements WithAssertions {
 
 		Mockito.verify(user).getName();
 	}
+
+	@Test
+	public void size_Collection_Null_ReturnsZero() {
+		assertEquals(0, X.size((Collection<?>) null));
+	}
+
+	@Test
+	public void size_Collection_Empty_ReturnsZero() {
+		assertEquals(0, X.size(Collections.emptyList()));
+	}
+
+	@Test
+	public void size_Collection_NonEmpty_ReturnsSize() {
+		List<Integer> list = Arrays.asList(1, 2, 3);
+		assertEquals(3, X.size(list));
+	}
+
+	@Test
+	public void size_Map_Null_ReturnsZero() {
+		assertEquals(0, X.size((Map<?, ?>) null));
+	}
+
+	@Test
+	public void size_Map_Empty_ReturnsZero() {
+		assertEquals(0, X.size(Collections.emptyMap()));
+	}
+
+	@Test
+	public void size_Map_NonEmpty_ReturnsSize() {
+		Map<String, Integer> map = new HashMap<>();
+		map.put("key1", 1);
+		map.put("key2", 2);
+		assertEquals(2, X.size(map));
+	}
+
+	@Test
+	public void size_ObjectArray_Null_ReturnsZero() {
+		assertEquals(0, X.size((Object[]) null));
+	}
+
+	@Test
+	public void size_ObjectArray_Empty_ReturnsZero() {
+		assertEquals(0, X.size(new Object[0]));
+	}
+
+	@Test
+	public void size_ObjectArray_NonEmpty_ReturnsLength() {
+		Object[] array = new Object[] { 1, 2, 3 };
+		assertEquals(3, X.size(array));
+	}
+
+	@Test
+	public void sizeOfArray_Null_ReturnsZero() {
+		assertEquals(0, X.sizeOfArray(null));
+	}
+
+	@Test
+	public void sizeOfArray_Empty_ReturnsZero() {
+		assertEquals(0, X.sizeOfArray(new int[0]));
+	}
+
+	@Test
+	public void sizeOfArray_NonEmpty_ReturnsLength() {
+		int[] array = new int[] { 1, 2, 3 };
+		assertEquals(3, X.sizeOfArray(array));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void sizeOfArray_NotAnArray_ThrowsException() {
+		X.sizeOfArray("not an array");
+	}
+
+	@Test
+	public void size_CharSequence_Null_ReturnsZero() {
+		assertEquals(0, X.size((CharSequence) null));
+	}
+
+	@Test
+	public void size_CharSequence_Empty_ReturnsZero() {
+		assertEquals(0, X.size(""));
+	}
+
+	@Test
+	public void size_CharSequence_Blank_ReturnsLength() {
+		assertEquals(1, X.size(" "));
+	}
+
+	@Test
+	public void size_StringBuilder_NonEmpty_ReturnsLength() {
+		StringBuilder sb = new StringBuilder("CodePlayer").append(" ");
+		assertEquals(11, X.size(sb));
+	}
+
+	@Test
+	public void size_CharSequence_NonEmpty_ReturnsLength() {
+		assertEquals(6, X.size("acsd中国"));
+	}
+
 }
