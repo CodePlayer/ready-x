@@ -45,3 +45,4 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: CodePlayer/ready-x
+          verbose: true
