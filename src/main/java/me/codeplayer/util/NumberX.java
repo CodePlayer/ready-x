@@ -316,18 +316,18 @@ public abstract class NumberX {
 	 * 如果字符串为null，返回false<br>
 	 * 如果字符串前后有空格，请先去除空格后再调用此方法，否则返回false<br>
 	 *
-	 * @param str 指定的字符串
+	 * @param cs 指定的字符串
 	 */
-	public static boolean isNumber(String str) {
-		if (str == null) { // 为空则返回false
+	public static boolean isNumber(CharSequence cs) {
+		if (cs == null) { // 为空则返回false
 			return false;
 		}
-		char[] chars = str.toCharArray();
-		if (chars.length < 1) { // 为空字符串则返回false
+		final int length = cs.length();
+		if (length == 0) { // 为空字符串则返回false
 			return false;
 		}
-		for (char c : chars) {
-			if (!Character.isDigit((int) c)) { // 不为数字则返回false
+		for (int i = 0; i < length; i++) {
+			if (!Character.isDigit(cs.charAt(i))) {
 				return false;
 			}
 		}
@@ -362,23 +362,43 @@ public abstract class NumberX {
 	}
 
 	/**
-	 * 以尽可能快的速度判断指定字符串是否为整数形式(仅限十进制)
+	 * 以尽可能快的速度判断指定字符串是否为整数形式（仅限十进制 <code>[0-9]</code> ）
 	 *
-	 * @param str 指定的字符串
+	 * @param cs 指定的字符串
 	 */
-	public static boolean isNumeric(String str) {
-		int length;
-		if (str == null || (length = str.length()) == 0) {
+	public static boolean isNumeric(final CharSequence cs) {
+		return cs != null && isNumeric0(cs, 0, cs.length());
+	}
+
+	/**
+	 * 以尽可能快的速度判断指定字符序列片段是否全部都是数字（仅限十进制 <code>[0-9]</code> ）
+	 *
+	 * @param cs 指定的字符串
+	 * @param start 开始位置（包括）
+	 * @param end 结束位置（不包括）
+	 */
+	public static boolean isNumeric(final CharSequence cs, int start, int end) {
+		if (cs == null || cs.length() == 0) {
 			return false;
 		}
-		char[] chars = str.toCharArray();
-		do {
-			// 48-57
-			if (chars[--length] < '0' || chars[length] > '9') {
+		return isNumeric0(cs, start, end);
+	}
+
+	/**
+	 * 以尽可能快的速度判断指定字符序列片段是否全部都是数字（仅限十进制 <code>[0-9]</code> ）
+	 *
+	 * @param cs 指定的字符串
+	 * @param start 开始位置（包括）
+	 * @param end 结束位置（不包括）
+	 */
+	static boolean isNumeric0(final CharSequence cs, int start, int end) {
+		for (int i = start; i < end; i++) {
+			char ch = cs.charAt(i);
+			if (ch < '0' || ch > '9') {
 				return false;
 			}
-		} while (length > 0);
-		return true;
+		}
+		return start < end;
 	}
 
 	/**
