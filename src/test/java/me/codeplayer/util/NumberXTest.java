@@ -112,6 +112,61 @@ public class NumberXTest {
 	}
 
 	@Test
+	public void isNumeric_NullString_ReturnsFalse() {
+		assertFalse(NumberX.isNumeric(null, 0, 1));
+	}
+
+	@Test
+	public void isNumeric_EmptyString_ReturnsFalse() {
+		assertFalse(NumberX.isNumeric("", 0, 1));
+	}
+
+	@Test
+	public void isNumeric_StartEqualsEnd_ReturnsFalse() {
+		assertFalse(NumberX.isNumeric("123", 1, 1));
+	}
+
+	@Test
+	public void isNumeric_StartGreaterThanEnd_ReturnsFalse() {
+		assertFalse(NumberX.isNumeric("123", 2, 1));
+	}
+
+	@Test
+	public void isNumeric_ValidNumericString_ReturnsTrue() {
+		assertTrue(NumberX.isNumeric("12345", 0, 5));
+	}
+
+	@Test
+	public void isNumeric_InvalidNumericString_ReturnsFalse() {
+		assertFalse(NumberX.isNumeric("123abc", 0, 6));
+	}
+
+	@Test
+	public void isNumeric_NumericStringWithNonNumericCharacters_ReturnsFalse() {
+		assertFalse(NumberX.isNumeric("123abc456", 0, 9));
+	}
+
+	@Test
+	public void isNumeric_NumericStringWithLeadingNonNumeric_ReturnsFalse() {
+		assertFalse(NumberX.isNumeric("abc123", 0, 6));
+	}
+
+	@Test
+	public void isNumeric_NumericStringWithTrailingNonNumeric_ReturnsFalse() {
+		assertFalse(NumberX.isNumeric("123abc", 0, 6));
+	}
+
+	@Test
+	public void isNumeric_ValidNumericSubstring_ReturnsTrue() {
+		assertTrue(NumberX.isNumeric("abc123def", 3, 6));
+	}
+
+	@Test
+	public void isNumeric_EmptySubstring_ReturnsFalse() {
+		assertFalse(NumberX.isNumeric("123", 1, 1));
+	}
+
+	@Test
 	public void isInt_NullValue_ReturnsFalse() {
 		assertFalse(NumberX.isInt(null));
 	}
