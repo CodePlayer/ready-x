@@ -1,11 +1,12 @@
 package me.codeplayer.validator;
 
-import java.math.*;
+import java.math.BigDecimal;
+import java.util.Objects;
 import java.util.function.*;
+import javax.annotation.Nullable;
 
-import javax.annotation.*;
-
-import me.codeplayer.util.*;
+import me.codeplayer.util.NumberX;
+import me.codeplayer.util.StringX;
 
 /**
  * 用于进行 Pipeline 初始化及附属校验器定义的辅助工具类
@@ -42,6 +43,8 @@ public abstract class Validators {
 	/*
 	 * assert group
 	 */
+	public static final Predicate<Object> assertIsNull = Objects::isNull;
+	public static final Predicate<Object> assertNotNull = Objects::nonNull;
 	public static final Predicate<Object> assertNotEmpty = StringX::notEmpty;
 	public static final Predicate<Object> assertNotBlank = StringX::notBlank;
 	public static final Predicate<Object> assertIsNumber = NumberX::isNumber;

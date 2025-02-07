@@ -1,10 +1,9 @@
 package me.codeplayer.validator;
 
 import java.util.function.*;
+import javax.annotation.Nullable;
 
-import javax.annotation.*;
-
-import me.codeplayer.util.*;
+import me.codeplayer.util.X;
 
 /**
  * 对实体及其属性进行预处理、校验、格式化的流水线处理封装类
@@ -18,7 +17,15 @@ public class Pipeline<T, R> implements PropertyAccessor<T, R> {
 	protected transient Function<? super T, R> getter;
 	protected transient BiConsumer<? super T, R> setter;
 	protected transient R val;
-	//
+	/**
+	 * 用于存储校验结果 <p>
+	 * 默认为 OK，也有可能为：
+	 * <ul>
+	 * <li>CharSequence => 一般是错误提示信息</li>
+	 * <li>Supplier< ? > => 断言失败时才会触发的自定义 Supplier 对象</li>
+	 * <li>Throwable => 抛出的异常对象</li>
+	 * </ul>
+	 */
 	protected transient Object result = OK;
 	protected transient boolean silent;
 
@@ -88,12 +95,12 @@ public class Pipeline<T, R> implements PropertyAccessor<T, R> {
 			R val = this.val;
 			if (silent) {
 				try {
-					val = validator.apply(val);
+					this.val = val = validator.apply(val);
 				} catch (Throwable e) {
 					result = e;
 				}
 			} else {
-				val = validator.apply(val);
+				this.val = val = validator.apply(val);
 			}
 			if (setter != null) {
 				setter.accept(bean, val);
@@ -182,8 +189,8 @@ public class Pipeline<T, R> implements PropertyAccessor<T, R> {
 		return assertInternal(() -> validator.test(getter.apply(bean)), throwsError);
 	}
 
-	public Pipeline<T, R> asserts(Predicate<? super R> validator, final @Nullable CharSequence charSequence) {
-		return assertInternal(() -> validator.test(getter.apply(bean)), charSequence);
+	public Pipeline<T, R> asserts(Predicate<? super R> validator, final @Nullable CharSequence errorMsg) {
+		return assertInternal(() -> validator.test(getter.apply(bean)), errorMsg);
 	}
 
 	public Pipeline<T, R> asserts(Predicate<? super R> validator) {
@@ -194,8 +201,8 @@ public class Pipeline<T, R> implements PropertyAccessor<T, R> {
 		return assertInternal(() -> !validator.test(getter.apply(bean)), throwsError);
 	}
 
-	public Pipeline<T, R> assertsNot(Predicate<? super R> validator, final @Nullable CharSequence charSequence) {
-		return assertInternal(() -> !validator.test(getter.apply(bean)), charSequence);
+	public Pipeline<T, R> assertsNot(Predicate<? super R> validator, final @Nullable CharSequence errorMsg) {
+		return assertInternal(() -> !validator.test(getter.apply(bean)), errorMsg);
 	}
 
 	public Pipeline<T, R> assertsNot(Predicate<? super R> validator) {
@@ -206,8 +213,8 @@ public class Pipeline<T, R> implements PropertyAccessor<T, R> {
 		return assertInternal(() -> validator.test(bean), throwsError);
 	}
 
-	public Pipeline<T, R> assertBean(Predicate<? super T> validator, final @Nullable CharSequence charSequence) {
-		return assertInternal(() -> validator.test(bean), charSequence);
+	public Pipeline<T, R> assertBean(Predicate<? super T> validator, final @Nullable CharSequence errorMsg) {
+		return assertInternal(() -> validator.test(bean), errorMsg);
 	}
 
 	public Pipeline<T, R> assertBean(Predicate<? super T> validator) {
@@ -218,8 +225,8 @@ public class Pipeline<T, R> implements PropertyAccessor<T, R> {
 		return assertInternal(() -> !validator.test(bean), throwsError);
 	}
 
-	public Pipeline<T, R> assertBeanNot(Predicate<? super T> validator, final @Nullable CharSequence charSequence) {
-		return assertInternal(() -> !validator.test(bean), charSequence);
+	public Pipeline<T, R> assertBeanNot(Predicate<? super T> validator, final @Nullable CharSequence errorMsg) {
+		return assertInternal(() -> !validator.test(bean), errorMsg);
 	}
 
 	public Pipeline<T, R> assertBeanNot(Predicate<? super T> validator) {
