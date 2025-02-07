@@ -6,6 +6,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import javax.annotation.Nullable;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 /**
  * 用于对数组类型的数据(字节数组参见NumberUtil类)进行相应处理的工具类
  *
@@ -42,7 +44,7 @@ public abstract class ArrayX {
 			return sb;
 		}
 		// 如果是 int、long 及其包装类型时，需调用特定的 append 方法，避免循环装箱及调用 String.valueOf 的开销
-		Class<?> type = array.getClass().getComponentType();
+		final Class<?> type = array.getClass().getComponentType();
 		boolean appendSep = false;
 		for (int i = 0; i < length; i++) {
 			if (appendSep) {
@@ -50,25 +52,29 @@ public abstract class ArrayX {
 			} else {
 				appendSep = true;
 			}
-			if (type == int.class) {
-				sb.append(Array.getInt(array, i));
-			} else if (type == long.class) {
-				sb.append(Array.getLong(array, i));
-			} else {
-				Object val = Array.get(array, i);
-				if (val != null) {
-					if (type == Integer.class) {
-						sb.append((int) val);
-						continue;
-					} else if (type == Long.class) {
-						sb.append((long) val);
-						continue;
-					}
-				}
-				sb.append(val);
-			}
+			appendElement(sb, type, array, i);
 		}
 		return sb;
+	}
+
+	static void appendElement(final StringBuilder sb, final Class<?> elementType, Object array, int i) {
+		if (elementType == int.class) {
+			sb.append(Array.getInt(array, i));
+		} else if (elementType == long.class) {
+			sb.append(Array.getLong(array, i));
+		} else {
+			Object val = Array.get(array, i);
+			if (val != null) {
+				if (elementType == Integer.class) {
+					sb.append((int) val);
+					return;
+				} else if (elementType == Long.class) {
+					sb.append((long) val);
+					return;
+				}
+			}
+			sb.append(val);
+		}
 	}
 
 	/**
@@ -83,15 +89,14 @@ public abstract class ArrayX {
 	}
 
 	/**
-	 * 将指定字符串数组拼接为InSQL子句，方法将会根据元素个数来判断内容为“=”语句还是“IN”语句<br>
-	 * 如果数组为空，将会引发异常<br>
-	 * 如果数组元素只有一个，拼接内容为“=1”或“='1'”<br>
-	 * 如果数组元素有多个，拼接内容为“ IN (1, 2, 5)”或“ IN ('1', '2', '5')”
+	 * 将指定字符串数组拼接为 IN SQL子句 <br>
+	 * 如果数组为空，将会引发异常 <br>
+	 * 如果存在数组元素，则拼接内容形如 " IN (1, 2, 5)" 或 " IN ('1', '2', '5')"
 	 *
 	 * @param sb 指定的StringBuilder
 	 * @param array 指定的任意数组
-	 * @param isInclude 指示IN SQL是包含还是排除查询，如果是包含(true)将返回=、IN，如果是排除(false)将返回!=、NOT IN
-	 * @param isString 指示元素是否以字符串形式参与InSQL语句。如果为true，将会在每个元素两侧加上单引号"'"
+	 * @param isInclude 指示IN SQL是包含还是排除查询，如果是包含(true)将返回 IN，如果是排除(false)将返回 NOT IN
+	 * @param isString 指示元素是否以字符串形式参与in SQL语句。如果为true，将会在每个元素两侧加上单引号"'"
 	 */
 	public static StringBuilder getInSQL(StringBuilder sb, Object array, boolean isInclude, boolean isString) {
 		final int length = Array.getLength(array);
@@ -99,27 +104,20 @@ public abstract class ArrayX {
 			throw new IllegalArgumentException("Array can not be empty:" + array);
 		}
 		if (sb == null) {
-			sb = new StringBuilder(length << 3);
-		}
-		if (length == 1) {
-			if (!isInclude) {
-				sb.append('!');
-			}
+			int factor = 8;
 			if (isString) {
-				sb.append("='").append(Array.get(array, 0)).append('\'');
-			} else {
-				sb.append('=').append(Array.get(array, 0));
+				factor += 2;
 			}
-		} else {
-			sb.append(isInclude ? " IN (" : " NOT IN (");
-			if (isString) {// 如果是字符串格式
-				sb.append('\'');
-				join(sb, array, "', '");
-				sb.append("')");
-			} else {// 如果是数字格式
-				join(sb, array, ", ");
-				sb.append(')');
-			}
+			sb = new StringBuilder(length * factor);
+		}
+		sb.append(isInclude ? " IN (" : " NOT IN (");
+		if (isString) {// 如果是字符串格式
+			sb.append('\'');
+			join(sb, array, "', '");
+			sb.append("')");
+		} else {// 如果是数字格式
+			join(sb, array, ", ");
+			sb.append(')');
 		}
 		return sb;
 	}
@@ -301,10 +299,12 @@ public abstract class ArrayX {
 	 */
 	public static boolean isPrimitiveArray(Object array) {
 		if (array != null) {
-			Class<?> clazz = array.getClass();
+			final Class<?> clazz = array.getClass();
 			if (clazz.isArray()) {
-				String className = array.getClass().getName();
-				return className.length() == 2 && className.charAt(0) == '[';
+				// 获取数组的元素类型
+				Class<?> componentType = clazz.getComponentType();
+				// 判断元素类型是否为基本数据类型
+				return componentType.isPrimitive();
 			}
 		}
 		return false;
@@ -316,12 +316,7 @@ public abstract class ArrayX {
 	 * @since 0.3.5
 	 */
 	public static boolean in(int value, int... array) {
-		for (int item : array) {
-			if (value == item) {
-				return true;
-			}
-		}
-		return false;
+		return ArrayUtils.indexOf(array, value) != ArrayUtils.INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -354,102 +349,47 @@ public abstract class ArrayX {
 	 * <p>
 	 * 如果数组中存在相等的值，则返回最靠近最大值的区间索引。
 	 *
-	 * @param array 区间临界值数组
+	 * @param sortedArray 区间临界值数组
 	 * @param toCompare 指定的对象
 	 * @param ascOrDesc 指定区间临界值数组的排序方式： true 表示升序， false 表示 降序；null 则自动根据数组中前两个元素的比较结果智能判断排序方式
 	 * @return 返回对应的区间索引。如果不满足最小的区间临界值，则返回 -1
 	 * @throws IllegalArgumentException 如果数组前两个元素的大小相等，则抛出该异常
 	 * @since 1.0.4
 	 */
-	public static <T extends Comparable<T>> int indexOfInterval(@Nullable T[] array, T toCompare, @Nullable Boolean ascOrDesc) throws IllegalArgumentException {
-		if (array == null || array.length == 0) {
+	public static <T extends Comparable<T>> int indexOfInterval(@Nullable T[] sortedArray, T toCompare, @Nullable Boolean ascOrDesc) throws IllegalArgumentException {
+		if (sortedArray == null || sortedArray.length == 0) {
 			return -1;
 		}
 		boolean orderByAsc;
 		if (ascOrDesc == null) {
-			if (array.length > 1) {
-				int result = array[0].compareTo(array[1]);
-				if (result != 0) {
-					orderByAsc = result < 0;
-				} else {
-					throw new IllegalArgumentException("Unable to determine the sort order");
-				}
-			} else {
+			int result;
+			if (sortedArray.length == 1 || (result = sortedArray[0].compareTo(sortedArray[1])) == 0) {
 				throw new IllegalArgumentException("Unable to determine the sort order");
 			}
+			orderByAsc = result < 0;
 		} else {
 			orderByAsc = ascOrDesc;
 		}
 		int index = -1;
+		// fn( [ 1, 3, 5 ], 0, true ) = -1
+		// fn( [ 1, 3, 5 ], 1, true ) = 0
+		// fn( [ 1, 3, 5 ], 2, true ) = 0
+		// fn( [ 1, 3, 5 ], 3, true ) = 1
+		// fn( [ 1, 3, 5 ], 5, true ) = 2
+		// fn( [ 1, 3, 5 ], 6, true ) = 2
 		if (orderByAsc) {
-			for (int i = array.length - 1; i >= 0; i--) {
-				if (toCompare.compareTo(array[i]) >= 0) {
-					index = i;
-					break;
-				}
+			for (int i = 0; i < sortedArray.length && toCompare.compareTo(sortedArray[i]) >= 0; i++) {
+				index = i;
 			}
 		} else {
-			for (int i = 0; i < array.length; i++) {
-				if (toCompare.compareTo(array[i]) >= 0) {
-					index = i;
-					break;
-				}
-			}
-		}
-		return index;
-	}
-
-	/**
-	 * 查找指定数值在已经排序好的区间临界值数组中的区间索引（本方法主要用于兼容原始数据类型）。
-	 * <p>
-	 * 数组{@code array }必须预先排序好，可以是升序或降序。例如：{@code [5, 10, 20, 50, 100] }。 此时，如果 {@code toCompare = 4 }，则返回 -1；如果 {@code toCompare = 5 }，则返回 0；如果 {@code toCompare = 12 }，则返回 1。
-	 * <p>
-	 * 如果数组中存在相等的值，则返回最靠近最大值的区间索引。
-	 *
-	 * @param array 区间临界值数组
-	 * @param toCompare 指定的对象
-	 * @param ascOrDesc 指定区间临界值数组的排序方式： true 表示升序， false 表示 降序；null 则自动根据数组中前两个元素的比较结果智能判断排序方式
-	 * @return 返回对应的区间索引。如果不满足最小的区间临界值，则返回 -1
-	 * @throws IllegalArgumentException 如果数组前两个元素的大小相等，则抛出该异常
-	 * @since 1.0.4
-	 */
-	public static int indexOfInterval(Object array, double toCompare, Boolean ascOrDesc) throws IllegalArgumentException {
-		if (array == null) {
-			return -1;
-		}
-		int len = Array.getLength(array);
-		if (len == 0) {
-			return -1;
-		}
-		boolean orderByAsc;
-		if (ascOrDesc == null) {
-			if (len > 1) {
-				double result = Array.getDouble(array, 0) - Array.getDouble(array, 1);
-				if (result != 0) {
-					orderByAsc = result < 0;
-				} else {
-					throw new IllegalArgumentException("Unable to determine the sort order");
-				}
-			} else {
-				throw new IllegalArgumentException("Unable to determine the sort order");
-			}
-		} else {
-			orderByAsc = ascOrDesc;
-		}
-		int index = -1;
-		if (orderByAsc) {
-			for (int i = len - 1; i >= 0; i--) {
-				if (toCompare >= Array.getDouble(array, i)) {
-					index = i;
-					break;
-				}
-			}
-		} else {
-			for (int i = 0; i < len; i++) {
-				if (toCompare >= Array.getDouble(array, i)) {
-					index = i;
-					break;
-				}
+			// fn( [ 5, 3, 1 ], 6, false ) = -1
+			// fn( [ 5, 3, 1 ], 5, false ) = 0
+			// fn( [ 5, 3, 1 ], 4, false ) = 0
+			// fn( [ 5, 3, 1 ], 3, false ) = 1
+			// fn( [ 5, 3, 1 ], 1, false ) = 2
+			// fn( [ 5, 3, 1 ], 0, false ) = 2
+			for (int i = 0; i < sortedArray.length && toCompare.compareTo(sortedArray[i]) <= 0; i++) {
+				index = i;
 			}
 		}
 		return index;
@@ -459,36 +399,33 @@ public abstract class ArrayX {
 	 * 移除数组里的重复元素，使其唯一化。如果存在重复的元素，则只保留排序最靠前(索引较小)的那个元素
 	 *
 	 * @param array 指定的数组对象
-	 * @param forceNewCopy 是否必须返回新的数组副本。如果为 {@code false}，在没有找到重复元素时，将会直接返回原数组 {@code array}
+	 * @param newArrayRequired 是否必须返回新的数组副本。如果为 {@code false}，在没有找到重复元素时，将会直接返回原数组 {@code array}
 	 */
-	public static Object unique(Object array, final boolean forceNewCopy) {
+	public static Object unique(Object array, final boolean newArrayRequired) {
 		final int length = Array.getLength(array);
-		if (!forceNewCopy && length < 2) {
-			return array;
+		if (length > 1) {
+			final Map<Object, Boolean> map = CollectionX.newLinkedHashMap(length);
+			for (int i = 0; i < length; i++) {
+				map.putIfAbsent(Array.get(array, i), Boolean.TRUE);
+			}
+			final int size = map.size();
+			if (size < length) {
+				final Class<?> componentType = array.getClass().getComponentType();
+				final Object copy = Array.newInstance(componentType, size);
+				int i = 0;
+				for (Object ele : map.keySet()) {
+					Array.set(copy, i++, ele);
+				}
+				return copy;
+			}
 		}
-		final Class<?> componentType = array.getClass().getComponentType();
-		Object copy = Array.newInstance(componentType, length);
-		System.arraycopy(array, 0, copy, 0, length);
-		if (length < 2) {
+		if (newArrayRequired) {
+			final Class<?> componentType = array.getClass().getComponentType();
+			Object copy = Array.newInstance(componentType, length);
+			System.arraycopy(array, 0, copy, 0, length);
 			return copy;
 		}
-		final Map<Object, Object> map = new HashMap<>(length * 4 / 3 + 1);
-		int size = 0;
-		for (int i = 0; i < length; i++) {
-			Object ele = Array.get(array, i);
-			if (!map.containsKey(ele)) {
-				map.put(ele, null);
-				Array.set(copy, size++, ele);
-			}
-		}
-		if (size < length) {
-			array = Array.newInstance(componentType, size);
-			if (size > 0) {
-				System.arraycopy(copy, 0, array, 0, size);
-			}
-			return array;
-		}
-		return copy;
+		return array;
 	}
 
 	/**
