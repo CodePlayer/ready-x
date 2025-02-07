@@ -13,19 +13,6 @@ import javax.annotation.Nullable;
 public abstract class NumberX {
 
 	/**
-	 * 将int类型的变量转为二进制字符串
-	 */
-	public static String int2Byte(int i) {
-		int index = 32;
-		char[] chars = new char[index];
-		do {
-			chars[--index] = StringX.DIGITS[(i & 1)];
-			i >>>= 1;
-		} while (i != 0);
-		return new String(chars, index, 32 - index);
-	}
-
-	/**
 	 * 以byte形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为byte形式，将报错
 	 *
