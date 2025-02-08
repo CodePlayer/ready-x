@@ -8,7 +8,7 @@ import me.codeplayer.util.X;
 /**
  * 对实体及其属性进行预处理、校验、格式化的流水线处理封装类
  */
-public class Pipeline<T, R> implements PropertyAccessor<T, R> {
+public class Validator<T, R> implements PropertyAccessor<T, R> {
 
 	/** 用于标识当前 Pipeline 的校验结果为通过 */
 	public static final Object OK = new Object();
@@ -29,48 +29,58 @@ public class Pipeline<T, R> implements PropertyAccessor<T, R> {
 	protected transient Object result = OK;
 	protected transient boolean silent;
 
-	public Pipeline(T bean) {
+	public Validator(T bean) {
 		this.bean = bean;
 	}
 
-	public <N, E> Pipeline<N, E> begin(N newBean, Function<? super N, E> getter, @Nullable BiConsumer<? super N, E> setter) {
-		this.bean = X.castType(newBean);
-		this.getter = X.castType(getter);
-		this.setter = X.castType(setter);
-		resetForNewProperty();
-		return X.castType(this);
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public <N, E> Validator<N, E> begin(N newBean, Function<? super N, E> getter, @Nullable BiConsumer<? super N, E> setter) {
+		final Validator raw = this;
+		raw.bean = newBean;
+		return raw.begin(getter, setter);
 	}
 
-	public <N, E> Pipeline<N, E> begin(N newBean, Function<? super N, E> getter) {
+	public <N, E> Validator<N, E> begin(N newBean, Function<? super N, E> getter) {
 		return begin(newBean, getter, null);
 	}
 
-	public Pipeline<T, R> begin(T newBean) {
-		this.bean = newBean;
-		return this;
+	public <N> Validator<N, R> begin(N newBean) {
+		return begin(newBean, null, null);
 	}
 
-	public <N, E> Pipeline<N, E> begin(Function<? super N, E> getter, @Nullable BiConsumer<? super N, E> setter) {
-		this.getter = X.castType(getter);
-		this.setter = X.castType(setter);
-		resetForNewProperty();
-		return X.castType(this);
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public <E> Validator<T, E> begin(@Nullable Function<? super T, E> getter, @Nullable BiConsumer<? super T, E> setter) {
+		final Validator raw = this;
+		raw.getter = getter;
+		raw.setter = setter;
+		raw.resetForNewProperty();
+		return raw;
 	}
 
-	public <N, E> Pipeline<N, E> begin(PropertyAccessor<? super N, E> accessor) {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public <E> Validator<T, E> beginValue(E val) {
+		final Validator raw = this;
+		raw.getter = t -> this.val;
+		raw.setter = null;
+		raw.result = OK;
+		raw.val = val;
+		return raw;
+	}
+
+	public <E> Validator<T, E> begin(PropertyAccessor<? super T, E> accessor) {
 		return begin(accessor.getGetter(), accessor.getSetter());
 	}
 
-	public <E> Pipeline<T, E> begin(Function<? super T, E> getter) {
+	public <E> Validator<T, E> begin(Function<? super T, E> getter) {
 		return begin(getter, (BiConsumer<? super T, E>) null);
 	}
 
-	public Pipeline<T, R> silent(boolean silent) {
+	public Validator<T, R> silent(boolean silent) {
 		this.silent = silent;
 		return this;
 	}
 
-	public Pipeline<T, R> silent() {
+	public Validator<T, R> silent() {
 		return silent(true);
 	}
 
@@ -86,43 +96,48 @@ public class Pipeline<T, R> implements PropertyAccessor<T, R> {
 	}
 
 	protected void resetForNewProperty() {
+		// 如果改动本方法，则需同步改动 beginValue() 方法
 		this.result = OK;
 		this.val = getter == null || (bean == null && silent) ? null : getter.apply(bean);
 	}
 
-	public Pipeline<T, R> apply(Function<? super R, R> validator) {
+	public Validator<T, R> apply(Function<? super R, R> callback) {
 		if (canNext()) {
 			R val = this.val;
 			if (silent) {
 				try {
-					this.val = val = validator.apply(val);
+					val = callback.apply(val);
 				} catch (Throwable e) {
 					result = e;
 				}
 			} else {
-				this.val = val = validator.apply(val);
+				val = callback.apply(val);
 			}
-			if (setter != null) {
-				setter.accept(bean, val);
+			if (setter != null && val != this.val) {
+				setter.accept(bean, this.val = val);
 			}
 		}
 		return this;
 	}
 
-	public Pipeline<T, R> applyIf(Predicate<? super R> precondition, Function<? super R, R> validator) {
-		return apply(val -> precondition.test(val) ? validator.apply(val) : val);
+	public Validator<T, R> applyIf(Predicate<? super R> precondition, Function<? super R, R> callback) {
+		return precondition.test(val) ? this.apply(callback) : this;
 	}
 
-	public Pipeline<T, R> apply(Consumer<? super T> validator) {
+	public Validator<T, R> applyIfBean(Predicate<? super T> precondition, Function<? super R, R> callback) {
+		return precondition.test(bean) ? this.apply(callback) : this;
+	}
+
+	public Validator<T, R> accept(Consumer<? super T> beanConsumer) {
 		if (canNext()) {
 			if (silent) {
 				try {
-					validator.accept(bean);
+					beanConsumer.accept(bean);
 				} catch (Throwable e) {
 					result = e;
 				}
 			} else {
-				validator.accept(bean);
+				beanConsumer.accept(bean);
 			}
 			if (getter != null) { // ensure val is refresh
 				this.val = getter.apply(bean);
@@ -131,37 +146,15 @@ public class Pipeline<T, R> implements PropertyAccessor<T, R> {
 		return this;
 	}
 
-	public Pipeline<T, R> applyIf(Predicate<? super T> precondition, Consumer<? super T> validator) {
-		return apply(t -> {
-			if (precondition.test(t)) {
-				validator.accept(t);
-			}
-		});
+	public Validator<T, R> acceptIf(Predicate<? super R> precondition, Consumer<? super T> callback) {
+		return precondition.test(val) ? this.accept(callback) : this;
 	}
 
-	public Pipeline<T, R> applyIfValue(Consumer<? super T> validator, Predicate<? super R> precondition) {
-		return apply(t -> {
-			final R val = this.getter.apply(t);
-			if (precondition.test(val)) {
-				validator.accept(t);
-			}
-		});
+	public Validator<T, R> acceptIfBean(Predicate<? super T> precondition, Consumer<? super T> callback) {
+		return precondition.test(bean) ? this.accept(callback) : this;
 	}
 
-	public Pipeline<T, R> applyValueIf(final Predicate<? super R> precondition, final Consumer<? super R> validator) {
-		return apply(val -> {
-			if (precondition == null || precondition.test(val)) {
-				validator.accept(val);
-			}
-			return val;
-		});
-	}
-
-	public Pipeline<T, R> applyValue(Consumer<? super R> validator) {
-		return applyValueIf(null, validator);
-	}
-
-	protected Pipeline<T, R> assertInternal(Supplier<Boolean> validator, @Nullable Object throwsError) {
+	protected Validator<T, R> assertInternal(Supplier<Boolean> validator, @Nullable Object throwsError) {
 		if (canNext()) {
 			boolean matches;
 			if (silent) {
@@ -185,69 +178,69 @@ public class Pipeline<T, R> implements PropertyAccessor<T, R> {
 		return this;
 	}
 
-	public Pipeline<T, R> asserts(Predicate<? super R> validator, final @Nullable Supplier<?> throwsError) {
+	public Validator<T, R> asserts(Predicate<? super R> validator, final @Nullable Supplier<?> throwsError) {
 		return assertInternal(() -> validator.test(getter.apply(bean)), throwsError);
 	}
 
-	public Pipeline<T, R> asserts(Predicate<? super R> validator, final @Nullable CharSequence errorMsg) {
+	public Validator<T, R> asserts(Predicate<? super R> validator, final @Nullable CharSequence errorMsg) {
 		return assertInternal(() -> validator.test(getter.apply(bean)), errorMsg);
 	}
 
-	public Pipeline<T, R> asserts(Predicate<? super R> validator) {
+	public Validator<T, R> asserts(Predicate<? super R> validator) {
 		return asserts(validator, (Supplier<?>) null);
 	}
 
-	public Pipeline<T, R> assertsNot(Predicate<? super R> validator, final @Nullable Supplier<?> throwsError) {
+	public Validator<T, R> assertsNot(Predicate<? super R> validator, final @Nullable Supplier<?> throwsError) {
 		return assertInternal(() -> !validator.test(getter.apply(bean)), throwsError);
 	}
 
-	public Pipeline<T, R> assertsNot(Predicate<? super R> validator, final @Nullable CharSequence errorMsg) {
+	public Validator<T, R> assertsNot(Predicate<? super R> validator, final @Nullable CharSequence errorMsg) {
 		return assertInternal(() -> !validator.test(getter.apply(bean)), errorMsg);
 	}
 
-	public Pipeline<T, R> assertsNot(Predicate<? super R> validator) {
+	public Validator<T, R> assertsNot(Predicate<? super R> validator) {
 		return assertsNot(validator, (Supplier<?>) null);
 	}
 
-	public Pipeline<T, R> assertBean(Predicate<? super T> validator, final @Nullable Supplier<?> throwsError) {
+	public Validator<T, R> assertBean(Predicate<? super T> validator, final @Nullable Supplier<?> throwsError) {
 		return assertInternal(() -> validator.test(bean), throwsError);
 	}
 
-	public Pipeline<T, R> assertBean(Predicate<? super T> validator, final @Nullable CharSequence errorMsg) {
+	public Validator<T, R> assertBean(Predicate<? super T> validator, final @Nullable CharSequence errorMsg) {
 		return assertInternal(() -> validator.test(bean), errorMsg);
 	}
 
-	public Pipeline<T, R> assertBean(Predicate<? super T> validator) {
+	public Validator<T, R> assertBean(Predicate<? super T> validator) {
 		return assertBean(validator, (Supplier<?>) null);
 	}
 
-	public Pipeline<T, R> assertBeanNot(Predicate<? super T> validator, final @Nullable Supplier<?> throwsError) {
+	public Validator<T, R> assertBeanNot(Predicate<? super T> validator, final @Nullable Supplier<?> throwsError) {
 		return assertInternal(() -> !validator.test(bean), throwsError);
 	}
 
-	public Pipeline<T, R> assertBeanNot(Predicate<? super T> validator, final @Nullable CharSequence errorMsg) {
+	public Validator<T, R> assertBeanNot(Predicate<? super T> validator, final @Nullable CharSequence errorMsg) {
 		return assertInternal(() -> !validator.test(bean), errorMsg);
 	}
 
-	public Pipeline<T, R> assertBeanNot(Predicate<? super T> validator) {
+	public Validator<T, R> assertBeanNot(Predicate<? super T> validator) {
 		return assertBeanNot(validator, (Supplier<?>) null);
 	}
 
-	public Pipeline<T, R> tryThrow(@Nullable Supplier<?> toThrow) {
+	public Validator<T, R> tryThrow(@Nullable Supplier<?> toThrow) {
 		if (!isOK()) {
 			tryThrow(toThrow, result);
 		}
 		return this;
 	}
 
-	public Pipeline<T, R> tryThrow(@Nullable CharSequence errorMsg) {
+	public Validator<T, R> tryThrow(@Nullable CharSequence errorMsg) {
 		if (!isOK()) {
 			tryThrow(errorMsg, result);
 		}
 		return this;
 	}
 
-	public Pipeline<T, R> tryThrow() {
+	public Validator<T, R> tryThrow() {
 		if (!isOK()) {
 			tryThrow(result, null);
 		}
@@ -313,6 +306,26 @@ public class Pipeline<T, R> implements PropertyAccessor<T, R> {
 	@Override
 	public BiConsumer<? super T, R> getSetter() {
 		return setter;
+	}
+
+	public static <T, R> Validator<T, R> of(T bean, Function<? super T, R> getter, @Nullable BiConsumer<? super T, R> setter) {
+		return new Validator<>(bean).begin(getter, setter);
+	}
+
+	public static <T, R> Validator<T, R> of(T bean, Function<? super T, R> getter) {
+		return new Validator<>(bean).begin(getter, (BiConsumer<? super T, R>) null);
+	}
+
+	public static <T, R> Validator<T, R> of(T bean, PropertyAccessor<? super T, R> accessor) {
+		return new Validator<>(bean).begin(accessor);
+	}
+
+	public static <T, R> Validator<T, R> of(T bean) {
+		return new Validator<>(bean);
+	}
+
+	public static <R> Validator<R, R> valueOf(R val) {
+		return of(val).beginValue(val);
 	}
 
 }

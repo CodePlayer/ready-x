@@ -5,13 +5,20 @@ import java.math.BigDecimal;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ValidatorsTest {
+public class ValidatorTest {
+
+	static PropertyAccessor<Entity, Long> id = PropertyAccessor.of(Entity::getId, Entity::setId);
+
+	@Test
+	public void misc() {
+		Assert.assertNotNull(id.getGetter());
+		Assert.assertNotNull(id.getSetter());
+	}
 
 	@Test
 	public void validateTrue_ReturnBoolean() {
 		Book book = new Book(123L, "The Old Man and the Sea", "12345", "978-3-16-148410-0  ", 100, BigDecimal.valueOf(28.8));
-		boolean result = Validators.of(book)
-				.begin(Book::getId)
+		boolean result = Validator.of(book, id)
 				.asserts(Validators.assertPositive)
 
 				.begin(Book::getName)
@@ -39,13 +46,16 @@ public class ValidatorsTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void validate_ThrowException() {
 		Book book = new Book(123L, "The Old Man and the Sea", "12345", "978-3-16-148410-0  ", 88, BigDecimal.ZERO);
-		Pipeline<Book, ?> validator = Validators.of(book)
+		Validator<Book, ?> validator = Validator.of(book, Book::getName, Book::setName)
+				.asserts(Validators.assertNotEmpty)
+				.apply(Validators.upper)
+
 				.begin(Book::getId)
 				.asserts(Validators.assertPositive)
 
-				.begin(Book::getName, Book::setName)
-				.asserts(Validators.assertNotEmpty)
-				.apply(Validators.upper)
+				.begin(Book::getCode)
+				.asserts(Validators.assertNotBlank)
+				.asserts(Validators.assertIsNonNegative)
 
 				.begin(Book::getStock)
 				.asserts(Validators.assertNotNull)
@@ -62,7 +72,7 @@ public class ValidatorsTest {
 	public void validate_ErrorMsg() {
 		Book book = new Book(null, "The Old Man and the Sea", "12345", "978-3-16-148410-0  ", 100, BigDecimal.valueOf(28.8));
 		final String errorMsg = "书籍名称必须是1~20个字符";
-		Pipeline<Book, ?> validator = Validators.of(book)
+		Validator<Book, ?> validator = Validator.of(book)
 				.silent()
 				.begin(Book::getId)
 				.asserts(Validators.assertIsNull)
@@ -75,7 +85,42 @@ public class ValidatorsTest {
 		Assert.assertEquals(errorMsg, validator.getResult(String.class));
 	}
 
-	static class Book {
+	@Test
+	public void validateValue_ErrorMsg() {
+		final String name = "The Old Man and the Sea";
+		Book book = new Book(null, name, "12345", "978-3-16-148410-0  ", 100, BigDecimal.valueOf(100));
+		final String errorMsg = "书籍名称必须是1~20个字符";
+		Validator<Book, String> validator = Validator.valueOf(name).
+				asserts(Validators.assertLength(1, 50), errorMsg)
+
+				.silent()
+				.begin(book).begin(Book::getId)
+				.asserts(Validators.assertIsNull)
+
+				.begin(Book::getName)
+				.asserts(Validators.assertLength(1, 20), errorMsg);
+
+		Assert.assertFalse(validator.isOK());
+		Assert.assertEquals(errorMsg, validator.getResult());
+		Assert.assertEquals(errorMsg, validator.getResult(String.class));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void validatePropertyAccessor_ErrorMsg() {
+		Book book = new Book(null, "The Old Man and the Sea", "12345", "978-3-16-148410-0  ", 100, BigDecimal.valueOf(28.8));
+		Validator.of(book, id)
+				.asserts(Validators.assertNotNull);
+	}
+
+	interface Entity {
+
+		Long getId();
+
+		void setId(Long id);
+
+	}
+
+	static class Book implements Entity {
 
 		Long id;
 		String name;
@@ -96,10 +141,12 @@ public class ValidatorsTest {
 		public Book() {
 		}
 
+		@Override
 		public Long getId() {
 			return id;
 		}
 
+		@Override
 		public void setId(Long id) {
 			this.id = id;
 		}
