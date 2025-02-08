@@ -88,14 +88,14 @@ public class ValidatorTest {
 	@Test
 	public void validateValue_ErrorMsg() {
 		final String name = "The Old Man and the Sea";
-		Book book = new Book(null, name, "12345", "978-3-16-148410-0  ", 100, BigDecimal.valueOf(100));
+		Book book = new Book(123L, name, "12345", "978-3-16-148410-0  ", 100, BigDecimal.valueOf(100));
 		final String errorMsg = "书籍名称必须是1~20个字符";
 		Validator<Book, String> validator = Validator.valueOf(name).
 				asserts(Validators.assertLength(1, 50), errorMsg)
 
 				.silent()
 				.begin(book).begin(Book::getId)
-				.asserts(Validators.assertIsNull)
+				.asserts(Validators.assertPositive)
 
 				.begin(Book::getName)
 				.asserts(Validators.assertLength(1, 20), errorMsg);
