@@ -1,6 +1,7 @@
 package me.codeplayer.util;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -61,6 +62,27 @@ public class Cmp {
 	/**
 	 * 指示指定的 val 是否为 null 或 等于 0
 	 */
+	public static Double zeroToNull(@Nullable Double val) {
+		return val != null && val == 0 ? null : val;
+	}
+
+	/**
+	 * 指示指定的 val 是否为 null 或 等于 0
+	 */
+	public static Float zeroToNull(@Nullable Float val) {
+		return val != null && val == 0 ? null : val;
+	}
+
+	/**
+	 * 指示指定的 val 是否为 null 或 等于 0
+	 */
+	public static BigInteger zeroToNull(@Nullable BigInteger val) {
+		return val != null && val.compareTo(BigInteger.ZERO) == 0 ? null : val;
+	}
+
+	/**
+	 * 指示指定的 val 是否为 null 或 等于 0
+	 */
 	public static BigDecimal zeroToNull(@Nullable BigDecimal val) {
 		return val != null && val.compareTo(BigDecimal.ZERO) == 0 ? null : val;
 	}
@@ -85,8 +107,34 @@ public class Cmp {
 	 * 返回指定的 val，如果该参数为 null 时，则返回 0
 	 */
 	@Nonnull
+	public static Double nullToZero(@Nullable Double val) {
+		// 此处 Double.valueOf(0) 不能简写成 0 或 0D，否则会产生额外的拆箱/装箱开销 */
+		return val == null ? Double.valueOf(0) : val;
+	}
+
+	/**
+	 * 返回指定的 val，如果该参数为 null 时，则返回 0
+	 */
+	@Nonnull
+	public static Float nullToZero(@Nullable Float val) {
+		// 此处 Float.valueOf(0) 不能简写成 0 或 0F，否则会产生额外的拆箱/装箱开销 */
+		return val == null ? Float.valueOf(0) : val;
+	}
+
+	/**
+	 * 返回指定的 val，如果该参数为 null 时，则返回 0
+	 */
+	@Nonnull
 	public static BigDecimal nullToZero(@Nullable BigDecimal val) {
 		return val == null ? BigDecimal.ZERO : val;
+	}
+
+	/**
+	 * 返回指定的 val，如果该参数为 null 时，则返回 0
+	 */
+	@Nonnull
+	public static BigInteger nullToZero(@Nullable BigInteger val) {
+		return val == null ? BigInteger.ZERO : val;
 	}
 
 	/**
@@ -216,12 +264,67 @@ public class Cmp {
 	}
 
 	/**
-	 * 指示 指定的 {@code val} 是否在 {@code min} 和 {@code max} 之间（闭区间）
+	 * 指示 val 是否 {@code ＞  min}
 	 *
-	 * @return 如果 {@code val}、{@code min} 和 {@code max} 任一为 null，则返回 false
+	 * @return {@code val} 为 null 时，则返回 false
 	 */
-	public static <T extends Comparable<T>> boolean between(@Nullable T val, @Nullable T min, @Nullable T max) {
-		return val != null && min != null && max != null && val.compareTo(min) >= 0 && val.compareTo(max) <= 0;
+	public static <T extends Comparable<T>> boolean gt(@Nullable T val, T min) {
+		return val != null && val.compareTo(min) > 0;
+	}
+
+	/**
+	 * 指示 val 是否为 null 或 {@code ＞ min}
+	 */
+	public static <T extends Comparable<T>> boolean gtOrNull(@Nullable T val, T min) {
+		return val == null || val.compareTo(min) > 0;
+	}
+
+	/**
+	 * 指示 val 是否 {@code ≥ min}
+	 *
+	 * @return {@code val} 为 null 时，则返回 false
+	 */
+	public static <T extends Comparable<T>> boolean ge(@Nullable T val, T min) {
+		return val != null && val.compareTo(min) >= 0;
+	}
+
+	/**
+	 * 指示 val 是否为 null 或 ≥ min
+	 */
+	public static <T extends Comparable<T>> boolean geOrNull(@Nullable T val, T min) {
+		return val == null || val.compareTo(min) >= 0;
+	}
+
+	/**
+	 * 指示 val 是否 ≤ {@code max}
+	 *
+	 * @return {@code val} 为 null 时，则返回 false
+	 */
+	public static <T extends Comparable<T>> boolean le(@Nullable T val, T max) {
+		return val != null && val.compareTo(max) <= 0;
+	}
+
+	/**
+	 * 指示 val 是否为 null 或 ≤ max
+	 */
+	public static <T extends Comparable<T>> boolean leOrNull(@Nullable T val, T max) {
+		return val == null || val.compareTo(max) <= 0;
+	}
+
+	/**
+	 * 指示 val 是否 ＜ {@code max}
+	 *
+	 * @return {@code val} 为 null 时，则返回 false
+	 */
+	public static <T extends Comparable<T>> boolean lt(@Nullable T val, T max) {
+		return val != null && val.compareTo(max) < 0;
+	}
+
+	/**
+	 * 指示 val 是否为 null 或 ＜ max
+	 */
+	public static <T extends Comparable<T>> boolean ltOrNull(@Nullable T val, T max) {
+		return val == null || val.compareTo(max) < 0;
 	}
 
 	/**
@@ -240,6 +343,15 @@ public class Cmp {
 	 */
 	public static boolean between(@Nullable Long val, long min, long max) {
 		return val != null && val >= min && val <= max;
+	}
+
+	/**
+	 * 指示 指定的 {@code val} 是否在 {@code min} 和 {@code max} 之间（闭区间）
+	 *
+	 * @return 如果 {@code val}、{@code min} 和 {@code max} 任一为 null，则返回 false
+	 */
+	public static <T extends Comparable<T>> boolean between(@Nullable T val, @Nullable T min, @Nullable T max) {
+		return val != null && min != null && max != null && val.compareTo(min) >= 0 && val.compareTo(max) <= 0;
 	}
 
 }
