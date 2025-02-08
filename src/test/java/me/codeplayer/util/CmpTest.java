@@ -45,12 +45,14 @@ public class CmpTest {
 	public void eq_Integer() {
 		assertTrue(Cmp.eq(integers[1], 1)); // equals
 		assertFalse(Cmp.eq(integers[_null], 1)); // argument 1 is null
+		assertFalse(Cmp.eq(integers[1], 2)); // not equals
 	}
 
 	@Test
 	public void eq_Long() {
 		assertTrue(Cmp.eq(longs[1], 1L)); // equals
 		assertFalse(Cmp.eq(longs[_null], 1L)); // argument 1 is null
+		assertFalse(Cmp.eq(longs[1], 2L)); // not equals
 	}
 
 	@Test
