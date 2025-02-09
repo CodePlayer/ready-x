@@ -32,7 +32,7 @@ Ready-X 是一个基于Java 8（ ***1.x*** 基于 Java 5） 编写的基础工�
 
 **示例一：将多个用户的ID拼接为一个字符串，以","分隔**
 ```java
-// ① 常规版本
+// 1、常规版本
 public static String joinIds0(List<User> list) {
   final StringBuilder sb = new StringBuilder();
   for (User user : list) {
@@ -44,7 +44,7 @@ public static String joinIds0(List<User> list) {
   return sb.toString();
 }
 
-// ② 升级版本 1
+// 2、升级版本 1
 public static String joinIds1(List<User> list) {
   final StringBuilder sb = new StringBuilder(list.size() * 8); // 初始化容量
   for (User user : list) {
@@ -56,7 +56,7 @@ public static String joinIds1(List<User> list) {
   return sb.toString();
 }
 
-// ③ 升级版本 2
+// 3、升级版本 2
 public static String joinIds2(List<User> list) {
   final StringBuilder sb = new StringBuilder(list.size() * 8); // 初始化容量
   for (User user : list) {
@@ -68,7 +68,7 @@ public static String joinIds2(List<User> list) {
   return sb.toString();
 }
 
-// ④ 直接使用封装好的工具方法（且是 null 安全的）
+// 4、直接使用封装好的工具方法（且是 null 安全的）
 public static String joinIds(List<User> list) {
   return StringX.joinIntValue(list, User::getId, ",");
 }
@@ -77,7 +77,7 @@ public static String joinIds(List<User> list) {
 **示例二：将 List<User> 转为 Map<Integer, User>**（key是用户ID）
 
 ```java
-// ① 常规版本
+// 1、常规版本
 public static Map<Integer, User> toMap0(List<User> list) {
   if (list == null) {
     return new HashMap<>();
@@ -85,7 +85,7 @@ public static Map<Integer, User> toMap0(List<User> list) {
   return list.stream().collect(Collectors.toMap(User::getId, Function.identity()));
 }
 
-// ② 升级版本 1
+// 2、升级版本 1
 public static Map<Integer, User> toMap1(List<User> list) {
   Map<Integer, User> map = new HashMap<>();
   if (list != null) {
@@ -96,7 +96,7 @@ public static Map<Integer, User> toMap1(List<User> list) {
   return map;
 }
 
-// ③ 升级版本 2
+// 3、升级版本 2
 public static Map<Integer, User> toMap2(List<User> list) {
   if (list == null) {
     return new HashMap<>();
@@ -108,7 +108,7 @@ public static Map<Integer, User> toMap2(List<User> list) {
   return map;
 }
 
-// ④ 直接使用封装好的工具方法（并且是 null 安全的）
+// 4、直接使用封装好的工具方法（并且是 null 安全的）
 public static Map<Integer, User> toMap(List<User> list) {
   return CollectionX.toHashMap(list, User::getId);
 }
@@ -117,19 +117,19 @@ public static Map<Integer, User> toMap(List<User> list) {
 
 **示例三：从 "a,b,c,d"（多个片段以","分隔） 格式的字符串中检测是否存在片段 "a"**
 ```java
-// ① 常规版本
+// 1、常规版本
 public boolean contains0(String segments, String part) {
   String[] parts = segments.split(",");
   return Arrays.asList(parts).contains(part);
 }
 
-// ② 升级版本 1
+// 2、升级版本 1
 public boolean contains1(String segments, String part) {
   String[] parts = segments.split(",");
   return ArrayUtils.contains(parts, part); // 避免new ArrayList
 }
 
-// ③ 直接使用封装好的工具方法（并且是 null 安全的）
+// 3、直接使用封装好的工具方法（并且是 null 安全的）
 public boolean contains(String segments, String part) {
   // 无需预先 split，直接通过一次性 indexOf + 临界字符判断，避免多次遍历、生成多个中间字符串/集合对象的开销
   return StringX.containsWord(segments, part, ",");
@@ -154,9 +154,21 @@ Lambda（或 Stream API） 虽然好用，但是也要保持**适当**的理性�
 
 ### 4、追求 80+% 的测试覆盖率
 
+1. 不断完善测试用例，努力争取所有分支代码均被覆盖；
+2. 每次提交均自动进行 **多系统**（Windows、Ubuntu、Mac）x **多版本**（JDK 8、11、17、21）的交叉单元测试，努力覆盖更多测试场景。
 
 ### 5、同一大版本内严格向后兼容
 
+遵循语义化版本号命名规范。
+
+以 `x.y.z` 为例：
+- `x` 变更，表示主版本号更新（**不一定向后兼容**）；
+- `y` 变更，表示次版本号更新，一般是添加了新的功能或特性 或 进行了大幅重构优化，但尽量确保向后兼容（若因修复bug所需，或调整了少量生僻API，无法向后兼容的，也会在更新中加以解释说明）；
+- `z` 变更，表示版本修订更新，一般是bug修复或内部代码改进。
+
+> 【注意】
+> - SNAPSHOT、ALPHA、BETA、RC 等非正式版本，不保证一定向后兼容。
+> - `3.x` 及更早版本未严格遵循此规范。
 
 ### 6、代码注释完备
 
