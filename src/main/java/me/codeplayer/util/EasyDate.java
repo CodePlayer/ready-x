@@ -735,6 +735,16 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	}
 
 	/**
+	 * 判断指定年份是否为闰年
+	 *
+	 * @param year 例如 2012
+	 */
+	public static boolean isLeapYears(int year) {
+		// (year & 3) 等价于 (year % 4)
+		return (year & 3) == 0 && (year % 400 == 0 || year % 100 != 0);
+	}
+
+	/**
 	 * 判断当前日期年份是否为闰年
 	 */
 	public boolean isLeapYear() {
@@ -1003,7 +1013,12 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	}
 
 	/**
-	 * 获取本地时间相对于GMT时间的偏移分钟数
+	 * 获取本地时间相对于GMT时间的偏移分钟数。例如：
+	 * <pre><code>
+	 * "GMT+8" 将返回 480
+	 * "GMT-4" 将返回 -240
+	 * "GMT+5:30" 将返回 330
+	 * </code></pre>
 	 *
 	 * @since 0.3
 	 */
