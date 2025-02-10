@@ -72,7 +72,7 @@ public class ArithTest implements WithAssertions {
 
 		Assert.assertEquals(0, new Arith(true).add(10.3).multiply("10").divide("11.3").toBigDecimal().compareTo(BigDecimal.TEN));
 
-		assertThat(new Arith(212.454).add(1245.23).multiply(12.45).value).isEqualByComparingTo(BigDecimal.valueOf(18148.1658));
+		assertThat(new Arith(false).add(212.454).add(1245.23).multiply(12.45).value).isEqualByComparingTo(BigDecimal.valueOf(18148.1658));
 	}
 
 	@Test(expected = ArithmeticException.class)
@@ -392,22 +392,40 @@ public class ArithTest implements WithAssertions {
 	}
 
 	@Test
-	public void minus_PositiveNumbers_CorrectResult() {
+	public void add_PositiveNumbers_ReturnsCorrectSum() {
+		double result = Arith.add(12.65656465, 3.34343535);
+		Assert.assertEquals(16.0, result, delta);
+	}
+
+	@Test
+	public void add_NegativeNumbers_ReturnsCorrectSum() {
+		double result = Arith.add(-12.65656465, -3.34343535);
+		Assert.assertEquals(-16.0, result, delta);
+	}
+
+	@Test
+	public void add_MixedNumbers_ReturnsCorrectSum() {
+		double result = Arith.add(12.65656465, -3.34343535);
+		Assert.assertEquals(9.3131293, result, delta);
+	}
+
+	@Test
+	public void add_ZeroValue_ReturnsCorrectSum() {
+		double result = Arith.add(0.0, 12.65656465);
+		Assert.assertEquals(12.65656465, result, delta);
+
+		result = Arith.add(12.65656465, 0.0);
+		Assert.assertEquals(12.65656465, result, delta);
+
+		result = Arith.add(0.0, 0.0);
+		Assert.assertEquals(0.0, result, delta);
+	}
+
+	@Test
+	public void minus() {
 		assertThat(Arith.minus(10.0, 5.0)).isEqualTo(5.0);
-	}
-
-	@Test
-	public void minus_NegativeNumbers_CorrectResult() {
 		assertThat(Arith.minus(-10.0, -5.0)).isEqualTo(-5.0);
-	}
-
-	@Test
-	public void minus_ZeroAndPositive_CorrectResult() {
 		assertThat(Arith.minus(0.0, 5.0)).isEqualTo(-5.0);
-	}
-
-	@Test
-	public void multiply_PositiveNumbers_CorrectResult() {
 		assertThat(Arith.multiply(10.0, 5.0)).isEqualTo(50.0);
 	}
 
@@ -565,7 +583,9 @@ public class ArithTest implements WithAssertions {
 	public void isIntegral() {
 		Assert.assertFalse(Arith.isIntegral(null));
 		Assert.assertTrue(Arith.isIntegral(BigDecimal.valueOf(100)));
+		Assert.assertTrue(Arith.isIntegral(new BigDecimal("100.00")));
 		Assert.assertFalse(Arith.isIntegral(new BigDecimal("100.5")));
+		Assert.assertFalse(Arith.isIntegral(new BigDecimal("100.001")));
 	}
 
 	@Test(expected = NullPointerException.class)
