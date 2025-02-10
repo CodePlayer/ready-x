@@ -128,12 +128,12 @@ public boolean contains0(String segments, String part) {
 // 2、升级版本 1
 public boolean contains1(String segments, String part) {
   String[] parts = segments.split(",");
-  return ArrayUtils.contains(parts, part); // 避免new ArrayList
+  return org.apache.commons.lang3.ArrayUtils.contains(parts, part); // 避免new ArrayList
 }
 
 // 3、直接使用封装好的工具方法（并且是 null 安全的）
+// 无需预先 split，直接通过一次性 indexOf + 临界字符判断，避免多次遍历、生成多个中间字符串/集合对象的开销
 public boolean contains(String segments, String part) {
-  // 无需预先 split，直接通过一次性 indexOf + 临界字符判断，避免多次遍历、生成多个中间字符串/集合对象的开销
   return StringX.containsWord(segments, part, ",");
 }
 ```
