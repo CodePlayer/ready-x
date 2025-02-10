@@ -348,9 +348,12 @@ public class Arith {
 	 * @param newScale 指定的精确位数
 	 */
 	public static double roundFast(final double value, final int newScale) {
+		if (value < 0 || newScale > 10) {
+			return round(value, newScale);
+		}
 		final double factor = Math.pow(10, newScale + 1);
 		final double target = value * factor;
-		if (newScale > 10 || target < Long.MIN_VALUE || target > Long.MAX_VALUE || Math.abs(target) > Double.MAX_VALUE) {
+		if (target < Long.MIN_VALUE || target > Long.MAX_VALUE || Math.abs(target) > Double.MAX_VALUE) {
 			return round(value, newScale);
 		}
 		final double adjust = 0.000000000001;
@@ -365,23 +368,44 @@ public class Arith {
 	}
 
 	/**
-	 * 将当前BigDecimal进行向上舍入到相邻的整数
+	 * 将当前数值进行 向上舍入，并保留指定的小数位数
+	 */
+	public Arith ceil(int newScale) {
+		return setScale(newScale, RoundingMode.CEILING);
+	}
+
+	/**
+	 * 将当前数值进行 向上舍入 到相邻的整数
 	 */
 	public Arith ceil() {
-		return setScale(0, RoundingMode.CEILING);
+		return ceil(0);
 	}
 
 	/**
-	 * 将当前BigDecimal进行向下舍去到相邻的整数
+	 * 将当前数值进行 向下舍去，并保留指定的小数位数
+	 */
+	public Arith floor(int newScale) {
+		return setScale(newScale, RoundingMode.FLOOR);
+	}
+
+	/**
+	 * 将当前数值进行 向下舍去 到相邻的整数
 	 */
 	public Arith floor() {
-		return setScale(0, RoundingMode.FLOOR);
+		return floor(0);
 	}
 
 	/**
-	 * 转换为BigDecimal
+	 * 转换为 BigDecimal
 	 */
 	public BigDecimal toBigDecimal() {
+		return value;
+	}
+
+	/**
+	 * 转换为 BigDecimal
+	 */
+	public BigDecimal value() {
 		return value;
 	}
 
@@ -500,9 +524,9 @@ public class Arith {
 	 *
 	 * @param a 乘数1
 	 * @param b 乘数2
-	 * @param precision 包含整数部分的有效位数
+	 * @param precision 包含整数部分的有效位数，0 表示不限制
 	 */
-	public static double multiply(double a, double b, long precision) {
+	public static double multiplyInContext(double a, double b, long precision) {
 		MathContext context = new MathContext((int) precision, RoundingMode.HALF_UP);
 		return toBigDecimal(a).multiply(toBigDecimal(b), context).doubleValue();
 	}
@@ -547,7 +571,7 @@ public class Arith {
 	 */
 	public static double scale(double d, int scale, RoundingMode mode) {
 		checkScale(scale);
-		return new BigDecimal(d).setScale(scale, mode).doubleValue();
+		return toBigDecimal(d).setScale(scale, mode).doubleValue();
 	}
 
 	/**
@@ -558,7 +582,7 @@ public class Arith {
 	 */
 	public static BigDecimal fastScale(double val, int scale, RoundingMode mode) {
 		checkScale(scale);
-		BigDecimal d = new BigDecimal(val);
+		BigDecimal d = toBigDecimal(val);
 		return d.scale() <= scale ? d : d.setScale(scale, mode);
 	}
 
@@ -567,7 +591,7 @@ public class Arith {
 	 *
 	 * @param d 指定的数值
 	 */
-	public static long ceil(double d) {
+	public static long ceilToLong(double d) {
 		return (long) Math.ceil(d);
 	}
 
@@ -576,7 +600,7 @@ public class Arith {
 	 *
 	 * @param d 指定的数值
 	 */
-	public static long floor(double d) {
+	public static long floorToLong(double d) {
 		return (long) Math.floor(d);
 	}
 
@@ -611,7 +635,7 @@ public class Arith {
 	 * </ul>
 	 */
 	public static int compareTo(BigDecimal a, double b) {
-		return a.compareTo(BigDecimal.valueOf(b));
+		return a.compareTo(toBigDecimal(b));
 	}
 
 	/**
@@ -686,7 +710,7 @@ public class Arith {
 	 * 输出以四舍五入模式保留指定小数位精度的数值字符串
 	 */
 	public String toString(int scale) {
-		return value.setScale(scale, RoundingMode.HALF_UP).toString();
+		return value.setScale(scale, RoundingMode.HALF_UP).toPlainString();
 		// return value.divide(BigDecimal.ONE, scale, RoundingMode.HALF_UP).toString();
 	}
 
