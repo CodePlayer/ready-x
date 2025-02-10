@@ -539,7 +539,6 @@ public class Arith {
 	 * @param scale 小数精确度位数
 	 */
 	public static double divide(double a, double b, int scale) {
-		checkScale(scale);
 		return toBigDecimal(a).divide(toBigDecimal(b), scale, RoundingMode.HALF_UP).doubleValue();
 	}
 
@@ -570,7 +569,6 @@ public class Arith {
 	 * @param scale 指定的小数精确位数
 	 */
 	public static double scale(double d, int scale, RoundingMode mode) {
-		checkScale(scale);
 		return toBigDecimal(d).setScale(scale, mode).doubleValue();
 	}
 
@@ -581,7 +579,6 @@ public class Arith {
 	 * @param scale 指定的小数精确位数
 	 */
 	public static BigDecimal fastScale(double val, int scale, RoundingMode mode) {
-		checkScale(scale);
 		BigDecimal d = toBigDecimal(val);
 		return d.scale() <= scale ? d : d.setScale(scale, mode);
 	}
@@ -602,12 +599,6 @@ public class Arith {
 	 */
 	public static long floorToLong(double d) {
 		return (long) Math.floor(d);
-	}
-
-	static void checkScale(int scale) {
-		if (scale < 0) {
-			throw new IllegalArgumentException("Argument 'scale' can not less than 0:" + scale);
-		}
 	}
 
 	/**
