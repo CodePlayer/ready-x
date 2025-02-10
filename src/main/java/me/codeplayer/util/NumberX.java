@@ -23,15 +23,14 @@ public abstract class NumberX {
 	}
 
 	/**
-	 * 以byte形式返回指定的值<br>
-	 * 如果指定的值为null或无法转为byte形式，将返回指定的<code>defaultValue</code>
+	 * 以byte形式返回指定的值
 	 *
 	 * @param value 指定的对象
-	 * @param defaultValue 指定的默认值
+	 * @param defaultIfEmpty 如果 <code>value</code> 为 null 或 空字符串，将默认返回该参数
 	 */
-	public static byte getByte(Object value, byte defaultValue) {
+	public static byte getByte(Object value, byte defaultIfEmpty) {
 		if (value == null) {
-			return defaultValue;
+			return defaultIfEmpty;
 		}
 		if (value instanceof Number) {
 			return ((Number) value).byteValue();
@@ -39,7 +38,7 @@ public abstract class NumberX {
 		if (value instanceof CharSequence) {
 			final CharSequence cs = (CharSequence) value;
 			if (cs.length() == 0) {
-				return defaultValue;
+				return defaultIfEmpty;
 			}
 			return Byte.parseByte(value.toString());
 		}
@@ -115,20 +114,23 @@ public abstract class NumberX {
 	}
 
 	/**
-	 * 以Integer形式返回指定的值<br>
-	 * 如果指定的值为null或无法转为Integer形式，将返回指定的<code>defaultValue</code>
+	 * 以Integer形式返回指定的值
+	 *
+	 * @param defaultIfEmpty 如果 <code>value</code> 为 null 或 空字符串，将返回该参数
 	 */
-	public static Integer getInteger(Object value, Integer defaultValue) {
+	public static Integer getInteger(Object value, @Nullable Integer defaultIfEmpty) {
 		if (value == null) {
-			return defaultValue;
+			return defaultIfEmpty;
+		}
+		if (value instanceof Integer) {
+			return (Integer) value;
 		}
 		if (value instanceof Number) {
-			return value.getClass() == Integer.class ? (Integer) value : ((Number) value).intValue();
-		}
-		if (value instanceof CharSequence) {
+			return ((Number) value).intValue();
+		} else if (value instanceof CharSequence) {
 			final CharSequence cs = (CharSequence) value;
 			if (cs.length() == 0) {
-				return defaultValue;
+				return defaultIfEmpty;
 			}
 			return Integer.parseInt(value.toString());
 		}
@@ -137,7 +139,7 @@ public abstract class NumberX {
 
 	/**
 	 * 以long形式返回指定的值<br>
-	 * 如果指定的值为null或无法转为long形式，将报错
+	 * 如果无法转为long形式，将报错
 	 *
 	 * @param value 指定的对象
 	 */
@@ -146,15 +148,14 @@ public abstract class NumberX {
 	}
 
 	/**
-	 * 以long形式返回指定的值<br>
-	 * 如果指定的值为null或无法转为long形式，将返回指定的<code>defaultValue</code>
+	 * 以 long 形式返回指定的值
 	 *
 	 * @param value 指定的对象
-	 * @param defaultValue 指定的默认值
+	 * @param defaultIfEmpty 如果 <code>value</code> 为 null 或 空字符串，将返回该参数
 	 */
-	public static long getLong(Object value, long defaultValue) {
+	public static long getLong(Object value, long defaultIfEmpty) {
 		if (value == null) {
-			return defaultValue;
+			return defaultIfEmpty;
 		}
 		if (value instanceof Number) {
 			return ((Number) value).longValue();
@@ -162,7 +163,7 @@ public abstract class NumberX {
 		if (value instanceof CharSequence) {
 			final CharSequence cs = (CharSequence) value;
 			if (cs.length() == 0) {
-				return defaultValue;
+				return defaultIfEmpty;
 			}
 			return Long.parseLong(value.toString());
 		}
@@ -170,23 +171,24 @@ public abstract class NumberX {
 	}
 
 	/**
-	 * 以Long形式返回指定的值<br>
-	 * 如果指定的值为null或无法转为Long形式，将返回指定的<code>defaultValue</code>
+	 * 以 Long 形式返回指定的值
 	 *
 	 * @param value 指定的对象
-	 * @param defaultValue 指定的默认值
+	 * @param defaultIfEmpty 如果 <code>value</code> 为 null 或 空字符串，将返回该参数
 	 */
-	public static Long getLong(Object value, Long defaultValue) {
+	public static Long getLong(Object value, @Nullable Long defaultIfEmpty) {
 		if (value == null) {
-			return defaultValue;
+			return defaultIfEmpty;
+		}
+		if (value instanceof Long) {
+			return (Long) value;
 		}
 		if (value instanceof Number) {
-			return Long.class == value.getClass() ? (Long) value : ((Number) value).longValue();
-		}
-		if (value instanceof CharSequence) {
+			return ((Number) value).longValue();
+		} else if (value instanceof CharSequence) {
 			final CharSequence cs = (CharSequence) value;
 			if (cs.length() == 0) {
-				return defaultValue;
+				return defaultIfEmpty;
 			}
 			return Long.parseLong(value.toString());
 		}
@@ -204,15 +206,14 @@ public abstract class NumberX {
 	}
 
 	/**
-	 * 以float形式返回指定的值<br>
-	 * 如果指定的值为null或无法转为float形式，将返回指定的<code>defaultValue</code>
+	 * 以 float 形式返回指定的值
 	 *
 	 * @param value 指定的对象
-	 * @param defaultValue 指定的默认值
+	 * @param defaultIfEmpty 如果 <code>value</code> 为 null 或 空字符串，将默认返回该参数
 	 */
-	public static float getFloat(Object value, float defaultValue) {
+	public static float getFloat(Object value, float defaultIfEmpty) {
 		if (value == null) {
-			return defaultValue;
+			return defaultIfEmpty;
 		}
 		if (value instanceof Number) {
 			return ((Number) value).floatValue();
@@ -220,7 +221,7 @@ public abstract class NumberX {
 		if (value instanceof CharSequence) {
 			final CharSequence cs = (CharSequence) value;
 			if (cs.length() == 0) {
-				return defaultValue;
+				return defaultIfEmpty;
 			}
 			return Float.parseFloat(value.toString());
 		}
@@ -228,7 +229,7 @@ public abstract class NumberX {
 	}
 
 	/**
-	 * 以double形式返回指定的值<br>
+	 * 以 double 形式返回指定的值<br>
 	 * 如果指定的值为null或无法转为double形式，将报错
 	 *
 	 * @param value 指定的对象
@@ -238,15 +239,14 @@ public abstract class NumberX {
 	}
 
 	/**
-	 * 以double形式返回指定的值<br>
-	 * 如果指定的值为null或无法转为double形式，将返回指定的<code>defaultValue</code>
+	 * 以 double 形式返回指定的值
 	 *
 	 * @param value 指定的对象
-	 * @param defaultValue 指定的默认值
+	 * @param defaultIfEmpty 如果 <code>value</code> 为 null 或 空字符串，将默认返回该参数
 	 */
-	public static double getDouble(Object value, double defaultValue) {
+	public static double getDouble(Object value, double defaultIfEmpty) {
 		if (value == null) {
-			return defaultValue;
+			return defaultIfEmpty;
 		}
 		if (value instanceof Number) {
 			return ((Number) value).doubleValue();
@@ -254,7 +254,7 @@ public abstract class NumberX {
 		if (value instanceof CharSequence) {
 			final CharSequence cs = (CharSequence) value;
 			if (cs.length() == 0) {
-				return defaultValue;
+				return defaultIfEmpty;
 			}
 			return Double.parseDouble(value.toString());
 		}
@@ -281,15 +281,14 @@ public abstract class NumberX {
 	}
 
 	/**
-	 * 以BigDecimal形式返回指定的值<br>
-	 * 如果指定的值为null或无法转为BigDecimal形式，将返回指定的<code>defaultValue</code>
+	 * 以BigDecimal形式返回指定的值
 	 *
 	 * @param value 指定的对象
-	 * @param defaultValue 指定的默认值
+	 * @param defaultIfEmpty 如果 <code>value</code> 为 null 或 空字符串，将默认返回该参数。如果该参数不是 BigDecimal 类型，将尝试自动转换
 	 */
-	public static BigDecimal getBigDecimal(Object value, Object defaultValue) {
+	public static BigDecimal getBigDecimal(Object value, Object defaultIfEmpty) {
 		if (value == null) {
-			return defaultValue == null ? null : getBigDecimal(defaultValue);
+			return defaultIfEmpty == null ? null : getBigDecimal(defaultIfEmpty);
 		}
 		if (value instanceof Number || value instanceof CharSequence) {
 			return getBigDecimal(value);
