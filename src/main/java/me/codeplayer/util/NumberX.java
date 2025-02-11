@@ -348,9 +348,8 @@ public abstract class NumberX {
 		if (obj instanceof Number) {
 			Number num = (Number) obj;
 			return num.longValue() == num.doubleValue();
-		} else {
-			return obj != null && isNumber(obj.toString());
 		}
+		return obj != null && isNumber(obj.toString());
 	}
 
 	/**
@@ -418,9 +417,8 @@ public abstract class NumberX {
 			return false;
 		} else if (pointPos > 0) { // 有"."
 			return isNumeric(str.substring(0, pointPos - 1)) && isNumeric(str.substring(pointPos));
-		} else {
-			return isNumeric(str);
 		}
+		return isNumeric(str);
 	}
 
 	/**
@@ -446,9 +444,8 @@ public abstract class NumberX {
 				return allowZero ? val.intValue() >= 0 : val.intValue() > 0;
 			} else if (val instanceof Long) {
 				return allowZero ? val.longValue() >= 0 : val.longValue() > 0;
-			} else {
-				return allowZero ? val.doubleValue() >= 0 : val.doubleValue() > 0;
 			}
+			return allowZero ? val.doubleValue() >= 0 : val.doubleValue() > 0;
 		}
 		return false;
 	}
