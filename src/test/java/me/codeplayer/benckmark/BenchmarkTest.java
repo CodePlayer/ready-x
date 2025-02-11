@@ -5,37 +5,53 @@ import javax.annotation.Nullable;
 
 import me.codeplayer.util.NumberX;
 import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.results.format.ResultFormatType;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
+/**
+ * 如果输出的结果是 JSON 文件，可以使用以下站点进行可视化：
+ * <li>https://deepoove.com/jmh-visual-chart/</li>
+ * <li>https://jmh.morethan.io/</li>
+ */
+@SuppressWarnings("UnusedReturnValue")
 @BenchmarkMode(Mode.Throughput) // 测试类型：吞吐量
-// @Threads(16)
-@OutputTimeUnit(TimeUnit.MILLISECONDS)
+@Threads(4) // 每个进程中的测试线程数
+@Warmup(iterations = 3) // 预热 5 轮（ 每轮默认执行 10s ）
+@Measurement(iterations = 3) // 度量 10 轮（ 每轮默认执行 10s ）
+@Fork(1) // 进行 fork 的次数。如果 fork 数是 2 的话，则 JMH 会 fork 出两个进程来进行测试。
+// @State(value = Scope.Thread) // 多个线程是否共享实例：Benchmark=所有线程共享一个实例；Thread=每个线程一个实例（默认）；Group=同一个线程在同一个 group 里共享实例
+@OutputTimeUnit(TimeUnit.MILLISECONDS) // 统计结果的时间单位
 public class BenchmarkTest {
 
 	public static void main(String[] args) throws RunnerException {
 		// 启动基准测试
+		startBenchmark(BenchmarkTest.class);
+	}
+
+	/** 启动性能基准测试 */
+	public static void startBenchmark(Class<?> clazz) throws RunnerException {
+		// 启动基准测试
 		Options opt = new OptionsBuilder()
-				.include(BenchmarkTest.class.getSimpleName()) // 要导入的测试类
-				.warmupIterations(5) // 预热 5 轮
-				.measurementIterations(10) // 度量10轮
-				.forks(1)
+				.include(clazz.getSimpleName()) // 要导入的测试类
+				.resultFormat(ResultFormatType.JSON)
+				.result("result.json") // 在项目根目录下
 				.build();
 		new Runner(opt).run(); // 执行测试
 	}
 
 	@Benchmark
-	public void getInteger() {
+	public Integer getInteger() {
 		String str = "123456";
-		Integer val = NumberX.getInteger(str, null);
+		return NumberX.getInteger(str, null);
 	}
 
 	@Benchmark
-	public void getInteger0() {
+	public Integer getInteger0() {
 		String str = "123456";
-		Integer val = getInteger0(str, null);
+		return getInteger0(str, null);
 	}
 
 	/**
