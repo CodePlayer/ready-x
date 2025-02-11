@@ -66,6 +66,58 @@ public class NumberXTest {
 	}
 
 	@Test
+	public void getShort_NumberValue_ReturnsShortValue() {
+		// 测试用例：value 是 Short
+		Short shortValue = 123;
+		assertEquals(shortValue.shortValue(), NumberX.getShort(shortValue));
+
+		// 测试用例：value 是其他 Number 类型
+		Integer intValue = 12345;
+		assertEquals(intValue.shortValue(), NumberX.getShort(intValue));
+
+		Long longValue = 1234567890L;
+		assertEquals(longValue.shortValue(), NumberX.getShort(longValue));
+	}
+
+	@Test
+	public void getShort_CharSequenceValue_ReturnsParsedShortValue() {
+		String val = "12345";
+		short result = NumberX.getShort(val);
+		assertEquals(Short.parseShort(val), result);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void getShort_InvalidValue_ThrowsException() {
+		Object invalidValue = new Object();
+		NumberX.getShort(invalidValue);
+	}
+
+	@Test
+	public void getShort_NullValue_ReturnsDefaultValue() {
+		Short defaultValue = 10;
+		assertEquals(defaultValue, NumberX.getShort(null, defaultValue));
+	}
+
+	@Test
+	public void getShort_EmptyCharSequenceValue_ReturnsDefaultValue() {
+		Short defaultValue = 10;
+		assertEquals(defaultValue, NumberX.getShort("", defaultValue));
+	}
+
+	@Test
+	public void getShort_NonEmptyCharSequenceValue_ReturnsParsedShortValue() {
+		String val = "12345";
+		Short result = NumberX.getShort(val, (short) 0);
+		assertEquals(Short.valueOf(val), result);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void getShort_InvalidValueWithDefaultValue_ThrowsException() {
+		Object invalidValue = new Object();
+		NumberX.getShort(invalidValue, (short) 0);
+	}
+
+	@Test
 	public void getInt_NullValue_ReturnsDefaultValue() {
 		Integer _null = null;
 		int defaultValue = 100;
@@ -312,6 +364,11 @@ public class NumberXTest {
 		assertEquals(new BigDecimal(val), result);
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void isNumber_NegativeLength_ThrowsException() {
+		NumberX.isNumber("123", -1);
+	}
+
 	@Test
 	public void isNumber() {
 		assertFalse(NumberX.isNumber(null));
@@ -322,6 +379,18 @@ public class NumberXTest {
 		assertFalse(NumberX.isNumber("-12345"));
 		assertFalse(NumberX.isNumber("12.3"));
 		assertFalse(NumberX.isNumber(" 123"));
+
+		assertFalse(NumberX.isNumber(null, 3));
+		assertFalse(NumberX.isNumber("123", 4));
+		assertTrue(NumberX.isNumber("123", 3));
+		assertFalse(NumberX.isNumber(" 123", 3));
+		assertFalse(NumberX.isNumber("12a", 3));
+		assertFalse(NumberX.isNumber(null));
+		assertTrue(NumberX.isNumber(123));
+		assertTrue(NumberX.isNumber("123"));
+		assertFalse(NumberX.isNumber("12a"));
+		assertFalse(NumberX.isNumber("abc"));
+		assertFalse(NumberX.isNumber("0xff"));
 	}
 
 	@Test
@@ -334,6 +403,7 @@ public class NumberXTest {
 		assertTrue(NumberX.isNumeric("12345"));
 		assertFalse(NumberX.isNumeric("-12345"));
 		assertFalse(NumberX.isNumeric(" 123"));
+		assertFalse(NumberX.isNumeric(" 0xff"));
 	}
 
 	@Test
