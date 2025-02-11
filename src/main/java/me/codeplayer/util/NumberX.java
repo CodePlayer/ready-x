@@ -2,6 +2,8 @@ package me.codeplayer.util;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.function.Function;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -12,6 +14,9 @@ import javax.annotation.Nullable;
  */
 public abstract class NumberX {
 
+	static final Function<String, Integer> string2Integer = Integer::valueOf;
+	static final Function<String, Long> string2Long = Long::valueOf;
+
 	/**
 	 * 以 byte 形式返回指定的值
 	 *
@@ -21,6 +26,17 @@ public abstract class NumberX {
 	 */
 	public static byte getByte(Object value) {
 		return value instanceof Number ? ((Number) value).byteValue() : Byte.parseByte(value.toString());
+	}
+
+	static <E extends Number> E castString2Number(@Nonnull Object value, Function<? super String, E> converter, @Nullable E defaultIfEmpty) {
+		if (value instanceof CharSequence) {
+			final CharSequence cs = (CharSequence) value;
+			if (cs.length() == 0) {
+				return defaultIfEmpty;
+			}
+			return converter.apply(value.toString());
+		}
+		throw new IllegalArgumentException("Unexpected number value:" + value);
 	}
 
 	/**
@@ -39,14 +55,7 @@ public abstract class NumberX {
 		} else if (value instanceof Number) {
 			return ((Number) value).byteValue();
 		}
-		if (value instanceof CharSequence) {
-			final CharSequence cs = (CharSequence) value;
-			if (cs.length() == 0) {
-				return defaultIfEmpty;
-			}
-			return Byte.valueOf(value.toString());
-		}
-		throw new IllegalArgumentException("Unexpected byte value:" + value);
+		return castString2Number(value, Byte::valueOf, defaultIfEmpty);
 	}
 
 	/**
@@ -76,14 +85,7 @@ public abstract class NumberX {
 		} else if (value instanceof Number) {
 			return ((Number) value).shortValue();
 		}
-		if (value instanceof CharSequence) {
-			final CharSequence cs = (CharSequence) value;
-			if (cs.length() == 0) {
-				return defaultIfEmpty;
-			}
-			return Short.parseShort(value.toString());
-		}
-		throw new IllegalArgumentException("Unexpected short value:" + value);
+		return castString2Number(value, Short::valueOf, defaultIfEmpty);
 	}
 
 	/**
@@ -138,14 +140,7 @@ public abstract class NumberX {
 		} else if (value instanceof Number) {
 			return ((Number) value).intValue();
 		}
-		if (value instanceof CharSequence) {
-			final CharSequence cs = (CharSequence) value;
-			if (cs.length() == 0) {
-				return defaultIfEmpty;
-			}
-			return Integer.parseInt(value.toString());
-		}
-		throw new IllegalArgumentException("Unexpected int value:" + value);
+		return castString2Number(value, string2Integer, defaultIfEmpty);
 	}
 
 	/**
@@ -200,14 +195,7 @@ public abstract class NumberX {
 		} else if (value instanceof Number) {
 			return ((Number) value).longValue();
 		}
-		if (value instanceof CharSequence) {
-			final CharSequence cs = (CharSequence) value;
-			if (cs.length() == 0) {
-				return defaultIfEmpty;
-			}
-			return Long.parseLong(value.toString());
-		}
-		throw new IllegalArgumentException("Unexpected long value:" + value);
+		return castString2Number(value, string2Long, defaultIfEmpty);
 	}
 
 	/**
@@ -237,14 +225,7 @@ public abstract class NumberX {
 		} else if (value instanceof Number) {
 			return ((Number) value).floatValue();
 		}
-		if (value instanceof CharSequence) {
-			final CharSequence cs = (CharSequence) value;
-			if (cs.length() == 0) {
-				return defaultIfEmpty;
-			}
-			return Float.parseFloat(value.toString());
-		}
-		throw new IllegalArgumentException("Unexpected float value:" + value);
+		return castString2Number(value, Float::valueOf, defaultIfEmpty);
 	}
 
 	/**
@@ -274,14 +255,7 @@ public abstract class NumberX {
 		} else if (value instanceof Number) {
 			return ((Number) value).doubleValue();
 		}
-		if (value instanceof CharSequence) {
-			final CharSequence cs = (CharSequence) value;
-			if (cs.length() == 0) {
-				return defaultIfEmpty;
-			}
-			return Double.parseDouble(value.toString());
-		}
-		throw new IllegalArgumentException("Unexpected double value:" + value);
+		return castString2Number(value, Double::valueOf, defaultIfEmpty);
 	}
 
 	/**
@@ -313,15 +287,17 @@ public abstract class NumberX {
 	public static BigDecimal getBigDecimal(@Nullable Object value, @Nullable Object defaultIfEmpty) {
 		if (value instanceof Number) {
 			return getBigDecimal(value);
-		} else if (value == null) {
-			return defaultIfEmpty == null ? null : getBigDecimal(defaultIfEmpty);
 		}
-		if (value instanceof CharSequence) {
+		boolean empty = value == null;
+		if (!empty && value instanceof CharSequence) {
 			final CharSequence cs = (CharSequence) value;
-			if (cs.length() == 0) {
-				return defaultIfEmpty == null ? null : getBigDecimal(defaultIfEmpty);
+			if (cs.length() > 0) {
+				return getBigDecimal(value);
 			}
-			return getBigDecimal(value);
+			empty = true;
+		}
+		if (empty) {
+			return defaultIfEmpty == null ? null : getBigDecimal(defaultIfEmpty);
 		}
 		throw new IllegalArgumentException("Unexpected decimal value:" + value);
 	}
