@@ -132,13 +132,13 @@ public class StringXTest implements WithAssertions {
 
 	@Test
 	public void isEmpty() {
-		assertTrue(StringX.isEmpty(""));
-		assertTrue(StringX.isEmpty(null));
-		assertFalse(StringX.isEmpty("   "));
-		assertFalse(StringX.isEmpty("\t"));
-		assertFalse(StringX.isEmpty("\t\n"));
-		assertFalse(StringX.isEmpty("China"));
-		assertFalse(StringX.isEmpty("A "));
+		assertTrue(X.isEmpty(""));
+		assertTrue(X.isEmpty(null));
+		assertFalse(X.isEmpty("   "));
+		assertFalse(X.isEmpty("\t"));
+		assertFalse(X.isEmpty("\t\n"));
+		assertFalse(X.isEmpty("China"));
+		assertFalse(X.isEmpty("A "));
 	}
 
 	@Test
@@ -150,12 +150,12 @@ public class StringXTest implements WithAssertions {
 
 	@Test
 	public void isBlank() {
-		assertTrue(StringX.isBlank(null));
-		assertTrue(StringX.isBlank(""));
-		assertTrue(StringX.isBlank("   "));
-		assertTrue(StringX.isBlank("\t"));
-		assertTrue(StringX.isBlank("\t\n"));
-		assertFalse(StringX.isBlank(" y  "));
+		assertTrue(X.isBlank(null));
+		assertTrue(X.isBlank(""));
+		assertTrue(X.isBlank("   "));
+		assertTrue(X.isBlank("\t"));
+		assertTrue(X.isBlank("\t\n"));
+		assertFalse(X.isBlank(" y  "));
 	}
 
 	@Test

@@ -1,6 +1,7 @@
 package me.codeplayer.util;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import me.codeplayer.util.JsonXTest.User;
@@ -39,6 +40,48 @@ public class XTest implements WithAssertions {
 		HashMap<Object, Object> map = CollectionX.asHashMap("name", "James", "age", 18);
 		assertTrue(X.isValid(map));
 		assertFalse(X.isValid(Collections.emptyMap()));
+
+		assertFalse(X.isValid((byte[]) null));
+		assertFalse(X.isValid(new byte[0]));
+		assertTrue(X.isValid(new byte[] { 1, 2, 3 }));
+		assertFalse(X.isValid((int[]) null));
+		assertFalse(X.isValid(new int[0]));
+		assertTrue(X.isValid(new int[] { 1, 2, 3 }));
+		assertFalse(X.isValid((long[]) null));
+		assertFalse(X.isValid(new long[0]));
+		assertTrue(X.isValid(new long[] { 1L, 2L, 3L }));
+		assertFalse(X.isValid((char[]) null));
+		assertFalse(X.isValid(new char[0]));
+		assertTrue(X.isValid(new char[] { 'a', 'b', 'c' }));
+		assertFalse(X.isValid((float[]) null));
+		assertFalse(X.isValid(new float[0]));
+		assertTrue(X.isValid(new float[] { 1.0f, 2.0f, 3.0f }));
+		assertFalse(X.isValid((double[]) null));
+		assertFalse(X.isValid(new double[0]));
+		assertTrue(X.isValid(new double[] { 1.0, 2.0, 3.0 }));
+		assertFalse(X.isValid((Object[]) null));
+		assertFalse(X.isValid(new Object[0]));
+		assertTrue(X.isValid(new Object[] { 1, 2, 3 }));
+		assertFalse(X.isValid((Object) null));
+		assertFalse(X.isValid(""));
+		assertTrue(X.isValid("abc"));
+		assertFalse(X.isValid(0));
+		assertTrue(X.isValid(123));
+		assertFalse(X.isValid(Collections.emptyMap()));
+
+		Map<String, Integer> map1 = CollectionX.asHashMap("key", 1);
+		assertTrue(X.isValid(map1));
+
+		assertFalse(X.isValid(Collections.emptyList()));
+
+		List<String> list1 = Arrays.asList("a", "b", "c");
+		assertTrue(X.isValid(list1));
+
+		assertFalse(X.isValid(new int[0]));
+		assertTrue(X.isValid(new int[] { 1, 2, 3 }));
+		assertFalse(X.isValid(false));
+		assertTrue(X.isValid(true));
+		assertTrue(X.isValid(new Object()));
 	}
 
 	@Test
@@ -69,23 +112,38 @@ public class XTest implements WithAssertions {
 
 		assertThat(X.mapElse(user, User::getPassword, "Hello")).isEqualTo("Hello");
 
-		assertThat(X.mapElseGet(user, User::getPassword, () -> StringX.replaceChars("18000001234", '*', 3, -4)))
-				.isEqualTo("180****1234");
+		assertThat(X.mapElseGet(user, User::getPassword, () -> StringX.replaceChars("18000001234", '*', 3, -4))).isEqualTo("180****1234");
 
 		assertThat((Object) X.decode(1, 0, "PENDING", 1, "YES", -1, "NO")).isEqualTo("YES");
 
-		assertThat(X.expectNotEmpty(user.getPassword(), "123")).isEqualTo("123");
-
-		assertThat(X.expectNotEmpty(user.getName(), "Hello")).isEqualTo("James");
-
-		assertThat((String) X.tryUnwrap((Supplier<String>) () -> StringX.replaceSubstring("Hello", "+++", 1, -1)))
-				.isEqualTo("H+++o");
+		assertThat((String) X.tryUnwrap((Supplier<String>) () -> StringX.replaceSubstring("Hello", "+++", 1, -1))).isEqualTo("H+++o");
 
 		user = Mockito.spy(user);
 
 		X.with(user, User::getName);
 
 		Mockito.verify(user).getName();
+	}
+
+	@Test
+	public void expectNotEmpty() {
+		assertThat(X.expectNotEmpty(null, "123")).isEqualTo("123");
+		assertThat(X.expectNotEmpty("James", "Hello")).isEqualTo("James");
+		assertEquals("", X.expectNotEmpty(null, null));
+		assertEquals("Code", X.expectNotEmpty("Code", null));
+		assertEquals(" ", X.expectNotEmpty(" ", null));
+		assertEquals("Player", X.expectNotEmpty("", "Player"));
+		assertEquals(" ", X.expectNotEmpty("", " "));
+
+		assertEquals("", X.expectNotEmpty(null, null, null));
+		assertEquals("", X.expectNotEmpty("", "", ""));
+		assertEquals(" ", X.expectNotEmpty("", "", " "));
+		assertEquals("v1", X.expectNotEmpty("v1", null, null));
+		assertEquals("v2", X.expectNotEmpty(null, "v2", null));
+		assertEquals("v3", X.expectNotEmpty(null, null, "v3"));
+		assertEquals("v2", X.expectNotEmpty("", "v2", null));
+		assertEquals("v3", X.expectNotEmpty("", "", "v3"));
+		assertEquals("", X.expectNotEmpty("", null, ""));
 	}
 
 	@Test
@@ -160,29 +218,144 @@ public class XTest implements WithAssertions {
 	}
 
 	@Test
-	public void size_CharSequence_Null_ReturnsZero() {
+	public void size() {
 		assertEquals(0, X.size((CharSequence) null));
-	}
-
-	@Test
-	public void size_CharSequence_Empty_ReturnsZero() {
 		assertEquals(0, X.size(""));
-	}
-
-	@Test
-	public void size_CharSequence_Blank_ReturnsLength() {
 		assertEquals(1, X.size(" "));
-	}
-
-	@Test
-	public void size_StringBuilder_NonEmpty_ReturnsLength() {
 		StringBuilder sb = new StringBuilder("CodePlayer").append(" ");
 		assertEquals(11, X.size(sb));
+		assertEquals(6, X.size("acsd中国"));
 	}
 
 	@Test
-	public void size_CharSequence_NonEmpty_ReturnsLength() {
-		assertEquals(6, X.size("acsd中国"));
+	public void expectNotNull() {
+		assertNull(X.expectNotNull(null, null, null, null));
+
+		assertEquals("first", X.expectNotNull("first", null, null, null));
+		assertEquals("second", X.expectNotNull(null, "second", null, null));
+		assertEquals("third", X.expectNotNull(null, null, "third", null));
+		assertEquals("fourth", X.expectNotNull(null, null, null, "fourth"));
+
+		assertNull(X.expectNotNull(null, null, null));
+		assertEquals("first", X.expectNotNull("first", null, null));
+		assertEquals("second", X.expectNotNull(null, "second", null));
+		assertEquals("third", X.expectNotNull(null, null, "third"));
+
+		assertNull(X.expectNotNull(null, null));
+		assertEquals("first", X.expectNotNull("first", null));
+		assertEquals("second", X.expectNotNull(null, "second"));
+	}
+
+	@Test
+	public void emptyToNull() {
+		Integer[] array = new Integer[0];
+		assertNull(X.emptyToNull(array));
+	}
+
+	@Test
+	public void emptyToNull_Array_NonEmpty_ReturnsArray() {
+		Integer[] nonEmptyArray = { 1, 2, 3 };
+		assertSame(nonEmptyArray, X.emptyToNull(nonEmptyArray));
+	}
+
+	@Test
+	public void emptyToNull_Collection_Empty_ReturnsNull() {
+		List<Integer> emptyList = Collections.emptyList();
+		assertNull(X.emptyToNull(emptyList));
+	}
+
+	@Test
+	public void emptyToNull_Collection_NonEmpty_ReturnsCollection() {
+		List<Integer> nonEmptyList = Arrays.asList(1, 2, 3);
+		assertSame(nonEmptyList, X.emptyToNull(nonEmptyList));
+	}
+
+	@Test
+	public void emptyToNull_Map_Empty_ReturnsNull() {
+		assertNull(X.emptyToNull(Collections.emptyMap()));
+	}
+
+	@Test
+	public void emptyToNull_Map_NonEmpty_ReturnsMap() {
+		Map<String, Integer> nonEmptyMap = CollectionX.asHashMap("key", 1);
+		assertSame(nonEmptyMap, X.emptyToNull(nonEmptyMap));
+	}
+
+	@Test
+	public void mapAny_EmptyArgs_ReturnsNull() {
+		assertNull(X.mapAny(t -> t, r -> true));
+	}
+
+	@Test
+	public void mapAny_NoElementMatches_ReturnsNull() {
+		assertNull(X.mapAny(t -> t, r -> false, 1, 2, 3));
+	}
+
+	@Test
+	public void mapAny_FirstElementMatches_ReturnsFirstMatch() {
+		Integer expected = 1;
+		Integer val = X.mapAny(t -> t, r -> r == 1, expected, 2, 3);
+		assertSame(expected, val);
+	}
+
+	@Test
+	public void mapAny_MiddleElementMatches_ReturnsFirstMatch() {
+		Integer expected = 2;
+		Integer val = X.mapAny(t -> t, r -> r == 2, 1, expected, 3);
+		assertSame(expected, val);
+	}
+
+	@Test
+	public void mapAny_LastElementMatches_ReturnsFirstMatch() {
+		Integer expected = 3;
+		Integer val = X.mapAny(t -> t, r -> r == 3, 1, 2, expected);
+		assertSame(expected, val);
+	}
+
+	@Test
+	public void mapAny_MapperAndMatcherComplexLogic_ReturnsCorrectResult() {
+		Integer val = X.mapAny(String::length, len -> len > 3, "hi", "hello", "world");
+		assertEquals((Integer) 5, val);
+	}
+
+	@Test
+	public void with() {
+		final User user = new User();
+
+		X.with("CodePlayer", StringX::notEmpty, user::setName);
+		assertEquals("CodePlayer", user.getName());
+
+		final Set<Object> values = new HashSet<>();
+		final Consumer<Object> add = values::add;
+		X.with(user.getId(), add);
+		X.with(user.getName(), add);
+		X.with(user.getPassword(), add);
+
+		assertEquals(1, values.size());
+		assertEquals("CodePlayer", CollectionX.getAny(values));
+
+		X.with(null, NumberX::isPositive, user::setId);
+		assertNull(user.getId());
+
+		user.setAge(18);
+		user.setPassword("");
+
+		final User copy = new User();
+		X.with(user.getId(), copy::setId);
+		X.with(user.getName(), StringX::notEmpty, copy::setName);
+		X.with(user.getPassword(), StringX::notEmpty, copy::setPassword);
+		X.with(user.getAge(), NumberX::isPositive, copy::setAge);
+		assertNull(copy.getId());
+		assertEquals("CodePlayer", copy.getName());
+		assertNull(copy.getPassword());
+		assertEquals((Integer) 18, copy.getAge());
+	}
+
+	@Test
+	public void with_NonNullObjectAndFalseFilter_ConsumerNotExecuted() {
+		StringBuilder sb = new StringBuilder();
+		X.with("test", obj -> false, obj -> sb.append("executed"));
+		assertEquals("", sb.toString());
 	}
 
 }
