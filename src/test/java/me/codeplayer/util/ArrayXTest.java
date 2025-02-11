@@ -1,7 +1,6 @@
 package me.codeplayer.util;
 
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.*;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -524,6 +523,82 @@ public class ArrayXTest {
 	@Test
 	public void matchAll_NonEmptyArray_ReturnsFalseIfNotAllMatch() {
 		Assert.assertFalse(ArrayX.matchAll(x -> x > 0, 1, -2, 3));
+	}
+
+	@Test
+	public void ofNullable_NullElement_ReturnsNull() {
+		//noinspection ConstantValue
+		Object[] array = ArrayX.ofNullable(null);
+		Assert.assertNull(array);
+	}
+
+	@Test
+	public void ofNullable_IntegerElement() {
+		Integer[] array = ArrayX.ofNullable(1);
+		Assert.assertNotNull(array);
+		Assert.assertEquals(1, array.length);
+		Assert.assertEquals((Integer) 1, array[0]);
+	}
+
+	@Test
+	public void ofNullable_NonNullElement_ReturnsArrayWithElement() {
+		Integer element = 42;
+		Integer[] result = ArrayX.ofNullable(element);
+		Assert.assertNotNull(result);
+		Assert.assertEquals(1, result.length);
+		Assert.assertEquals(element, result[0]);
+	}
+
+	@Test
+	public void ofNullable_NonNullStringElement_ReturnsArrayWithElement() {
+		String element = "test";
+		String[] result = ArrayX.ofNullable(element);
+		Assert.assertNotNull(result);
+		Assert.assertEquals(1, result.length);
+		Assert.assertEquals(element, result[0]);
+	}
+
+	@Test
+	public void ofNullable_NonNullObjectElement_ReturnsArrayWithElement() {
+		Object element = new Object();
+		Object[] result = ArrayX.ofNullable(element);
+		Assert.assertNotNull(result);
+		Assert.assertEquals(1, result.length);
+		Assert.assertEquals(element, result[0]);
+	}
+
+	@Test
+	public void toArray_NullIterable_ReturnsNull() {
+		String[] result = ArrayX.toArray(null, String.class, Object::toString);
+		Assert.assertNull(result);
+	}
+
+	@Test
+	public void toArray_NonEmptyCollection_ReturnsArray() {
+		List<Integer> list = Arrays.asList(1, 2, 3);
+		String[] result = ArrayX.toArray(list, String.class, Object::toString);
+		Assert.assertArrayEquals(new String[] { "1", "2", "3" }, result);
+	}
+
+	@Test
+	public void toArray_EmptyCollection_ReturnsEmptyArray() {
+		List<Integer> list = Collections.emptyList();
+		String[] result = ArrayX.toArray(list, String.class, Object::toString);
+		Assert.assertArrayEquals(new String[] {}, result);
+	}
+
+	@Test
+	public void toArray_NonEmptyIterable_ReturnsArray() {
+		Iterable<Integer> iterable = Arrays.asList(1, 2, 3);
+		String[] result = ArrayX.toArray(iterable, String.class, Object::toString);
+		Assert.assertArrayEquals(new String[] { "1", "2", "3" }, result);
+	}
+
+	@Test
+	public void toArray_EmptyIterable_ReturnsEmptyArray() {
+		Iterable<Integer> iterable = Collections.emptyList();
+		String[] result = ArrayX.toArray(iterable, String.class, Object::toString);
+		Assert.assertArrayEquals(new String[] {}, result);
 	}
 
 }
