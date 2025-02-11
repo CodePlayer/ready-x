@@ -405,22 +405,24 @@ public abstract class NumberX {
 	}
 
 	/**
-	 * 判断字符串内容是否为整数或小数形式
+	 * 判断字符串内容是否为整数或小数形式（主要用于常规输入，不支持科学计数法，否则将返回 false）
 	 * <pre><code>
-	 * isDecimal("12") == true
-	 * isDecimal("12.3") == true
-	 * isDecimal("-12.3") == true
-	 * isDecimal("0012") == true
+	 * isDecimal("0", *) == true
+	 * isDecimal("12", *) == true
+	 * isDecimal("12.3", *) == true
+	 * isDecimal("-12.3", true) == true
+	 * isDecimal("0012", *) == true
 	 *
-	 * isDecimal("") == false
-	 * isDecimal(" ") == false
-	 * isDecimal(" 123") == false
-	 * isDecimal("12E3") == false
-	 * isDecimal("0xff") == false
-	 * isDecimal(null) == false
+	 * isDecimal("", *) == false
+	 * isDecimal(" ", *) == false
+	 * isDecimal(" 123", *) == false
+	 * isDecimal("12E3", *) == false
+	 * isDecimal("0xff", *) == false
+	 * isDecimal(null, *) == false
 	 * </code></pre>
 	 *
 	 * @param str 需要判断的字符串
+	 * @param allowNegative 是否允许负数也返回 true
 	 */
 	public static boolean isDecimal(String str, boolean allowNegative) {
 		final int length;
@@ -433,7 +435,7 @@ public abstract class NumberX {
 	}
 
 	/**
-	 * 判断字符串内容是否为整数或小数形式
+	 * 判断字符串内容是否为整数或小数形式（主要用于常规输入，不兼容负数、科学计数法，否则将返回 false）
 	 * <pre><code>
 	 * isDecimal("12") == true
 	 * isDecimal("12.3") == true

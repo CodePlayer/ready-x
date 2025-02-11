@@ -411,6 +411,7 @@ public class NumberXTest {
 	@Test
 	public void isNumeric() {
 		// true
+		assertTrue(NumberX.isNumeric("0"));
 		assertTrue(NumberX.isNumeric("001"));
 		assertTrue(NumberX.isNumeric("12345"));
 		// false
@@ -418,6 +419,7 @@ public class NumberXTest {
 		assertFalse(NumberX.isNumeric(""));
 		assertFalse(NumberX.isNumeric("  "));
 		assertFalse(NumberX.isNumeric("1.23"));
+		assertFalse(NumberX.isNumeric("0.0"));
 		assertFalse(NumberX.isNumeric("-12345"));
 		assertFalse(NumberX.isNumeric(" 123"));
 		assertFalse(NumberX.isNumeric(" 0xff"));
@@ -442,6 +444,8 @@ public class NumberXTest {
 		assertTrue(NumberX.isDecimal(1235678L));
 		assertTrue(NumberX.isDecimal(123.45F));
 		assertTrue(NumberX.isDecimal("123.45"));
+		assertTrue(NumberX.isDecimal("0"));
+		assertTrue(NumberX.isDecimal("0.0"));
 		assertTrue(NumberX.isDecimal(BigDecimal.valueOf(456.78)));
 		assertTrue(NumberX.isDecimal(-123));
 		assertTrue(NumberX.isDecimal(-123.45));
