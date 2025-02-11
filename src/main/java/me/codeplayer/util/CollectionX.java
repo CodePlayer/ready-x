@@ -490,14 +490,14 @@ public abstract class CollectionX {
 		if (c == null) {
 			return null;
 		}
-		final C list = creator.apply(c.size());
+		final C values = creator.apply(c.size());
 		for (E t : c) {
 			R val = converter.apply(t);
 			if (allowNull || val != null) {
-				list.add(val);
+				values.add(val);
 			}
 		}
-		return list;
+		return values;
 	}
 
 	/**
@@ -571,7 +571,6 @@ public abstract class CollectionX {
 	 * @param converter 对集合元素进行预处理的转换器，如果为 null 则表示无需预处理。如果转换后的结果为 {@code null}，则表示跳过该参数（不对其进行参数拼接）
 	 * @return 如果传入的 sb 为 {@code null} 且 {@code params} 为空，就会返回 {@code null}
 	 */
-	@Nullable
 	public static StringBuilder mapToParams(@Nullable StringBuilder sb, @Nullable Boolean hasParam, final @Nullable Map<String, ?> params, final boolean urlSafeRequired, final @Nullable Function<Map.Entry<String, Object>, Map.Entry<String, Object>> converter) {
 		if (params == null || params.isEmpty()) {
 			return sb;
@@ -634,7 +633,6 @@ public abstract class CollectionX {
 	 * @param converter 对集合元素进行预处理的转换器，如果为 null 则表示无需预处理。如果转换后的结果为 {@code null}，则表示跳过该参数（不对其进行参数拼接）
 	 * @return 如果传入的 sb 为 {@code null} 且 {@code params} 为空，就会返回 {@code null}
 	 */
-	@Nullable
 	public static StringBuilder mapToParams(@Nullable StringBuilder sb, @Nullable Boolean hasParam, final @Nullable Map<String, ?> params, final @Nullable Function<Map.Entry<String, Object>, Map.Entry<String, Object>> converter) {
 		return mapToParams(sb, hasParam, params, true, converter);
 	}
@@ -647,7 +645,6 @@ public abstract class CollectionX {
 	 * @param hasParam 之前是否已拼接了参数，如果为 {@code true}，则会在后续拼接的第一个参数前追加 '&' 符号。如果为 {@code null} 表示内部自动根据 {@code sb} 中的内容进行识别
 	 * @return 如果传入的 sb 为 {@code null} 且 {@code params} 为空，就会返回 {@code null}
 	 */
-	@Nullable
 	public static StringBuilder mapToParams(@Nullable StringBuilder sb, @Nullable Boolean hasParam, final boolean urlSafeRequired, final @Nullable Map<String, ?> params) {
 		return mapToParams(sb, hasParam, params, urlSafeRequired, null);
 	}
@@ -660,7 +657,6 @@ public abstract class CollectionX {
 	 * @param hasParam 之前是否已拼接了参数，如果为 {@code true}，则会在后续拼接的第一个参数前追加 '&' 符号。如果为 {@code null} 表示内部自动根据 {@code sb} 中的内容进行识别
 	 * @return 如果传入的 sb 为 {@code null} 且 {@code params} 为空，就会返回 {@code null}
 	 */
-	@Nullable
 	public static StringBuilder mapToParams(@Nullable StringBuilder sb, @Nullable Boolean hasParam, final @Nullable Map<String, ?> params) {
 		return mapToParams(sb, hasParam, params, null);
 	}
