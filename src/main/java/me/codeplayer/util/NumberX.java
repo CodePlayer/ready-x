@@ -303,12 +303,20 @@ public abstract class NumberX {
 	}
 
 	/**
-	 * 判断字符串内容是否为整数形式<br>
-	 * 前面带0，例如"0012"仍为整数，返回true<br>
-	 * 如果字符串为null，返回false<br>
-	 * 如果字符串前后有空格，请先去除空格后再调用此方法，否则返回false<br>
+	 * 判断指定的字符串内容是否为整数形式
+	 * <pre><code>
+	 * isNumber("123") == true
+	 * isNumber("00123") == true
+	 *
+	 * isNumber(null) == false
+	 * isNumber("") == false
+	 * isNumber("  ") == false
+	 * isNumber("-123") == false
+	 * isNumber("123.45") == false
+	 * </code></pre>
 	 *
 	 * @param cs 指定的字符串
+	 * @see Character#isDigit(char)
 	 */
 	public static boolean isNumber(CharSequence cs) {
 		if (cs == null) { // 为空则返回false
@@ -344,12 +352,18 @@ public abstract class NumberX {
 	/**
 	 * 判断指定对象是否为整数类型或能够转为整数形式
 	 */
-	public static boolean isNumber(Object obj) {
-		if (obj instanceof Number) {
-			Number num = (Number) obj;
+	public static boolean isNumber(Object value) {
+		if (value instanceof Number) {
+			if (value instanceof Integer || value instanceof Long || value instanceof BigInteger) {
+				return true;
+			} else if (value instanceof BigDecimal) {
+				BigDecimal bd = (BigDecimal) value;
+				return bd.scale() <= 0 || bd.stripTrailingZeros().scale() <= 0;
+			}
+			Number num = (Number) value;
 			return num.longValue() == num.doubleValue();
 		}
-		return obj != null && isNumber(obj.toString());
+		return value != null && isNumber(value.toString());
 	}
 
 	/**
@@ -358,7 +372,7 @@ public abstract class NumberX {
 	 * @param cs 指定的字符串
 	 */
 	public static boolean isNumeric(final CharSequence cs) {
-		return cs != null && isNumeric0(cs, 0, cs.length());
+		return cs != null && scanNumeric(cs, 0, cs.length()) == -1;
 	}
 
 	/**
@@ -369,10 +383,7 @@ public abstract class NumberX {
 	 * @param end 结束位置（不包括）
 	 */
 	public static boolean isNumeric(final CharSequence cs, int start, int end) {
-		if (cs == null || cs.length() == 0) {
-			return false;
-		}
-		return isNumeric0(cs, start, end);
+		return cs != null && cs.length() > 0 && scanNumeric(cs, start, end) == -1;
 	}
 
 	/**
@@ -381,56 +392,92 @@ public abstract class NumberX {
 	 * @param cs 指定的字符串
 	 * @param start 开始位置（包括）
 	 * @param end 结束位置（不包括）
+	 * @return 返回第一个非数字的字符下标，如果全部是数字，则返回 -1
 	 */
-	static boolean isNumeric0(final CharSequence cs, int start, int end) {
+	static int scanNumeric(final CharSequence cs, int start, int end) {
 		for (int i = start; i < end; i++) {
 			char ch = cs.charAt(i);
 			if (ch < '0' || ch > '9') {
-				return false;
+				return i;
 			}
 		}
-		return start < end;
+		return start < end ? -1 : end;
 	}
 
 	/**
-	 * 判断指定对象的字符串形式是否为整数形式
-	 */
-	public static boolean isInt(Object value) {
-		return value != null && (value instanceof Integer || isNumber(value.toString()));
-	}
-
-	/**
-	 * 判断字符串内容是否为整数或小数形式<br>
-	 * 前面带0，例如"0012"仍为整数，返回true<br>
-	 * 如果字符串为null，返回false<br>
-	 * 如果字符串前后有空格，请先去除空格后再调用此方法，否则返回false<br>
-	 * 此方法性能是使用正则表达式验证性能的4-9倍
+	 * 判断字符串内容是否为整数或小数形式
+	 * <pre><code>
+	 * isDecimal("12") == true
+	 * isDecimal("12.3") == true
+	 * isDecimal("-12.3") == true
+	 * isDecimal("0012") == true
+	 *
+	 * isDecimal("") == false
+	 * isDecimal(" ") == false
+	 * isDecimal(" 123") == false
+	 * isDecimal("12E3") == false
+	 * isDecimal("0xff") == false
+	 * isDecimal(null) == false
+	 * </code></pre>
 	 *
 	 * @param str 需要判断的字符串
 	 */
-	public static boolean isDouble(String str) {
-		if (str == null) {
+	public static boolean isDecimal(String str, boolean allowNegative) {
+		final int length;
+		if (str == null || (length = str.length()) == 0) {
 			return false;
 		}
-		int pointPos = str.indexOf('.', 0) + 1;
-		if (pointPos == str.length()) { // "."在最后一位
-			return false;
-		} else if (pointPos > 0) { // 有"."
-			return isNumeric(str.substring(0, pointPos - 1)) && isNumeric(str.substring(pointPos));
-		}
-		return isNumeric(str);
+		final int fromIndex = allowNegative && str.charAt(0) == '-' ? 1 : 0;
+		final int errPos = scanNumeric(str, fromIndex, length);
+		return errPos == -1 || fromIndex < errPos && errPos < length && str.charAt(errPos) == '.' && scanNumeric(str, errPos + 1, length) == -1;
 	}
 
 	/**
-	 * 判断指定对象是否为整数或小数形式<br>
-	 * 前面带0，例如"0012"仍为整数，返回true<br>
-	 * 如果字符串为null，返回false<br>
-	 * 如果字符串前后有空格，请先去除空格后再调用此方法，否则返回 false
+	 * 判断字符串内容是否为整数或小数形式
+	 * <pre><code>
+	 * isDecimal("12") == true
+	 * isDecimal("12.3") == true
+	 * isDecimal("0012") == true
+	 *
+	 * isDecimal("") == false
+	 * isDecimal(" ") == false
+	 * isDecimal("-12.3") == false
+	 * isDecimal(" 123") == false
+	 * isDecimal("12E3") == false
+	 * isDecimal("0xff") == false
+	 * isDecimal(null) == false
+	 * </code></pre>
+	 *
+	 * @param str 需要判断的字符串
+	 */
+	public static boolean isDecimal(String str) {
+		return isDecimal(str, false);
+	}
+
+	/**
+	 * 判断指定对象是否为整数或小数形式
+	 * <pre><code>
+	 * isDecimal(12.3) == true
+	 * isDecimal(12.3F) == true
+	 * isDecimal(12L) == true
+	 * isDecimal("0012") == true
+	 * isDecimal(-12) == true
+	 * isDecimal("12") == true
+	 * isDecimal("-12") == true
+	 * isDecimal("12.3") == true
+	 *
+	 * isDecimal("") == false
+	 * isDecimal(" ") == false
+	 * isDecimal(" 123") == false
+	 * isDecimal("12E3") == false
+	 * isDecimal("0xff") == false
+	 * isDecimal(null) == false
+	 * </code></pre>
 	 *
 	 * @param value 需要判断的对象
 	 */
-	public static boolean isDouble(Object value) {
-		return value != null && (value instanceof Number || isDouble(value.toString()));
+	public static boolean isDecimal(Object value) {
+		return value != null && (value instanceof Number || isDecimal(value.toString()));
 	}
 
 	/**

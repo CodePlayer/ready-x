@@ -364,141 +364,100 @@ public class NumberXTest {
 		assertEquals(new BigDecimal(val), result);
 	}
 
+	@Test
+	public void isNumber() {
+		// true
+		assertTrue(NumberX.isNumber("123"));
+		assertTrue(NumberX.isNumber("12345"));
+		assertTrue(NumberX.isNumber("00123"));
+		assertTrue(NumberX.isNumber(123));
+		assertTrue(NumberX.isNumber(-123));
+		assertTrue(NumberX.isNumber(123.00));
+		assertTrue(NumberX.isNumber(123.0F));
+		assertTrue(NumberX.isNumber(BigInteger.TEN));
+		assertTrue(NumberX.isNumber(new BigDecimal("123.00")));
+
+		// false
+		assertFalse(NumberX.isNumber(null));
+		assertFalse(NumberX.isNumber(""));
+		assertFalse(NumberX.isNumber("   "));
+		assertFalse(NumberX.isNumber("-12345"));
+		assertFalse(NumberX.isNumber("12.3"));
+		assertFalse(NumberX.isNumber(" 123"));
+		assertFalse(NumberX.isNumber("12a"));
+		assertFalse(NumberX.isNumber("abc"));
+		assertFalse(NumberX.isNumber("0xff"));
+		assertFalse(NumberX.isNumber(123.1));
+
+		// true
+		assertTrue(NumberX.isNumber("123", 3));
+		assertTrue(NumberX.isNumber("00123", 5));
+		// false
+		assertFalse(NumberX.isNumber(null, 3));
+		assertFalse(NumberX.isNumber("123", 4));
+		assertFalse(NumberX.isNumber("-123", 3));
+		assertFalse(NumberX.isNumber("-123", 4));
+		assertFalse(NumberX.isNumber("123.0", 3));
+		assertFalse(NumberX.isNumber("123.0", 4));
+		assertFalse(NumberX.isNumber(" 123", 3));
+		assertFalse(NumberX.isNumber("12a", 3));
+	}
+
 	@Test(expected = IllegalArgumentException.class)
 	public void isNumber_NegativeLength_ThrowsException() {
 		NumberX.isNumber("123", -1);
 	}
 
 	@Test
-	public void isNumber() {
-		assertFalse(NumberX.isNumber(null));
-		assertFalse(NumberX.isNumber(""));
-		assertFalse(NumberX.isNumber("   "));
-		assertTrue(NumberX.isNumber("12345"));
-		assertTrue(NumberX.isNumber("00123"));
-		assertFalse(NumberX.isNumber("-12345"));
-		assertFalse(NumberX.isNumber("12.3"));
-		assertFalse(NumberX.isNumber(" 123"));
-
-		assertFalse(NumberX.isNumber(null, 3));
-		assertFalse(NumberX.isNumber("123", 4));
-		assertTrue(NumberX.isNumber("123", 3));
-		assertFalse(NumberX.isNumber(" 123", 3));
-		assertFalse(NumberX.isNumber("12a", 3));
-		assertFalse(NumberX.isNumber(null));
-		assertTrue(NumberX.isNumber(123));
-		assertTrue(NumberX.isNumber("123"));
-		assertFalse(NumberX.isNumber("12a"));
-		assertFalse(NumberX.isNumber("abc"));
-		assertFalse(NumberX.isNumber("0xff"));
-	}
-
-	@Test
 	public void isNumeric() {
+		// true
+		assertTrue(NumberX.isNumeric("001"));
+		assertTrue(NumberX.isNumeric("12345"));
+		// false
 		assertFalse(NumberX.isNumeric(null));
 		assertFalse(NumberX.isNumeric(""));
 		assertFalse(NumberX.isNumeric("  "));
-		assertTrue(NumberX.isNumeric("001"));
 		assertFalse(NumberX.isNumeric("1.23"));
-		assertTrue(NumberX.isNumeric("12345"));
 		assertFalse(NumberX.isNumeric("-12345"));
 		assertFalse(NumberX.isNumeric(" 123"));
 		assertFalse(NumberX.isNumeric(" 0xff"));
-	}
-
-	@Test
-	public void isNumber_InvalidNumberString_ReturnsFalse() {
-		assertFalse(NumberX.isNumber("123abc"));
-	}
-
-	@Test
-	public void isNumeric_NullString_ReturnsFalse() {
-		assertFalse(NumberX.isNumeric(null, 0, 1));
-	}
-
-	@Test
-	public void isNumeric_EmptyString_ReturnsFalse() {
-		assertFalse(NumberX.isNumeric("", 0, 1));
-	}
-
-	@Test
-	public void isNumeric_StartEqualsEnd_ReturnsFalse() {
-		assertFalse(NumberX.isNumeric("123", 1, 1));
-	}
-
-	@Test
-	public void isNumeric_StartGreaterThanEnd_ReturnsFalse() {
-		assertFalse(NumberX.isNumeric("123", 2, 1));
-	}
-
-	@Test
-	public void isNumeric_ValidNumericString_ReturnsTrue() {
+		// true
 		assertTrue(NumberX.isNumeric("12345", 0, 5));
-	}
-
-	@Test
-	public void isNumeric_InvalidNumericString_ReturnsFalse() {
-		assertFalse(NumberX.isNumeric("123abc", 0, 6));
-	}
-
-	@Test
-	public void isNumeric_NumericStringWithNonNumericCharacters_ReturnsFalse() {
-		assertFalse(NumberX.isNumeric("123abc456", 0, 9));
-	}
-
-	@Test
-	public void isNumeric_NumericStringWithLeadingNonNumeric_ReturnsFalse() {
-		assertFalse(NumberX.isNumeric("abc123", 0, 6));
-	}
-
-	@Test
-	public void isNumeric_NumericStringWithTrailingNonNumeric_ReturnsFalse() {
-		assertFalse(NumberX.isNumeric("123abc", 0, 6));
-	}
-
-	@Test
-	public void isNumeric_ValidNumericSubstring_ReturnsTrue() {
 		assertTrue(NumberX.isNumeric("abc123def", 3, 6));
-	}
-
-	@Test
-	public void isNumeric_EmptySubstring_ReturnsFalse() {
+		// false
+		assertFalse(NumberX.isNumeric(null, 0, 1));
+		assertFalse(NumberX.isNumeric("", 0, 1));
 		assertFalse(NumberX.isNumeric("123", 1, 1));
+		assertFalse(NumberX.isNumeric("123", 2, 1));
+		assertFalse(NumberX.isNumeric("123abc", 0, 6));
+		assertFalse(NumberX.isNumeric("123abc456", 0, 9));
+		assertFalse(NumberX.isNumeric("abc123", 0, 6));
+		assertFalse(NumberX.isNumeric("123abc", 0, 6));
 	}
 
 	@Test
-	public void isInt_NullValue_ReturnsFalse() {
-		assertFalse(NumberX.isInt(null));
-	}
+	public void isDecimal() {
+		assertTrue(NumberX.isDecimal(123.45));
+		assertTrue(NumberX.isDecimal(123));
+		assertTrue(NumberX.isDecimal(1235678L));
+		assertTrue(NumberX.isDecimal(123.45F));
+		assertTrue(NumberX.isDecimal("123.45"));
+		assertTrue(NumberX.isDecimal(BigDecimal.valueOf(456.78)));
+		assertTrue(NumberX.isDecimal(-123));
+		assertTrue(NumberX.isDecimal(-123.45));
+		assertTrue(NumberX.isDecimal(new StringBuilder("123.45")));
+		assertTrue(NumberX.isDecimal("-123", true));
+		assertTrue(NumberX.isDecimal("-123.45", true));
 
-	@Test
-	public void isInt_IntegerValue_ReturnsTrue() {
-		assertTrue(NumberX.isInt(12345));
-	}
-
-	@Test
-	public void isInt_ValidNumberString_ReturnsTrue() {
-		assertTrue(NumberX.isInt("12345"));
-	}
-
-	@Test
-	public void isDouble_NullValue_ReturnsFalse() {
-		assertFalse(NumberX.isDouble((Object) null));
-	}
-
-	@Test
-	public void isDouble_NumberValue_ReturnsTrue() {
-		assertTrue(NumberX.isDouble(123.45));
-	}
-
-	@Test
-	public void isDouble_ValidDoubleString_ReturnsTrue() {
-		assertTrue(NumberX.isDouble("123.45"));
-	}
-
-	@Test
-	public void isDouble_InvalidString_ReturnsFalse() {
-		assertFalse(NumberX.isDouble("123abc"));
+		assertFalse(NumberX.isDecimal("-123"));
+		assertFalse(NumberX.isDecimal("-123.45"));
+		assertFalse(NumberX.isDecimal(""));
+		assertFalse(NumberX.isDecimal(" 123"));
+		assertFalse(NumberX.isDecimal("123 "));
+		assertFalse(NumberX.isDecimal("12E3"));
+		assertFalse(NumberX.isDecimal("-12E3"));
+		assertFalse(NumberX.isDecimal((Object) null));
+		assertFalse(NumberX.isDecimal("123abc"));
 	}
 
 }
