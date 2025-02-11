@@ -1,5 +1,7 @@
 package me.codeplayer.util;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -13,75 +15,94 @@ import static org.junit.Assert.*;
 
 public class XTest implements WithAssertions {
 
+	@SuppressWarnings("ConstantValue")
 	@Test
 	public void isValid() {
-		assertFalse(X.isValid((Boolean) null));
+		// Boolean
 		assertTrue(X.isValid(true));
+
+		assertFalse(X.isValid((Boolean) null));
 		assertFalse(X.isValid(false));
 
+		// Number
 		int i = 0;
-		assertFalse(X.isValid(i));
 		assertTrue(X.isValid(-5));
 		assertTrue(X.isValid(100.12));
+		assertTrue(X.isValid(123L));
+		assertTrue(X.isValid(-123L));
+		assertTrue(X.isValid(123.45));
+		assertTrue(X.isValid(-123.45));
+		assertTrue(X.isValid(BigInteger.TEN));
+		assertTrue(X.isValid(BigDecimal.TEN));
 
-		assertTrue(X.isValid("xxx"));
+		assertFalse(X.isValid(i));
+		assertFalse(X.isValid(0));
+		assertFalse(X.isValid(0L));
+		assertFalse(X.isValid(0.0));
+		assertFalse(X.isValid(0.0F));
+		assertFalse(X.isValid(BigDecimal.ZERO));
+		assertFalse(X.isValid(BigInteger.ZERO));
+
+		// CharSequence
+		assertTrue(X.isValid("abc"));
+		assertTrue(X.isValid("Code Player"));
+		assertTrue(X.isValid(" "));
+
 		assertFalse(X.isValid(""));
 
+		//  Array & Collection & Map
 		assertTrue(X.isValid(new int[1]));
-		assertFalse(X.isValid(new int[0]));
-
+		assertTrue(X.isValid(new byte[] { 1, 2, 3 }));
 		Object[] array = new Integer[] { 1, 2, 3 };
 		assertTrue((X.isValid(array)));
+		assertTrue(X.isValid(new int[] { 1, 2, 3 }));
+		assertTrue(X.isValid(new long[] { 1L, 2L, 3L }));
+		assertTrue(X.isValid(new char[] { 'a', 'b', 'c' }));
+		assertTrue(X.isValid(new float[] { 1.0f, 2.0f, 3.0f }));
+		assertTrue(X.isValid(new double[] { 1.0, 2.0, 3.0 }));
+		assertTrue(X.isValid(new Object[] { JavaX.javaVersion, 2, 3 }));
 
 		List<Integer> list = Arrays.asList(1, 2, 3);
 		assertTrue(X.isValid(list));
-		assertFalse(X.isValid(Collections.emptyList()));
-
 		HashMap<Object, Object> map = CollectionX.asHashMap("name", "James", "age", 18);
 		assertTrue(X.isValid(map));
-		assertFalse(X.isValid(Collections.emptyMap()));
-
-		assertFalse(X.isValid((byte[]) null));
-		assertFalse(X.isValid(new byte[0]));
-		assertTrue(X.isValid(new byte[] { 1, 2, 3 }));
-		assertFalse(X.isValid((int[]) null));
-		assertFalse(X.isValid(new int[0]));
 		assertTrue(X.isValid(new int[] { 1, 2, 3 }));
-		assertFalse(X.isValid((long[]) null));
-		assertFalse(X.isValid(new long[0]));
-		assertTrue(X.isValid(new long[] { 1L, 2L, 3L }));
-		assertFalse(X.isValid((char[]) null));
-		assertFalse(X.isValid(new char[0]));
-		assertTrue(X.isValid(new char[] { 'a', 'b', 'c' }));
-		assertFalse(X.isValid((float[]) null));
-		assertFalse(X.isValid(new float[0]));
-		assertTrue(X.isValid(new float[] { 1.0f, 2.0f, 3.0f }));
-		assertFalse(X.isValid((double[]) null));
-		assertFalse(X.isValid(new double[0]));
-		assertTrue(X.isValid(new double[] { 1.0, 2.0, 3.0 }));
-		assertFalse(X.isValid((Object[]) null));
-		assertFalse(X.isValid(new Object[0]));
-		assertTrue(X.isValid(new Object[] { 1, 2, 3 }));
-		assertFalse(X.isValid((Object) null));
-		assertFalse(X.isValid(""));
-		assertTrue(X.isValid("abc"));
-		assertFalse(X.isValid(0));
-		assertTrue(X.isValid(123));
-		assertFalse(X.isValid(Collections.emptyMap()));
-
 		Map<String, Integer> map1 = CollectionX.asHashMap("key", 1);
 		assertTrue(X.isValid(map1));
-
-		assertFalse(X.isValid(Collections.emptyList()));
-
 		List<String> list1 = Arrays.asList("a", "b", "c");
 		assertTrue(X.isValid(list1));
 
 		assertFalse(X.isValid(new int[0]));
-		assertTrue(X.isValid(new int[] { 1, 2, 3 }));
-		assertFalse(X.isValid(false));
-		assertTrue(X.isValid(true));
+		assertFalse(X.isValid(Collections.emptyList()));
+		assertFalse(X.isValid(Collections.emptySet()));
+		assertFalse(X.isValid(Arrays.asList()));
+		assertFalse(X.isValid((Collection<?>) null));
+
+		assertFalse(X.isValid(Collections.emptyMap()));
+		assertFalse(X.isValid((Map<?, ?>) null));
+
+		assertFalse(X.isValid((byte[]) null));
+		assertFalse(X.isValid(new byte[0]));
+		assertFalse(X.isValid((int[]) null));
+		assertFalse(X.isValid(new int[0]));
+		assertFalse(X.isValid((long[]) null));
+		assertFalse(X.isValid(new long[0]));
+		assertFalse(X.isValid((char[]) null));
+		assertFalse(X.isValid(new char[0]));
+		assertFalse(X.isValid((float[]) null));
+		assertFalse(X.isValid(new float[0]));
+		assertFalse(X.isValid((double[]) null));
+		assertFalse(X.isValid(new double[0]));
+		assertFalse(X.isValid(ArrayX.ofNullable(null)));
+		assertFalse(X.isValid(ArrayX.of()));
+		assertFalse(X.isValid(new Object[0]));
+
 		assertTrue(X.isValid(new Object()));
+		assertTrue(X.isValid(new AssertException("errorMsg", null)));
+		assertTrue(X.isValid(new AssertException((Throwable) null)));
+		assertTrue(X.isValid(new AssertException((Throwable) null)));
+		assertTrue(X.isValid(new AssertException("errorMsg", null, false, false)));
+		assertFalse(X.isValid((Object) null));
 	}
 
 	@Test
@@ -144,6 +165,9 @@ public class XTest implements WithAssertions {
 		assertEquals("v2", X.expectNotEmpty("", "v2", null));
 		assertEquals("v3", X.expectNotEmpty("", "", "v3"));
 		assertEquals("", X.expectNotEmpty("", null, ""));
+
+		assertEquals("", X.expectNotEmpty(null, null, null, null));
+		assertEquals("v4", X.expectNotEmpty(null, null, null, "v4"));
 	}
 
 	@Test

@@ -115,6 +115,24 @@ public abstract class X {
 	}
 
 	/**
+	 * 判断指定的数值对象是否有效。如果参数为 <code>null</code> 或 数值等于0，则为无效；其他均为有效。
+	 *
+	 * @param number 指定的
+	 */
+	public static boolean isValid(Integer number) {
+		return number != null && number != 0;
+	}
+
+	/**
+	 * 判断指定的数值对象是否有效。如果参数为 <code>null</code> 或 数值等于0，则为无效；其他均为有效。
+	 *
+	 * @param number 指定的
+	 */
+	public static boolean isValid(Long number) {
+		return number != null && number != 0;
+	}
+
+	/**
 	 * 判断指定的字符串序列是否有效。如果参数为 <code>null</code> 或空字符串 <code>""</code> ，则为无效；其他均为有效。
 	 *
 	 * @param sequence 指定的字符串序列对象
