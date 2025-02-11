@@ -11,16 +11,18 @@ public class NumberXTest {
 
 	@Test
 	public void getByte_NullValue_ReturnsDefaultValue() {
-		byte defaultValue = 10;
-		byte result = NumberX.getByte(null, defaultValue);
-		assertEquals(defaultValue, result);
+		Byte defaultValue = 10;
+		assertEquals(defaultValue, NumberX.getByte(null, defaultValue));
 	}
 
 	@Test
 	public void getByte_NumberValue_ReturnsByteValue() {
-		Number number = 123;
-		byte result = NumberX.getByte(number);
-		assertEquals(number.byteValue(), result);
+		//noinspection WrapperTypeMayBePrimitive
+		Integer number = 123;
+		assertEquals(number.byteValue(), NumberX.getByte(number));
+
+		number = 300;
+		assertEquals(44, NumberX.getByte(number));
 	}
 
 	@Test
@@ -37,10 +39,48 @@ public class NumberXTest {
 	}
 
 	@Test
-	public void getInt_NullValue_ReturnsDefaultValue() {
-		int defaultValue = 100;
-		int result = NumberX.getInt(null, defaultValue);
+	public void getByte_NumberValueWithDefaultValue_ReturnsByteValue() {
+		Number number = 123;
+		byte result = NumberX.getByte(number, (byte) 0);
+		assertEquals(number.byteValue(), result);
+	}
+
+	@Test
+	public void getByte_CharSequenceValueWithDefaultValue_ReturnsParsedByteValue() {
+		String val = "123";
+		byte result = NumberX.getByte(val, (byte) 0);
+		assertEquals(Byte.parseByte(val), result);
+	}
+
+	@Test
+	public void getByte_EmptyCharSequenceValue_ReturnsDefaultValue() {
+		byte defaultValue = 10;
+		byte result = NumberX.getByte("", defaultValue);
 		assertEquals(defaultValue, result);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void getByte_InvalidValueWithDefaultValue_ThrowsException() {
+		Object invalidValue = new Object();
+		NumberX.getByte(invalidValue, (byte) 0);
+	}
+
+	@Test
+	public void getInt_NullValue_ReturnsDefaultValue() {
+		Integer _null = null;
+		int defaultValue = 100;
+		int result = NumberX.getInt(_null, defaultValue);
+		assertEquals(defaultValue, result);
+
+		Integer result2 = NumberX.getInteger(_null, _null);
+		assertNull(result2);
+	}
+
+	@Test
+	public void getInteger() {
+		Integer number = 1234567;
+		Integer result = NumberX.getInteger(number, 0);
+		assertSame(number, result);
 	}
 
 	@Test
@@ -60,7 +100,188 @@ public class NumberXTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void getInt_InvalidValue_ThrowsException() {
 		Object invalidValue = new Object();
-		NumberX.getInt(invalidValue);
+		NumberX.getInt(invalidValue, 0);
+	}
+
+	@Test(expected = NumberFormatException.class)
+	public void getInt_InvalidString_ThrowsException() {
+		NumberX.getInteger("abc", null);
+	}
+
+	@Test
+	public void getLong_NumberValue_ReturnsLongValue() {
+		Number number = 1234567890L;
+		long result = NumberX.getLong(number);
+		assertEquals(number.longValue(), result);
+	}
+
+	@Test
+	public void getLong_CharSequenceValue_ReturnsParsedLongValue() {
+		String val = "1234567890";
+		long result = NumberX.getLong(val);
+		assertEquals(Long.parseLong(val), result);
+	}
+
+	@Test(expected = NumberFormatException.class)
+	public void getLong_InvalidCharSequenceValue_ThrowsException() {
+		String invalidVal = "abc";
+		NumberX.getLong(invalidVal, 0);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void getLong_NullValue_ThrowsException() {
+		NumberX.getLong(null);
+	}
+
+	@Test
+	public void getLong_NullValueWithDefaultValue_ReturnsDefaultValue() {
+		long defaultValue = 1000L;
+		long result = NumberX.getLong(null, defaultValue);
+		assertEquals(defaultValue, result);
+	}
+
+	@Test(expected = NumberFormatException.class)
+	public void getLong_InvalidCharSequenceValueWithDefaultValue_ThrowException() {
+		String invalidVal = "abc";
+		long defaultValue = 1000L;
+		long result = NumberX.getLong(invalidVal, defaultValue);
+		assertEquals(defaultValue, result);
+	}
+
+	@Test
+	public void getLong_NumberValueWithLongDefaultValue_ReturnsLongValue() {
+		Long number = 1234567890L;
+		Long defaultValue = 1000L;
+		Long result = NumberX.getLong(number, defaultValue);
+		assertSame(number, result);
+	}
+
+	@Test
+	public void getLong_CharSequenceValueWithLongDefaultValue_ReturnsParsedLongValue() {
+		String val = "1234567890";
+		Long defaultValue = 1000L;
+		Long result = NumberX.getLong(val, defaultValue);
+		assertEquals(Long.parseLong(val), result.longValue());
+	}
+
+	@Test
+	public void getLong_NullValueWithLongDefaultValue_ReturnsDefaultValue() {
+		Long defaultValue = 1000L;
+		Long result = NumberX.getLong(null, defaultValue);
+		assertEquals(defaultValue, result);
+	}
+
+	@Test(expected = NumberFormatException.class)
+	public void getLong_InvalidCharSequenceValueWithLongDefaultValue_ThrowException() {
+		String invalidVal = "abc";
+		Long defaultValue = 1000L;
+		Long result = NumberX.getLong(invalidVal, defaultValue);
+		assertEquals(defaultValue, result);
+	}
+
+	@Test
+	public void getFloat_NumberValue_ReturnsFloatValue() {
+		Number number = 123.45f;
+		float result = NumberX.getFloat(number);
+		assertEquals(number.floatValue(), result, 0.001f);
+	}
+
+	@Test
+	public void getFloat_CharSequenceValue_ReturnsParsedFloatValue() {
+		String val = "123.45";
+		float result = NumberX.getFloat(val);
+		assertEquals(Float.parseFloat(val), result, 0.001f);
+	}
+
+	@Test(expected = NumberFormatException.class)
+	public void getFloat_InvalidValue_ThrowsException() {
+		Object invalidValue = "abc";
+		NumberX.getFloat(invalidValue);
+	}
+
+	@Test
+	public void getFloat_NullValue_ReturnsDefaultValue() {
+		float defaultValue = 10.0f;
+		float result = NumberX.getFloat(null, defaultValue);
+		assertEquals(defaultValue, result, 0.001f);
+	}
+
+	@Test
+	public void getFloat_EmptyCharSequenceValue_ReturnsDefaultValue() {
+		float defaultValue = 10.0f;
+		float result = NumberX.getFloat("", defaultValue);
+		assertEquals(defaultValue, result, 0.001f);
+	}
+
+	@Test
+	public void getDouble_NumberValue_ReturnsDoubleValue() {
+		Number number = 123.45;
+		double result = NumberX.getDouble(number);
+		assertEquals(number.doubleValue(), result, 0.001);
+	}
+
+	@Test
+	public void getDouble_CharSequenceValue_ReturnsParsedDoubleValue() {
+		String val = "123.45";
+		double result = NumberX.getDouble(val);
+		assertEquals(Double.parseDouble(val), result, 0.001);
+	}
+
+	@Test(expected = NumberFormatException.class)
+	public void getDouble_InvalidValue_ThrowsException() {
+		Object invalidValue = "abc";
+		NumberX.getDouble(invalidValue);
+	}
+
+	@Test
+	public void getDouble_NullValue_ReturnsDefaultValue() {
+		double defaultValue = 10.0;
+		double result = NumberX.getDouble(null, defaultValue);
+		assertEquals(defaultValue, result, 0.001);
+	}
+
+	@Test
+	public void getDouble_EmptyCharSequenceValue_ReturnsDefaultValue() {
+		double defaultValue = 10.0;
+		double result = NumberX.getDouble("", defaultValue);
+		assertEquals(defaultValue, result, 0.001);
+	}
+
+	@Test
+	public void getBigDecimal_NumberValue_ReturnsBigDecimalValue() {
+		Number number = 1234567890L;
+		BigDecimal result = NumberX.getBigDecimal(number);
+		assertEquals(new BigDecimal(number.toString()), result);
+	}
+
+	@Test
+	public void getBigDecimal_CharSequenceValue_ReturnsParsedBigDecimalValue() {
+		String val = "1234567890.12345";
+		BigDecimal result = NumberX.getBigDecimal(val);
+		assertEquals(new BigDecimal(val), result);
+	}
+
+	@Test(expected = NumberFormatException.class)
+	public void getBigDecimal_InvalidValue_ThrowsException() {
+		Object invalidValue = "abc";
+		NumberX.getBigDecimal(invalidValue, null);
+	}
+
+	@Test
+	public void getBigDecimal_NullValue_ReturnsDefaultValue() {
+		BigDecimal defaultValue = new BigDecimal("10.0");
+		BigDecimal result = NumberX.getBigDecimal(null, defaultValue);
+		assertEquals(defaultValue, result);
+	}
+
+	@Test
+	public void getBigDecimal_EmptyCharSequenceValue_ReturnsDefaultValue() {
+		BigDecimal defaultValue = new BigDecimal("10.0");
+		BigDecimal result = NumberX.getBigDecimal("", defaultValue);
+		assertEquals(defaultValue, result);
+
+		result = NumberX.getBigDecimal("", 10);
+		assertEquals(0, result.compareTo(BigDecimal.TEN));
 	}
 
 	@Test
@@ -92,18 +313,27 @@ public class NumberXTest {
 	}
 
 	@Test
-	public void isNumber_NullString_ReturnsFalse() {
+	public void isNumber() {
 		assertFalse(NumberX.isNumber(null));
-	}
-
-	@Test
-	public void isNumber_EmptyString_ReturnsFalse() {
 		assertFalse(NumberX.isNumber(""));
+		assertFalse(NumberX.isNumber("   "));
+		assertTrue(NumberX.isNumber("12345"));
+		assertTrue(NumberX.isNumber("00123"));
+		assertFalse(NumberX.isNumber("-12345"));
+		assertFalse(NumberX.isNumber("12.3"));
+		assertFalse(NumberX.isNumber(" 123"));
 	}
 
 	@Test
-	public void isNumber_ValidNumberString_ReturnsTrue() {
-		assertTrue(NumberX.isNumber("12345"));
+	public void isNumeric() {
+		assertFalse(NumberX.isNumeric(null));
+		assertFalse(NumberX.isNumeric(""));
+		assertFalse(NumberX.isNumeric("  "));
+		assertTrue(NumberX.isNumeric("001"));
+		assertFalse(NumberX.isNumeric("1.23"));
+		assertTrue(NumberX.isNumeric("12345"));
+		assertFalse(NumberX.isNumeric("-12345"));
+		assertFalse(NumberX.isNumeric(" 123"));
 	}
 
 	@Test

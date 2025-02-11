@@ -13,26 +13,30 @@ import javax.annotation.Nullable;
 public abstract class NumberX {
 
 	/**
-	 * 以byte形式返回指定的值<br>
-	 * 如果指定的值为null或无法转为byte形式，将报错
+	 * 以 byte 形式返回指定的值
 	 *
 	 * @param value 指定的对象
+	 * @throws NullPointerException 如果 <code>value</code> 为 null，将报错
+	 * @throws NumberFormatException 如果无法转为 byte 形式，将报错
 	 */
 	public static byte getByte(Object value) {
 		return value instanceof Number ? ((Number) value).byteValue() : Byte.parseByte(value.toString());
 	}
 
 	/**
-	 * 以byte形式返回指定的值
+	 * 以  byte 形式返回指定的值
 	 *
 	 * @param value 指定的对象
 	 * @param defaultIfEmpty 如果 <code>value</code> 为 null 或 空字符串，将默认返回该参数
+	 * @throws NumberFormatException 如果无法转为 byte 形式，将报错
+	 * @throws IllegalArgumentException 如果 <code>value</code> 非 Number、CharSequence 类型，将报错
 	 */
-	public static byte getByte(Object value, byte defaultIfEmpty) {
+	public static Byte getByte(@Nullable Object value, @Nullable Byte defaultIfEmpty) {
 		if (value == null) {
 			return defaultIfEmpty;
-		}
-		if (value instanceof Number) {
+		} else if (value instanceof Byte) {
+			return (Byte) value;
+		} else if (value instanceof Number) {
 			return ((Number) value).byteValue();
 		}
 		if (value instanceof CharSequence) {
@@ -40,39 +44,42 @@ public abstract class NumberX {
 			if (cs.length() == 0) {
 				return defaultIfEmpty;
 			}
-			return Byte.parseByte(value.toString());
+			return Byte.valueOf(value.toString());
 		}
 		throw new IllegalArgumentException("Unexpected byte value:" + value);
 	}
 
 	/**
-	 * 以short形式返回指定的值<br>
-	 * 如果指定的值为null或无法转为short形式，将报错
+	 * 以 short 形式返回指定的值
 	 *
 	 * @param value 指定的对象
+	 * @throws NullPointerException 如果 <code>value</code> 为 null，将报错
+	 * @throws NumberFormatException 如果无法转为 short 形式，将报错
 	 */
 	public static short getShort(Object value) {
 		return value instanceof Number ? ((Number) value).shortValue() : Short.parseShort(value.toString());
 	}
 
 	/**
-	 * 以short形式返回指定的值<br>
-	 * 如果指定的值为null或无法转为short形式，将返回指定的<code>defaultValue</code>
+	 * 以 Short 形式返回指定的值
 	 *
 	 * @param value 指定的对象
-	 * @param defaultValue 指定的默认值
+	 * @param defaultIfEmpty 如果 <code>value</code> 为 null 或 空字符串，将默认返回该参数
+	 * @throws NumberFormatException 如果无法转为 Short 形式，将报错
+	 * @throws IllegalArgumentException 如果 <code>value</code> 非 Number、CharSequence 类型，将报错
 	 */
-	public static short getShort(Object value, short defaultValue) {
+	public static Short getShort(@Nullable Object value, @Nullable Short defaultIfEmpty) {
 		if (value == null) {
-			return defaultValue;
-		}
-		if (value instanceof Number) {
+			return defaultIfEmpty;
+		} else if (value instanceof Short) {
+			return (Short) value;
+		} else if (value instanceof Number) {
 			return ((Number) value).shortValue();
 		}
 		if (value instanceof CharSequence) {
 			final CharSequence cs = (CharSequence) value;
 			if (cs.length() == 0) {
-				return defaultValue;
+				return defaultIfEmpty;
 			}
 			return Short.parseShort(value.toString());
 		}
@@ -80,54 +87,32 @@ public abstract class NumberX {
 	}
 
 	/**
-	 * 以int形式返回指定的值<br>
-	 * 如果指定的值为null或无法转为int形式，将报错
+	 * 以 int 形式返回指定的值
 	 *
 	 * @param value 指定的对象
+	 * @throws NullPointerException 如果 <code>value</code> 为 null，将报错
+	 * @throws NumberFormatException 如果无法转为 int 形式，将报错
 	 */
 	public static int getInt(Object value) {
 		return value instanceof Number ? ((Number) value).intValue() : Integer.parseInt(value.toString());
 	}
 
 	/**
-	 * 以int形式返回指定的值<br>
-	 * 如果指定的值为 null 或无法转为 int 形式，将返回指定的<code>defaultValue</code>
+	 * 以 int 形式返回指定的值
 	 *
 	 * @param value 指定的对象
-	 * @param defaultValue 指定的默认值
+	 * @param defaultIfEmpty 如果 <code>value</code> 为 null 或 空字符串，将默认返回该参数
+	 * @throws NumberFormatException 如果无法转为 int 形式，将报错
+	 * @throws IllegalArgumentException 如果 <code>value</code> 非 Number、CharSequence 类型，将报错
 	 */
-	public static int getInt(Object value, int defaultValue) {
+	public static int getInt(@Nullable Object value, int defaultIfEmpty) {
 		if (value == null) {
-			return defaultValue;
+			return defaultIfEmpty;
 		}
 		if (value instanceof Number) {
 			return ((Number) value).intValue();
 		}
 		if (value instanceof CharSequence) {
-			final CharSequence cs = (CharSequence) value;
-			if (cs.length() == 0) {
-				return defaultValue;
-			}
-			return Integer.parseInt(value.toString());
-		}
-		throw new IllegalArgumentException("Unexpected int value:" + value);
-	}
-
-	/**
-	 * 以Integer形式返回指定的值
-	 *
-	 * @param defaultIfEmpty 如果 <code>value</code> 为 null 或 空字符串，将返回该参数
-	 */
-	public static Integer getInteger(Object value, @Nullable Integer defaultIfEmpty) {
-		if (value == null) {
-			return defaultIfEmpty;
-		}
-		if (value instanceof Integer) {
-			return (Integer) value;
-		}
-		if (value instanceof Number) {
-			return ((Number) value).intValue();
-		} else if (value instanceof CharSequence) {
 			final CharSequence cs = (CharSequence) value;
 			if (cs.length() == 0) {
 				return defaultIfEmpty;
@@ -138,10 +123,37 @@ public abstract class NumberX {
 	}
 
 	/**
-	 * 以long形式返回指定的值<br>
-	 * 如果无法转为long形式，将报错
+	 * 以 Integer 形式返回指定的值
 	 *
 	 * @param value 指定的对象
+	 * @param defaultIfEmpty 如果 <code>value</code> 为 null 或 空字符串，将默认返回该参数
+	 * @throws NumberFormatException 如果无法转为 Integer 形式，将报错
+	 * @throws IllegalArgumentException 如果 <code>value</code> 非 Number、CharSequence 类型，将报错
+	 */
+	public static Integer getInteger(@Nullable Object value, @Nullable Integer defaultIfEmpty) {
+		if (value == null) {
+			return defaultIfEmpty;
+		} else if (value instanceof Integer) {
+			return (Integer) value;
+		} else if (value instanceof Number) {
+			return ((Number) value).intValue();
+		}
+		if (value instanceof CharSequence) {
+			final CharSequence cs = (CharSequence) value;
+			if (cs.length() == 0) {
+				return defaultIfEmpty;
+			}
+			return Integer.parseInt(value.toString());
+		}
+		throw new IllegalArgumentException("Unexpected int value:" + value);
+	}
+
+	/**
+	 * 以 long 形式返回指定的值
+	 *
+	 * @param value 指定的对象
+	 * @throws NullPointerException 如果 <code>value</code> 为 null，将报错
+	 * @throws NumberFormatException 如果无法转为 long 形式，将报错
 	 */
 	public static long getLong(Object value) {
 		return value instanceof Number ? ((Number) value).longValue() : Long.parseLong(value.toString());
@@ -151,9 +163,11 @@ public abstract class NumberX {
 	 * 以 long 形式返回指定的值
 	 *
 	 * @param value 指定的对象
-	 * @param defaultIfEmpty 如果 <code>value</code> 为 null 或 空字符串，将返回该参数
+	 * @param defaultIfEmpty 如果 <code>value</code> 为 null 或 空字符串，将默认返回该参数
+	 * @throws NumberFormatException 如果无法转为 long 形式，将报错
+	 * @throws IllegalArgumentException 如果 <code>value</code> 非 Number、CharSequence 类型，将报错
 	 */
-	public static long getLong(Object value, long defaultIfEmpty) {
+	public static long getLong(@Nullable Object value, long defaultIfEmpty) {
 		if (value == null) {
 			return defaultIfEmpty;
 		}
@@ -174,18 +188,19 @@ public abstract class NumberX {
 	 * 以 Long 形式返回指定的值
 	 *
 	 * @param value 指定的对象
-	 * @param defaultIfEmpty 如果 <code>value</code> 为 null 或 空字符串，将返回该参数
+	 * @param defaultIfEmpty 如果 <code>value</code> 为 null 或 空字符串，将默认返回该参数
+	 * @throws NumberFormatException 如果无法转为 Long 形式，将报错
+	 * @throws IllegalArgumentException 如果 <code>value</code> 非 Number、CharSequence 类型，将报错
 	 */
-	public static Long getLong(Object value, @Nullable Long defaultIfEmpty) {
+	public static Long getLong(@Nullable Object value, @Nullable Long defaultIfEmpty) {
 		if (value == null) {
 			return defaultIfEmpty;
-		}
-		if (value instanceof Long) {
+		} else if (value instanceof Long) {
 			return (Long) value;
-		}
-		if (value instanceof Number) {
+		} else if (value instanceof Number) {
 			return ((Number) value).longValue();
-		} else if (value instanceof CharSequence) {
+		}
+		if (value instanceof CharSequence) {
 			final CharSequence cs = (CharSequence) value;
 			if (cs.length() == 0) {
 				return defaultIfEmpty;
@@ -196,26 +211,30 @@ public abstract class NumberX {
 	}
 
 	/**
-	 * 以float形式返回指定的值<br>
-	 * 如果指定的值为null或无法转为float形式，将报错
+	 * 以 float 形式返回指定的值
 	 *
 	 * @param value 指定的对象
+	 * @throws NullPointerException 如果 <code>value</code> 为 null，将报错
+	 * @throws NumberFormatException 如果无法转为 float 形式，将报错
 	 */
 	public static float getFloat(Object value) {
 		return value instanceof Number ? ((Number) value).floatValue() : Float.parseFloat(value.toString());
 	}
 
 	/**
-	 * 以 float 形式返回指定的值
+	 * 以 Float 形式返回指定的值
 	 *
 	 * @param value 指定的对象
 	 * @param defaultIfEmpty 如果 <code>value</code> 为 null 或 空字符串，将默认返回该参数
+	 * @throws NumberFormatException 如果无法转为 Float 形式，将报错
+	 * @throws IllegalArgumentException 如果 <code>value</code> 非 Number、CharSequence 类型，将报错
 	 */
-	public static float getFloat(Object value, float defaultIfEmpty) {
+	public static Float getFloat(@Nullable Object value, @Nullable Float defaultIfEmpty) {
 		if (value == null) {
 			return defaultIfEmpty;
-		}
-		if (value instanceof Number) {
+		} else if (value instanceof Float) {
+			return (Float) value;
+		} else if (value instanceof Number) {
 			return ((Number) value).floatValue();
 		}
 		if (value instanceof CharSequence) {
@@ -229,26 +248,30 @@ public abstract class NumberX {
 	}
 
 	/**
-	 * 以 double 形式返回指定的值<br>
-	 * 如果指定的值为null或无法转为double形式，将报错
+	 * 以 double 形式返回指定的值
 	 *
 	 * @param value 指定的对象
+	 * @throws NullPointerException 如果 <code>value</code> 为 null，将报错
+	 * @throws NumberFormatException 如果无法转为 double 形式，将报错
 	 */
 	public static double getDouble(Object value) {
 		return value instanceof Number ? ((Number) value).doubleValue() : Double.parseDouble(value.toString());
 	}
 
 	/**
-	 * 以 double 形式返回指定的值
+	 * 以 Double 形式返回指定的值
 	 *
 	 * @param value 指定的对象
 	 * @param defaultIfEmpty 如果 <code>value</code> 为 null 或 空字符串，将默认返回该参数
+	 * @throws NumberFormatException 如果无法转为 Double 形式，将报错
+	 * @throws IllegalArgumentException 如果 <code>value</code> 非 Number、CharSequence 类型，将报错
 	 */
-	public static double getDouble(Object value, double defaultIfEmpty) {
+	public static Double getDouble(@Nullable Object value, @Nullable Double defaultIfEmpty) {
 		if (value == null) {
 			return defaultIfEmpty;
-		}
-		if (value instanceof Number) {
+		} else if (value instanceof Double) {
+			return (Double) value;
+		} else if (value instanceof Number) {
 			return ((Number) value).doubleValue();
 		}
 		if (value instanceof CharSequence) {
@@ -262,35 +285,42 @@ public abstract class NumberX {
 	}
 
 	/**
-	 * 以BigDecimal形式返回指定的值<br>
-	 * 如果指定的值为null或无法转为BigDecimal形式，将报错
+	 * 以 BigDecimal 形式返回指定的值
 	 *
 	 * @param value 指定的对象
+	 * @throws NullPointerException 如果 <code>value</code> 为 null，将报错
+	 * @throws NumberFormatException 如果无法转为 BigDecimal 形式，将报错
 	 */
 	public static BigDecimal getBigDecimal(Object value) {
 		if (value instanceof BigDecimal) {
 			return (BigDecimal) value;
-		}
-		if (value instanceof BigInteger) {
+		} else if (value instanceof BigInteger) {
 			return new BigDecimal((BigInteger) value);
-		}
-		if (value instanceof Integer || value instanceof Long) {
+		} else if (value instanceof Integer || value instanceof Long) {
 			return BigDecimal.valueOf(((Number) value).longValue());
 		}
 		return new BigDecimal(value.toString());
 	}
 
 	/**
-	 * 以BigDecimal形式返回指定的值
+	 * 以 BigDecimal 形式返回指定的值
 	 *
 	 * @param value 指定的对象
 	 * @param defaultIfEmpty 如果 <code>value</code> 为 null 或 空字符串，将默认返回该参数。如果该参数不是 BigDecimal 类型，将尝试自动转换
+	 * @throws NumberFormatException 如果无法转为 BigDecimal 形式，将报错
+	 * @throws IllegalArgumentException 如果 <code>value</code> 非 Number、CharSequence 类型，将报错
 	 */
-	public static BigDecimal getBigDecimal(Object value, Object defaultIfEmpty) {
-		if (value == null) {
+	public static BigDecimal getBigDecimal(@Nullable Object value, @Nullable Object defaultIfEmpty) {
+		if (value instanceof Number) {
+			return getBigDecimal(value);
+		} else if (value == null) {
 			return defaultIfEmpty == null ? null : getBigDecimal(defaultIfEmpty);
 		}
-		if (value instanceof Number || value instanceof CharSequence) {
+		if (value instanceof CharSequence) {
+			final CharSequence cs = (CharSequence) value;
+			if (cs.length() == 0) {
+				return defaultIfEmpty == null ? null : getBigDecimal(defaultIfEmpty);
+			}
 			return getBigDecimal(value);
 		}
 		throw new IllegalArgumentException("Unexpected decimal value:" + value);
@@ -330,7 +360,7 @@ public abstract class NumberX {
 	 */
 	public static boolean isNumber(String str, int length) {
 		if (length < 0) {
-			throw new IllegalArgumentException("指定长度不能小于0!");
+			throw new IllegalArgumentException("length can not less than 0!");
 		}
 		return str != null && str.length() == length && isNumber(str);
 	}
