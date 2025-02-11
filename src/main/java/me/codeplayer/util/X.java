@@ -372,13 +372,13 @@ public abstract class X {
 	 *
 	 * @param obj 指定的对象，可以为 null
 	 * @param mapper 转换器
-	 * @param other 如果转换后的值为null，则返回该参数值
+	 * @param defaultIfNull 如果转换后的值为null，则返回该参数值
 	 * @return 如果 {@code obj == null } 则返回null，否则返回转换后的结果
 	 * @since 2.6
 	 */
-	public static <T, R> R mapElse(@Nullable T obj, Function<? super T, R> mapper, R other) {
+	public static <T, R> R mapElse(@Nullable T obj, Function<? super T, R> mapper, R defaultIfNull) {
 		R val = map(obj, mapper);
-		return val == null ? other : val;
+		return val == null ? defaultIfNull : val;
 	}
 
 	/**
@@ -386,13 +386,13 @@ public abstract class X {
 	 *
 	 * @param obj 指定的对象，可以为 null
 	 * @param mapper 转换器
-	 * @param other 如果转换后的值为null，则返回该备用对象的返回值
+	 * @param defaultIfNull 如果转换后的值为null，则返回该备用对象的返回值
 	 * @return 如果 {@code obj == null } 则返回null，否则返回转换后的结果
 	 * @since 2.6
 	 */
-	public static <T, R> R mapElseGet(@Nullable T obj, Function<? super T, R> mapper, Supplier<R> other) {
+	public static <T, R> R mapElseGet(@Nullable T obj, Function<? super T, R> mapper, Supplier<R> defaultIfNull) {
 		R val = map(obj, mapper);
-		return val == null ? other.get() : val;
+		return val == null ? defaultIfNull.get() : val;
 	}
 
 	/**
