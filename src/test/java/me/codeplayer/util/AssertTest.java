@@ -1,94 +1,94 @@
 package me.codeplayer.util;
 
+import java.util.function.Supplier;
+
 import org.junit.Test;
 
+import static org.junit.Assert.assertThrows;
+
+@SuppressWarnings("DataFlowIssue")
 public class AssertTest {
 
 	@Test
-	public void isTrue_ExpressionTrue_NoException() {
+	public void isTrue() {
 		Assert.isTrue(true);
-	}
+		Assert.isTrue(true, "error message");
+		Assert.isTrue(true, () -> "assert failed");
 
-	@Test(expected = AssertException.class)
-	public void isTrue_ExpressionFalse_ExceptionThrown() {
-		Assert.isTrue(false);
+		assertThrows(AssertException.class, () -> Assert.isTrue(false));
+		assertThrows(AssertException.class, () -> Assert.isTrue(false, "error message"));
+		assertThrows(AssertException.class, () -> Assert.isTrue(false, (CharSequence) null));
+		assertThrows(AssertException.class, () -> Assert.isTrue(false, () -> "assert failed"));
+		assertThrows(AssertException.class, () -> Assert.isTrue(false, (Supplier<? extends CharSequence>) null));
 	}
 
 	@Test
-	public void state_ExpressionTrue_NoException() {
+	public void state() {
 		Assert.state(true);
-	}
-
-	@Test(expected = IllegalStateException.class)
-	public void state_ExpressionFalse_ExceptionThrown() {
-		Assert.state(false);
+		assertThrows(IllegalStateException.class, () -> Assert.state(false));
+		assertThrows(IllegalStateException.class, () -> Assert.state(false, "state error message"));
+		assertThrows(IllegalStateException.class, () -> Assert.state(false, (CharSequence) null));
 	}
 
 	@Test
-	public void isFalse_ExpressionFalse_NoException() {
+	public void isFalse() {
 		Assert.isFalse(false);
-	}
-
-	@Test(expected = AssertException.class)
-	public void isFalse_ExpressionTrue_ExceptionThrown() {
-		Assert.isFalse(true);
+		assertThrows(AssertException.class, () -> Assert.isFalse(true));
+		assertThrows(AssertException.class, () -> Assert.isFalse(true, (CharSequence) null));
+		assertThrows(AssertException.class, () -> Assert.isFalse(true, "assert failed"));
+		assertThrows(AssertException.class, () -> Assert.isFalse(true, () -> "assert failed"));
+		assertThrows(AssertException.class, () -> Assert.isFalse(true, (Supplier<? extends CharSequence>) null));
 	}
 
 	@Test
-	public void notNull_ObjectNotNull_NoException() {
+	public void notNull() {
 		Object obj = new Object();
 		Assert.notNull(obj);
-	}
 
-	@Test(expected = NullPointerException.class)
-	public void notNull_ObjectNull_ExceptionThrown() {
-		Assert.notNull(null);
+		assertThrows(NullPointerException.class, () -> Assert.notNull(null));
+		assertThrows(NullPointerException.class, () -> Assert.notNull(null, (CharSequence) null));
+		assertThrows(NullPointerException.class, () -> Assert.notNull(null, "assert failed"));
+		assertThrows(NullPointerException.class, () -> Assert.notNull(null, () -> "assert failed"));
+		assertThrows(NullPointerException.class, () -> Assert.notNull(null, (Supplier<? extends CharSequence>) null));
 	}
 
 	@Test
-	public void isEmpty_StringNullOrEmpty_NoException() {
+	public void isEmpty() {
 		Assert.isEmpty(null);
 		Assert.isEmpty("");
-	}
 
-	@Test(expected = AssertException.class)
-	public void isEmpty_StringNotEmpty_ExceptionThrown() {
-		Assert.isEmpty("not empty");
+		assertThrows(AssertException.class, () -> Assert.isEmpty("null"));
+		assertThrows(AssertException.class, () -> Assert.isEmpty(" "));
+		assertThrows(AssertException.class, () -> Assert.isEmpty(" "));
+		assertThrows(AssertException.class, () -> Assert.isEmpty(" ", (CharSequence) null));
+		assertThrows(AssertException.class, () -> Assert.isEmpty(" ", "assert failed"));
+		assertThrows(AssertException.class, () -> Assert.isEmpty(" ", () -> "assert failed"));
+		assertThrows(AssertException.class, () -> Assert.isEmpty(" ", (Supplier<? extends CharSequence>) null));
 	}
 
 	@Test
-	public void notEmpty_StringNotNullOrEmpty_NoException() {
+	public void notEmpty() {
 		Assert.notEmpty("not empty");
+		Assert.notEmpty(" ");
+		Assert.notEmpty("null");
+		assertThrows(AssertException.class, () -> Assert.notEmpty(null));
+		assertThrows(AssertException.class, () -> Assert.notEmpty(""));
+		assertThrows(AssertException.class, () -> Assert.notEmpty("", (CharSequence) null));
+		assertThrows(AssertException.class, () -> Assert.notEmpty("", "assert failed"));
+		assertThrows(AssertException.class, () -> Assert.notEmpty("", () -> "assert failed"));
+		assertThrows(AssertException.class, () -> Assert.notEmpty("", (Supplier<? extends CharSequence>) null));
 	}
 
 	@Test
-	public void notBlank_StringNotNullOrBlank_NoException() {
-		Assert.notBlank("not blank");
-	}
-
-	@Test(expected = AssertException.class)
-	public void notEmpty_StringNull_ExceptionThrown() {
-		Assert.notEmpty(null);
-	}
-
-	@Test(expected = AssertException.class)
-	public void notEmpty_StringEmpty_ExceptionThrown() {
-		Assert.notEmpty("");
-	}
-
-	@Test(expected = AssertException.class)
-	public void notBlank_StringNull_ExceptionThrown() {
-		Assert.notBlank(null);
-	}
-
-	@Test(expected = AssertException.class)
-	public void notBlank_StringEmpty_ExceptionThrown() {
-		Assert.notBlank("");
-	}
-
-	@Test(expected = AssertException.class)
-	public void notBlank_StringBlank_ExceptionThrown() {
-		Assert.notBlank("   ");
+	public void notBlank() {
+		Assert.notBlank("not empty");
+		Assert.notBlank("null");
+		assertThrows(AssertException.class, () -> Assert.notBlank(null));
+		assertThrows(AssertException.class, () -> Assert.notBlank(" "));
+		assertThrows(AssertException.class, () -> Assert.notBlank(" ", (CharSequence) null));
+		assertThrows(AssertException.class, () -> Assert.notBlank(" ", "assert failed"));
+		assertThrows(AssertException.class, () -> Assert.notBlank(" ", () -> "assert failed"));
+		assertThrows(AssertException.class, () -> Assert.notBlank(" ", (Supplier<? extends CharSequence>) null));
 	}
 
 }

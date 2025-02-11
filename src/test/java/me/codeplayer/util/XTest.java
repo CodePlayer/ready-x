@@ -115,11 +115,14 @@ public class XTest implements WithAssertions {
 		assertThat(X.expectNotNull(nullUser, user)).isSameAs(user);
 
 		assertThat(X.getElse(nullUser, User::new)).isNotNull();
+		assertThat(X.getElse(user.getName(), () -> "else")).isEqualTo("James");
 
+		assertThat((Object) X.map(user, null)).isNull();
 		assertThat(X.map(user, User::getName)).isEqualTo("James");
 		assertThat(X.map(nullUser, User::getName)).isNull();
 
 		assertThat(X.map(user, User::getName, String::length)).isEqualTo(5);
+		assertThat(X.mapElse(user, User::getName, "abc")).isEqualTo("James");
 
 		assertThat(X.isMatch(user, User::getName, StringX::notEmpty)).isTrue();
 
@@ -134,6 +137,7 @@ public class XTest implements WithAssertions {
 		assertThat(X.mapElse(user, User::getPassword, "Hello")).isEqualTo("Hello");
 
 		assertThat(X.mapElseGet(user, User::getPassword, () -> StringX.replaceChars("18000001234", '*', 3, -4))).isEqualTo("180****1234");
+		assertThat(X.mapElseGet(user, User::getName, () -> "abc")).isEqualTo("James");
 
 		assertThat((Object) X.decode(1, 0, "PENDING", 1, "YES", -1, "NO")).isEqualTo("YES");
 
