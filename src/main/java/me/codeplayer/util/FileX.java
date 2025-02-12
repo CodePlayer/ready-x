@@ -21,7 +21,7 @@ public abstract class FileX {
 	/**
 	 * 用于表示文件大小的单位
 	 */
-	private static final String[] FILE_UNITS = new String[] { "Byte", "KB", "MB", "GB", "TB", "PB" };
+	private static final String[] FILE_UNITS = { "Byte", "KB", "MB", "GB", "TB", "PB" };
 	/** 单位：自动判断 */
 	public static final int UNIT_AUTO = 0;
 	/** 单位：字节 */
@@ -196,7 +196,7 @@ public abstract class FileX {
 	 */
 	public static String calcFileSize(long fileSize, int unit, int scale, RoundingMode roundingMode) {
 		if (fileSize < 0) {
-			throw new IllegalArgumentException("Argument 'fileSize' can not less than 0: " + fileSize);
+			throw new IllegalArgumentException("fileSize can not less than 0: " + fileSize);
 		}
 		if (unit < UNIT_AUTO || unit > UNIT_PB) {
 			throw new IllegalArgumentException(String.valueOf(unit));
