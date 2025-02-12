@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThrows;
 
 @SuppressWarnings("DataFlowIssue")
@@ -48,7 +49,9 @@ public class AssertTest {
 	@Test
 	public void notNull() {
 		Object obj = new Object();
-		Assert.notNull(obj);
+		assertSame(obj, Assert.notNull(obj));
+		assertSame(obj, Assert.notNull(obj, errorMsg));
+		assertSame(obj, Assert.notNull(obj, errorMsgSupplier));
 
 		assertThrows(NullPointerException.class, () -> Assert.notNull(null));
 		assertThrows(NullPointerException.class, () -> Assert.notNull(null, nullMsg));
@@ -73,9 +76,12 @@ public class AssertTest {
 
 	@Test
 	public void notEmpty() {
-		Assert.notEmpty("not empty");
+		assertSame("not empty", Assert.notEmpty("not empty"));
 		Assert.notEmpty(" ");
-		Assert.notEmpty("null");
+		assertSame("null", Assert.notEmpty("null"));
+		assertSame("null", Assert.notEmpty("null", errorMsg));
+		assertSame("null", Assert.notEmpty("null", errorMsgSupplier));
+
 		assertThrows(AssertException.class, () -> Assert.notEmpty(null));
 		assertThrows(AssertException.class, () -> Assert.notEmpty(""));
 		assertThrows(AssertException.class, () -> Assert.notEmpty("", errorMsg));
@@ -86,8 +92,10 @@ public class AssertTest {
 
 	@Test
 	public void notBlank() {
-		Assert.notBlank("not empty");
-		Assert.notBlank("null");
+		assertSame("not empty", Assert.notBlank("not empty"));
+		assertSame("null", Assert.notBlank("null", errorMsg));
+		assertSame(" not blank", Assert.notBlank(" not blank", errorMsgSupplier));
+
 		assertThrows(AssertException.class, () -> Assert.notBlank(null));
 		assertThrows(AssertException.class, () -> Assert.notBlank(" "));
 		assertThrows(AssertException.class, () -> Assert.notBlank(" ", errorMsg));
