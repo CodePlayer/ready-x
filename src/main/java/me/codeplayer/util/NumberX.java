@@ -344,7 +344,7 @@ public abstract class NumberX {
 	 */
 	public static boolean isNumber(String str, int length) {
 		if (length < 0) {
-			throw new IllegalArgumentException("length can not less than 0!");
+			throw new IllegalArgumentException("length can not be less than 0: " + length);
 		}
 		return str != null && str.length() == length && isNumber(str);
 	}
