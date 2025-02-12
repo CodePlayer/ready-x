@@ -476,7 +476,7 @@ public abstract class StringX {
 			return "";
 		}
 		if (minLength < 1) {
-			throw new IllegalArgumentException("Argument 'minLength' can not be less than 1:" + minLength);
+			throw new IllegalArgumentException("minLength can not be less than 1:" + minLength);
 		}
 		int length = str.length();
 		if (minLength > length) {
