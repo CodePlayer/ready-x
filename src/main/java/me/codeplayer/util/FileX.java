@@ -4,7 +4,7 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.channels.FileChannel;
-import java.nio.file.AccessDeniedException;
+import java.nio.file.*;
 import java.util.*;
 import javax.annotation.Nullable;
 
@@ -21,7 +21,7 @@ public abstract class FileX {
 	/**
 	 * 用于表示文件大小的单位
 	 */
-	private static final String[] FILE_UNITS = { "Byte", "KB", "MB", "GB", "TB", "PB" };
+	private static final String[] FILE_UNITS = { "Byte", "KB", "MB", "GB", "TB", "PB", "EB" };
 	/** 单位：自动判断 */
 	public static final int UNIT_AUTO = 0;
 	/** 单位：字节 */
@@ -36,13 +36,20 @@ public abstract class FileX {
 	public static final int UNIT_TB = 5;
 	/** 单位：PB */
 	public static final int UNIT_PB = 6;
+	/** 单位：EB */
+	public static final int UNIT_EB = 7;
+
+	private static RoundingMode fileSizeRoundingMode = RoundingMode.FLOOR;
+
+	public static void setFileSizeRoundingMode(RoundingMode roundingMode) {
+		fileSizeRoundingMode = Objects.requireNonNull(roundingMode);
+	}
 
 	/**
 	 * 根据文件名称返回对应的扩展名在字符串中的索引值
 	 *
 	 * @param filename 指定的文件名
 	 * @return 返回扩展名分隔符'.'对应的索引值，如果不存在则返回 -1
-	 * @author Ready
 	 */
 	public static int indexOfExtension(String filename) {
 		return indexOfExtension(filename, true);
@@ -53,7 +60,6 @@ public abstract class FileX {
 	 *
 	 * @param filename 指定的文件名
 	 * @return 返回扩展名分隔符'.'对应的索引值，如果不存在则返回 -1
-	 * @author Ready
 	 */
 	public static int indexOfExtension(String filename, boolean backScanDirSeparator) {
 		final int pos = filename.lastIndexOf('.');
@@ -139,12 +145,14 @@ public abstract class FileX {
 	}
 
 	/**
-	 * 获取随机文件名，根据当前时间采用随机算法自动生成，并且内部保证本地没有重复文件名的文件
+	 * 获取具有随机文件名的文件对象，文件名会根据当前时间采用随机算法自动生成，并且内部保证本地没有重名的文件
 	 *
-	 * @param prefix 文件名前缀(可以为null)
+	 * @param path 文件路径
+	 * @param prefix 文件名的补充前缀(可以为null)
+	 * @param suffix 文件名后缀，例如 ".png" 或 "png"
 	 * @since 0.0.1
 	 */
-	public static File getRandomFile(String path, String prefix, String suffix, Date now) {
+	public static File getRandomFile(String path, @Nullable String prefix, @Nullable String suffix, Date now) {
 		String fileName = FastDateFormat.getInstance("yyyyMMdd-HHmmssSSS").format(now);
 		if (prefix != null) {
 			fileName = prefix + fileName;
@@ -186,7 +194,7 @@ public abstract class FileX {
 
 	/**
 	 * 根据文件的字节数量计算出改文件为多少"Byte"/"KB"/"MB"/"GB"/"TB"/"PB"<br>
-	 * 如果unit为 UNIT_AUTO(0)，则根据文件大小自动选择单位，如果存在小数均保留<code>scale</code>位小数<br>
+	 * 如果unit为 UNIT_AUTO(0)，则根据文件大小自动选择单位，如果存在小数均保留<code>scale</code>位小数
 	 *
 	 * @param fileSize 指定的文件大小
 	 * @param unit 指定的文件单位
@@ -198,12 +206,12 @@ public abstract class FileX {
 		if (fileSize < 0) {
 			throw new IllegalArgumentException("fileSize can not less than 0: " + fileSize);
 		}
-		if (unit < UNIT_AUTO || unit > UNIT_PB) {
+		if (unit < UNIT_AUTO || unit > UNIT_EB) {
 			throw new IllegalArgumentException(String.valueOf(unit));
 		}
 		if (unit != UNIT_AUTO) {
 			int shift = unit - 1;
-			return divide(fileSize, 1L << (10 * shift), scale) + FILE_UNITS[shift];
+			return divide(fileSize, 1L << (10 * shift), scale, roundingMode) + FILE_UNITS[shift];
 		}
 		// 如果没有传入单位，则自动识别
 		int shift = 0;
@@ -218,21 +226,23 @@ public abstract class FileX {
 	}
 
 	/**
-	 * 根据文件的字节数量计算出改文件为多少"Byte"/"KB"/"MB"/"GB"/"TB"/"PB"<br>
-	 * 如果unit为 UNIT_AUTO(0)，则根据文件大小自动选择单位，如果存在小数均保留<code>scale</code>位小数<br>
+	 * 根据文件的字节数量计算出改文件为多少 "Byte"/"KB"/"MB"/"GB"/"TB"/"PB"<br>
+	 * 如果 unit 为 UNIT_AUTO(0)，则根据文件大小自动选择单位，如果存在小数均保留 <code>scale</code> 位小数
 	 *
 	 * @param fileSize 指定的文件大小
 	 * @param unit 指定的文件单位
-	 * @param scale 保留的小数位数
+	 * @param scale 保留的小数位数（超出默认向下舍去）
+	 * @see #calcFileSize(long, int, int, RoundingMode)
+	 * @see #setFileSizeRoundingMode(RoundingMode)
 	 * @since 0.0.1
 	 */
 	public static String calcFileSize(long fileSize, int unit, int scale) {
-		return calcFileSize(fileSize, unit, scale, RoundingMode.HALF_UP);
+		return calcFileSize(fileSize, unit, scale, fileSizeRoundingMode);
 	}
 
 	/**
 	 * 根据文件的字节数量计算出改文件为多少"Byte"/"KB"/"MB"/"GB"/"TB"/"PB"<br>
-	 * 如果unit为UNIT_AUTO(0)，则根据文件大小自动选择单位，如果存在小数均保留两位小数<br>
+	 * 如果 unit 为 UNIT_AUTO(0)，则根据文件大小自动选择单位，如果存在小数则保留两位小数（超出默认向下舍去）
 	 *
 	 * @param fileSize 指定的文件大小
 	 * @param unit 指定的文件单位
@@ -243,7 +253,7 @@ public abstract class FileX {
 	}
 
 	/**
-	 * 文件大小除以指定度量，返回保留scale位小数的值
+	 * 文件大小除以指定度量，返回保留 scale 位小数的值（向下舍去）
 	 *
 	 * @param fileSize 文件大小
 	 * @param divisor 指定文件单位的字节数
@@ -252,19 +262,21 @@ public abstract class FileX {
 	 * @since 3.0.0
 	 */
 	public static String divide(long fileSize, long divisor, int scale, RoundingMode roundingMode) {
-		return new BigDecimal(fileSize).divide(new BigDecimal(divisor), scale, roundingMode).toString();
+		return BigDecimal.valueOf(fileSize).divide(BigDecimal.valueOf(divisor), scale, roundingMode).toString();
 	}
 
 	/**
-	 * 文件大小除以指定度量，返回保留scale位小数的值
+	 * 文件大小除以指定度量，返回保留 scale 位小数的值（默认向下舍去）
 	 *
 	 * @param fileSize 文件大小
 	 * @param divisor 指定文件单位的字节数
 	 * @param scale 保留的小数位数
+	 * @see #divide(long, long, int, RoundingMode)
+	 * @see #setFileSizeRoundingMode(RoundingMode)
 	 * @since 0.0.1
 	 */
 	public static String divide(long fileSize, long divisor, int scale) {
-		return divide(fileSize, divisor, scale, RoundingMode.HALF_UP);
+		return divide(fileSize, divisor, scale, fileSizeRoundingMode);
 	}
 
 	/**
@@ -317,36 +329,36 @@ public abstract class FileX {
 	/**
 	 * 初步检测目标文件是否存在且可读
 	 */
-	public static void checkReadable(final File toRead) {
+	public static void checkReadable(final File toRead) throws IOException {
 		if (!toRead.exists()) {
-			throw new IllegalArgumentException(new FileNotFoundException("File not found:" + toRead.getAbsolutePath()));
+			throw new NoSuchFileException(toRead.getAbsolutePath());
 		}
 		// 如果目标文件是一个目录
 		if (toRead.isDirectory()) {
-			throw new IllegalArgumentException("File is a directory:" + toRead.getAbsolutePath());
+			throw new AccessDeniedException("File is a directory:" + toRead.getAbsolutePath());
 		}
 		// 如果目标文件不可写入数据
 		if (!toRead.canRead()) {
-			throw new IllegalStateException(new AccessDeniedException("Unable to read file:" + toRead.getAbsolutePath()));
+			throw new AccessDeniedException("Unable to read file:" + toRead.getAbsolutePath());
 		}
 	}
 
 	/**
 	 * 初步检测目标文件是否可写入（不可写入，将直接报错）
 	 */
-	public static void checkWritable(final File toWrite, final boolean override) {
+	public static void checkWritable(final File toWrite, final boolean override) throws IOException {
 		if (toWrite.exists()) {
 			// 如果目标文件是一个目录
 			if (toWrite.isDirectory()) {
-				throw new IllegalArgumentException("File is a directory:" + toWrite);
+				throw new AccessDeniedException(toWrite.getAbsolutePath());
 			}
 			// 如果目标文件不可写入数据
 			if (!toWrite.canWrite()) {
-				throw new IllegalStateException(new IOException("Unable to write to file:" + toWrite));
+				throw new AccessDeniedException("Unable to write to file:" + toWrite);
 			}
 			// 如果目标文件不允许被覆盖
 			if (!override) {
-				throw new IllegalStateException("File already exists:" + toWrite);
+				throw new FileAlreadyExistsException("File already exists:" + toWrite);
 			}
 		}
 	}
@@ -357,7 +369,7 @@ public abstract class FileX {
 	 * @param target 目标文件
 	 * @param override 如果已存在同名的文件，是否允许覆盖
 	 */
-	public static void checkAndPrepareForWrite(File target, boolean override) {
+	public static void checkAndPrepareForWrite(File target, boolean override) throws IOException {
 		checkWritable(target, override);
 		// 如果目标文件所在的目录不存在，则创建
 		ensureParentDirExists(target);
@@ -375,6 +387,8 @@ public abstract class FileX {
 		try {
 			fos = new FileOutputStream(dest);
 			writeStream(is, fos);
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		} finally {
@@ -390,7 +404,7 @@ public abstract class FileX {
 	 * @param override 如果目标文件已存在，是否允许覆盖
 	 * @since 0.0.1
 	 */
-	public static void copyFile(InputStream is, File dest, boolean override) {
+	public static void copyFile(InputStream is, File dest, boolean override) throws IOException {
 		checkAndPrepareForWrite(dest, override);
 		copyInternal(is, dest);
 	}
@@ -403,7 +417,7 @@ public abstract class FileX {
 	 * @param override 如果目标文件已存在，是否允许覆盖
 	 * @since 0.0.1
 	 */
-	public static void copyFile(File src, File dest, boolean override) {
+	public static void copyFile(File src, File dest, boolean override) throws IOException {
 		checkReadable(src);
 		checkAndPrepareForWrite(dest, override);
 		copyFileInternal(src, dest);
@@ -429,7 +443,7 @@ public abstract class FileX {
 	 * @param dest 目标文件对象
 	 * @since 0.0.1
 	 */
-	public static void copyFile(File src, File dest) {
+	public static void copyFile(File src, File dest) throws IOException {
 		copyFile(src, dest, false);
 	}
 
@@ -440,7 +454,7 @@ public abstract class FileX {
 	 * @param dest 目标文件路径
 	 * @since 0.0.1
 	 */
-	public static void copyFile(String src, String dest, boolean override) {
+	public static void copyFile(String src, String dest, boolean override) throws IOException {
 		copyFile(new File(src), new File(dest), override);
 	}
 
@@ -451,7 +465,7 @@ public abstract class FileX {
 	 * @param dest 目标文件路径
 	 * @since 0.0.1
 	 */
-	public static void copyFile(String src, String dest) {
+	public static void copyFile(String src, String dest) throws IOException {
 		copyFile(src, dest, false);
 	}
 
@@ -462,15 +476,15 @@ public abstract class FileX {
 	 * @param destDiretory 指定的目录
 	 * @param override 如果已存在同名的文件，是否允许覆盖
 	 */
-	public static void copyFileToDirectory(File file, File destDiretory, boolean override) {
+	public static void copyFileToDirectory(File file, File destDiretory, boolean override) throws IOException {
 		if (destDiretory.exists()) {
 			// 如果目标文件是一个目录
 			if (!destDiretory.isDirectory()) {
-				throw new IllegalStateException("It's not a directory:" + destDiretory);
+				throw new NotDirectoryException(destDiretory.getPath());
 			}
 			// 如果目标文件不可写入数据
 			if (!destDiretory.canWrite()) {
-				throw new IllegalStateException(new AccessDeniedException("Unable to write to file：" + destDiretory));
+				throw new AccessDeniedException("Unable to write to file：" + destDiretory);
 			}
 		}
 		// 如果目标文件不允许被覆盖
@@ -485,7 +499,7 @@ public abstract class FileX {
 	 * @param diretory 指定的目录
 	 * @since 0.0.1
 	 */
-	public static void copyFileToDirectory(File file, File diretory) {
+	public static void copyFileToDirectory(File file, File diretory) throws IOException {
 		copyFileToDirectory(file, diretory, false);
 	}
 
@@ -497,7 +511,7 @@ public abstract class FileX {
 	 * @param override 如果已存在同名的文件，是否允许覆盖
 	 * @since 0.0.1
 	 */
-	public static void copyFileToDirectory(String file, String destDiretory, boolean override) {
+	public static void copyFileToDirectory(String file, String destDiretory, boolean override) throws IOException {
 		copyFileToDirectory(new File(file), new File(destDiretory), override);
 	}
 
@@ -509,7 +523,7 @@ public abstract class FileX {
 	 * @param destDiretory 指定的目录
 	 * @since 0.0.1
 	 */
-	public static void copyFileToDirectory(String file, String destDiretory) {
+	public static void copyFileToDirectory(String file, String destDiretory) throws IOException {
 		copyFileToDirectory(file, destDiretory, false);
 	}
 
@@ -521,7 +535,7 @@ public abstract class FileX {
 	 * @param override 如果已存在同名的文件，是否允许覆盖
 	 * @since 0.0.1
 	 */
-	public static void moveFile(File src, File dest, boolean override) {
+	public static void moveFile(File src, File dest, boolean override) throws IOException {
 		checkReadable(src);
 		checkAndPrepareForWrite(dest, override);
 		moveFileInternal(src, dest, override);
@@ -535,7 +549,7 @@ public abstract class FileX {
 	public static void ensureParentDirExists(File target) {
 		File parent = target.getParentFile();
 		if (!parent.exists() && !parent.mkdirs()) {
-			throw new IllegalStateException(new IOException("Unable to create directory:" + parent));
+			throw new UncheckedIOException(new AccessDeniedException(parent.getAbsolutePath()));
 		}
 	}
 
@@ -547,7 +561,7 @@ public abstract class FileX {
 	 * @param dest 目标文件
 	 * @since 0.0.1
 	 */
-	public static void moveFile(File src, File dest) {
+	public static void moveFile(File src, File dest) throws IOException {
 		moveFile(src, dest, false);
 	}
 
@@ -559,7 +573,7 @@ public abstract class FileX {
 	 * @param override 如果已存在同名的文件，是否允许覆盖
 	 * @since 0.0.1
 	 */
-	public static void moveFile(String path, String destPath, boolean override) {
+	public static void moveFile(String path, String destPath, boolean override) throws IOException {
 		moveFile(new File(path), new File(destPath), override);
 	}
 
@@ -571,7 +585,7 @@ public abstract class FileX {
 	 * @param dest 目标文件
 	 * @since 0.0.1
 	 */
-	public static void moveFile(String path, String dest) {
+	public static void moveFile(String path, String dest) throws IOException {
 		moveFile(new File(path), new File(dest), false);
 	}
 
@@ -584,21 +598,20 @@ public abstract class FileX {
 	 * @throws IllegalArgumentException 如果指定的文件或目录不可写，或指定的目录不是目录
 	 * @since 0.0.1
 	 */
-	public static void moveFileToDirectory(File file, File destDirectory, boolean override) throws IllegalArgumentException {
+	public static void moveFileToDirectory(File file, File destDirectory, boolean override) throws IllegalArgumentException, IOException {
 		checkReadable(file);
 		final File dest = new File(destDirectory, file.getName());
 		checkAndPrepareForWrite(dest, override);
 		moveFileInternal(file, dest, override);
 	}
 
-	static void moveFileInternal(File src, File dest, boolean override) {
+	static void moveFileInternal(File src, File dest, boolean override) throws FileAlreadyExistsException {
 		if (!src.renameTo(dest)) {
-			if (override) {
-				copyFileInternal(src, dest);
-				src.delete();
-			} else {
-				throw new IllegalArgumentException("Move file failed:[" + src + "] => [" + dest + ']');
+			if (!override) {
+				throw new FileAlreadyExistsException("Move file failed:[" + src + "] => [" + dest + ']');
 			}
+			copyFileInternal(src, dest);
+			src.delete();
 		}
 	}
 
@@ -610,7 +623,7 @@ public abstract class FileX {
 	 * @param directory 目标文件夹
 	 * @since 0.0.1
 	 */
-	public static void moveFileToDirectory(File file, File directory) {
+	public static void moveFileToDirectory(File file, File directory) throws IOException {
 		moveFileToDirectory(file, directory, false);
 	}
 
@@ -622,7 +635,7 @@ public abstract class FileX {
 	 * @param override 如果已存在同名的文件，是否允许覆盖
 	 * @since 0.0.1
 	 */
-	public static void moveFileToDirectory(String path, String directory, boolean override) {
+	public static void moveFileToDirectory(String path, String directory, boolean override) throws IOException {
 		moveFileToDirectory(new File(path), new File(directory), override);
 	}
 
@@ -634,7 +647,7 @@ public abstract class FileX {
 	 * @param directory 目标文件夹
 	 * @since 0.0.1
 	 */
-	public static void moveFileToDirectory(String path, String directory) {
+	public static void moveFileToDirectory(String path, String directory) throws IOException {
 		moveFileToDirectory(path, directory, false);
 	}
 
@@ -747,7 +760,7 @@ public abstract class FileX {
 	 * @return 返回复制后的目标文件对象
 	 * @since 0.0.1
 	 */
-	public static File copyFileToDirectoryWithRandomFileName(File file, String destDir) {
+	public static File copyFileToDirectoryWithRandomFileName(File file, String destDir) throws IOException {
 		File dest = getRandomFile(destDir, getExtension(file.getName()));
 		copyFile(file, dest);
 		return dest;
@@ -761,7 +774,7 @@ public abstract class FileX {
 	 * @return 返回移动后的目标文件对象
 	 * @since 0.0.1
 	 */
-	public static File moveFileToDirectoryWithRandomFileName(File file, String destDir) {
+	public static File moveFileToDirectoryWithRandomFileName(File file, String destDir) throws IOException {
 		File dest = getRandomFile(destDir, getExtension(file.getName()));
 		moveFile(file, dest);
 		return dest;
@@ -777,7 +790,7 @@ public abstract class FileX {
 	 * @return 返回复制后的目标文件对象
 	 * @since 0.0.1
 	 */
-	public static File copyFileToDirectoryWithRandomFileName(File file, String destDir, String prefix, String suffix) {
+	public static File copyFileToDirectoryWithRandomFileName(File file, String destDir, String prefix, String suffix) throws IOException {
 		File dest = getRandomFile(destDir, prefix, suffix);
 		copyFile(file, dest);
 		return dest;
@@ -792,7 +805,7 @@ public abstract class FileX {
 	 * @return 返回复制后的目标文件对象
 	 * @since 0.0.1
 	 */
-	public static File copyFileToDirectoryWithRandomFileName(File file, String destDir, String suffix) {
+	public static File copyFileToDirectoryWithRandomFileName(File file, String destDir, String suffix) throws IOException {
 		return copyFileToDirectoryWithRandomFileName(file, destDir, null, suffix);
 	}
 
@@ -806,7 +819,7 @@ public abstract class FileX {
 	 * @return 返回移动后的目标文件对象
 	 * @since 0.0.1
 	 */
-	public static File moveFileToDirectoryWithRandomFileName(File file, String destDir, String prefix, String suffix) {
+	public static File moveFileToDirectoryWithRandomFileName(File file, String destDir, String prefix, String suffix) throws IOException {
 		File dest = getRandomFile(destDir, prefix, suffix);
 		moveFile(file, dest);
 		return dest;
@@ -821,7 +834,7 @@ public abstract class FileX {
 	 * @return 返回移动后的目标文件对象
 	 * @since 0.0.1
 	 */
-	public static File moveFileToDirectoryWithRandomFileName(File file, String destDir, String suffix) {
+	public static File moveFileToDirectoryWithRandomFileName(File file, String destDir, String suffix) throws IOException {
 		return moveFileToDirectoryWithRandomFileName(file, destDir, null, suffix);
 	}
 
@@ -835,7 +848,8 @@ public abstract class FileX {
 		if (char0 != '/' && char0 != '\\') {
 			pathname = '/' + pathname;
 		}
-		return new File(FileX.class.getResource(pathname).getPath());
+		java.net.URL resource = FileX.class.getResource(pathname);
+		return resource == null ? null : new File(resource.getPath());
 	}
 
 	/**
@@ -843,7 +857,6 @@ public abstract class FileX {
 	 *
 	 * @param pathname 指定的文件路径
 	 * @param inClassPath 是否相对于classpath类路径下
-	 * @author Ready
 	 * @since 0.3.1
 	 */
 	public static File getFile(String pathname, boolean inClassPath) {
@@ -859,9 +872,7 @@ public abstract class FileX {
 	 */
 	public static File parseFile(String pathname, boolean checkExists) {
 		final String classPathPrefix = "classpath:";
-		File file = pathname.startsWith(classPathPrefix)
-				? parseClassPathFile(pathname.substring(classPathPrefix.length()))
-				: new File(pathname);
+		File file = pathname.startsWith(classPathPrefix) ? parseClassPathFile(pathname.substring(classPathPrefix.length())) : new File(pathname);
 		if (checkExists && !file.exists()) {
 			throw new IllegalArgumentException("File not found：[" + file.getPath() + ']');
 		}
@@ -872,10 +883,9 @@ public abstract class FileX {
 	 * 读取指定的文件内容
 	 *
 	 * @return 返回文件内容字符串，内部换行符为'\n'
-	 * @author Ready
 	 * @since 0.3.1
 	 */
-	public static String readContent(File file) {
+	public static String readContent(File file) throws IOException {
 		checkReadable(file);
 		BufferedReader reader = null;
 		long length = (file.length() >>> 3) + 1;
@@ -905,10 +915,9 @@ public abstract class FileX {
 	 *
 	 * @param inClassPath 是否相对于classpath类路径下
 	 * @return 返回文件内容字符串，内部换行符为'\n'
-	 * @author Ready
 	 * @since 0.3.1
 	 */
-	public static String readContent(String pathname, boolean inClassPath) {
+	public static String readContent(String pathname, boolean inClassPath) throws IOException {
 		return readContent(getFile(pathname, inClassPath));
 	}
 
@@ -950,19 +959,18 @@ public abstract class FileX {
 	 * 读取指定名称的 ".properties" 文件
 	 *
 	 * @param file 指定的文件
-	 * @return 对应的 Properties 对象(出于泛型兼容考虑 ， 以 {@code Map<String, String>} 形式返回)。如果指定的文件不存在，则返回 null
-	 * @author Ready
+	 * @return 对应的 Properties 对象(出于泛型兼容考虑 ， 以 {@code Map< String, String >} 形式返回)。如果指定的文件不存在，则返回 null
 	 * @since 3.0.0
 	 */
 	public static Map<String, String> readProperties(File file) {
-		try (InputStream inputStream = new FileInputStream(file)) {
+		try (FileReader reader = new FileReader(file)) {
 			Properties prop = new Properties();
-			prop.load(inputStream);
+			prop.load(reader);
 			return X.castType(prop);
 		} catch (FileNotFoundException fe) {
 			return null; // 如果文件不存在，则返回 null
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new UncheckedIOException(e);
 		}
 	}
 
@@ -971,8 +979,7 @@ public abstract class FileX {
 	 *
 	 * @param pathname 指定的文件路径
 	 * @param inClassPath 是否相对于classpath类路径下
-	 * @return 对应的Properties对象(出于泛型兼容考虑 ， 以Map & lt ; String, String & gt ; 形式返回)。如果指定的文件不存在，则返回null
-	 * @author Ready
+	 * @return 对应的 Properties 对象(出于泛型兼容考虑 ， 以 Map < String, String > 形式返回)。如果指定的文件不存在，则返回 null
 	 * @since 0.3.1
 	 */
 	public static Map<String, String> readProperties(String pathname, boolean inClassPath) {
