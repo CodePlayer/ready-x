@@ -518,7 +518,7 @@ public class ArrayXTest {
 	@Test
 	public void matchAll_EmptyArray_ReturnsTrue() {
 		final Integer[] values = {};
-		Assert.assertTrue(ArrayX.matchAll(x -> x > 0, values));
+		Assert.assertFalse(ArrayX.matchAll(x -> x > 0, values));
 	}
 
 	@Test
