@@ -90,8 +90,8 @@ public class EasyDateTest implements WithAssertions {
 		final Locale defLocale = Locale.getDefault();
 		Locale.setDefault(Locale.CHINA);
 
-		// JDK 9+ 的月份采用的是阿拉伯数字
-		assertTrue(ArrayX.ins(d.toGMTNetString(), "星期四, 28 二月 2013 23:59:59 GMT", "星期四, 28 2月 2013 23:59:59 GMT"));
+		// JDK 9+ 输出的格式是后者
+		assertTrue(ArrayX.ins(d.toGMTNetString(), "星期四, 28 二月 2013 23:59:59 GMT", "周四, 28 2月 2013 23:59:59 GMT"));
 		assertTrue(ArrayX.ins(EasyDate.valueOf(baseDate).toGMTString(), "14 二月 2009 07:31:30 GMT", "14 2月 2009 07:31:30 GMT"));
 		Locale.setDefault(defLocale);
 
