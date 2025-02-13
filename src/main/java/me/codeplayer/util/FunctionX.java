@@ -1,6 +1,7 @@
 package me.codeplayer.util;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -23,7 +24,7 @@ public class FunctionX {
 
 	@SuppressWarnings("unchecked")
 	public static <K, T, L extends List<T>> Function<K, L> arrayListBuilder(int size) {
-		return k -> (L) (size == 10 ? new ArrayList<T>() : new ArrayList<T>(size));
+		return k -> (L) CollectionX.newArrayList(size);
 	}
 
 	public static <K, T, L extends List<T>> Function<K, L> arrayListBuilder() {
