@@ -100,7 +100,21 @@ public abstract class StringX {
 	 * @since 0.4.2
 	 */
 	public static StringBuilder getBuilder(final int extraCapacity, @Nullable CharSequence s1, @Nullable CharSequence s2, @Nullable CharSequence s3, @Nullable CharSequence s4) {
-		return new StringBuilder(extraCapacity + length(s1) + length(s2) + length(s3) + length(s4));
+		final int size1 = length(s1), size2 = length(s2), size3 = length(s3), size4 = length(s4);
+		final StringBuilder sb = new StringBuilder(extraCapacity + size1 + size2 + size3 + size4);
+		if (size1 > 0) {
+			sb.append(s1);
+		}
+		if (size2 > 0) {
+			sb.append(s2);
+		}
+		if (size3 > 0) {
+			sb.append(s3);
+		}
+		if (size4 > 0) {
+			sb.append(s4);
+		}
+		return sb;
 	}
 
 	/**
@@ -110,7 +124,7 @@ public abstract class StringX {
 	 * @since 0.4.2
 	 */
 	public static StringBuilder getBuilder(final int extraCapacity, @Nullable CharSequence s1, @Nullable CharSequence s2, @Nullable CharSequence s3) {
-		return new StringBuilder(extraCapacity + length(s1) + length(s2) + length(s3));
+		return getBuilder(extraCapacity, s1, s2, s3, null);
 	}
 
 	/**
@@ -120,7 +134,15 @@ public abstract class StringX {
 	 * @since 0.4.2
 	 */
 	public static StringBuilder getBuilder(final int extraCapacity, @Nullable CharSequence s1, @Nullable CharSequence s2) {
-		return new StringBuilder(extraCapacity + length(s1) + length(s2));
+		final int size1 = length(s1), size2 = length(s2);
+		final StringBuilder sb = new StringBuilder(extraCapacity + size1 + size2);
+		if (size1 > 0) {
+			sb.append(s1);
+		}
+		if (size2 > 0) {
+			sb.append(s2);
+		}
+		return sb;
 	}
 
 	/**
@@ -130,7 +152,7 @@ public abstract class StringX {
 	 * @since 0.4.2
 	 */
 	public static StringBuilder getBuilder(final int extraCapacity, @Nullable CharSequence s1) {
-		return new StringBuilder(extraCapacity + length(s1));
+		return getBuilder(extraCapacity, s1, null);
 	}
 
 	/**
@@ -239,14 +261,7 @@ public abstract class StringX {
 	 * @since 1.0.2
 	 */
 	public static boolean isAnyNotEmpty(@Nullable CharSequence... css) {
-		if (css != null) {
-			for (final CharSequence cs : css) {
-				if (notEmpty(cs)) {
-					return true;
-				}
-			}
-		}
-		return false;
+		return css != null && ArrayX.matchAny(StringX::notEmpty, css);
 	}
 
 	/**
@@ -281,13 +296,7 @@ public abstract class StringX {
 	 * @see #isEmpty(Object)
 	 */
 	public static boolean hasEmpty(Object... values) {
-		int length = ArrayX.getLength(values, true);
-		do {
-			if (isEmpty(values[--length])) {
-				return true;
-			}
-		} while (length > 0);
-		return false;
+		return ArrayX.matchAny(StringX::isEmpty, values);
 	}
 
 	/**
@@ -354,13 +363,7 @@ public abstract class StringX {
 	 * @since 0.0.1
 	 */
 	public static boolean hasBlank(Object... values) {
-		int length = ArrayX.getLength(values, true);
-		do {
-			if (isBlank(values[--length])) {
-				return true;
-			}
-		} while (length > 0);
-		return false;
+		return ArrayX.matchAny(StringX::isBlank, values);
 	}
 
 	/**
