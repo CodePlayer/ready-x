@@ -936,7 +936,15 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 				calendar.set(Calendar.DATE, 1);
 			case DAY_OF_WEEK: {
 				if (field == DAY_OF_WEEK) {
-					setWeekDay(1);
+					// SUNDAY(1), MONDAY(2), TUESDAY(3), WEDNESDAY(3), THURSDAY(5), FRIDAY(6), SATURDAY(7)
+					final int base = calendar.getFirstDayOfWeek(), current = calendar.get(DAY_OF_WEEK);
+					if (base != current) {
+						int diff = base - current;
+						if (diff > 0) {
+							diff -= 7;
+						}
+						calendar.add(Calendar.DATE, diff);
+					}
 				}
 			}
 			case Calendar.DATE:
@@ -1048,7 +1056,16 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 				calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DATE));
 			case DAY_OF_WEEK: {
 				if (field == DAY_OF_WEEK) {
-					setWeekDay(7); // 周日
+					// SUNDAY(1), MONDAY(2), TUESDAY(3), WEDNESDAY(3), THURSDAY(5), FRIDAY(6), SATURDAY(7)
+					final int base = calendar.getFirstDayOfWeek(), current = calendar.get(DAY_OF_WEEK);
+					int diff = base + 6 - current;
+					if (diff > 0) {
+						if (diff > 7) {
+							diff -= 7;
+						}
+						// SUNDAY(1) => 6, MONDAY(2) => 7, TUESDAY(3) => 1, WEDNESDAY(3) => 2, THURSDAY(5) => 3, FRIDAY(6) => 4, SATURDAY(7) => 5
+						calendar.add(Calendar.DATE, diff);
+					}
 				}
 			}
 			case Calendar.DATE:
