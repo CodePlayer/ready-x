@@ -6,8 +6,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import javax.annotation.Nullable;
 
-import me.codeplayer.util.NumberX;
-import me.codeplayer.util.StringX;
+import me.codeplayer.util.*;
 
 /**
  * 用于进行 Pipeline 初始化及附属校验器定义的辅助工具类
@@ -29,7 +28,7 @@ public interface Validators {
 	 * assert group
 	 */
 	Predicate<Object> assertIsNull = Objects::isNull;
-	Predicate<Object> assertNotNull = Objects::nonNull;
+	Predicate<Object> assertNotNull = FunctionX.nonNull();
 	Predicate<Object> assertNotEmpty = StringX::notEmpty;
 	Predicate<Object> assertNotBlank = StringX::notBlank;
 	Predicate<Object> assertIsNumber = NumberX::isNumber;

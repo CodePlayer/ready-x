@@ -317,7 +317,7 @@ public abstract class CollectionX {
 	 * @param keyMapper Map 的 {@code Entry.key} 转换器
 	 */
 	public static <K, V, M extends Map<K, V>> M toMap(final IntFunction<M> newMap, @Nullable final Iterable<V> items, final Function<? super V, K> keyMapper) {
-		return toMap(newMap, items, keyMapper, Function.identity());
+		return toMap(newMap, items, keyMapper, FunctionX.identity());
 	}
 
 	/**
