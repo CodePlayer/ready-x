@@ -8,7 +8,7 @@
 	<packaging>jar</packaging>
 
 	<name>ready-x</name>
-	<description>ready-x is a high-performance tool library for Java.</description>
+	<description>Ready-X is a high-performance Java tool library. It contains tool classes for high-performance processing of common text, arrays, collections, files, business calculations, random numbers, parameter validation, dates, etc.</description>
 	<url>https://github.com/CodePlayer/ready-x</url>
 
 	<properties>
