@@ -90,10 +90,10 @@ public class FileUtilTest {
 	@Test
 	public void calcFileSize() {
 		String fileSize = FileUtil.calcFileSize(10154, FileUtil.UNIT_AUTO);
-		assertEquals("9.92KB", fileSize);
+		assertEquals("9.91KB", fileSize);
 
 		fileSize = FileUtil.calcFileSize(37546126, FileUtil.UNIT_AUTO);
-		assertEquals("35.81MB", fileSize);
+		assertEquals("35.80MB", fileSize);
 
 		fileSize = FileUtil.calcFileSize(37546126, FileUtil.UNIT_AUTO, 2, RoundingMode.FLOOR);
 		assertEquals("35.80MB", fileSize);
@@ -102,7 +102,7 @@ public class FileUtilTest {
 		assertEquals("1.16GB", fileSize);
 
 		fileSize = FileUtil.calcFileSize(37546126, FileUtil.UNIT_KB);
-		assertEquals("36666.14KB", fileSize);
+		assertEquals("36666.13KB", fileSize);
 
 		fileSize = FileUtil.calcFileSize(37546126, FileUtil.UNIT_GB);
 		assertEquals("0.03GB", fileSize);

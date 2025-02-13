@@ -1,7 +1,8 @@
 package me.codeplayer.util;
 
-import java.math.*;
-import java.util.*;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 将阿拉伯数字形式的整数转换为中文大写形式的字符串的工具类
@@ -12,9 +13,9 @@ import java.util.*;
 public class ChineseNumber {
 
 	/** 中文大单位：'亿', '万' */
-	static final char[] BIG_UNITS = new char[] { '亿', '万' };
+	static final char[] BIG_UNITS = { '亿', '万' };
 	/** 中文货币单位：'圆', '角', '分' */
-	static final char[] CURRENCY_UNITS = new char[] { '圆', '角', '分' };
+	static final char[] CURRENCY_UNITS = { '圆', '角', '分' };
 	// properties
 	protected final String number;
 	/** 为null表示忽略小数；为""表示不忽略小数，但没有小数部分 */
@@ -61,7 +62,7 @@ public class ChineseNumber {
 			size++;
 		}
 		// 循环截取4位数字字符串组装成cell，放入List中
-		List<Cell> cells = new ArrayList<Cell>(size);
+		List<Cell> cells = new ArrayList<>(size);
 		do {
 			int startIndex = length - 4;
 			if (startIndex < 0) { // 如果开始索引小于0，重置为0
@@ -75,7 +76,7 @@ public class ChineseNumber {
 		boolean leftEndWithZero = false; // 指示当前计算单元左侧的单元是否以0结尾
 		while (index-- > 0) {
 			Cell cell = cells.get(index);
-			if (cell.chinese.length() > 0) {
+			if (!cell.chinese.isEmpty()) {
 				if (leftEndWithZero || cell.startWithZero) {
 					sb.append(style.getNumbersText()[0]);
 				}
@@ -143,9 +144,9 @@ public class ChineseNumber {
 	/**
 	 * 格式化指定的数值为中文字符串
 	 *
-	 * @param d             指定的数值
+	 * @param d 指定的数值
 	 * @param ignoreDecimal 是否忽略小数部分
-	 * @param style         指定中文字符串的格式
+	 * @param style 指定中文字符串的格式
 	 * @author Ready
 	 * @since 1.0
 	 */
@@ -160,9 +161,9 @@ public class ChineseNumber {
 	/**
 	 * 格式化指定的数值为中文字符串
 	 *
-	 * @param d             指定的数值
+	 * @param d 指定的数值
 	 * @param ignoreDecimal 是否忽略小数部分
-	 * @param style         指定中文字符串的格式
+	 * @param style 指定中文字符串的格式
 	 * @author Ready
 	 * @since 1.0
 	 */
@@ -177,9 +178,8 @@ public class ChineseNumber {
 	/**
 	 * 格式化指定的数值为中文字符串
 	 *
-	 * @param d     指定的数值
+	 * @param d 指定的数值
 	 * @param style 指定中文字符串的格式
-	 * @author Ready
 	 * @since 1.0
 	 */
 	public static String formatNumber(long d, FormatStyle style) {
@@ -245,6 +245,7 @@ public class ChineseNumber {
 				chinese = money.toString();
 			}
 		}
+
 	}
 
 	/**
@@ -254,7 +255,7 @@ public class ChineseNumber {
 	 * @since 2015年8月21日
 	 * @since 1.0
 	 */
-	public static enum FormatStyle {
+	public enum FormatStyle {
 		/**
 		 * 中文数字：'零', '一', '二', '三', '四', '五', '六', '七', '八', '九'<br>
 		 * 中文单位：'亿', '万', '千', '百', '十'
@@ -292,4 +293,5 @@ public class ChineseNumber {
 			return numbersText[Character.digit(ch, 10)];
 		}
 	}
+
 }

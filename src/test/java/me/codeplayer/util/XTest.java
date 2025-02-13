@@ -1,15 +1,15 @@
 package me.codeplayer.util;
 
-import static org.junit.Assert.*;
-
 import java.util.*;
-import java.util.function.*;
+import java.util.function.Supplier;
 
-import org.assertj.core.api.*;
-import org.junit.*;
-import org.mockito.*;
+import me.codeplayer.util.JSONUtilTest.User;
+import org.assertj.core.api.WithAssertions;
+import org.junit.Test;
+import org.mockito.Mockito;
 
-import me.codeplayer.util.JSONUtilTest.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class XTest implements WithAssertions {
 
@@ -37,7 +37,7 @@ public class XTest implements WithAssertions {
 		assertTrue(X.isValid(list));
 		assertFalse(X.isValid(Collections.emptyList()));
 
-		HashMap<Object, Object> map = CollectionUtil.ofHashMap("name", "James", "age", 18);
+		HashMap<Object, Object> map = CollectionUtil.asHashMap("name", "James", "age", 18);
 		assertTrue(X.isValid(map));
 		assertFalse(X.isValid(Collections.emptyMap()));
 	}
@@ -88,4 +88,5 @@ public class XTest implements WithAssertions {
 
 		Mockito.verify(user).getName();
 	}
+
 }

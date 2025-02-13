@@ -1,8 +1,11 @@
 package me.codeplayer.util;
 
 import java.lang.reflect.Array;
+import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.util.*;
 import java.util.function.*;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -17,6 +20,14 @@ public abstract class CollectionUtil {
 		if ((pairs.length & 1) != 0) {
 			throw new IllegalArgumentException("The length of the Array must be even:" + pairs.length);
 		}
+	}
+
+	public static <T> T get(@Nullable List<T> list, int index, T defaultValue) {
+		return list != null && list.size() > index ? list.get(index) : defaultValue;
+	}
+
+	public static <T> T get(@Nullable List<T> list, int index) {
+		return get(list, index, null);
 	}
 
 	/**
@@ -48,8 +59,12 @@ public abstract class CollectionUtil {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <E> Collection<E> addAll(Collection<E> target, @Nullable Predicate<? super E> filter, final E... elements) {
+		if (filter == null) {
+			Collections.addAll(target, elements);
+			return target;
+		}
 		for (E e : elements) {
-			if (filter == null || filter.test(e)) {
+			if (filter.test(e)) {
 				target.add(e);
 			}
 		}
@@ -89,22 +104,9 @@ public abstract class CollectionUtil {
 	 * @param elements 可变参数形式的元素数组
 	 */
 	@SuppressWarnings("unchecked")
-	public static <E, S extends Collection<E>> S ofSize(IntFunction<S> newList, E... elements) {
-		S list = newList.apply(elements.length);
-		addAll(list, elements);
-		return list;
-	}
-
-	/**
-	 * 根据可变参数形式的键值数组构造一个集合
-	 *
-	 * @param newList Collection 构造器
-	 * @param elements 可变参数形式的元素数组
-	 */
-	@SuppressWarnings("unchecked")
-	public static <E, S extends Collection<E>> S of(Supplier<S> newList, E... elements) {
-		S list = newList.get();
-		addAll(list, elements);
+	public static <E, S extends Collection<E>> S asList(IntFunction<S> newList, E... elements) {
+		final S list = newList.apply(elements.length);
+		Collections.addAll(list, elements);
 		return list;
 	}
 
@@ -115,10 +117,10 @@ public abstract class CollectionUtil {
 	 * @param elements 可变参数形式的元素数组
 	 */
 	@SuppressWarnings("unchecked")
-	public static <E, S extends Set<E>> S ofSet(IntFunction<S> newSet, E... elements) {
-		S list = newSet.apply(mapInitialCapacity(elements.length));
-		addAll(list, elements);
-		return list;
+	public static <E, S extends Set<E>> S asSet(IntFunction<S> newSet, E... elements) {
+		final S set = newSet.apply(elements.length);
+		Collections.addAll(set, elements);
+		return set;
 	}
 
 	/**
@@ -127,8 +129,22 @@ public abstract class CollectionUtil {
 	 * @param elements 可变参数形式的元素数组
 	 */
 	@SuppressWarnings("unchecked")
-	public static <E> HashSet<E> ofHashSet(E... elements) {
-		return ofSet(HashSet::new, elements);
+	public static <E> HashSet<E> asHashSet(E... elements) {
+		HashSet<E> set = newHashSet(elements.length);
+		Collections.addAll(set, elements);
+		return set;
+	}
+
+	/**
+	 * 根据可变参数形式的键值数组构造一个 HashSet 集合
+	 *
+	 * @param elements 可变参数形式的元素数组
+	 */
+	@SuppressWarnings("unchecked")
+	public static <E> LinkedHashSet<E> asLinkedHashSet(E... elements) {
+		LinkedHashSet<E> set = newLinkedHashSet(elements.length);
+		Collections.addAll(set, elements);
+		return set;
 	}
 
 	/**
@@ -137,8 +153,10 @@ public abstract class CollectionUtil {
 	 * @param elements 可变参数形式的元素数组
 	 */
 	@SuppressWarnings("unchecked")
-	public static <E> ArrayList<E> ofArrayList(E... elements) {
-		return ofSize(ArrayList::new, elements);
+	public static <E> ArrayList<E> asArrayList(E... elements) {
+		final ArrayList<E> list = newArrayList(elements.length);
+		Collections.addAll(list, elements);
+		return list;
 	}
 
 	/**
@@ -178,8 +196,21 @@ public abstract class CollectionUtil {
 	 *
 	 * @param elements 可变参数形式的元素数组
 	 */
-	public static <K, V> HashMap<K, V> ofHashMap(Object... elements) {
-		return toMap(HashMap::new, elements);
+	public static <K, V> HashMap<K, V> asHashMap(Object... elements) {
+		final HashMap<K, V> map = newHashMap(elements.length);
+		addAll(map, elements);
+		return map;
+	}
+
+	/**
+	 * 根据可变参数形式的键值数组构造一个 Map 集合<br/>
+	 *
+	 * @param elements 可变参数形式的元素数组
+	 */
+	public static <K, V> LinkedHashMap<K, V> asLinkedHashMap(Object... elements) {
+		final LinkedHashMap<K, V> map = newLinkedHashMap(elements.length);
+		addAll(map, elements);
+		return map;
 	}
 
 	/**
@@ -190,7 +221,8 @@ public abstract class CollectionUtil {
 	 * @param keyMapper Map 的 {@code Entry.key} 转换器
 	 * @param valueMapper Map 的 {@code Entry.value} 转换器
 	 */
-	public static <E, K, V, M extends Map<K, V>> M toMap(final IntFunction<M> newMap, final Iterable<E> items, final Function<? super E, K> keyMapper, final Function<? super E, V> valueMapper) {
+	public static <E, K, V, M extends Map<K, V>> M toMap(final IntFunction<M> newMap, @Nullable final Iterable<E> items, final Function<? super E, K> keyMapper,
+	                                                     final Function<? super E, V> valueMapper) {
 		int size = items instanceof Collection ? ((Collection<E>) items).size() : 0;
 		M map = newMap.apply(size > 0 ? mapInitialCapacity(size) : 16);
 		if (items != null) {
@@ -208,8 +240,8 @@ public abstract class CollectionUtil {
 	 * @param keyMapper Map 的 {@code Entry.key} 转换器
 	 * @param valueMapper Map 的 {@code Entry.value} 转换器
 	 */
-	public static <E, K, V> HashMap<K, V> toHashMap(final Iterable<E> items, final Function<? super E, K> keyMapper, final Function<? super E, V> valueMapper) {
-		return toMap(HashMap::new, items, keyMapper, valueMapper);
+	public static <E, K, V> HashMap<K, V> toHashMap(@Nullable final Iterable<E> items, final Function<? super E, K> keyMapper, final Function<? super E, V> valueMapper) {
+		return toMap(CollectionUtil::newHashMap, items, keyMapper, valueMapper);
 	}
 
 	/**
@@ -217,8 +249,27 @@ public abstract class CollectionUtil {
 	 *
 	 * @param size 预期的实际存储容量
 	 */
-	public static <K, V> HashMap<K, V> newHashMap(int size) {
-		return new HashMap<>(mapInitialCapacity(size));
+	public static <K, V> HashMap<K, V> newHashMap(final int size) {
+		if (size > 6 && size <= 12 || size == 0) {
+			return new HashMap<>();
+		} else if (size > 128) {
+			return new HashMap<>(mapInitialCapacity(size));
+		}
+		return new HashMap<>(size, 1F);
+	}
+
+	/**
+	 * 构造一个可以实际存储指定容量的 LinkedHashMap
+	 *
+	 * @param size 预期的实际存储容量
+	 */
+	public static <K, V> LinkedHashMap<K, V> newLinkedHashMap(final int size) {
+		if (size > 6 && size <= 12 || size == 0) {
+			return new LinkedHashMap<>();
+		} else if (size > 128) {
+			return new LinkedHashMap<>(mapInitialCapacity(size));
+		}
+		return new LinkedHashMap<>(size, 1F);
 	}
 
 	/**
@@ -227,7 +278,35 @@ public abstract class CollectionUtil {
 	 * @param size 预期的实际存储容量
 	 */
 	public static <K> HashSet<K> newHashSet(int size) {
-		return new HashSet<>(mapInitialCapacity(size));
+		if (size > 6 && size <= 12 || size == 0) {
+			return new HashSet<>();
+		} else if (size > 128) {
+			return new HashSet<>(mapInitialCapacity(size));
+		}
+		return new HashSet<>(size, 1F);
+	}
+
+	/**
+	 * 构造一个可以实际存储指定容量的 HashSet
+	 *
+	 * @param size 预期的实际存储容量
+	 */
+	public static <K> LinkedHashSet<K> newLinkedHashSet(int size) {
+		if (size > 6 && size <= 12 || size == 0) {
+			return new LinkedHashSet<>();
+		} else if (size > 128) {
+			return new LinkedHashSet<>(mapInitialCapacity(size));
+		}
+		return new LinkedHashSet<>(size, 1F);
+	}
+
+	/**
+	 * 构造一个可以实际存储指定容量的 HashSet
+	 *
+	 * @param size 预期的实际存储容量
+	 */
+	public static <E> ArrayList<E> newArrayList(int size) {
+		return size == 10 ? new ArrayList<>() : new ArrayList<>(size);
 	}
 
 	/**
@@ -237,7 +316,7 @@ public abstract class CollectionUtil {
 	 * @param items 需要放入 Map 集合的数据集合
 	 * @param keyMapper Map 的 {@code Entry.key} 转换器
 	 */
-	public static <K, V, M extends Map<K, V>> M toMap(final IntFunction<M> newMap, final Iterable<V> items, final Function<? super V, K> keyMapper) {
+	public static <K, V, M extends Map<K, V>> M toMap(final IntFunction<M> newMap, @Nullable final Iterable<V> items, final Function<? super V, K> keyMapper) {
 		return toMap(newMap, items, keyMapper, Function.identity());
 	}
 
@@ -247,8 +326,8 @@ public abstract class CollectionUtil {
 	 * @param items 需要放入 Map 集合的数据集合
 	 * @param keyMapper Map 的 {@code Entry.key} 转换器
 	 */
-	public static <K, V> HashMap<K, V> toHashMap(final Iterable<V> items, final Function<? super V, K> keyMapper) {
-		return toMap(HashMap::new, items, keyMapper);
+	public static <K, V> HashMap<K, V> toHashMap(@Nullable final Iterable<V> items, final Function<? super V, K> keyMapper) {
+		return toMap(CollectionUtil::newHashMap, items, keyMapper);
 	}
 
 	/**
@@ -257,28 +336,32 @@ public abstract class CollectionUtil {
 	 * @param map 指定的Map集合
 	 * @param valueClass 数组的组件类型
 	 * @param keys 指定的键数组
-	 * @author Ready
 	 * @since 0.3.1
 	 */
 	@SuppressWarnings("unchecked")
-	public static <K, V> V[] mapValues(Map<K, V> map, Class<V> valueClass, K... keys) {
-		V[] results = X.castType(Array.newInstance(valueClass, keys.length));
+	public static <K, V> V[] mapValues(@Nullable Map<K, V> map, Class<V> valueClass, K... keys) {
+		final V[] results = (V[]) Array.newInstance(valueClass, keys.length);
+		final boolean empty = map == null || map.isEmpty();
 		for (int i = 0; i < keys.length; i++) {
-			results[i] = map.get(keys[i]);
+			results[i] = empty ? null : map.get(keys[i]);
 		}
 		return results;
 	}
 
 	/**
-	 * 遍历集合，并使用指定的过滤器进行检测，返回遍历到的第一个符合条件的元素
+	 * 遍历集合，并使用指定的过滤器进行检测，返回遍历到的第一个符合条件的元素。这相当于
+	 * <pre><code>
+	 * range.stream().filter(filter).findFirst().orElse(null);
+	 * </code></pre>
+	 * 但性能更优
 	 *
 	 * @param filter 如果为 null，则默认为 true
 	 * @since 2.8.0
 	 */
-	public static <T> T findFirst(final Collection<T> range, @Nullable final Predicate<? super T> filter) {
+	public static <T> T findFirst(@Nullable final Collection<T> range, final Predicate<? super T> filter) {
 		if (range != null && !range.isEmpty()) {
 			for (T t : range) {
-				if (filter == null || filter.test(t)) {
+				if (filter.test(t)) {
 					return t;
 				}
 			}
@@ -287,11 +370,51 @@ public abstract class CollectionUtil {
 	}
 
 	/**
-	 * 遍历集合，并使用指定的过滤器进行检测，返回遍历到的第一个元素
+	 * 检查集合中是否存在至少一个符合指定条件的元素。这相当于
+	 * <pre><code>
+	 *  range.stream().anyMatch(filter);
+	 *  </code></pre>
+	 * 但性能更优
+	 *
+	 * @param filter 条件过滤器
+	 */
+	public static <T> boolean anyMatch(@Nullable final Collection<T> range, final Predicate<? super T> filter) {
+		return countMatches(range, filter, 1) > 0;
+	}
+
+	/**
+	 * 检索集合中符合条件的元素个数。这相当于
+	 * <pre><code>
+	 *  long count = range.stream().filter(matcher).count();
+	 *  return max <= 0 ? count : Math.min(count, max);
+	 *  </code></pre>
+	 * 但性能更优
+	 *
+	 * @param matcher 条件过滤器
+	 * @param max 限制返回的最大计数。如果为 0 或负数 表示不限制
+	 */
+	public static <T> int countMatches(@Nullable final Collection<T> range, final Predicate<? super T> matcher, final int max) {
+		int count = 0;
+		if (range != null && !range.isEmpty()) {
+			for (T t : range) {
+				if (matcher.test(t) && ++count == max) {
+					break;
+				}
+			}
+		}
+		return count;
+	}
+
+	/**
+	 * 遍历集合，并使用指定的过滤器进行检测，返回遍历到的第一个元素。这相当于
+	 * <pre><code>
+	 * range.stream().findFirst().orElse(null);
+	 * </code></pre>
+	 * 但性能更优
 	 *
 	 * @since 3.0.0
 	 */
-	public static <T> T getAny(final Collection<T> range) {
+	public static <T> T getAny(@Nullable final Collection<T> range) {
 		if (range != null && !range.isEmpty()) {
 			if (range instanceof List) {
 				return ((List<T>) range).get(0);
@@ -304,26 +427,261 @@ public abstract class CollectionUtil {
 	}
 
 	/**
-	 * 依次将集合中每个元素进行指定的映射，。并返回映射后的数组
+	 * 对指定集合进行进行转换，并返回转换后的 ArrayList 集合，这相当于
+	 * <pre><code>
+	 *  // allowNull = true
+	 *  c.stream().map(converter).collect(Collectors.toList());
 	 *
-	 * @param list 集合
-	 * @param fieldType 映射后的字段类型
-	 * @param mapper 映射转换器
+	 *  // allowNull = false
+	 *  c.stream().map(converter).filter(Objects::nonNull).collect(Collectors.toList());
+	 *  </code></pre>
+	 * 但性能更优
+	 *
+	 * @return 只有 {@code c == null}，才会返回 {@code null}
 	 */
-	@SuppressWarnings("unchecked")
-	public static <T, R> R[] mapField(Collection<T> list, Class<R> fieldType, Function<? super T, ? extends R> mapper) {
-		if (list == null) {
+	public static <E, R> ArrayList<R> toList(@Nullable Collection<E> c, Function<? super E, R> converter, boolean allowNull) {
+		return toCollection(c, converter, allowNull, CollectionUtil::newArrayList);
+	}
+
+	/**
+	 * 对指定集合进行进行转换，并返回转换后的 HashSet 集合，这相当于
+	 * <pre><code>
+	 *  // allowNull = true
+	 *  c.stream().map(converter).collect(Collectors.toSet());
+	 *
+	 *  // allowNull = false
+	 *  c.stream().map(converter).filter(Objects::nonNull).collect(Collectors.toSet());
+	 *  </code></pre>
+	 * 但性能更优
+	 *
+	 * @return 只有 {@code c == null}，才会返回 {@code null}
+	 */
+	public static <E, R> HashSet<R> toSet(Collection<E> c, Function<? super E, R> converter, boolean allowNull) {
+		return toCollection(c, converter, allowNull, CollectionUtil::newHashSet);
+	}
+
+	/**
+	 * 对指定集合进行进行转换，并返回转换后的 HashSet 集合，这相当于
+	 * <pre><code>
+	 *  c.stream().map(converter).collect(Collectors.toSet());
+	 *  </code></pre>
+	 * 但性能更优
+	 *
+	 * @return 只有 {@code c == null}，才会返回 {@code null}
+	 */
+	public static <E, R> HashSet<R> toSet(Collection<E> c, Function<? super E, R> converter) {
+		return toSet(c, converter, true);
+	}
+
+	/**
+	 * 对指定集合进行进行转换，并返回转换后的集合，这相当于
+	 * <pre><code>
+	 *  // allowNull = true
+	 *  c.stream().map(converter).collect(Collectors.toList/toSet());
+	 *
+	 *  // allowNull = false
+	 *  c.stream().map(converter).filter(Objects::nonNull).collect(Collectors.toList/toSet());
+	 *  </code></pre>
+	 * 但性能更优
+	 *
+	 * @return 如果 {@code c == null}，则返回 {@code null}
+	 */
+	public static <E, R, C extends Collection<R>> C toCollection(@Nullable Collection<E> c, Function<? super E, R> converter, boolean allowNull, IntFunction<? extends C> creator) {
+		if (c == null) {
 			return null;
 		}
-		int size = list.size();
-		final R[] arrays = (R[]) Array.newInstance(fieldType, size);
-		if (size > 0) {
-			int index = 0;
-			for (T t : list) {
-				arrays[index++] = mapper.apply(t);
+		final C values = creator.apply(c.size());
+		for (E t : c) {
+			R val = converter.apply(t);
+			if (allowNull || val != null) {
+				values.add(val);
 			}
 		}
-		return arrays;
+		return values;
+	}
+
+	/**
+	 * 对指定集合进行进行转换，并返回转换后的 ArrayList 集合，这相当于
+	 * <pre><code>
+	 *  c.stream().map(converter).collect(Collectors.toList());
+	 *  </code></pre>
+	 * 但性能更优
+	 *
+	 * @return 只有 {@code c == null}，才会返回 {@code null}
+	 */
+	public static <E, R> ArrayList<R> toList(@Nullable Collection<E> c, Function<? super E, R> converter) {
+		return toList(c, converter, true);
+	}
+
+	/**
+	 * 对指定集合进行分组，这相当于
+	 * <pre><code>
+	 *  c.stream().collect(Collectors.groupingBy(keyMapper));
+	 *  </code></pre>
+	 * 但性能更优
+	 */
+	@Nonnull
+	public static <K, V> Map<K, List<V>> groupBy(@Nullable final Collection<V> c, final Function<? super V, ? extends K> keyMapper) {
+		final int size = c == null ? 0 : c.size();
+		if (size == 0) {
+			return new HashMap<>();
+		}
+		final Map<K, List<V>> map = size <= 16 ? new HashMap<>(size, 1F) : new HashMap<>();
+		final Function<K, List<V>> listBuilder = k -> CollectionUtil.newArrayList(size);
+		for (V t : c) {
+			map.computeIfAbsent(keyMapper.apply(t), listBuilder).add(t);
+		}
+		return map;
+	}
+
+	/**
+	 * 返回从指定集合过滤并映射后的新集合，这相当于
+	 * <pre><code>
+	 *  c.stream().filter(filter).map(mapper).collect(Collectors.toList());
+	 *  </code></pre>
+	 * 但性能更优
+	 */
+	@Nonnull
+	public static <T, R> List<R> filterAndMap(@Nullable Collection<T> c, final Predicate<? super T> filter, final Function<? super T, R> mapper) {
+		final int size = c == null ? 0 : c.size();
+		if (size > 0) {
+			List<R> result = null;
+			for (T t : c) {
+				if (filter.test(t)) {
+					if (result == null) {
+						result = size > 10 ? new ArrayList<>() : new ArrayList<>(size);
+					}
+					result.add(mapper.apply(t));
+				}
+			}
+			if (result != null) {
+				return result;
+			}
+		}
+		return new ArrayList<>();
+	}
+
+	/**
+	 * 将 Map 集合中的键值对转换为 URL 参数格式的字符串。
+	 * 【注意】如果 {@link Map.Entry#getValue()} 为 {@code null}，则表示该键值对不会被拼接
+	 *
+	 * @param sb 用于拼接参数的 StringBuilder。如果为 {@code null}，则内部会在必要时创建一个新的 StringBuilder 对象
+	 * @param hasParam 之前是否已拼接了参数，如果为 {@code true}，则会在后续拼接的第一个参数前追加 '&' 符号。如果为 {@code null} 表示内部自动根据 {@code sb} 中的内容进行识别
+	 * @param urlSafeRequired 是否需要对参数值进行 URL 预编码（只有明确不会出现非安全字符时，才建议为  {@code false} ）
+	 * @param converter 对集合元素进行预处理的转换器，如果为 null 则表示无需预处理。如果转换后的结果为 {@code null}，则表示跳过该参数（不对其进行参数拼接）
+	 * @return 如果传入的 sb 为 {@code null} 且 {@code params} 为空，就会返回 {@code null}
+	 */
+	public static StringBuilder mapToParams(@Nullable StringBuilder sb, @Nullable Boolean hasParam, final @Nullable Map<String, ?> params, final boolean urlSafeRequired, final @Nullable Function<Map.Entry<String, Object>, Map.Entry<String, Object>> converter) {
+		if (params == null || params.isEmpty()) {
+			return sb;
+		}
+		boolean notFirst;
+		if (sb == null) {
+			sb = new StringBuilder(params.size() * 16);
+			notFirst = hasParam != null && hasParam;
+		} else {
+			notFirst = hasParam != null ? hasParam : sb.lastIndexOf("=") > -1;
+			sb.ensureCapacity(sb.length() + params.size() * 16);
+		}
+		for (Map.Entry<String, ?> entry : params.entrySet()) {
+			if (converter != null) {
+				entry = converter.apply(X.castType(entry));
+				if (entry == null) {
+					continue;
+				}
+			}
+			Object val = entry.getValue();
+			if (val != null) {
+				if (notFirst) {
+					sb.append('&');
+				} else {
+					notFirst = true;
+				}
+				sb.append(entry.getKey()).append('=');
+				if (val instanceof Number) {
+					if (val instanceof Integer) {
+						sb.append((int) val);
+					} else if (val instanceof Long) {
+						sb.append((long) val);
+					} else if (val instanceof BigDecimal) {
+						sb.append(((BigDecimal) val).toPlainString());
+					} else {
+						sb.append(val);
+					}
+					continue;
+				}
+				if (urlSafeRequired) { // 如果需要对 URL 编码安全，就需要对参数进行 URL 预编码
+					try {
+						sb.append(URLEncoder.encode(val.toString(), "UTF-8"));
+					} catch (java.io.UnsupportedEncodingException e) {
+						throw new IllegalArgumentException(e);
+					}
+				} else {
+					sb.append(val);
+				}
+			}
+		}
+		return sb;
+	}
+
+	/**
+	 * 将 Map 集合中的键值对转换为 URL 参数格式的字符串，如果参数值中存在不安全的字符，也会预先进行 URL 编码。
+	 * 【注意】如果 {@link Map.Entry#getValue()} 为 {@code null}，则表示该键值对不会被拼接
+	 *
+	 * @param sb 用于拼接参数的 StringBuilder。如果为 {@code null}，则内部会在必要时创建一个新的 StringBuilder 对象
+	 * @param hasParam 之前是否已拼接了参数，如果为 {@code true}，则会在后续拼接的第一个参数前追加 '&' 符号。如果为 {@code null} 表示内部自动根据 {@code sb} 中的内容进行识别
+	 * @param converter 对集合元素进行预处理的转换器，如果为 null 则表示无需预处理。如果转换后的结果为 {@code null}，则表示跳过该参数（不对其进行参数拼接）
+	 * @return 如果传入的 sb 为 {@code null} 且 {@code params} 为空，就会返回 {@code null}
+	 */
+	public static StringBuilder mapToParams(@Nullable StringBuilder sb, @Nullable Boolean hasParam, final @Nullable Map<String, ?> params, final @Nullable Function<Map.Entry<String, Object>, Map.Entry<String, Object>> converter) {
+		return mapToParams(sb, hasParam, params, true, converter);
+	}
+
+	/**
+	 * 将 Map 集合中的键值对转换为 URL 参数格式的字符串，如果参数值中存在不安全的字符，也会预先进行 URL 编码。
+	 * 【注意】如果参数值为 {@code null}，则表示该键值对不会被拼接
+	 *
+	 * @param sb 用于拼接参数的 StringBuilder。如果为 {@code null}，则内部会在必要时创建一个新的 StringBuilder 对象
+	 * @param hasParam 之前是否已拼接了参数，如果为 {@code true}，则会在后续拼接的第一个参数前追加 '&' 符号。如果为 {@code null} 表示内部自动根据 {@code sb} 中的内容进行识别
+	 * @return 如果传入的 sb 为 {@code null} 且 {@code params} 为空，就会返回 {@code null}
+	 */
+	public static StringBuilder mapToParams(@Nullable StringBuilder sb, @Nullable Boolean hasParam, final boolean urlSafeRequired, final @Nullable Map<String, ?> params) {
+		return mapToParams(sb, hasParam, params, urlSafeRequired, null);
+	}
+
+	/**
+	 * 将 Map 集合中的键值对转换为 URL 参数格式的字符串，如果参数值中存在不安全的字符，也会预先进行 URL 编码。
+	 * 【注意】如果参数值为 {@code null}，则表示该键值对不会被拼接
+	 *
+	 * @param sb 用于拼接参数的 StringBuilder。如果为 {@code null}，则内部会在必要时创建一个新的 StringBuilder 对象
+	 * @param hasParam 之前是否已拼接了参数，如果为 {@code true}，则会在后续拼接的第一个参数前追加 '&' 符号。如果为 {@code null} 表示内部自动根据 {@code sb} 中的内容进行识别
+	 * @return 如果传入的 sb 为 {@code null} 且 {@code params} 为空，就会返回 {@code null}
+	 */
+	public static StringBuilder mapToParams(@Nullable StringBuilder sb, @Nullable Boolean hasParam, final @Nullable Map<String, ?> params) {
+		return mapToParams(sb, hasParam, params, null);
+	}
+
+	/**
+	 * 将 Map 集合中的键值对转换为 URL 参数格式的字符串，如果参数值中存在不安全的字符，也会预先进行 URL 编码。
+	 * 【注意】如果参数值为 {@code null}，则表示该键值对不会被拼接
+	 *
+	 * @return 如果传入的 {@code params} 为空，则返回 ""
+	 */
+	@Nonnull
+	public static String mapToParams(final @Nullable Map<String, ?> params, final boolean urlSafeRequired) {
+		StringBuilder sb = mapToParams(null, Boolean.FALSE, params, urlSafeRequired, null);
+		return sb == null ? "" : sb.toString();
+	}
+
+	/**
+	 * 将 Map 集合中的键值对转换为 URL 参数格式的字符串，如果参数值中存在不安全的字符，也会预先进行 URL 编码。
+	 * 【注意】如果参数值为 {@code null}，则表示该键值对不会被拼接
+	 *
+	 * @return 如果传入的 {@code params} 为空，则返回 ""
+	 */
+	@Nonnull
+	public static String mapToParams(final @Nullable Map<String, ?> params) {
+		return mapToParams(params, true);
 	}
 
 }

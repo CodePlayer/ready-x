@@ -102,7 +102,6 @@ public abstract class NumberUtil {
 	 * @param value 指定的对象
 	 */
 	public static int getInt(Object value) {
-		Assert.notNull(value);
 		return value instanceof Number ? ((Number) value).intValue() : Integer.parseInt(value.toString());
 	}
 
@@ -137,9 +136,10 @@ public abstract class NumberUtil {
 	public static Integer getInteger(Object value, Integer defaultValue) {
 		if (value == null) {
 			return defaultValue;
-		}
-		if (value instanceof Number) {
-			return value.getClass() == Integer.class ? (Integer) value : ((Number) value).intValue();
+		} else if (value instanceof Integer) {
+			return (Integer) value;
+		} else if (value instanceof Number) {
+			return ((Number) value).intValue();
 		}
 		if (value instanceof CharSequence) {
 			final CharSequence cs = (CharSequence) value;
@@ -158,7 +158,6 @@ public abstract class NumberUtil {
 	 * @param value 指定的对象
 	 */
 	public static long getLong(Object value) {
-		Assert.notNull(value);
 		return value instanceof Number ? ((Number) value).longValue() : Long.parseLong(value.toString());
 	}
 
@@ -289,24 +288,26 @@ public abstract class NumberUtil {
 	public static BigDecimal getBigDecimal(Object value) {
 		if (value instanceof BigDecimal) {
 			return (BigDecimal) value;
-		}
-		if (value instanceof BigInteger) {
+		} else if (value instanceof BigInteger) {
 			return new BigDecimal((BigInteger) value);
-		}
-		if (value instanceof Integer || value instanceof Long) {
+		} else if (value instanceof Integer || value instanceof Long) {
 			return BigDecimal.valueOf(((Number) value).longValue());
 		}
 		return new BigDecimal(value.toString());
 	}
 
 	/**
-	 * 以BigDecimal形式返回指定的值<br>
-	 * 如果指定的值为null或无法转为BigDecimal形式，将返回指定的<code>defaultValue</code>
+	 * 以 BigDecimal 形式返回指定的值
 	 *
 	 * @param value 指定的对象
-	 * @param defaultIfEmpty 指定的默认值
+	 * @param defaultIfEmpty 如果 <code>value</code> 为 null 或 空字符串，将默认返回该参数。如果该参数不是 BigDecimal 类型，将尝试自动转换
+	 * @throws NumberFormatException 如果无法转为 BigDecimal 形式，将报错
+	 * @throws IllegalArgumentException 如果 <code>value</code> 非 Number、CharSequence 类型，将报错
 	 */
-	public static BigDecimal getBigDecimal(Object value, Object defaultIfEmpty) {
+	public static BigDecimal getBigDecimal(@Nullable Object value, @Nullable Object defaultIfEmpty) {
+		if (value instanceof Number) {
+			return getBigDecimal(value);
+		}
 		boolean empty = value == null;
 		if (!empty && value instanceof CharSequence) {
 			final CharSequence cs = (CharSequence) value;
@@ -512,9 +513,8 @@ public abstract class NumberUtil {
 				return allowZero ? val.intValue() >= 0 : val.intValue() > 0;
 			} else if (val instanceof Long) {
 				return allowZero ? val.longValue() >= 0 : val.longValue() > 0;
-			} else {
-				return allowZero ? val.doubleValue() >= 0 : val.doubleValue() > 0;
 			}
+			return allowZero ? val.doubleValue() >= 0 : val.doubleValue() > 0;
 		}
 		return false;
 	}

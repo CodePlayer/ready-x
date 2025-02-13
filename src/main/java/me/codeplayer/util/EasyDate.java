@@ -1,15 +1,16 @@
 package me.codeplayer.util;
 
-import java.io.*;
-import java.math.*;
-import java.sql.*;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.text.*;
-import java.util.Date;
 import java.util.*;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-import javax.annotation.*;
-
-import org.apache.commons.lang3.time.*;
+import org.apache.commons.lang3.time.FastDateFormat;
 
 import static java.util.Calendar.*;
 
@@ -64,9 +65,9 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 初始化日历对象相关设置
 	 */
 	protected void initCalendar(Calendar calendar) {
+		calendar.setLenient(false);
+		calendar.setFirstDayOfWeek(MONDAY);
 		this.calendar = calendar;
-		this.calendar.setLenient(false);
-		this.calendar.setFirstDayOfWeek(MONDAY);
 	}
 
 	/**
@@ -92,18 +93,26 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	}
 
 	/**
+	 * 根据指定的毫秒数构造对应时区的实例对象
+	 */
+	public EasyDate(long date, TimeZone timeZone) {
+		initCalendar(new GregorianCalendar(timeZone));
+		calendar.setTimeInMillis(date);
+	}
+
+	/**
 	 * 根据相对于指定时间的偏移值构造一个对应的实例对象<br>
-	 * 例如，当前时间为：2012-10-10 例如要创建一个2013-10-10的时间对象，new EasyDate(null, 1, 0, 0)即可;<br>
-	 * 创建一个2011-8-10的时间对象，new EasyDate(null, -1, -2, 0)或new EasyDate(null, 0, -14, 0)
+	 * 例如，当前时间为：2012-10-10 例如要创建一个2013-10-10的时间对象，<code>new EasyDate(null, 1, 0, 0)</code> 即可;<br>
+	 * 创建一个2011-8-10的时间对象，<code>new EasyDate(null, -1, -2, 0)</code> 或 <code>new EasyDate(null, 0, -14, 0)</code>
 	 *
 	 * @param date 指定的时间，作为偏移量的参考对象，如果为null，则默认使用当前时间作为参考对象<br>
-	 * 该对象支持java.util.Date、me.codeplayer.util.EasyDate、java.util. Calendar等对象及其子类实例
+	 * 该对象支持 {@link java.util.Date}、{@link me.codeplayer.util.EasyDate}、{@link java.util.Calendar}等对象及其子类实例
 	 * @param offsetYear 相对于当前时间的年份偏移量
 	 * @param offsetMonth 相对于当前时间的月份偏移量
 	 * @param offsetDay 相对于当前时间的日期偏移量
 	 */
 	private EasyDate(@Nullable Object date, int offsetYear, int offsetMonth, int offsetDay) {
-		this(getTimeOfDate(date));
+		this(getTimeOfDate(date, true));
 		if (offsetYear != 0) {
 			calendar.add(YEAR, offsetYear);
 		}
@@ -111,14 +120,14 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 			calendar.add(MONTH, offsetMonth);
 		}
 		if (offsetDay != 0) {
-			calendar.add(DAY_OF_MONTH, offsetDay);
+			calendar.add(Calendar.DATE, offsetDay);
 		}
 	}
 
 	/**
 	 * 根据相对于指定时间的偏移值构造一个对应的实例对象<br>
-	 * 例如，当前时间为：2012-10-10 例如要创建一个2013-10-10的时间对象，new EasyDate(null, 1, 0, 0)即可;<br>
-	 * 创建一个2011-8-10的时间对象，new EasyDate(null, -1, -2, 0)或new EasyDate(null, 0, -14, 0)
+	 * 例如，当前时间为：2012-10-10 例如要创建一个2013-10-10的时间对象，<code>new EasyDate(null, 1, 0, 0)</code> 即可;<br>
+	 * 创建一个2011-8-10的时间对象，<code>new EasyDate(null, -1, -2, 0)</code> 或 <code>new EasyDate(null, 0, -14, 0)</code>
 	 *
 	 * @param date 指定的时间，作为偏移量的参考对象，如果为null，则默认使用当前时间作为参考对象<br>
 	 * 该对象支持{@link java.util.Date}、{@link me.codeplayer.util.EasyDate}、 {@link java.util.Calendar}等对象及其子类实例
@@ -163,9 +172,12 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 返回自 1970 年 1 月 1 日 00:00:00 GMT 以来指定日期对象表示的毫秒数。<br>
 	 * 如果为null，则默认为当前时间
 	 */
-	public static long getTimeOfDate(@Nullable Object date) {
+	public static long getTimeOfDate(@Nullable Object date, boolean nullAsNow) {
 		long theTime;
 		if (date == null) {
+			if (!nullAsNow) {
+				throw new NullPointerException();
+			}
 			theTime = System.currentTimeMillis();
 		} else if (date instanceof Date) {
 			theTime = ((Date) date).getTime();
@@ -177,6 +189,14 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 			throw new ClassCastException(date.getClass().getName());
 		}
 		return theTime;
+	}
+
+	/**
+	 * 返回自 1970 年 1 月 1 日 00:00:00 GMT 以来指定日期对象表示的毫秒数。<br>
+	 * 如果为null，则默认为当前时间
+	 */
+	public static long getTimeOfDate(@Nonnull Object date) {
+		return getTimeOfDate(date, false);
 	}
 
 	/**
@@ -271,9 +291,9 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	public EasyDate set(int year, int month, int day, int... args) {
 		calendar.set(YEAR, year);
 		calendar.set(MONTH, month - 1);
-		calendar.set(DAY_OF_MONTH, day);
+		calendar.set(Calendar.DATE, day);
 		if (args.length > 0) {
-			int[] fields = new int[] { HOUR_OF_DAY, MINUTE, SECOND, MILLISECOND };
+			int[] fields = { HOUR_OF_DAY, MINUTE, SECOND, MILLISECOND };
 			int i = 0;
 			do {
 				calendar.set(fields[i], args[i]);
@@ -286,7 +306,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 获取日期的日；月份的第一天返回1
 	 */
 	public int getDay() {
-		return calendar.get(DAY_OF_MONTH);
+		return calendar.get(Calendar.DATE);
 	}
 
 	/**
@@ -300,7 +320,20 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 设置日期的日；月份的第一天为1
 	 */
 	public EasyDate setDay(int day) {
-		calendar.set(DAY_OF_MONTH, day);
+		calendar.set(Calendar.DATE, day);
+		return this;
+	}
+
+	/**
+	 * 设置为本周的周几
+	 *
+	 * @param dayOfWeek 1~7 表示 周一到周日
+	 */
+	public EasyDate setWeekDay(int dayOfWeek) {
+		final int current = getWeekDay();
+		if (current != dayOfWeek) {
+			addDay(dayOfWeek - current);
+		}
 		return this;
 	}
 
@@ -310,7 +343,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * @param day 指定的天数，可以为负数
 	 */
 	public EasyDate addDay(int day) {
-		calendar.add(DAY_OF_MONTH, day);
+		calendar.add(Calendar.DATE, day);
 		return this;
 	}
 
@@ -493,20 +526,20 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 		int length = date.length(); // 字符串长度
 		String format;
 		switch (length) {
-		case 10:// 2012-01-02
-			format = DATE;
-			break;
-		case 19:// 2012-01-02 13:22:56
-			format = DATETIME;
-			break;
-		case 8:// 20120126
-			format = SHORT_DATE;
-			break;
-		case 6:// 201206
-			format = YM_DATE;
-			break;
-		default:
-			throw new IllegalArgumentException("Unable to parse the date string because of unexpected format:" + date);
+			case 10:// 2012-01-02
+				format = DATE;
+				break;
+			case 19:// 2012-01-02 13:22:56
+				format = DATETIME;
+				break;
+			case 8:// 20120126
+				format = SHORT_DATE;
+				break;
+			case 6:// 201206
+				format = YM_DATE;
+				break;
+			default:
+				throw new IllegalArgumentException("Unable to parse the date string because of unexpected format:" + date);
 		}
 		return parseDate(format, date);
 	}
@@ -528,9 +561,6 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 如果指定对象对null，则返回null
 	 */
 	public static EasyDate valueOf(final Object dateObj) {
-		if (dateObj == null) {
-			throw new NullPointerException();
-		}
 		if (dateObj instanceof EasyDate) {
 			return (EasyDate) dateObj;
 		}
@@ -626,12 +656,10 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 		if (this == date) {
 			return 0;
 		}
-		if (date == null) {
-			throw new NullPointerException();
-		}
 		long diff = calendar.getTimeInMillis() - getTimeOfDate(date);
-		if (diff == 0)
+		if (diff == 0) {
 			return 0;
+		}
 		return diff > 0 ? 1 : -1;
 	}
 
@@ -644,56 +672,51 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * @param roundingMode 舍入模式
 	 */
 	public long calcDifference(Object date, int field, RoundingMode roundingMode) {
-		if (date == null) {
-			throw new NullPointerException();
-		}
-		long theMillis = getTimeOfDate(date),
-				diff = getTime() - theMillis; // 毫秒值差距
+		long theMillis = getTimeOfDate(date), diff = getTime() - theMillis; // 毫秒值差距
 
 		if (diff == 0) {
 			return 0;
 		}
 		switch (field) {
-		case YEAR:
-		case MONTH:
-			boolean isMax = diff > 0;
-			EasyDate me = new EasyDate(getTime());
-			EasyDate other = new EasyDate(theMillis);
-			EasyDate min = isMax ? other : me,
-					max = isMax ? me : other;
-			int diffOfYear = max.getYear() - min.getYear();
-			if (diffOfYear > 0) {
-				min.addYear(diffOfYear);
-			}
-			if (field == MONTH) {
-				int diffOfMonth = max.getMonth() - min.getMonth();
-				if (diffOfMonth != 0) {
-					min.addMonth(diffOfMonth);
+			case YEAR:
+			case MONTH:
+				boolean isMax = diff > 0;
+				EasyDate me = new EasyDate(getTime());
+				EasyDate other = new EasyDate(theMillis);
+				EasyDate min = isMax ? other : me, max = isMax ? me : other;
+				int diffOfYear = max.getYear() - min.getYear();
+				if (diffOfYear > 0) {
+					min.addYear(diffOfYear);
 				}
-				diff = diffOfYear * 12L + diffOfMonth;
-			} else {
-				diff = diffOfYear;
-			}
-			long prefix = max.getTime() - min.getTime();
-			if (prefix == 0) {
-				return diff;
-			}
-			long suffix;
-			if (prefix > 0) {
-				min.calendar.add(field, 1);
-				suffix = min.getTime() - max.getTime();
-			} else {
-				suffix = -prefix;
-				diff--;
-				min.calendar.add(field, -1);
-				prefix = max.getTime() - min.getTime();
-			}
-			double base = suffix > prefix ? 0.1 : 0.9;
-			diff = new BigDecimal(diff + base).setScale(0, roundingMode).longValue();
-			return isMax ? diff : -diff;
-		default:
-			long unit = getMillisOfUnit(field);
-			return BigDecimal.valueOf(diff).divide(BigDecimal.valueOf(unit), roundingMode).longValue();
+				if (field == MONTH) {
+					int diffOfMonth = max.getMonth() - min.getMonth();
+					if (diffOfMonth != 0) {
+						min.addMonth(diffOfMonth);
+					}
+					diff = diffOfYear * 12L + diffOfMonth;
+				} else {
+					diff = diffOfYear;
+				}
+				long prefix = max.getTime() - min.getTime();
+				if (prefix == 0) {
+					return diff;
+				}
+				long suffix;
+				if (prefix > 0) {
+					min.calendar.add(field, 1);
+					suffix = min.getTime() - max.getTime();
+				} else {
+					suffix = -prefix;
+					diff--;
+					min.calendar.add(field, -1);
+					prefix = max.getTime() - min.getTime();
+				}
+				double base = suffix > prefix ? 0.1 : 0.9;
+				diff = new BigDecimal(diff + base).setScale(0, roundingMode).longValue();
+				return isMax ? diff : -diff;
+			default:
+				long unit = getMillisOfUnit(field);
+				return BigDecimal.valueOf(diff).divide(BigDecimal.valueOf(unit), roundingMode).longValue();
 		}
 	}
 
@@ -715,7 +738,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * @param dateObj 与当前日期进行比较的日期
 	 */
 	public int calcDifference(Object dateObj) {
-		return (int) calcDifference(dateObj, DAY_OF_MONTH, RoundingMode.CEILING);
+		return (int) calcDifference(dateObj, Calendar.DATE, RoundingMode.CEILING);
 	}
 
 	/**
@@ -728,6 +751,16 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	}
 
 	/**
+	 * 判断指定年份是否为闰年
+	 *
+	 * @param year 例如 2012
+	 */
+	public static boolean isLeapYears(int year) {
+		// (year & 3) 等价于 (year % 4)
+		return (year & 3) == 0 && (year % 400 == 0 || year % 100 != 0);
+	}
+
+	/**
 	 * 判断当前日期年份是否为闰年
 	 */
 	public boolean isLeapYear() {
@@ -737,27 +770,83 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	/**
 	 * 获取指定日历单位所对应的毫秒值，单位仅支持"天"及其以下的单位
 	 *
-	 * @param field 该方法支持的字段有{@link Calendar#YEAR}、{@link Calendar#MONTH}、 {@link Calendar#DAY_OF_MONTH}、 {@link Calendar#HOUR_OF_DAY}、 {@link Calendar#MINUTE}、{@link Calendar#SECOND}
+	 * @param field 该方法支持的字段有{@link Calendar#YEAR}、{@link Calendar#MONTH}、 {@link Calendar#DATE}、 {@link Calendar#HOUR_OF_DAY}、 {@link Calendar#MINUTE}、{@link Calendar#SECOND}
 	 * @author Ready
 	 * @since 0.3.6
 	 */
 	public static long getMillisOfUnit(int field) {
 		switch (field) {
-		case DAY_OF_YEAR:
-		case DAY_OF_MONTH:
-			return MILLIS_OF_DAY;
-		case HOUR:
-		case HOUR_OF_DAY:
-			return MILLIS_OF_HOUR;
-		case MINUTE:
-			return MILLIS_OF_MINUTE;
-		case SECOND:
-			return 1000;
-		case MILLISECOND:
-			return 1;
-		default:
-			throw new IllegalArgumentException(String.valueOf(field));
+			case DAY_OF_YEAR:
+			case Calendar.DATE:
+				return MILLIS_OF_DAY;
+			case HOUR:
+			case HOUR_OF_DAY:
+				return MILLIS_OF_HOUR;
+			case MINUTE:
+				return MILLIS_OF_MINUTE;
+			case SECOND:
+				return 1000;
+			case MILLISECOND:
+				return 1;
+			default:
+				throw new IllegalArgumentException(String.valueOf(field));
 		}
+	}
+
+	/**
+	 * 比较两个以毫秒数表示的时间值是否处于同一年/月/天/小时/分钟/秒/毫秒
+	 *
+	 * @param a 时间 a
+	 * @param b 时间 b
+	 * @param inField 指定用于判断是否为同一值的时间单位字段，可以使用Calendar类的单位常量
+	 * @param timeZone 用于比较的基准时区
+	 * @see Calendar#YEAR
+	 * @see Calendar#MONTH
+	 * @see Calendar#WEEK_OF_YEAR
+	 * @see Calendar#WEEK_OF_MONTH
+	 * @see Calendar#DAY_OF_YEAR
+	 * @see Calendar#DATE
+	 * @see Calendar#HOUR
+	 * @see Calendar#HOUR_OF_DAY
+	 * @see Calendar#MINUTE
+	 * @see Calendar#SECOND
+	 * @see Calendar#MILLISECOND
+	 * @since 0.3.6
+	 */
+	public static boolean isSameAs(long a, long b, int inField, final TimeZone timeZone) {
+		if (a == b) {
+			return true;
+		}
+		if (inField > WEEK_OF_MONTH) {
+			long unit = getMillisOfUnit(inField);
+			long diff = a - b;
+			if (diff > -unit && diff < unit) {
+				long offset = (a + timeZone.getRawOffset()) % unit - diff;
+				return 0 <= offset && offset < unit;
+			}
+		} else {
+			final Locale locale = Locale.getDefault(Locale.Category.FORMAT);
+			final Calendar ac = Calendar.getInstance(timeZone, locale);
+			ac.setTimeInMillis(a);
+			final Calendar bc = Calendar.getInstance(timeZone, locale);
+			bc.setTimeInMillis(b);
+			switch (inField) {
+				case WEEK_OF_YEAR:
+				case WEEK_OF_MONTH:
+					if (ac.get(WEEK_OF_MONTH) != bc.get(WEEK_OF_MONTH)) {
+						break;
+					}
+				case MONTH:
+					if (ac.get(MONTH) != bc.get(MONTH)) {
+						break;
+					}
+				case YEAR:
+					return ac.get(ERA) == bc.get(ERA) && ac.get(YEAR) == bc.get(YEAR);
+				default:
+					throw new IllegalArgumentException(String.valueOf(inField));
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -772,7 +861,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * @see Calendar#WEEK_OF_YEAR
 	 * @see Calendar#WEEK_OF_MONTH
 	 * @see Calendar#DAY_OF_YEAR
-	 * @see Calendar#DAY_OF_MONTH
+	 * @see Calendar#DATE
 	 * @see Calendar#HOUR
 	 * @see Calendar#HOUR_OF_DAY
 	 * @see Calendar#MINUTE
@@ -781,36 +870,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * @since 0.3.6
 	 */
 	public static boolean isSameAs(long a, long b, int inField) {
-		if (a == b) {
-			return true;
-		}
-		if (inField > WEEK_OF_MONTH) {
-			long unit = getMillisOfUnit(inField);
-			long diff = a - b;
-			if (diff > -unit && diff < unit) {
-				long offset = (a + TimeZone.getDefault().getRawOffset()) % unit - diff;
-				return 0 <= offset && offset < unit;
-			}
-		} else {
-			Calendar ac = Calendar.getInstance();
-			ac.setTimeInMillis(a);
-			Calendar bc = Calendar.getInstance();
-			bc.setTimeInMillis(b);
-			switch (inField) {
-			case WEEK_OF_YEAR:
-			case WEEK_OF_MONTH:
-				if (ac.get(WEEK_OF_MONTH) != bc.get(WEEK_OF_MONTH))
-					break;
-			case MONTH:
-				if (ac.get(MONTH) != bc.get(MONTH))
-					break;
-			case YEAR:
-				return ac.get(ERA) == bc.get(ERA) && ac.get(YEAR) == bc.get(YEAR);
-			default:
-				throw new IllegalArgumentException(String.valueOf(inField));
-			}
-		}
-		return false;
+		return isSameAs(a, b, inField, TimeZone.getDefault());
 	}
 
 	/**
@@ -822,7 +882,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * @see Calendar#YEAR
 	 * @see Calendar#MONTH
 	 * @see Calendar#WEEK_OF_MONTH
-	 * @see Calendar#DAY_OF_MONTH
+	 * @see Calendar#DATE
 	 * @see Calendar#HOUR_OF_DAY
 	 * @see Calendar#MINUTE
 	 * @see Calendar#SECOND
@@ -830,7 +890,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * @since 0.3.6
 	 */
 	public boolean isSameAs(Object date, int inField) {
-		return isSameAs(getTime(), getTimeOfDate(date), inField);
+		return isSameAs(getTime(), getTimeOfDate(date), inField, getTimeZone());
 	}
 
 	/**
@@ -844,7 +904,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * @see Calendar#YEAR
 	 * @see Calendar#MONTH
 	 * @see Calendar#WEEK_OF_MONTH
-	 * @see Calendar#DAY_OF_MONTH
+	 * @see Calendar#DATE
 	 * @see Calendar#HOUR_OF_DAY
 	 * @see Calendar#MINUTE
 	 * @see Calendar#SECOND
@@ -852,7 +912,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * @since 0.3.6
 	 */
 	public static boolean isSameAs(Object a, Object b, int inField) {
-		return isSameAs(getTimeOfDate(a), getTimeOfDate(b), inField);
+		return isSameAs(getTimeOfDate(a), getTimeOfDate(b), inField, TimeZone.getDefault());
 	}
 
 	/**
@@ -868,32 +928,53 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * @since 0.3
 	 */
 	public int getLastDayOfMonth() {
-		return calendar.getActualMaximum(DAY_OF_MONTH);
+		return calendar.getActualMaximum(Calendar.DATE);
 	}
 
 	/**
 	 * 将当前实例设置为指定时间字段范围内所能表示的最小值
 	 *
-	 * @param field 该方法支持的字段有{@link Calendar#YEAR}、{@link Calendar#MONTH}、 {@link Calendar#DAY_OF_MONTH}、 {@link Calendar#HOUR_OF_DAY}、 {@link Calendar#MINUTE}、{@link Calendar#SECOND}
+	 * @param field 该方法支持的字段请参见参阅
+	 * @see Calendar#YEAR
+	 * @see Calendar#MONTH
+	 * @see Calendar#DAY_OF_WEEK
+	 * @see Calendar#DATE
+	 * @see Calendar#HOUR_OF_DAY
+	 * @see Calendar#MINUTE
+	 * @see Calendar#SECOND
 	 * @since 0.3
 	 */
 	public EasyDate beginOf(int field) {
 		switch (field) {
-		case YEAR:
-			calendar.set(MONTH, 0);
-		case MONTH:
-			calendar.set(DAY_OF_MONTH, 1);
-		case DAY_OF_MONTH:
-			calendar.set(HOUR_OF_DAY, 0);
-		case HOUR_OF_DAY:
-			calendar.set(MINUTE, 0);
-		case MINUTE:
-			calendar.set(SECOND, 0);
-		case SECOND:
-			calendar.set(MILLISECOND, 0);
-			break;
-		default:
-			throw new IllegalArgumentException(String.valueOf(field));
+			case YEAR:
+				calendar.set(MONTH, 0);
+			case MONTH:
+				calendar.set(Calendar.DATE, 1);
+			case DAY_OF_WEEK: {
+				if (field == DAY_OF_WEEK) {
+					// SUNDAY(1), MONDAY(2), TUESDAY(3), WEDNESDAY(3), THURSDAY(5), FRIDAY(6), SATURDAY(7)
+					final int base = calendar.getFirstDayOfWeek(), current = calendar.get(DAY_OF_WEEK);
+					if (base != current) {
+						int diff = base - current;
+						if (diff > 0) {
+							diff -= 7;
+						}
+						calendar.add(Calendar.DATE, diff);
+					}
+				}
+			}
+			case Calendar.DATE:
+				calendar.set(HOUR_OF_DAY, 0);
+			case HOUR:
+			case HOUR_OF_DAY:
+				calendar.set(MINUTE, 0);
+			case MINUTE:
+				calendar.set(SECOND, 0);
+			case SECOND:
+				calendar.set(MILLISECOND, 0);
+				break;
+			default:
+				throw new IllegalArgumentException(String.valueOf(field));
 		}
 		return this;
 	}
@@ -901,30 +982,18 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	/**
 	 * 将当前实例设置为指定时间字段范围内所能表示的最小值
 	 *
-	 * @param field 该方法支持的字段有{@link Calendar#YEAR}、{@link Calendar#MONTH}、 {@link Calendar#DAY_OF_MONTH}、 {@link Calendar#HOUR_OF_DAY}、 {@link Calendar#MINUTE}、{@link Calendar#SECOND}
+	 * @param field 该方法支持的字段请参见参阅
+	 * @see Calendar#YEAR
+	 * @see Calendar#MONTH
+	 * @see Calendar#DAY_OF_WEEK
+	 * @see Calendar#DATE
+	 * @see Calendar#HOUR_OF_DAY
+	 * @see Calendar#MINUTE
+	 * @see Calendar#SECOND
 	 * @since 0.3
 	 */
-	@SuppressWarnings("deprecation")
 	public static Date beginOf(Date d, int field) {
-		switch (field) {
-		case YEAR:
-			d.setMonth(JANUARY);
-		case MONTH:
-			d.setDate(1);
-		case DAY_OF_MONTH:
-			d.setHours(0);
-		case HOUR_OF_DAY:
-		case HOUR:
-			d.setMinutes(0);
-		case MINUTE:
-			d.setSeconds(0);
-		case SECOND:
-			d.setTime(d.getTime() / 1000 * 1000);
-			break;
-		default:
-			throw new IllegalArgumentException(String.valueOf(field));
-		}
-		return d;
+		return new EasyDate(d).beginOf(field).toDate();
 	}
 
 	/**
@@ -968,7 +1037,12 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	}
 
 	/**
-	 * 获取本地时间相对于GMT时间的偏移分钟数
+	 * 获取本地时间相对于GMT时间的偏移分钟数。例如：
+	 * <pre><code>
+	 * "GMT+8" 将返回 480
+	 * "GMT-4" 将返回 -240
+	 * "GMT+5:30" 将返回 330
+	 * </code></pre>
 	 *
 	 * @since 0.3
 	 */
@@ -980,27 +1054,48 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	/**
 	 * 将当前实例设置为指定时间字段所能表示的最大值
 	 *
-	 * @param field 该方法支持的字段有{@link Calendar#YEAR}、{@link Calendar#MONTH}、 {@link Calendar#DAY_OF_MONTH}、 {@link Calendar#HOUR_OF_DAY}、 {@link Calendar#MINUTE}、{@link Calendar#SECOND}
+	 * @param field 该方法支持的字段请参见参阅
+	 * @see Calendar#YEAR
+	 * @see Calendar#MONTH
+	 * @see Calendar#DAY_OF_WEEK
+	 * @see Calendar#DATE
+	 * @see Calendar#HOUR_OF_DAY
+	 * @see Calendar#MINUTE
+	 * @see Calendar#SECOND
 	 * @since 0.3
 	 */
 	public EasyDate endOf(int field) {
 		switch (field) {
-		case YEAR:
-			calendar.set(MONTH, DECEMBER);
-		case MONTH:
-			calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(DAY_OF_MONTH));
-		case DAY_OF_MONTH:
-			calendar.set(HOUR_OF_DAY, 23);
-		case HOUR_OF_DAY:
-		case HOUR:
-			calendar.set(MINUTE, 59);
-		case MINUTE:
-			calendar.set(SECOND, 59);
-		case SECOND:
-			calendar.set(MILLISECOND, 999);
-			break;
-		default:
-			throw new IllegalArgumentException(String.valueOf(field));
+			case YEAR:
+				calendar.set(MONTH, DECEMBER);
+			case MONTH:
+				calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DATE));
+			case DAY_OF_WEEK: {
+				if (field == DAY_OF_WEEK) {
+					// SUNDAY(1), MONDAY(2), TUESDAY(3), WEDNESDAY(3), THURSDAY(5), FRIDAY(6), SATURDAY(7)
+					final int base = calendar.getFirstDayOfWeek(), current = calendar.get(DAY_OF_WEEK);
+					int diff = base + 6 - current;
+					if (diff > 0) {
+						if (diff > 7) {
+							diff -= 7;
+						}
+						// SUNDAY(1) => 6, MONDAY(2) => 7, TUESDAY(3) => 1, WEDNESDAY(3) => 2, THURSDAY(5) => 3, FRIDAY(6) => 4, SATURDAY(7) => 5
+						calendar.add(Calendar.DATE, diff);
+					}
+				}
+			}
+			case Calendar.DATE:
+				calendar.set(HOUR_OF_DAY, 23);
+			case HOUR:
+			case HOUR_OF_DAY:
+				calendar.set(MINUTE, 59);
+			case MINUTE:
+				calendar.set(SECOND, 59);
+			case SECOND:
+				calendar.set(MILLISECOND, 999);
+				break;
+			default:
+				throw new IllegalArgumentException(String.valueOf(field));
 		}
 		return this;
 	}
@@ -1008,52 +1103,40 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	/**
 	 * 将当前实例设置为指定时间字段所能表示的最大值
 	 *
-	 * @param field 该方法支持的字段有{@link Calendar#YEAR}、{@link Calendar#MONTH}、 {@link Calendar#DAY_OF_MONTH}、 {@link Calendar#HOUR_OF_DAY}、 {@link Calendar#MINUTE}、{@link Calendar#SECOND}
+	 * @param field 该方法支持的字段请参见参阅
+	 * @see Calendar#YEAR
+	 * @see Calendar#MONTH
+	 * @see Calendar#DAY_OF_WEEK
+	 * @see Calendar#DATE
+	 * @see Calendar#HOUR_OF_DAY
+	 * @see Calendar#MINUTE
+	 * @see Calendar#SECOND
 	 * @since 0.3
 	 */
-	@SuppressWarnings("deprecation")
 	public static Date endOf(Date d, int field) {
-		switch (field) {
-		case YEAR:
-			d.setMonth(DECEMBER);
-		case MONTH:
-			d.setDate(getMaxDayOfMonth(d));
-		case DAY_OF_MONTH:
-			d.setHours(23);
-		case HOUR_OF_DAY:
-		case HOUR:
-			d.setMinutes(59);
-		case MINUTE:
-			d.setSeconds(59);
-		case SECOND:
-			d.setTime(d.getTime() / 1000L * 1000L + 999L);
-			break;
-		default:
-			throw new IllegalArgumentException(String.valueOf(field));
-		}
-		return d;
+		return new EasyDate(d).endOf(field).toDate();
 	}
 
 	@SuppressWarnings("deprecation")
 	public static int getMaxDayOfMonth(Date d) {
 		final int month = d.getMonth();
 		switch (month) {
-		case JANUARY:
-		case MARCH:
-		case MAY:
-		case JULY:
-		case AUGUST:
-		case OCTOBER:
-		case DECEMBER:
-			return 31;
-		case FEBRUARY:
-			int year = d.getYear() + 1900;
-			if (year % 4 == 0 && (year % 400 == 0 || year % 100 != 0)) {
-				return 29;
-			}
-			return 28;
-		default:
-			return 30;
+			case JANUARY:
+			case MARCH:
+			case MAY:
+			case JULY:
+			case AUGUST:
+			case OCTOBER:
+			case DECEMBER:
+				return 31;
+			case FEBRUARY:
+				int year = d.getYear() + 1900;
+				if (year % 4 == 0 && (year % 400 == 0 || year % 100 != 0)) {
+					return 29;
+				}
+				return 28;
+			default:
+				return 30;
 		}
 	}
 
@@ -1073,8 +1156,9 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
+		}
 		if (obj instanceof EasyDate) {
 			EasyDate other = (EasyDate) obj;
 			return calendar != null && calendar.equals(other.calendar);
@@ -1100,7 +1184,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 
 	static String toString(int year, int month, int day) {
 		// "0000-00-00".toCharArray();
-		char[] chars = new char[] { '0', '0', '0', '0', '-', '0', '0', '-', '0', '0' };
+		char[] chars = { '0', '0', '0', '0', '-', '0', '0', '-', '0', '0' };
 		formatNormalDate(chars, 0, year, month, day);
 		return new String(chars);
 	}
@@ -1117,7 +1201,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 */
 	public static String toDateString(int year, int month, int day) {
 		// "0000年00月00日".toCharArray();
-		char[] chars = new char[] { '0', '0', '0', '0', '年', '0', '0', '月', '0', '0', '日' };
+		char[] chars = { '0', '0', '0', '0', '年', '0', '0', '月', '0', '0', '日' };
 		formatNormalDate(chars, 0, year, month, day);
 		return new String(chars);
 	}
@@ -1298,15 +1382,15 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	}
 
 	/**
-	 * 判断两个日期对象是否是同一天（不考虑时区差异）
+	 * 判断两个日期对象是否是同一天（基于系统时区）
 	 */
 	@SuppressWarnings("deprecation")
 	public static boolean isSameDay(final Date a, final Date b) {
 		if (a == null || b == null) {
 			return false;
 		}
-		return a == b || (Math.abs(a.getTime() - b.getTime()) < MILLIS_OF_DAY && a.getYear() == b.getYear()
-				&& a.getMonth() == b.getMonth() && a.getDate() == b.getDate());
+		return a == b || (Math.abs(a.getTime() - b.getTime()) < MILLIS_OF_DAY && a.getDate() == b.getDate())
+				&& a.getMonth() == b.getMonth() && a.getYear() == b.getYear();
 	}
 
 }

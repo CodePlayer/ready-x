@@ -20,8 +20,7 @@ public abstract class ThreadLocalUtil {
 	public static Map<Object, Object> getMap() {
 		Map<Object, Object> cache = LOCAL_CACHE.get();
 		if (cache == null) {
-			cache = new HashMap<>();
-			LOCAL_CACHE.set(cache);
+			LOCAL_CACHE.set(cache = new HashMap<>());
 		}
 		return cache;
 	}

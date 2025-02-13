@@ -1,14 +1,14 @@
 package me.codeplayer.util;
 
 import java.io.*;
-import java.math.*;
-import java.nio.channels.*;
-import java.nio.file.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.nio.channels.FileChannel;
+import java.nio.file.AccessDeniedException;
 import java.util.*;
+import javax.annotation.Nullable;
 
-import javax.annotation.*;
-
-import org.apache.commons.lang3.time.*;
+import org.apache.commons.lang3.time.FastDateFormat;
 
 /**
  * 用于文件操作的公共工具类
@@ -21,7 +21,7 @@ public abstract class FileUtil {
 	/**
 	 * 用于表示文件大小的单位
 	 */
-	private static final String[] FILE_UNITS = new String[] { "Byte", "KB", "MB", "GB", "TB", "PB" };
+	private static final String[] FILE_UNITS = { "Byte", "KB", "MB", "GB", "TB", "PB", "EB" };
 	/** 单位：自动判断 */
 	public static final int UNIT_AUTO = 0;
 	/** 单位：字节 */
@@ -36,17 +36,34 @@ public abstract class FileUtil {
 	public static final int UNIT_TB = 5;
 	/** 单位：PB */
 	public static final int UNIT_PB = 6;
+	/** 单位：EB */
+	public static final int UNIT_EB = 7;
+
+	private static RoundingMode fileSizeRoundingMode = RoundingMode.FLOOR;
+
+	public static void setFileSizeRoundingMode(RoundingMode roundingMode) {
+		fileSizeRoundingMode = Objects.requireNonNull(roundingMode);
+	}
 
 	/**
 	 * 根据文件名称返回对应的扩展名在字符串中的索引值
 	 *
 	 * @param filename 指定的文件名
 	 * @return 返回扩展名分隔符'.'对应的索引值，如果不存在则返回 -1
-	 * @author Ready
 	 */
 	public static int indexOfExtension(String filename) {
-		int pos = filename.lastIndexOf('.');
-		if (pos != -1) {
+		return indexOfExtension(filename, true);
+	}
+
+	/**
+	 * 根据文件名称返回对应的扩展名在字符串中的索引值
+	 *
+	 * @param filename 指定的文件名
+	 * @return 返回扩展名分隔符'.'对应的索引值，如果不存在则返回 -1
+	 */
+	public static int indexOfExtension(String filename, boolean backScanDirSeparator) {
+		final int pos = filename.lastIndexOf('.');
+		if (backScanDirSeparator && pos != -1) {
 			if (filename.indexOf('/', pos + 1) != -1) {
 				return -1;
 			}
@@ -108,8 +125,18 @@ public abstract class FileUtil {
 	 */
 	public static String getFileName(String path, boolean withoutExt) {
 		String str = new File(path).getName();
+		int pos = str.lastIndexOf('/');
+		if (pos != -1) {
+			int pos2 = str.indexOf('\\', pos + 1);
+			str = str.substring(Math.max(pos, pos2) + 1);
+		} else {
+			pos = str.lastIndexOf('\\');
+			if (pos != -1) {
+				str = str.substring(pos + 1);
+			}
+		}
 		if (withoutExt) {
-			int pos = indexOfExtension(path);
+			pos = indexOfExtension(str, false);
 			if (pos > -1) {
 				str = str.substring(0, pos);
 			}
@@ -118,19 +145,21 @@ public abstract class FileUtil {
 	}
 
 	/**
-	 * 获取随机文件名，根据当前时间采用随机算法自动生成，并且内部保证本地没有重复文件名的文件
+	 * 获取具有随机文件名的文件对象，文件名会根据当前时间采用随机算法自动生成，并且内部保证本地没有重名的文件
 	 *
-	 * @param prefix 文件名前缀(可以为null)
+	 * @param path 文件路径
+	 * @param prefix 文件名的补充前缀(可以为null)
+	 * @param suffix 文件名后缀，例如 ".png" 或 "png"
 	 * @since 0.0.1
 	 */
-	public static File getRandomFile(String path, String prefix, String suffix, Date now) {
+	public static File getRandomFile(String path, @Nullable String prefix, @Nullable String suffix, Date now) {
 		String fileName = FastDateFormat.getInstance("yyyyMMdd-HHmmssSSS").format(now);
 		if (prefix != null) {
 			fileName = prefix + fileName;
 		}
 		if (suffix == null) {
 			suffix = "";
-		} else if (suffix.length() > 0) { // 如果有后缀就+"."
+		} else if (!suffix.isEmpty()) { // 如果有后缀就+"."
 			if (suffix.charAt(0) != '.') {
 				suffix = '.' + suffix;
 			}
@@ -165,24 +194,24 @@ public abstract class FileUtil {
 
 	/**
 	 * 根据文件的字节数量计算出改文件为多少"Byte"/"KB"/"MB"/"GB"/"TB"/"PB"<br>
-	 * 如果unit为 UNIT_AUTO(0)，则根据文件大小自动选择单位，如果存在小数均保留<code>scale</code>位小数<br>
+	 * 如果unit为 UNIT_AUTO(0)，则根据文件大小自动选择单位，如果存在小数均保留<code>scale</code>位小数
 	 *
-	 * @param fileSize     指定的文件大小
-	 * @param unit         指定的文件单位
-	 * @param scale        保留的小数位数
+	 * @param fileSize 指定的文件大小
+	 * @param unit 指定的文件单位
+	 * @param scale 保留的小数位数
 	 * @param roundingMode 舍入模式
 	 * @since 0.0.1
 	 */
 	public static String calcFileSize(long fileSize, int unit, int scale, RoundingMode roundingMode) {
 		if (fileSize < 0) {
-			throw new IllegalArgumentException("Argument 'fileSize' can not less than 0:" + fileSize);
+			throw new IllegalArgumentException("fileSize can not less than 0: " + fileSize);
 		}
-		if (unit < UNIT_AUTO || unit > UNIT_PB) {
+		if (unit < UNIT_AUTO || unit > UNIT_EB) {
 			throw new IllegalArgumentException(String.valueOf(unit));
 		}
 		if (unit != UNIT_AUTO) {
 			int shift = unit - 1;
-			return divide(fileSize, 1L << (10 * shift), scale) + FILE_UNITS[shift];
+			return divide(fileSize, 1L << (10 * shift), scale, roundingMode) + FILE_UNITS[shift];
 		}
 		// 如果没有传入单位，则自动识别
 		int shift = 0;
@@ -197,24 +226,26 @@ public abstract class FileUtil {
 	}
 
 	/**
-	 * 根据文件的字节数量计算出改文件为多少"Byte"/"KB"/"MB"/"GB"/"TB"/"PB"<br>
-	 * 如果unit为 UNIT_AUTO(0)，则根据文件大小自动选择单位，如果存在小数均保留<code>scale</code>位小数<br>
+	 * 根据文件的字节数量计算出改文件为多少 "Byte"/"KB"/"MB"/"GB"/"TB"/"PB"<br>
+	 * 如果 unit 为 UNIT_AUTO(0)，则根据文件大小自动选择单位，如果存在小数均保留 <code>scale</code> 位小数
 	 *
 	 * @param fileSize 指定的文件大小
-	 * @param unit     指定的文件单位
-	 * @param scale    保留的小数位数
+	 * @param unit 指定的文件单位
+	 * @param scale 保留的小数位数（超出默认向下舍去）
+	 * @see #calcFileSize(long, int, int, RoundingMode)
+	 * @see #setFileSizeRoundingMode(RoundingMode)
 	 * @since 0.0.1
 	 */
 	public static String calcFileSize(long fileSize, int unit, int scale) {
-		return calcFileSize(fileSize, unit, scale, RoundingMode.HALF_UP);
+		return calcFileSize(fileSize, unit, scale, fileSizeRoundingMode);
 	}
 
 	/**
 	 * 根据文件的字节数量计算出改文件为多少"Byte"/"KB"/"MB"/"GB"/"TB"/"PB"<br>
-	 * 如果unit为UNIT_AUTO(0)，则根据文件大小自动选择单位，如果存在小数均保留两位小数<br>
+	 * 如果 unit 为 UNIT_AUTO(0)，则根据文件大小自动选择单位，如果存在小数则保留两位小数（超出默认向下舍去）
 	 *
 	 * @param fileSize 指定的文件大小
-	 * @param unit     指定的文件单位
+	 * @param unit 指定的文件单位
 	 * @since 0.0.1
 	 */
 	public static String calcFileSize(long fileSize, int unit) {
@@ -222,28 +253,30 @@ public abstract class FileUtil {
 	}
 
 	/**
-	 * 文件大小除以指定度量，返回保留scale位小数的值
+	 * 文件大小除以指定度量，返回保留 scale 位小数的值（向下舍去）
 	 *
-	 * @param fileSize     文件大小
-	 * @param divisor      指定文件单位的字节数
-	 * @param scale        保留的小数位数
+	 * @param fileSize 文件大小
+	 * @param divisor 指定文件单位的字节数
+	 * @param scale 保留的小数位数
 	 * @param roundingMode 舍入模式
 	 * @since 3.0.0
 	 */
 	public static String divide(long fileSize, long divisor, int scale, RoundingMode roundingMode) {
-		return new BigDecimal(fileSize).divide(new BigDecimal(divisor), scale, roundingMode).toString();
+		return BigDecimal.valueOf(fileSize).divide(BigDecimal.valueOf(divisor), scale, roundingMode).toString();
 	}
 
 	/**
-	 * 文件大小除以指定度量，返回保留scale位小数的值
+	 * 文件大小除以指定度量，返回保留 scale 位小数的值（默认向下舍去）
 	 *
 	 * @param fileSize 文件大小
-	 * @param divisor  指定文件单位的字节数
-	 * @param scale    保留的小数位数
+	 * @param divisor 指定文件单位的字节数
+	 * @param scale 保留的小数位数
+	 * @see #divide(long, long, int, RoundingMode)
+	 * @see #setFileSizeRoundingMode(RoundingMode)
 	 * @since 0.0.1
 	 */
 	public static String divide(long fileSize, long divisor, int scale) {
-		return divide(fileSize, divisor, scale, RoundingMode.HALF_UP);
+		return divide(fileSize, divisor, scale, fileSizeRoundingMode);
 	}
 
 	/**
@@ -266,7 +299,7 @@ public abstract class FileUtil {
 	 * 其他情况(例如没有删除权限)返回-1
 	 *
 	 * @param directoryPath 文件所在的文件夹路径
-	 * @param fileName      文件名
+	 * @param fileName 文件名
 	 * @since 0.0.1
 	 */
 	public static int deleteFile(String directoryPath, String fileName) {
@@ -364,8 +397,8 @@ public abstract class FileUtil {
 	/**
 	 * 通过文件流复制文件到指定路径
 	 *
-	 * @param is       指定的输入文件流
-	 * @param dest     指定的目标文件对象
+	 * @param is 指定的输入文件流
+	 * @param dest 指定的目标文件对象
 	 * @param override 如果目标文件已存在，是否允许覆盖
 	 * @since 0.0.1
 	 */
@@ -404,7 +437,7 @@ public abstract class FileUtil {
 	 * 将指定的文件复制到指定文件对象所表示的位置<br>
 	 * 如果目标文件已存在，将引发异常
 	 *
-	 * @param src  源文件对象
+	 * @param src 源文件对象
 	 * @param dest 目标文件对象
 	 * @since 0.0.1
 	 */
@@ -415,7 +448,7 @@ public abstract class FileUtil {
 	/**
 	 * 将指定的文件复制到指定的目标路径
 	 *
-	 * @param src  源文件路径
+	 * @param src 源文件路径
 	 * @param dest 目标文件路径
 	 * @since 0.0.1
 	 */
@@ -460,7 +493,7 @@ public abstract class FileUtil {
 	 * 将指定的文件复制到指定的目录，保持其原文件名<br>
 	 * 如果目标文件夹已存在同名的文件，则引发异常
 	 *
-	 * @param file     指定的文件
+	 * @param file 指定的文件
 	 * @param diretory 指定的目录
 	 * @since 0.0.1
 	 */
@@ -471,9 +504,9 @@ public abstract class FileUtil {
 	/**
 	 * 将指定的文件复制到指定的目录，保持其原文件名
 	 *
-	 * @param file         指定的文件
+	 * @param file 指定的文件
 	 * @param destDiretory 指定的目录
-	 * @param override     如果已存在同名的文件，是否允许覆盖
+	 * @param override 如果已存在同名的文件，是否允许覆盖
 	 * @since 0.0.1
 	 */
 	public static void copyFileToDirectory(String file, String destDiretory, boolean override) {
@@ -484,7 +517,7 @@ public abstract class FileUtil {
 	 * 将指定的文件复制到指定的目录，保持其原文件名<br>
 	 * 如果目标文件夹已存在同名的文件，则引发异常
 	 *
-	 * @param file         指定的文件
+	 * @param file 指定的文件
 	 * @param destDiretory 指定的目录
 	 * @since 0.0.1
 	 */
@@ -495,8 +528,8 @@ public abstract class FileUtil {
 	/**
 	 * 移动指定的文件到目标文件路径
 	 *
-	 * @param src      指定的文件
-	 * @param dest     目标文件
+	 * @param src 指定的文件
+	 * @param dest 目标文件
 	 * @param override 如果已存在同名的文件，是否允许覆盖
 	 * @since 0.0.1
 	 */
@@ -533,7 +566,7 @@ public abstract class FileUtil {
 	/**
 	 * 移动指定的文件到目标文件路径
 	 *
-	 * @param path     指定的文件
+	 * @param path 指定的文件
 	 * @param destPath 目标文件
 	 * @param override 如果已存在同名的文件，是否允许覆盖
 	 * @since 0.0.1
@@ -572,12 +605,11 @@ public abstract class FileUtil {
 
 	static void moveFileInternal(File src, File dest, boolean override) {
 		if (!src.renameTo(dest)) {
-			if (override) {
-				copyFileInternal(src, dest);
-				src.delete();
-			} else {
+			if (!override) {
 				throw new IllegalArgumentException("Move file failed:[" + src + "] => [" + dest + ']');
 			}
+			copyFileInternal(src, dest);
+			src.delete();
 		}
 	}
 
@@ -666,7 +698,7 @@ public abstract class FileUtil {
 	 * 关闭指定的输入输出流<br>
 	 * 内部会先关闭输出流，再关闭输入流
 	 *
-	 * @param in  输入流
+	 * @param in 输入流
 	 * @param out 输出流
 	 * @since 3.0.0
 	 */
@@ -749,10 +781,10 @@ public abstract class FileUtil {
 	/**
 	 * 将指定文件复制到指定的目录，并且采用随机的文件名、指定的文件后缀，方法内部会尽可能地确保文件名称不会重复
 	 *
-	 * @param file    指定的文件对象
+	 * @param file 指定的文件对象
 	 * @param destDir 目标目录
-	 * @param prefix  目标文件的文件名前缀(可以为null)
-	 * @param suffix  目标文件的文件后缀。null、""、"gif"、".gif"等形式均可，前两者表示没有后缀，后两者表示指定的后缀。
+	 * @param prefix 目标文件的文件名前缀(可以为null)
+	 * @param suffix 目标文件的文件后缀。null、""、"gif"、".gif"等形式均可，前两者表示没有后缀，后两者表示指定的后缀。
 	 * @return 返回复制后的目标文件对象
 	 * @since 0.0.1
 	 */
@@ -794,9 +826,9 @@ public abstract class FileUtil {
 	/**
 	 * 将指定文件移动到指定的目录，并且采用随机的文件名、指定的文件后缀，方法内部会尽可能地确保文件名称不会重复
 	 *
-	 * @param file    指定的文件对象
+	 * @param file 指定的文件对象
 	 * @param destDir 目标目录
-	 * @param suffix  目标文件的文件后缀。null、""、"gif"、".gif"等形式均可，前两者表示没有后缀，后两者表示指定的后缀。
+	 * @param suffix 目标文件的文件后缀。null、""、"gif"、".gif"等形式均可，前两者表示没有后缀，后两者表示指定的后缀。
 	 * @return 返回移动后的目标文件对象
 	 * @since 0.0.1
 	 */
@@ -814,7 +846,8 @@ public abstract class FileUtil {
 		if (char0 != '/' && char0 != '\\') {
 			pathname = '/' + pathname;
 		}
-		return new File(FileUtil.class.getResource(pathname).getPath());
+		java.net.URL resource = FileUtil.class.getResource(pathname);
+		return resource == null ? null : new File(resource.getPath());
 	}
 
 	/**
@@ -822,7 +855,6 @@ public abstract class FileUtil {
 	 *
 	 * @param pathname 指定的文件路径
 	 * @param inClassPath 是否相对于classpath类路径下
-	 * @author Ready
 	 * @since 0.3.1
 	 */
 	public static File getFile(String pathname, boolean inClassPath) {
@@ -851,7 +883,6 @@ public abstract class FileUtil {
 	 * 读取指定的文件内容
 	 *
 	 * @return 返回文件内容字符串，内部换行符为'\n'
-	 * @author Ready
 	 * @since 0.3.1
 	 */
 	public static String readContent(File file) {
@@ -884,7 +915,6 @@ public abstract class FileUtil {
 	 *
 	 * @param inClassPath 是否相对于classpath类路径下
 	 * @return 返回文件内容字符串，内部换行符为'\n'
-	 * @author Ready
 	 * @since 0.3.1
 	 */
 	public static String readContent(String pathname, boolean inClassPath) {
@@ -929,32 +959,31 @@ public abstract class FileUtil {
 	 * 读取指定名称的 ".properties" 文件
 	 *
 	 * @param file 指定的文件
-	 * @return 对应的 Properties 对象(出于泛型兼容考虑 ， 以 {@code Map<String, String>} 形式返回)。如果指定的文件不存在，则返回 null
-	 * @author Ready
+	 * @return 对应的 Properties 对象(出于泛型兼容考虑 ， 以 {@code Map< String, String >} 形式返回)。如果指定的文件不存在，则返回 null
 	 * @since 3.0.0
 	 */
 	public static Map<String, String> readProperties(File file) {
-		try (InputStream inputStream = new FileInputStream(file)) {
+		try (FileReader reader = new FileReader(file)) {
 			Properties prop = new Properties();
-			prop.load(inputStream);
+			prop.load(reader);
 			return X.castType(prop);
 		} catch (FileNotFoundException fe) {
 			return null; // 如果文件不存在，则返回 null
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new UncheckedIOException(e);
 		}
 	}
 
 	/**
 	 * 读取指定名称的".properties"文件
 	 *
-	 * @param pathname    指定的文件路径
+	 * @param pathname 指定的文件路径
 	 * @param inClassPath 是否相对于classpath类路径下
-	 * @return 对应的Properties对象(出于泛型兼容考虑 ， 以Map & lt ; String, String & gt ; 形式返回)。如果指定的文件不存在，则返回null
-	 * @author Ready
+	 * @return 对应的 Properties 对象(出于泛型兼容考虑 ， 以 Map < String, String > 形式返回)。如果指定的文件不存在，则返回 null
 	 * @since 0.3.1
 	 */
 	public static Map<String, String> readProperties(String pathname, boolean inClassPath) {
 		return readProperties(FileUtil.getFile(pathname, inClassPath));
 	}
+
 }

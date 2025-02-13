@@ -10,7 +10,7 @@ public class CollectionUtilTest implements WithAssertions {
 
 	@Test
 	public void ofArrayList() {
-		ArrayList<Integer> list = CollectionUtil.ofArrayList(1, 2, 3, 4);
+		ArrayList<Integer> list = CollectionUtil.asArrayList(1, 2, 3, 4);
 		assertThat(list)
 				.isInstanceOf(ArrayList.class)
 				.hasSize(4)
@@ -26,7 +26,7 @@ public class CollectionUtilTest implements WithAssertions {
 
 	@Test
 	public void ofHashMap() {
-		HashMap<Object, Object> map = CollectionUtil.ofHashMap("name", "Tom", "age", 18);
+		HashMap<Object, Object> map = CollectionUtil.asHashMap("name", "Tom", "age", 18);
 		assertThat(map)
 				.isInstanceOf(HashMap.class)
 				.hasSize(2)
@@ -36,7 +36,7 @@ public class CollectionUtilTest implements WithAssertions {
 
 	@Test
 	public void mapValues() {
-		HashMap<Object, Object> map = CollectionUtil.ofHashMap("name", "Tom", "age", 18, "color", "Yellow");
+		HashMap<Object, Object> map = CollectionUtil.asHashMap("name", "Tom", "age", 18, "color", "Yellow");
 		Object[] array = CollectionUtil.mapValues(map, Object.class, "name", "age", "haha");
 		assertThat(array)
 				.hasSize(3)
@@ -46,7 +46,7 @@ public class CollectionUtilTest implements WithAssertions {
 
 	@Test
 	public void findFirst() {
-		ArrayList<Integer> ids = CollectionUtil.ofArrayList(2, 1, 3, 4);
+		ArrayList<Integer> ids = CollectionUtil.asArrayList(2, 1, 3, 4);
 		Integer first = CollectionUtil.findFirst(ids, i -> i > 3);
 		assertThat(first).isEqualTo(4);
 
@@ -55,7 +55,7 @@ public class CollectionUtilTest implements WithAssertions {
 
 	@Test
 	public void ofHashSet() {
-		HashSet<Integer> set = CollectionUtil.ofHashSet(1, 2, 3, 4, 3, 5);
+		HashSet<Integer> set = CollectionUtil.asHashSet(1, 2, 3, 4, 3, 5);
 		assertThat(set).hasSize(5)
 				.contains(1, 2, 3, 4, 5);
 	}

@@ -49,13 +49,12 @@ public abstract class EnumUtil {
 		}
 		if (count == newArray.length) {
 			return newArray;
-		} else {
-			final E[] result = (E[]) Array.newInstance(enumClass, count);
-			if (count > 0) {
-				System.arraycopy(newArray, 0, result, 0, count);
-			}
-			return result;
 		}
+		final E[] result = (E[]) Array.newInstance(enumClass, count);
+		if (count > 0) {
+			System.arraycopy(newArray, 0, result, 0, count);
+		}
+		return result;
 	}
 
 }

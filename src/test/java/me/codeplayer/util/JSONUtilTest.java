@@ -15,7 +15,7 @@ public class JSONUtilTest implements WithAssertions {
 
 	Object[] array = new Object[] { "Hello", "CodePlayer", true, user };
 
-	List<User> users = CollectionUtil.ofArrayList(user, user);
+	List<User> users = CollectionUtil.asArrayList(user, user);
 
 	@Test
 	public void encode() {

@@ -1,6 +1,7 @@
 package me.codeplayer.util;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 
 import javax.crypto.*;
@@ -44,7 +45,7 @@ public class DES {
 	 * 根据字符串参数生成KEY
 	 */
 	public void setKey(String strKey) {
-		setKey(strKey.getBytes(Charsets.UTF_8));
+		setKey(strKey.getBytes(StandardCharsets.UTF_8));
 	}
 
 	/**

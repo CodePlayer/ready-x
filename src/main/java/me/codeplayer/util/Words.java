@@ -1,14 +1,12 @@
 package me.codeplayer.util;
 
 import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
+import java.util.function.BiConsumer;
+import java.util.stream.Stream;
+import javax.annotation.Nullable;
 
-import javax.annotation.*;
-
-import org.apache.commons.lang3.*;
-
-import me.codeplayer.util.CharConverter.*;
+import me.codeplayer.util.CharConverter.CharCase;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 一组分词（单词）的抽象表示。 其来源于将指定字符串按照特定的断词法进行分词处理。
@@ -187,17 +185,23 @@ public class Words {
 		public String toString() {
 			return source.substring(begin, end);
 		}
+
 	}
 
-	public static interface FromWordCase {
+	public interface FromWordCase {
+
 		Segment trySplit(char ch, String source, int currentIndex, WordSplitter ref);
+
 	}
 
-	public static interface WordSeparator {
+	public interface WordSeparator {
+
 		void appendSeparator(StringBuilder sb, Segment seg);
+
 	}
 
-	public static interface WordCaseDescriptor {
+	public interface WordCaseDescriptor {
+
 		/**
 		 * @param continueFlagRef 只包含一个 boolean 值的数组，该接口方法的实现可以通过该 boolean 值来传达下个字符是否还需要调用该方法来获取 {@code CharCase}。
 		 * @return 如果返回 null，则后续字符不再需要大小写转换处理，直接跳出处理循环。 其他情况下：如果 {@code continueFlagRef[0]} 为 true，则将返回对象仅应用于当前字符的转换处理；如果为 false，则后续字符都将应用该 {@code CharCase} 进行转换处理
@@ -207,10 +211,10 @@ public class Words {
 		default void formatWord(final StringBuilder sb, final Segment seg, final CharCase preprocessor) {
 			CharCase charCase = null;
 			final int end = seg.end;
-			final boolean[] continueFlagRef = new boolean[] { true };
+			final boolean[] continueFlagRef = { true };
 			int begin = seg.begin;
 			final String source = seg.source;
-			for (int i = 0; begin < end;) {
+			for (int i = 0; begin < end; ) {
 				charCase = getCharCase(seg, i++, continueFlagRef);
 				if (charCase == null) {
 					charCase = preprocessor;
@@ -238,13 +242,14 @@ public class Words {
 
 	}
 
-	public static interface ToWordCase extends WordSeparator {
+	public interface ToWordCase extends WordSeparator {
 
 		WordCaseDescriptor getDescriptor();
 
 		default String toString(StringBuilder sb) {
 			return sb.toString();
 		}
+
 	}
 
 	/**

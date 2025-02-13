@@ -1,6 +1,7 @@
 package me.codeplayer.util;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.*;
 import javax.annotation.Nonnull;
@@ -18,19 +19,23 @@ import org.apache.commons.lang3.ArrayUtils;
 public abstract class StringUtil {
 
 	/**
-	 * 用于在2-16进制之间进行转换的映射字符数组
+	 * 用于在2-16进制之间进行转换的【大写形式】映射字符数组
 	 */
-	protected static final char[] digits = "0123456789ABCDEF".toCharArray();
+	protected static final char[] DIGITS = "0123456789ABCDEF".toCharArray();
+	/**
+	 * 用于在2-16进制之间进行转换的【小写形式】映射字符数组
+	 */
+	protected static final char[] digits = "0123456789abcdef".toCharArray();
 
 	/**
-	 * 获取指定字符串的Unicode编码，例如：“中国”将返回“\u4E2D\u56FD”<br>
+	 * 获取指定字符串的Unicode编码，例如：“中国”将返回 <code>"\u4E2D\u56FD"</code><br>
 	 * 此方法返回的编码中，字母均采用大写形式，此外，本方法采用 {@link StringBuilder} 作为字符容器
 	 *
 	 * @param source 指定字符串不能为 null，否则将引发空指针异常
 	 * @since 0.0.1
 	 */
 	public static String unicode(String source) {
-		byte[] bytes = source.getBytes(Charsets.UTF_16);// 转为UTF-16字节数组
+		byte[] bytes = source.getBytes(StandardCharsets.UTF_16);// 转为UTF-16字节数组
 		int length = bytes.length;
 		if (length > 2) {// 由于转换出来的字节数组前两位属于UNICODE固定标记，因此要过滤掉
 			int i = 2;
@@ -41,8 +46,8 @@ public abstract class StringUtil {
 				if (isOdd = !isOdd) {
 					sb.append("\\u");
 				}
-				sb.append(digits[bytes[i] >> 4 & 0xf]);
-				sb.append(digits[bytes[i] & 0xf]);
+				sb.append(DIGITS[bytes[i] >> 4 & 0xf]);
+				sb.append(DIGITS[bytes[i] & 0xf]);
 			}
 			return sb.toString();
 		}
@@ -57,7 +62,7 @@ public abstract class StringUtil {
 	 * @since 0.0.1
 	 */
 	public static String fastUnicode(String source) {
-		byte[] bytes = source.getBytes(Charsets.UTF_16); // 转为UTF-16字节数组
+		byte[] bytes = source.getBytes(StandardCharsets.UTF_16); // 转为UTF-16字节数组
 		int length = bytes.length;
 		if (length > 2) {
 			int i = 2;
@@ -70,8 +75,8 @@ public abstract class StringUtil {
 					chars[index++] = '\\';
 					chars[index++] = 'u';
 				}
-				chars[index++] = digits[bytes[i] >> 4 & 0xf];
-				chars[index++] = digits[bytes[i] & 0xf];
+				chars[index++] = DIGITS[bytes[i] >> 4 & 0xf];
+				chars[index++] = DIGITS[bytes[i] & 0xf];
 			}
 			return new String(chars);
 		}
@@ -112,7 +117,21 @@ public abstract class StringUtil {
 	 * @since 0.4.2
 	 */
 	public static StringBuilder getBuilder(final int extraCapacity, @Nullable CharSequence s1, @Nullable CharSequence s2, @Nullable CharSequence s3, @Nullable CharSequence s4) {
-		return new StringBuilder(extraCapacity + length(s1) + length(s2) + length(s3) + length(s4));
+		final int size1 = length(s1), size2 = length(s2), size3 = length(s3), size4 = length(s4);
+		final StringBuilder sb = new StringBuilder(extraCapacity + size1 + size2 + size3 + size4);
+		if (size1 > 0) {
+			sb.append(s1);
+		}
+		if (size2 > 0) {
+			sb.append(s2);
+		}
+		if (size3 > 0) {
+			sb.append(s3);
+		}
+		if (size4 > 0) {
+			sb.append(s4);
+		}
+		return sb;
 	}
 
 	/**
@@ -122,7 +141,7 @@ public abstract class StringUtil {
 	 * @since 0.4.2
 	 */
 	public static StringBuilder getBuilder(final int extraCapacity, @Nullable CharSequence s1, @Nullable CharSequence s2, @Nullable CharSequence s3) {
-		return new StringBuilder(extraCapacity + length(s1) + length(s2) + length(s3));
+		return getBuilder(extraCapacity, s1, s2, s3, null);
 	}
 
 	/**
@@ -132,7 +151,15 @@ public abstract class StringUtil {
 	 * @since 0.4.2
 	 */
 	public static StringBuilder getBuilder(final int extraCapacity, @Nullable CharSequence s1, @Nullable CharSequence s2) {
-		return new StringBuilder(extraCapacity + length(s1) + length(s2));
+		final int size1 = length(s1), size2 = length(s2);
+		final StringBuilder sb = new StringBuilder(extraCapacity + size1 + size2);
+		if (size1 > 0) {
+			sb.append(s1);
+		}
+		if (size2 > 0) {
+			sb.append(s2);
+		}
+		return sb;
 	}
 
 	/**
@@ -142,7 +169,7 @@ public abstract class StringUtil {
 	 * @since 0.4.2
 	 */
 	public static StringBuilder getBuilder(final int extraCapacity, @Nullable CharSequence s1) {
-		return new StringBuilder(extraCapacity + length(s1));
+		return getBuilder(extraCapacity, s1, null);
 	}
 
 	/**
@@ -151,10 +178,12 @@ public abstract class StringUtil {
 	 * @since 3.0.0
 	 */
 	public static String concat(@Nullable String a, @Nullable String b) {
-		if (a == null || a.isEmpty())
+		if (a == null || a.isEmpty()) {
 			return b == null ? "" : b;
-		if (b == null || b.isEmpty())
+		}
+		if (b == null || b.isEmpty()) {
 			return a;
+		}
 		return a.concat(b);
 	}
 
@@ -249,14 +278,7 @@ public abstract class StringUtil {
 	 * @since 1.0.2
 	 */
 	public static boolean isAnyNotEmpty(@Nullable CharSequence... css) {
-		if (css != null && css.length > 0) {
-			for (final CharSequence cs : css) {
-				if (notEmpty(cs)) {
-					return true;
-				}
-			}
-		}
-		return false;
+		return css != null && ArrayUtil.matchAny(StringUtil::notEmpty, css);
 	}
 
 	/**
@@ -268,19 +290,19 @@ public abstract class StringUtil {
 	 * @since 0.0.1
 	 */
 	public static boolean isEmpty(@Nullable Object obj) {
-		return obj == null || obj.toString().length() == 0; // 后面的表达式相当于"".equals(str)，但比其性能稍好
+		return obj == null || obj.toString().isEmpty(); // 后面的表达式相当于"".equals(str)，但比其性能稍好
 	}
 
 	/**
 	 * 判断指定的对象是否不为空<br>
 	 * 如果对象(或其 toString() 返回值)不为null、空字符串，则返回true，否则返回false<br>
-	 * <b>注意：</b>本方法不会去除字符串两边的空格，如果需要对字符串进行去除两边空格后的判断，请使用{@link StringUtil#isBlank(Object obj)}方法
+	 * <b>注意：</b>本方法不会去除字符串两边的空格，如果需要对字符串进行去除两边空格后的判断，请使用{@link #isBlank(Object obj)}方法
 	 *
 	 * @param obj 指定的对象
 	 * @since 0.0.1
 	 */
 	public static boolean notEmpty(@Nullable Object obj) {
-		return obj != null && obj.toString().length() > 0;
+		return obj != null && !obj.toString().isEmpty();
 	}
 
 	/**
@@ -291,13 +313,7 @@ public abstract class StringUtil {
 	 * @see #isEmpty(Object)
 	 */
 	public static boolean hasEmpty(Object... values) {
-		int length = ArrayUtil.getLength(values, true);
-		do {
-			if (isEmpty(values[--length])) {
-				return true;
-			}
-		} while (length > 0);
-		return false;
+		return ArrayUtil.matchAny(StringUtil::isEmpty, values);
 	}
 
 	/**
@@ -364,13 +380,7 @@ public abstract class StringUtil {
 	 * @since 0.0.1
 	 */
 	public static boolean hasBlank(Object... values) {
-		int length = ArrayUtil.getLength(values, true);
-		do {
-			if (isBlank(values[--length])) {
-				return true;
-			}
-		} while (length > 0);
-		return false;
+		return ArrayUtil.matchAny(StringUtil::isBlank, values);
 	}
 
 	/**
@@ -431,18 +441,16 @@ public abstract class StringUtil {
 	 * @param suffix 超出长度时添加的指定后缀,如果不需要，可以为null
 	 * @since 0.0.1
 	 */
-	public static String limitChars(String str, int maxLength, String suffix) {
+	@Nonnull
+	public static String limitChars(@Nullable String str, int maxLength, String suffix) {
 		if (str == null) {
 			return "";
 		}
-		str = str.trim();
-		int length = str.length();
-		if (length <= maxLength) {
+		if (str.length() <= maxLength) {
 			return str;
-		} else {
-			str = str.substring(0, maxLength);
-			return suffix == null ? str : str.concat(suffix);
 		}
+		str = str.substring(0, maxLength);
+		return isEmpty(suffix) ? str : str.concat(suffix);
 	}
 
 	/**
@@ -454,7 +462,8 @@ public abstract class StringUtil {
 	 * @param maxLength 最大限制长度
 	 * @since 0.0.1
 	 */
-	public static String limitChars(String str, int maxLength) {
+	@Nonnull
+	public static String limitChars(@Nullable String str, int maxLength) {
 		return limitChars(str, maxLength, "...");
 	}
 
@@ -482,26 +491,27 @@ public abstract class StringUtil {
 	 * @param leftOrRight 是在字符串左侧添加，还是右侧添加。true=左侧，false=右侧
 	 * @since 0.0.1
 	 */
-	static String pad(String str, char ch, int minLength, boolean leftOrRight) {
-		if (str == null)
+	static String pad(@Nullable String str, char ch, int minLength, boolean leftOrRight) {
+		if (str == null) {
 			return "";
-		if (minLength < 1)
-			throw new IllegalArgumentException("Argument 'minLength' can not be less than 1:" + minLength);
+		}
+		if (minLength < 1) {
+			throw new IllegalArgumentException("minLength can not be less than 1:" + minLength);
+		}
 		int length = str.length();
 		if (minLength > length) {
-			int diffSize = minLength - length;
-			char[] chars = new char[minLength]; // 直接采用高效的char数组形式构建字符串
-			// Arrays.fill(chars, '0'); //内部也是循环赋值，直接循环赋值效率更高
+			final char[] chars = new char[minLength]; // 直接采用高效的char数组形式构建字符串
 			if (leftOrRight) {
-				for (int i = 0; i < diffSize; i++) {
+				final int offset = minLength - length;
+				for (int i = 0; i < offset; i++) {
 					chars[i] = ch;
 				}
-				System.arraycopy(str.toCharArray(), 0, chars, diffSize, length); // 此方法由JVM底层实现，因此效率相对较高
+				str.getChars(0, length, chars, offset);
 			} else {
-				for (int i = diffSize; i < minLength; i++) {
-					chars[i] = ch;
-				}
-				System.arraycopy(str.toCharArray(), 0, chars, 0, length);
+				str.getChars(0, length, chars, 0);
+				do {
+					chars[length++] = ch;
+				} while (length < minLength);
 			}
 			str = new String(chars);
 		}
@@ -538,7 +548,7 @@ public abstract class StringUtil {
 	 * @since 3.9.0
 	 */
 	public static StringBuilder zeroFill(@Nullable StringBuilder sb, long val, int minLength) {
-		int size = stringSize(val), expected = Math.max(minLength, size);
+		final int size = stringSize(val), expected = Math.max(minLength, size);
 		if (sb == null) {
 			// 为常规的 2、4 等位数进行专项优化
 			sb = new StringBuilder(expected);
@@ -665,8 +675,8 @@ public abstract class StringUtil {
 	 * @param endIndex 指定的字符串结束索引(可以为负数，表示 <code>endIndex + str.length()</code> )
 	 * @since 0.1.1
 	 */
-	public static String replaceChars(String str, char ch, int beginIndex, int endIndex) {
-		final int length = str.length();
+	public static String replaceChars(@Nullable String str, char ch, int beginIndex, int endIndex) {
+		final int length = length(str);
 		int[] range = ensureRangeSafe(beginIndex, endIndex, length);
 		if (range == null) {
 			return str;
@@ -734,8 +744,8 @@ public abstract class StringUtil {
 	 * @param beginIndex 指定的字符串起始索引(可以为负数，表示 <code>beginIndex + str.length()</code> )
 	 * @since 0.1.1
 	 */
-	public static String replaceChars(String str, char ch, int beginIndex) {
-		return replaceChars(str, ch, beginIndex, str.length());
+	public static String replaceChars(@Nullable String str, char ch, int beginIndex) {
+		return str == null ? null : replaceChars(str, ch, beginIndex, str.length());
 	}
 
 	/**
@@ -747,11 +757,11 @@ public abstract class StringUtil {
 	 * @param endIndex 指定的字符串结束索引(可以为负数，表示 <code>endIndex + str.length()</code> )
 	 * @since 0.1.1
 	 */
-	public static String replaceSubstring(String str, String replacement, int beginIndex, int endIndex) {
-		if (replacement == null || replacement.length() == 0) {
+	public static String replaceSubstring(@Nullable String str, String replacement, int beginIndex, int endIndex) {
+		if (replacement == null || replacement.isEmpty()) {
 			return str;
 		}
-		final int length = str.length();
+		final int length = length(str);
 		int[] range = ensureRangeSafe(beginIndex, endIndex, length);
 		if (range == null) {
 			return str;
@@ -777,8 +787,8 @@ public abstract class StringUtil {
 	 * @param beginIndex 指定的字符串起始索引(可以为负数，表示 <code>beginIndex + str.length()</code> )
 	 * @since 0.1.1
 	 */
-	public static String replaceSubstring(String str, String replacement, int beginIndex) {
-		return replaceSubstring(str, replacement, beginIndex, str.length());
+	public static String replaceSubstring(@Nullable String str, String replacement, int beginIndex) {
+		return str == null ? null : replaceSubstring(str, replacement, beginIndex, str.length());
 	}
 
 	/**
@@ -802,7 +812,7 @@ public abstract class StringUtil {
 	 * @since 0.3.9
 	 */
 	public static String convertCharsetForURI(String str, Charset targetCharset) {
-		return convertCharset(str, Charsets.ISO_8859_1, targetCharset);
+		return convertCharset(str, StandardCharsets.ISO_8859_1, targetCharset);
 	}
 
 	/**
@@ -827,7 +837,7 @@ public abstract class StringUtil {
 	 * @since 0.4.2
 	 */
 	public static boolean startsWith(final String str, final char firstChar) {
-		return str != null && str.length() > 0 && str.charAt(0) == firstChar;
+		return str != null && !str.isEmpty() && str.charAt(0) == firstChar;
 	}
 
 	/**
@@ -838,7 +848,7 @@ public abstract class StringUtil {
 	 * @since 0.4.2
 	 */
 	public static boolean endsWith(final String str, final char lastChar) {
-		return str != null && str.length() > 0 && str.charAt(str.length() - 1) == lastChar;
+		return str != null && !str.isEmpty() && str.charAt(str.length() - 1) == lastChar;
 	}
 
 	/**
@@ -850,8 +860,8 @@ public abstract class StringUtil {
 	 * @param escapedChars 需要被转义的字符的数组
 	 */
 	public static StringBuilder escape(@Nullable StringBuilder sb, final String str, final char escapeChar, final char[] escapedChars) {
-		sb = initBuilder(sb, str.length() + 4);
-		final int length = str.length();
+		final int length = length(str);
+		sb = initBuilder(sb, length + 4);
 		for (int i = 0; i < length; i++) {
 			char ch = str.charAt(i);
 			if (ch == escapeChar || ArrayUtils.contains(escapedChars, ch)) {
@@ -881,7 +891,7 @@ public abstract class StringUtil {
 	 * @param escapedChars 已经被转义过的字符的数组
 	 */
 	public static StringBuilder unescape(@Nullable StringBuilder sb, final String escapedStr, final char escapeChar, final char[] escapedChars) {
-		final int length = escapedStr.length();
+		final int length = length(escapedStr);
 		sb = initBuilder(sb, length);
 		for (int i = 0; i < length; ) {
 			char ch = escapedStr.charAt(i++);
@@ -921,8 +931,8 @@ public abstract class StringUtil {
 	 * @since 3.0.0
 	 */
 	@Nullable
-	public static StringBuilder escapeSQLLike(@Nullable StringBuilder sb, final String likeStr, final char escapeChar, final boolean appendWildcardAtStart, final boolean appendWildcardAtEnd) {
-		if (StringUtil.isEmpty(likeStr)) {
+	public static StringBuilder escapeSQLLike(@Nullable StringBuilder sb, @Nullable final String likeStr, final char escapeChar, final boolean appendWildcardAtStart, final boolean appendWildcardAtEnd) {
+		if (isEmpty(likeStr)) {
 			return sb;
 		}
 		final char[] strChars = likeStr.toCharArray();
@@ -956,9 +966,9 @@ public abstract class StringUtil {
 	 * @param appendWildcardAtEnd 是否需要在字符串末尾添加通配符'%'
 	 * @since 2.9
 	 */
-	public static String escapeSQLLike(final String likeStr, final char escapeChar, final boolean appendWildcardAtStart, final boolean appendWildcardAtEnd) {
+	public static String escapeSQLLike(@Nullable final String likeStr, final char escapeChar, final boolean appendWildcardAtStart, final boolean appendWildcardAtEnd) {
 		final StringBuilder sb = escapeSQLLike(null, likeStr, escapeChar, appendWildcardAtStart, appendWildcardAtEnd);
-		if (sb == null || sb.length() == likeStr.length()) { // modified
+		if (sb == null || sb.length() == length(likeStr)) { // modified
 			return likeStr;
 		}
 		return sb.toString();
@@ -972,7 +982,7 @@ public abstract class StringUtil {
 	 * @param appendWildcardAtEnd 是否需要在字符串末尾添加通配符'%'
 	 * @since 2.9
 	 */
-	public static String escapeSQLLike(final String likeStr, final boolean appendWildcardAtStart, final boolean appendWildcardAtEnd) {
+	public static String escapeSQLLike(@Nullable final String likeStr, final boolean appendWildcardAtStart, final boolean appendWildcardAtEnd) {
 		return escapeSQLLike(likeStr, '\\', appendWildcardAtStart, appendWildcardAtEnd);
 	}
 
@@ -984,7 +994,7 @@ public abstract class StringUtil {
 	 * @param appendWildcardAtBoth 是否需要在字符串两侧都添加通配符'%'
 	 * @since 0.3.5
 	 */
-	public static String escapeSQLLike(final String likeStr, final char escapeChar, final boolean appendWildcardAtBoth) {
+	public static String escapeSQLLike(@Nullable final String likeStr, final char escapeChar, final boolean appendWildcardAtBoth) {
 		return escapeSQLLike(likeStr, escapeChar, appendWildcardAtBoth, appendWildcardAtBoth);
 	}
 
@@ -996,7 +1006,7 @@ public abstract class StringUtil {
 	 * @param appendLikeWildcard 是否需要在字符串两侧添加通配符'%'
 	 * @since 0.3.5
 	 */
-	public static String escapeSQLLike(final String likeStr, final boolean appendLikeWildcard) {
+	public static String escapeSQLLike(@Nullable final String likeStr, final boolean appendLikeWildcard) {
 		return escapeSQLLike(likeStr, '\\', appendLikeWildcard);
 	}
 
@@ -1007,7 +1017,7 @@ public abstract class StringUtil {
 	 * @param likeStr 指定的字符串
 	 * @since 0.3.5
 	 */
-	public static String escapeSQLLike(final String likeStr) {
+	public static String escapeSQLLike(@Nullable final String likeStr) {
 		return escapeSQLLike(likeStr, '\\', false);
 	}
 
@@ -1017,14 +1027,15 @@ public abstract class StringUtil {
 	 * @param container 待检测的字符串
 	 * @param search 指定的单词
 	 * @param separatorChars 单词两侧必须是指定的字符之一或位于字符串 {@code container }的首/尾位置
-	 * @param fastMode 是否启用快速模式。快速模式：如果在 {@code container} 中第一次检索到该单词，就直接在此处进行周边字符的匹配测试，并返回测试结果。 <br>
-	 * 哪怕后面还会再次出现该单词，也不再继续向后检查。请参考重载方法 {@link #containsWord(String, String, String)} 方法上的注释
+	 * @param fastFail 是否启用快速失败模式。快速模式：如果在 {@code container} 中第一次检索到该单词，就直接在此处进行周边字符的匹配测试，并立即返回测试结果。 <br>
+	 * 在快速失败模式下，对于类似 {@code containsWord("abc123,123", "123", ",") } 的特殊情况将返回 <code>false</code>。哪怕后面还会再次出现该单词，也不再继续向后检查。
 	 * @author Ready
 	 * @since 2.0.0
 	 */
-	public static boolean containsWord(final String container, final String search, final String separatorChars, final boolean fastMode) {
-		if (container == null || search == null)
+	public static boolean containsWord(@Nullable final String container, @Nullable final String search, final String separatorChars, final boolean fastFail) {
+		if (container == null || search == null) {
 			return false;
+		}
 		final int cLength = container.length(), sLength = search.length();
 		if (cLength == sLength) {
 			return container.equals(search);
@@ -1038,7 +1049,7 @@ public abstract class StringUtil {
 						&& (fromIndex == cLength || separatorChars.indexOf(container.charAt(fromIndex)) != -1)) {
 					return true;
 				}
-				if (fastMode || fromIndex + sLength > cLength) {
+				if (fastFail || fromIndex + sLength > cLength) {
 					break;
 				}
 			}
@@ -1047,8 +1058,7 @@ public abstract class StringUtil {
 	}
 
 	/**
-	 * 检测指定字符串中是否存在指定的单词<br>
-	 * 该方法采用快速模式，对于类似 {@code containsWord("abc123,123", "123", ",") } 等特殊情况无法保证100%可靠；如果想要保证可靠性，建议使用 {@link #containsWord(String, String, String, boolean) }
+	 * 检测指定字符串中是否存在指定的单词
 	 *
 	 * @param container 待检测的字符串
 	 * @param searchedWord 指定的单词
@@ -1056,21 +1066,21 @@ public abstract class StringUtil {
 	 * @see #containsWord(String, String, String, boolean)
 	 * @since 0.4.2
 	 */
-	public static boolean containsWord(final String container, final String searchedWord, final String separatorChars) {
+	public static boolean containsWord(@Nullable final String container, final String searchedWord, final String separatorChars) {
 		return containsWord(container, searchedWord, separatorChars, false);
 	}
 
 	/**
 	 * 将字符串的首字母大写
 	 */
-	public static String capitalize(String str) {
+	public static String capitalize(@Nullable String str) {
 		return replaceChar(str, 0, CharCase.UPPER);
 	}
 
 	/**
 	 * 将字符串的首字母小写
 	 */
-	public static String decapitalize(String str) {
+	public static String decapitalize(@Nullable String str) {
 		return replaceChar(str, 0, CharCase.LOWER);
 	}
 
@@ -1079,8 +1089,8 @@ public abstract class StringUtil {
 	 *
 	 * @throws IndexOutOfBoundsException 索引越界时会抛出该异常。不过请注意：如果 {@code str} 为 null 时，将直接返回 null，而不会抛出 NPE
 	 */
-	public static String replaceChar(String str, int charIndex, CharConverter converter) throws IndexOutOfBoundsException {
-		if (str == null || str.length() == 0) {
+	public static String replaceChar(@Nullable String str, int charIndex, CharConverter converter) throws IndexOutOfBoundsException {
+		if (str == null || str.isEmpty()) {
 			return str;
 		}
 		char ch = str.charAt(charIndex);
@@ -1098,10 +1108,10 @@ public abstract class StringUtil {
 	 *
 	 * @param delimiter 分隔符
 	 */
-	public static <E> StringBuilder joinAppend(@Nonnull StringBuilder sb, Collection<E> items, BiConsumer<StringBuilder, E> itemAppender, String delimiter) {
+	public static <E> StringBuilder joinAppend(@Nullable StringBuilder sb, Collection<E> items, BiConsumer<StringBuilder, E> itemAppender, String delimiter) {
 		if (X.isValid(items)) {
 			final int size = items.size();
-			sb.ensureCapacity(sb.length() + size * (6 + delimiter.length()) + 4);
+			sb = initBuilder(sb, size * (6 + delimiter.length()) + 4);
 			boolean appendSep = false;
 			for (E e : items) {
 				if (appendSep) {
@@ -1120,22 +1130,9 @@ public abstract class StringUtil {
 	 *
 	 * @param delimiter 分隔符
 	 */
-	public static <E> String join(Collection<E> items, BiConsumer<StringBuilder, E> itemAppender, String delimiter) {
-		if (X.isValid(items)) {
-			final int size = items.size();
-			final StringBuilder sb = new StringBuilder(size * (6 + delimiter.length()) + 4);
-			boolean appendSep = false;
-			for (E e : items) {
-				if (appendSep) {
-					sb.append(delimiter);
-				} else {
-					appendSep = true;
-				}
-				itemAppender.accept(sb, e);
-			}
-			return sb.toString();
-		}
-		return "";
+	public static <E> String joinAppend(@Nullable Collection<E> items, BiConsumer<StringBuilder, E> itemAppender, String delimiter) {
+		final StringBuilder sb = joinAppend(null, items, itemAppender, delimiter);
+		return sb == null ? "" : sb.toString();
 	}
 
 	/**
@@ -1143,8 +1140,35 @@ public abstract class StringUtil {
 	 *
 	 * @param delimiter 分隔符
 	 */
-	public static <E> String join(Collection<E> c, Function<? super E, Object> getter, String delimiter) {
-		return join(c, (sb, t) -> sb.append(getter.apply(t)), delimiter);
+	public static <E> String joins(@Nullable Collection<E> c, String delimiter) {
+		return joinAppend(c, StringBuilder::append, delimiter);
+	}
+
+	/**
+	 * 将集合的指定属性或输出拼接为字符串
+	 *
+	 * @param delimiter 分隔符
+	 */
+	public static <E> String join(@Nullable E[] array, String delimiter) {
+		return array == null || array.length == 0 ? "" : joins(Arrays.asList(array), delimiter);
+	}
+
+	/**
+	 * 将 整数集合 拼接为字符串
+	 *
+	 * @param delimiter 分隔符
+	 */
+	public static String join(@Nullable Collection<? extends Number> c, String delimiter) {
+		return joinAppend(c, (sb, t) -> sb.append(t.longValue()), delimiter);
+	}
+
+	/**
+	 * 将集合的指定属性或输出拼接为字符串
+	 *
+	 * @param delimiter 分隔符
+	 */
+	public static <E> String join(@Nullable Collection<E> c, Function<? super E, Object> getter, String delimiter) {
+		return joinAppend(c, (sb, t) -> sb.append(getter.apply(t)), delimiter);
 	}
 
 	/**
@@ -1152,8 +1176,8 @@ public abstract class StringUtil {
 	 *
 	 * @param delimiter 分隔符
 	 */
-	public static <T> String joinNumber(Collection<T> c, Function<? super T, Number> mapper, String delimiter) {
-		return join(c, (sb, t) -> sb.append(mapper.apply(t).longValue()), delimiter);
+	public static <T> String joinLong(@Nullable Collection<T> c, Function<? super T, Number> mapper, String delimiter) {
+		return joinAppend(c, (sb, t) -> sb.append(mapper.apply(t).longValue()), delimiter);
 	}
 
 	/**
@@ -1161,8 +1185,8 @@ public abstract class StringUtil {
 	 *
 	 * @param delimiter 分隔符
 	 */
-	public static <T> String joinLong(Collection<T> c, ToLongFunction<? super T> mapper, String delimiter) {
-		return join(c, (sb, t) -> sb.append(mapper.applyAsLong(t)), delimiter);
+	public static <T> String joinLongValue(@Nullable Collection<T> c, ToLongFunction<? super T> mapper, String delimiter) {
+		return joinAppend(c, (sb, t) -> sb.append(mapper.applyAsLong(t)), delimiter);
 	}
 
 	/**
@@ -1170,8 +1194,8 @@ public abstract class StringUtil {
 	 *
 	 * @param delimiter 分隔符
 	 */
-	public static <T> String joinInt(Collection<T> c, ToIntFunction<? super T> mapper, String delimiter) {
-		return join(c, (sb, t) -> sb.append(mapper.applyAsInt(t)), delimiter);
+	public static <T> String joinIntValue(@Nullable Collection<T> c, ToIntFunction<? super T> mapper, String delimiter) {
+		return joinAppend(c, (sb, t) -> sb.append(mapper.applyAsInt(t)), delimiter);
 	}
 
 	/**
@@ -1182,8 +1206,8 @@ public abstract class StringUtil {
 	 * @param mapper 转换器
 	 * @param filter 过滤器（如果应用到对应的元素返回 false，则返回的集合中不会包含该元素 ）
 	 */
-	public static <T> List<T> split(final String str, final String sep, @Nullable Predicate<? super String> filter, final Function<? super String, T> mapper) {
-		if (StringUtil.notEmpty(str)) {
+	public static <T> List<T> split(@Nullable final String str, final String sep, @Nullable Predicate<? super String> filter, final Function<? super String, T> mapper) {
+		if (notEmpty(str)) {
 			final List<T> list = new ArrayList<>();
 			int pos, start = 0;
 			// ",,"
@@ -1208,7 +1232,7 @@ public abstract class StringUtil {
 	 * @param ignoreEmpty 是否忽略空子字符串（如果为 true，则忽略空字符串 ）
 	 */
 	public static <T> List<T> split(final String toSplit, final String sep, final Function<? super String, T> mapper, final boolean ignoreEmpty) {
-		if (StringUtil.notEmpty(toSplit)) {
+		if (notEmpty(toSplit)) {
 			final Predicate<String> filter = ignoreEmpty ? StringUtil::notEmpty : null;
 			return split(toSplit, sep, filter, mapper);
 		}
