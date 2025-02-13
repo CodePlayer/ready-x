@@ -36,10 +36,9 @@ public class EasyDateTest implements WithAssertions {
 		assertEquals(now.getSeconds(), d.getSecond());
 
 		d = new EasyDate(2014, 12, 2, 6);
-		assertEquals(2014, d.getYear());
-		assertEquals(12, d.getMonth());
-		assertEquals(2, d.getDay());
-		assertEquals(6, d.getHour());
+		assertEqualsYmdHms(d, 2014, 12, 2, 6, 0, 0);
+		assertEquals("2014年12月02日", d.toDateString());
+		assertEquals("2014年12月02日", EasyDate.toDateString(d.toSqlDate()));
 	}
 
 	@Test
@@ -60,9 +59,13 @@ public class EasyDateTest implements WithAssertions {
 	@Test
 	public void beginOf() {
 		EasyDate d = new EasyDate(2013, 2, 5, 23, 12, 55);
+		final Date date = d.toDate();
 		d.beginOf(Calendar.MONTH);
 		assertEqualsYmdHms(d, 2013, 2, 1, 0, 0, 0);
 		assertEquals(0, d.getMillisecond());
+
+		EasyDate copy = EasyDate.valueOf(EasyDate.beginOf(date, Calendar.MONTH));
+		assertEqualsYmdHms(copy, 2013, 2, 1, 0, 0, 0);
 
 		// 2009-02-14 07:31:30 GMT+8 星期六 => 2009-02-09 07:31:30 GMT+8 星期一
 		d.setDate(baseDate).beginOf(Calendar.DAY_OF_WEEK);
@@ -79,9 +82,24 @@ public class EasyDateTest implements WithAssertions {
 	@Test
 	public void endOf() {
 		EasyDate d = new EasyDate(2013, 2, 5);
+		final Date date = d.toDate();
 		d.endOf(Calendar.MONTH);
 		assertEqualsYmdHms(d, 2013, 2, 28, 23, 59, 59);
 		assertEquals(999, d.getMillisecond());
+
+		final Locale defLocale = Locale.getDefault();
+		Locale.setDefault(Locale.CHINA);
+		assertEquals("星期四, 28 二月 2013 23:59:59 GMT", d.toGMTNetString());
+		assertEquals("14 二月 2009 07:31:30 GMT", EasyDate.valueOf(baseDate).toGMTString());
+		Locale.setDefault(defLocale);
+
+		assertEquals("20130205", EasyDate.toShortString(date));
+		EasyDate copy = EasyDate.valueOf(EasyDate.endOf(date, Calendar.MONTH));
+		assertEqualsYmdHms(copy, 2013, 2, 28, 23, 59, 59);
+
+		String longString = EasyDate.toLongString(baseDate);
+		assertEquals("2009-02-14 07:31:30.000", longString);
+		assertEquals(baseDate, EasyDate.parseDate("yyyy-MM-dd HH:mm:ss.SSS", longString));
 
 		// 2009-02-14 07:31:30 GMT+8 星期六 => 2009-02-15 07:31:30 GMT+8 星期一
 		d.setDate(baseDate).endOf(Calendar.DAY_OF_WEEK);
@@ -152,7 +170,7 @@ public class EasyDateTest implements WithAssertions {
 
 	@Test
 	public void toStr() {
-		Date a = new EasyDate(2015, 3, 28, 22, 58, 59).toDate();
+		Date a = new EasyDate(2015, 3, 28, 22, 58, 59).toTimestamp();
 		Date b = new EasyDate(2015, 3, 28).toDate();
 		assertEquals("2015-03-28", EasyDate.toString(a));
 
@@ -339,6 +357,36 @@ public class EasyDateTest implements WithAssertions {
 	@Test(expected = IllegalArgumentException.class)
 	public void smartParse_UnexpectedLength_ThrowsIllegalArgumentException() {
 		EasyDate.smartParse("2012-01");
+	}
+
+	@Test
+	public void setWeekDay() {
+		// 2009-02-14 07:31:30 GMT+8 星期六
+		EasyDate d = EasyDate.valueOf(baseCalendar);
+		assertEqualsYmdHms(d, 2009, 2, 14, 7, 31, 30);
+		d.setWeekDay(1);
+		assertEqualsYmdHms(d, 2009, 2, 9, 7, 31, 30);
+		d.setWeekDay(3);
+		assertEqualsYmdHms(d, 2009, 2, 11, 7, 31, 30);
+		d.setWeekDay(7);
+		assertEqualsYmdHms(d, 2009, 2, 15, 7, 31, 30);
+	}
+
+	@Test
+	public void setWeekDay_DifferentWeekDay_ChangesDate() {
+		// 2009-02-14 07:31:30 GMT+8 星期六
+		EasyDate d = EasyDate.valueOf("2009-02-14 07:31:30");
+		assertEqualsYmdHms(d, 2009, 2, 14, 7, 31, 30);
+		d.setWeekDay(8);
+		assertEqualsYmdHms(d, 2009, 2, 16, 7, 31, 30);
+	}
+
+	@Test
+	public void setWeekDay_WeekdayWrapAround_CorrectDate() {
+		// 2009-02-14 07:31:30 GMT+8 星期六
+		EasyDate d = (EasyDate) EasyDate.valueOf(new EasyDate(baseDate.getTime())).clone();
+		EasyDate result = d.setWeekDay(-1); // 周一 再减去2天
+		assertEqualsYmdHms(result, 2009, 2, 7, 7, 31, 30);
 	}
 
 }
