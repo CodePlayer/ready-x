@@ -37,7 +37,7 @@ public class BenchmarkTest {
 		Options opt = new OptionsBuilder()
 				.include(clazz.getSimpleName()) // 要导入的测试类
 				.resultFormat(ResultFormatType.JSON)
-				.result("result.json") // 在项目根目录下
+				.result("benchmark-result.json") // 在项目根目录下
 				.build();
 		new Runner(opt).run(); // 执行测试
 	}
