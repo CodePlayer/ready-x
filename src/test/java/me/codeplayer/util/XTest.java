@@ -249,7 +249,7 @@ public class XTest implements WithAssertions {
 		assertEquals(0, X.size((CharSequence) null));
 		assertEquals(0, X.size(""));
 		assertEquals(1, X.size(" "));
-		StringBuilder sb = new StringBuilder("CodePlayer").append(" ");
+		StringBuilder sb = StringX.getBuilder(6, "CodePlayer", " ");
 		assertEquals(11, X.size(sb));
 		assertEquals(6, X.size("acsd中国"));
 	}

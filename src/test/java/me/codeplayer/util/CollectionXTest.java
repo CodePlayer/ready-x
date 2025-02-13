@@ -432,7 +432,7 @@ public class CollectionXTest implements WithAssertions {
 	@Test
 	public void toMap_NullItems_ReturnsEmptyMap() {
 		List<String> items = null;
-		Map<String, String> map = CollectionX.toMap(HashMap::new, items, Function.identity());
+		Map<String, String> map = CollectionX.toMap(HashMap::new, items, FunctionX.identity());
 		assertThat(map).isEmpty();
 	}
 
@@ -773,7 +773,7 @@ public class CollectionXTest implements WithAssertions {
 	@Test
 	public void mapToParams_HasParamTrue_AppendsAmpersand() {
 		Map<String, Object> params = CollectionX.asHashMap("key", "value");
-		StringBuilder sb = new StringBuilder("k1=v1");
+		StringBuilder sb = StringX.getBuilder(10, "k1=v1");
 		sb = CollectionX.mapToParams(sb, null, params);
 		Assert.assertEquals("k1=v1&key=value", sb.toString());
 	}

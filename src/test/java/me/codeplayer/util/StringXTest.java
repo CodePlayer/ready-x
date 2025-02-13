@@ -1,5 +1,7 @@
 package me.codeplayer.util;
 
+import java.util.*;
+
 import org.assertj.core.api.WithAssertions;
 import org.junit.Test;
 
@@ -212,6 +214,136 @@ public class StringXTest implements WithAssertions {
 		assertEquals("codeplayer", StringX.trimAll("  code player"));
 		assertEquals("codeplayer", StringX.trimAll("code  player  "));
 		assertEquals("codeplayer", StringX.trimAll(" code player "));
+	}
+
+	@Test
+	public void trim() {
+		assertEquals("", StringX.trim(null));
+		assertEquals("", StringX.trim(""));
+		assertEquals("", StringX.trim("   "));
+		assertEquals("hello", StringX.trim("hello"));
+		assertEquals("hello", StringX.trim(" hello"));
+		assertEquals("hello", StringX.trim("hello "));
+		assertEquals("hello", StringX.trim("   hello   "));
+		assertEquals("中文", StringX.trim("   中文   "));
+	}
+
+	@Test
+	public void trim_StringWithOnlyTrailingSpaces_ReturnsTrimmedString() {
+		assertEquals("hello", StringX.trim("hello   "));
+	}
+
+	@Test
+	public void trim_StringWithOnlyLeadingSpaces_ReturnsTrimmedString() {
+		assertEquals("hello", StringX.trim("   hello"));
+	}
+
+	@Test
+	public void trim_StringWithMixedCharacters_ReturnsTrimmedString() {
+		assertEquals("hello world", StringX.trim("   hello world   "));
+	}
+
+	@Test
+	public void capitalize() {
+		assertNull(StringX.capitalize(null));
+		assertSame("", StringX.capitalize(""));
+		assertEquals("A", StringX.capitalize("a"));
+		assertSame(" a", StringX.capitalize(" a"));
+		assertSame("A", StringX.capitalize("A"));
+		assertSame("Abc", StringX.capitalize("Abc"));
+		assertEquals("Abc", StringX.capitalize("abc"));
+		assertEquals("Abc def", StringX.capitalize("abc def"));
+		assertSame("中文", StringX.capitalize("中文"));
+		assertEquals("A中文", StringX.capitalize("a中文"));
+	}
+
+	@Test
+	public void decapitalize() {
+		assertNull(StringX.decapitalize(null));
+		assertEquals("", StringX.decapitalize(""));
+		assertSame("a", StringX.decapitalize("a"));
+		assertEquals("a", StringX.decapitalize("A"));
+		assertSame(" A", StringX.capitalize(" A"));
+		assertEquals("abc", StringX.decapitalize("Abc"));
+		assertSame("abc", StringX.decapitalize("abc"));
+		assertEquals("abc def", StringX.decapitalize("Abc def"));
+		assertSame("中文", StringX.decapitalize("中文"));
+		assertEquals("a中文", StringX.decapitalize("A中文"));
+	}
+
+	@Test
+	public void escapeSQLLike() {
+		assertNull(StringX.escapeSQLLike(null, false));
+		assertNull(StringX.escapeSQLLike(null));
+		assertEquals("", StringX.escapeSQLLike("", false));
+		assertEquals("abc", StringX.escapeSQLLike("abc", false));
+		assertEquals("a\\'b\\_c\\%d\\;e", StringX.escapeSQLLike("a'b_c%d;e", false));
+		assertEquals("%a\\'b\\_c\\%d\\;e%", StringX.escapeSQLLike("a'b_c%d;e", true));
+		assertEquals("%abc", StringX.escapeSQLLike("abc", true, false));
+		assertEquals("abc%", StringX.escapeSQLLike("abc", false, true));
+		assertEquals("%abc%", StringX.escapeSQLLike("abc", true));
+		assertEquals("%a\\'b\\_c\\%d\\;e%", StringX.escapeSQLLike("a'b_c%d;e", true, true));
+	}
+
+	@Test
+	public void reverse() {
+		assertEquals("", StringX.reverse(null));
+		assertEquals("", StringX.reverse(""));
+		assertEquals("a", StringX.reverse("a"));
+		assertEquals("cba", StringX.reverse("abc"));
+		assertEquals(" edcba", StringX.reverse("abcde "));
+	}
+
+	@Test
+	public void startsWith() {
+		assertFalse(StringX.startsWith(null, 'a'));
+		assertFalse(StringX.startsWith("", 'a'));
+		assertTrue(StringX.startsWith("abc", 'a'));
+		assertFalse(StringX.startsWith(" abc", 'a'));
+		assertFalse(StringX.startsWith("abc", 'b'));
+	}
+
+	@Test
+	public void endsWith() {
+		assertFalse(StringX.endsWith(null, 'a'));
+		assertFalse(StringX.endsWith("", 'a'));
+		assertTrue(StringX.endsWith("abc", 'c'));
+		assertFalse(StringX.endsWith("abc ", 'c'));
+		assertFalse(StringX.endsWith("abc", 'b'));
+	}
+
+	@Test
+	public void joins() {
+		assertEquals("", StringX.joins(null, ","));
+		assertEquals("", StringX.joins(Collections.emptyList(), ","));
+		assertThat(StringX.joins(Collections.singletonList("a"), ",")).isEqualTo("a");
+		assertThat(StringX.joins(Arrays.asList("a", "b", "c"), ",")).isEqualTo("a,b,c");
+		assertThat(StringX.joins(Arrays.asList("a", "b", "c"), "")).isEqualTo("abc");
+		assertThat(StringX.join(new String[] {}, ",")).isEqualTo("");
+		assertThat(StringX.join(new String[] { "a" }, ",")).isEqualTo("a");
+		assertThat(StringX.join(new String[] { "a", null, "c" }, ",")).isEqualTo("a,null,c");
+
+		assertThat(StringX.join(Collections.emptyList(), ",")).isEqualTo("");
+		assertThat(StringX.join(Collections.singletonList(1), ",")).isEqualTo("1");
+		assertThat(StringX.join(Arrays.asList(1, 2, 3), ",")).isEqualTo("1,2,3");
+		assertThat(StringX.join(Collections.emptyList(), Object::toString, ",")).isEqualTo("");
+		assertThat(StringX.join(Collections.singletonList("a"), Object::toString, ",")).isEqualTo("a");
+		assertThat(StringX.join(Arrays.asList("a", "b", "c"), Object::toString, ",")).isEqualTo("a,b,c");
+	}
+
+	@Test
+	public void joinLongValue() {
+		List<Long> longs = Collections.emptyList();
+		assertThat(StringX.joinLong(longs, FunctionX.identity(), ",")).isEqualTo("");
+		assertThat(StringX.joinLong(Collections.singletonList(1L), FunctionX.identity(), ",")).isEqualTo("1");
+		assertThat(StringX.joinLong(Arrays.asList(1, 2, 3), FunctionX.identity(), ",")).isEqualTo("1,2,3");
+	}
+
+	@Test
+	public void joinIntValue() {
+		assertThat(StringX.joinIntValue(Collections.emptyList(), Integer::intValue, ",")).isEqualTo("");
+		assertThat(StringX.joinIntValue(Collections.singletonList(1), Integer::intValue, ",")).isEqualTo("1");
+		assertThat(StringX.joinIntValue(Arrays.asList(1, 2, 3), Integer::intValue, ",")).isEqualTo("1,2,3");
 	}
 
 }

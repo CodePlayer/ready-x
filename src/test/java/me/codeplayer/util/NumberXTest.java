@@ -450,6 +450,7 @@ public class NumberXTest {
 		assertTrue(NumberX.isDecimal(-123));
 		assertTrue(NumberX.isDecimal(-123.45));
 		assertTrue(NumberX.isDecimal(new StringBuilder("123.45")));
+		assertTrue(NumberX.isDecimal(StringX.getBuilder(0, "123", ".", "45")));
 		assertTrue(NumberX.isDecimal("-123", true));
 		assertTrue(NumberX.isDecimal("-123.45", true));
 

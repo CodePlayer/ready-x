@@ -462,7 +462,7 @@ public class ArrayXTest {
 	@Test
 	public void unique_ForceNewCopy_ReturnsNewArray() {
 		Integer[] array = { 1, 2, 2, 3 };
-		Integer[] result = (Integer[]) ArrayX.unique(array, true);
+		Integer[] result = (Integer[]) ArrayX.unique(array);
 		Assert.assertNotSame(array, result);
 		Assert.assertArrayEquals(new Integer[] { 1, 2, 3 }, result);
 	}
@@ -488,7 +488,8 @@ public class ArrayXTest {
 
 	@Test
 	public void of_NullElements_ReturnsNull() {
-		Assert.assertNull(ArrayX.ofNull());
+		Object[] values = ArrayX.ofNull();
+		Assert.assertNull(values);
 	}
 
 	@Test
