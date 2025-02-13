@@ -61,12 +61,18 @@ public class EasyDateTest implements WithAssertions {
 	public void beginOf() {
 		EasyDate d = new EasyDate(2013, 2, 5, 23, 12, 55);
 		d.beginOf(Calendar.MONTH);
-		assertEquals(2013, d.getYear());
-		assertEquals(2, d.getMonth());
-		assertEquals(1, d.getDay());
-		assertEquals(0, d.getHour());
-		assertEquals(0, d.getMinute());
-		assertEquals(0, d.getSecond());
+		assertEqualsYmdHms(d, 2013, 2, 1, 0, 0, 0);
+		assertEquals(0, d.getMillisecond());
+
+		// 2009-02-14 07:31:30 GMT+8 星期六 => 2009-02-09 07:31:30 GMT+8 星期一
+		d.setDate(baseDate).beginOf(Calendar.DAY_OF_WEEK);
+		assertEqualsYmdHms(d, 2009, 2, 9, 0, 0, 0);
+		assertEquals(0, d.getMillisecond());
+
+		// 2009-02-14 07:31:30 GMT+8 星期六 => 2009-02-08 07:31:30 GMT+8 星期日
+		d.getCalendar().setFirstDayOfWeek(Calendar.SUNDAY);
+		d.setDate(baseDate).beginOf(Calendar.DAY_OF_WEEK);
+		assertEqualsYmdHms(d, 2009, 2, 8, 0, 0, 0);
 		assertEquals(0, d.getMillisecond());
 	}
 
@@ -75,6 +81,24 @@ public class EasyDateTest implements WithAssertions {
 		EasyDate d = new EasyDate(2013, 2, 5);
 		d.endOf(Calendar.MONTH);
 		assertEqualsYmdHms(d, 2013, 2, 28, 23, 59, 59);
+		assertEquals(999, d.getMillisecond());
+
+		// 2009-02-14 07:31:30 GMT+8 星期六 => 2009-02-15 07:31:30 GMT+8 星期一
+		d.setDate(baseDate).endOf(Calendar.DAY_OF_WEEK);
+		assertEqualsYmdHms(d, 2009, 2, 15, 23, 59, 59);
+		assertEquals(999, d.getMillisecond());
+
+		// 2009-02-14 07:31:30 GMT+8 星期六 => 2009-02-14 07:31:30 GMT+8 星期六
+		d.getCalendar().setFirstDayOfWeek(Calendar.SUNDAY);
+		d.setDate(baseDate).endOf(Calendar.DAY_OF_WEEK);
+		assertEqualsYmdHms(d, 2009, 2, 14, 23, 59, 59);
+		assertEquals(999, d.getMillisecond());
+
+		// 2009-02-15 07:31:30 GMT+8 星期日 => 2009-02-21 07:31:30 GMT+8 星期六
+		d = EasyDate.valueOf(baseDate);
+		d.getCalendar().setFirstDayOfWeek(Calendar.SUNDAY);
+		d.addDay(1).endOf(Calendar.DAY_OF_WEEK);
+		assertEqualsYmdHms(d, 2009, 2, 21, 23, 59, 59);
 		assertEquals(999, d.getMillisecond());
 	}
 
@@ -223,15 +247,7 @@ public class EasyDateTest implements WithAssertions {
 		Date expectedTime = expected.getTime();
 		assertEquals(expectedTime, easyDate.toDate());
 		final Calendar c = baseCalendar;
-		assertEquals(new Date(c.getTimeInMillis() + 123), easyDate.set(
-				c.get(Calendar.YEAR),
-				c.get(Calendar.MONTH) + 1,
-				c.get(Calendar.DATE),
-				c.get(Calendar.HOUR_OF_DAY),
-				c.get(Calendar.MINUTE),
-				c.get(Calendar.SECOND),
-				123
-		).toDate());
+		assertEquals(new Date(c.getTimeInMillis() + 123), easyDate.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH) + 1, c.get(Calendar.DATE), c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), c.get(Calendar.SECOND), 123).toDate());
 	}
 
 	@Test

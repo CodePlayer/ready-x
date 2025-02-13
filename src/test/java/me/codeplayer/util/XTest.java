@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import me.codeplayer.util.JsonXTest.User;
 import org.assertj.core.api.WithAssertions;
@@ -141,7 +140,7 @@ public class XTest implements WithAssertions {
 
 		assertThat((Object) X.decode(1, 0, "PENDING", 1, "YES", -1, "NO")).isEqualTo("YES");
 
-		assertThat((String) X.tryUnwrap((Supplier<String>) () -> StringX.replaceSubstring("Hello", "+++", 1, -1))).isEqualTo("H+++o");
+		assertThat((String) X.tryUnwrap(new LazyCacheLoader<>(() -> StringX.replaceSubstring("Hello", "+++", 1, -1)))).isEqualTo("H+++o");
 
 		user = Mockito.spy(user);
 

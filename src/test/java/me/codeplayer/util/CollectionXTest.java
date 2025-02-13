@@ -625,7 +625,7 @@ public class CollectionXTest implements WithAssertions {
 
 	@Test
 	public void toCollection_NullCollection_ReturnsNull() {
-		Collection<String> result = CollectionX.toCollection(null, Function.identity(), true, CollectionX::newArrayList);
+		Collection<String> result = CollectionX.toCollection(null, FunctionX.identity(), true, CollectionX::newArrayList);
 		assertThat(result).isNull();
 	}
 
@@ -640,7 +640,7 @@ public class CollectionXTest implements WithAssertions {
 	public void toSet_NullCollection_ReturnsNull() {
 		assertThat(CollectionX.toSet(null, Function.identity())).isNull();
 
-		Set<String> result = CollectionX.toSet(null, Function.identity(), true);
+		Set<String> result = CollectionX.toSet(null, FunctionX.identity(), true);
 		assertThat(result).isNull();
 	}
 
