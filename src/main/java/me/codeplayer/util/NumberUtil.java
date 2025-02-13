@@ -1,8 +1,8 @@
 package me.codeplayer.util;
 
-import java.math.*;
-
-import javax.annotation.*;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import javax.annotation.Nullable;
 
 /**
  * 对数值类型的数据(包含字节)进行相应处理的工具类
@@ -304,36 +304,49 @@ public abstract class NumberUtil {
 	 * 如果指定的值为null或无法转为BigDecimal形式，将返回指定的<code>defaultValue</code>
 	 *
 	 * @param value 指定的对象
-	 * @param defaultValue 指定的默认值
+	 * @param defaultIfEmpty 指定的默认值
 	 */
-	public static BigDecimal getBigDecimal(Object value, Object defaultValue) {
-		if (value == null) {
-			return defaultValue == null ? null : getBigDecimal(defaultValue);
+	public static BigDecimal getBigDecimal(Object value, Object defaultIfEmpty) {
+		boolean empty = value == null;
+		if (!empty && value instanceof CharSequence) {
+			final CharSequence cs = (CharSequence) value;
+			if (cs.length() > 0) {
+				return getBigDecimal(value);
+			}
+			empty = true;
 		}
-		if (value instanceof Number || value instanceof CharSequence) {
-			return getBigDecimal(value);
+		if (empty) {
+			return defaultIfEmpty == null ? null : getBigDecimal(defaultIfEmpty);
 		}
 		throw new IllegalArgumentException("Unexpected decimal value:" + value);
 	}
 
 	/**
-	 * 判断字符串内容是否为整数形式<br>
-	 * 前面带0，例如"0012"仍为整数，返回true<br>
-	 * 如果字符串为null，返回false<br>
-	 * 如果字符串前后有空格，请先去除空格后再调用此方法，否则返回false<br>
+	 * 判断指定的字符串内容是否为整数形式
+	 * <pre><code>
+	 * isNumber("123") == true
+	 * isNumber("00123") == true
 	 *
-	 * @param str 指定的字符串
+	 * isNumber(null) == false
+	 * isNumber("") == false
+	 * isNumber("  ") == false
+	 * isNumber("-123") == false
+	 * isNumber("123.45") == false
+	 * </code></pre>
+	 *
+	 * @param cs 指定的字符串
+	 * @see Character#isDigit(char)
 	 */
-	public static boolean isNumber(String str) {
-		if (str == null) { // 为空则返回false
+	public static boolean isNumber(CharSequence cs) {
+		if (cs == null) { // 为空则返回false
 			return false;
 		}
-		char[] chars = str.toCharArray();
-		if (chars.length < 1) { // 为空字符串则返回false
+		final int length = cs.length();
+		if (length == 0) { // 为空字符串则返回false
 			return false;
 		}
-		for (char c : chars) {
-			if (!Character.isDigit((int) c)) { // 不为数字则返回false
+		for (int i = 0; i < length; i++) {
+			if (!Character.isDigit(cs.charAt(i))) {
 				return false;
 			}
 		}
@@ -350,7 +363,7 @@ public abstract class NumberUtil {
 	 */
 	public static boolean isNumber(String str, int length) {
 		if (length < 0) {
-			throw new IllegalArgumentException("指定长度不能小于0!");
+			throw new IllegalArgumentException("length can not be less than 0: " + length);
 		}
 		return str != null && str.length() == length && isNumber(str);
 	}
@@ -358,75 +371,134 @@ public abstract class NumberUtil {
 	/**
 	 * 判断指定对象是否为整数类型或能够转为整数形式
 	 */
-	public static boolean isNumber(Object obj) {
-		if (obj instanceof Number) {
-			Number num = (Number) obj;
+	public static boolean isNumber(Object value) {
+		if (value instanceof Number) {
+			if (value instanceof Integer || value instanceof Long || value instanceof BigInteger) {
+				return true;
+			} else if (value instanceof BigDecimal) {
+				BigDecimal bd = (BigDecimal) value;
+				return bd.scale() <= 0 || bd.stripTrailingZeros().scale() <= 0;
+			}
+			Number num = (Number) value;
 			return num.longValue() == num.doubleValue();
-		} else {
-			return obj != null && isNumber(obj.toString());
 		}
+		return value != null && isNumber(value.toString());
 	}
 
 	/**
-	 * 以尽可能快的速度判断指定字符串是否为整数形式(仅限十进制)
+	 * 以尽可能快的速度判断指定字符串是否为整数形式（仅限十进制 <code>[0-9]</code> ）
 	 *
-	 * @param str 指定的字符串
+	 * @param cs 指定的字符串
 	 */
-	public static boolean isNumeric(String str) {
-		int length;
+	public static boolean isNumeric(final CharSequence cs) {
+		return cs != null && scanNumeric(cs, 0, cs.length()) == -1;
+	}
+
+	/**
+	 * 以尽可能快的速度判断指定字符序列片段是否全部都是数字（仅限十进制 <code>[0-9]</code> ）
+	 *
+	 * @param cs 指定的字符串
+	 * @param start 开始位置（包括）
+	 * @param end 结束位置（不包括）
+	 */
+	public static boolean isNumeric(final CharSequence cs, int start, int end) {
+		return cs != null && cs.length() > 0 && scanNumeric(cs, start, end) == -1;
+	}
+
+	/**
+	 * 以尽可能快的速度判断指定字符序列片段是否全部都是数字（仅限十进制 <code>[0-9]</code> ）
+	 *
+	 * @param cs 指定的字符串
+	 * @param start 开始位置（包括）
+	 * @param end 结束位置（不包括）
+	 * @return 返回第一个非数字的字符下标，如果全部是数字，则返回 -1
+	 */
+	static int scanNumeric(final CharSequence cs, int start, int end) {
+		for (int i = start; i < end; i++) {
+			char ch = cs.charAt(i);
+			if (ch < '0' || ch > '9') {
+				return i;
+			}
+		}
+		return start < end ? -1 : end;
+	}
+
+	/**
+	 * 判断字符串内容是否为整数或小数形式（主要用于常规输入，不支持科学计数法，否则将返回 false）
+	 * <pre><code>
+	 * isDecimal("0", *) == true
+	 * isDecimal("12", *) == true
+	 * isDecimal("12.3", *) == true
+	 * isDecimal("-12.3", true) == true
+	 * isDecimal("0012", *) == true
+	 *
+	 * isDecimal("", *) == false
+	 * isDecimal(" ", *) == false
+	 * isDecimal(" 123", *) == false
+	 * isDecimal("12E3", *) == false
+	 * isDecimal("0xff", *) == false
+	 * isDecimal(null, *) == false
+	 * </code></pre>
+	 *
+	 * @param str 需要判断的字符串
+	 * @param allowNegative 是否允许负数也返回 true
+	 */
+	public static boolean isDecimal(String str, boolean allowNegative) {
+		final int length;
 		if (str == null || (length = str.length()) == 0) {
 			return false;
 		}
-		char[] chars = str.toCharArray();
-		do {
-			// 48-57
-			if (chars[--length] < '0' || chars[length] > '9') {
-				return false;
-			}
-		} while (length > 0);
-		return true;
+		final int fromIndex = allowNegative && str.charAt(0) == '-' ? 1 : 0;
+		final int errPos = scanNumeric(str, fromIndex, length);
+		return errPos == -1 || fromIndex < errPos && errPos < length && str.charAt(errPos) == '.' && scanNumeric(str, errPos + 1, length) == -1;
 	}
 
 	/**
-	 * 判断指定对象的字符串形式是否为整数形式
-	 */
-	public static boolean isInt(Object value) {
-		return value != null && (value instanceof Integer || isNumber(value.toString()));
-	}
-
-	/**
-	 * 判断字符串内容是否为整数或小数形式<br>
-	 * 前面带0，例如"0012"仍为整数，返回true<br>
-	 * 如果字符串为null，返回false<br>
-	 * 如果字符串前后有空格，请先去除空格后再调用此方法，否则返回false<br>
-	 * 此方法性能是使用正则表达式验证性能的4-9倍
+	 * 判断字符串内容是否为整数或小数形式（主要用于常规输入，不兼容负数、科学计数法，否则将返回 false）
+	 * <pre><code>
+	 * isDecimal("12") == true
+	 * isDecimal("12.3") == true
+	 * isDecimal("0012") == true
+	 *
+	 * isDecimal("") == false
+	 * isDecimal(" ") == false
+	 * isDecimal("-12.3") == false
+	 * isDecimal(" 123") == false
+	 * isDecimal("12E3") == false
+	 * isDecimal("0xff") == false
+	 * isDecimal(null) == false
+	 * </code></pre>
 	 *
 	 * @param str 需要判断的字符串
 	 */
-	public static boolean isDouble(String str) {
-		if (str == null) {
-			return false;
-		}
-		int pointPos = str.indexOf('.', 0) + 1;
-		if (pointPos == str.length()) { // "."在最后一位
-			return false;
-		} else if (pointPos > 0) { // 有"."
-			return isNumeric(str.substring(0, pointPos - 1)) && isNumeric(str.substring(pointPos));
-		} else {
-			return isNumeric(str);
-		}
+	public static boolean isDecimal(String str) {
+		return isDecimal(str, false);
 	}
 
 	/**
-	 * 判断指定对象是否为整数或小数形式<br>
-	 * 前面带0，例如"0012"仍为整数，返回true<br>
-	 * 如果字符串为null，返回false<br>
-	 * 如果字符串前后有空格，请先去除空格后再调用此方法，否则返回 false
+	 * 判断指定对象是否为整数或小数形式
+	 * <pre><code>
+	 * isDecimal(12.3) == true
+	 * isDecimal(12.3F) == true
+	 * isDecimal(12L) == true
+	 * isDecimal("0012") == true
+	 * isDecimal(-12) == true
+	 * isDecimal("12") == true
+	 * isDecimal("-12") == true
+	 * isDecimal("12.3") == true
+	 *
+	 * isDecimal("") == false
+	 * isDecimal(" ") == false
+	 * isDecimal(" 123") == false
+	 * isDecimal("12E3") == false
+	 * isDecimal("0xff") == false
+	 * isDecimal(null) == false
+	 * </code></pre>
 	 *
 	 * @param value 需要判断的对象
 	 */
-	public static boolean isDouble(Object value) {
-		return value != null && (value instanceof Number || isDouble(value.toString()));
+	public static boolean isDecimal(Object value) {
+		return value != null && (value instanceof Number || isDecimal(value.toString()));
 	}
 
 	/**
