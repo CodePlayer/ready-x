@@ -92,7 +92,7 @@ public abstract class ThreadLocalUtil {
 	/**
 	 * 将指定映射的所有映射关系复制到线程局部缓存中，这些映射关系将替换线程局部缓存目前针对指定映射中所有键的所有映射关系。
 	 */
-	public static void pubAll(Map<Object, Object> map) {
+	public static void putAll(Map<Object, Object> map) {
 		getMap().putAll(map);
 	}
 
