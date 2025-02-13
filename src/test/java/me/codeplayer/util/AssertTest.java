@@ -16,8 +16,10 @@ public class AssertTest {
 	@Test
 	public void isTrue() {
 		Assert.isTrue(true);
-		Assert.isTrue(true, "error message");
-		Assert.isTrue(true, () -> "assert failed");
+		Assert.isTrue(true, errorMsg);
+		Assert.isTrue(true, nullMsg);
+		Assert.isTrue(true, errorMsgSupplier);
+		Assert.isTrue(true, nullSupplier);
 
 		assertThrows(AssertException.class, () -> Assert.isTrue(false));
 		assertThrows(AssertException.class, () -> Assert.isTrue(false, errorMsg));
@@ -29,6 +31,11 @@ public class AssertTest {
 	@Test
 	public void state() {
 		Assert.state(true);
+		Assert.state(true, errorMsg);
+		Assert.state(true, nullMsg);
+		Assert.state(true, errorMsgSupplier);
+		Assert.state(true, nullSupplier);
+
 		assertThrows(IllegalStateException.class, () -> Assert.state(false));
 		assertThrows(IllegalStateException.class, () -> Assert.state(false, nullMsg));
 		assertThrows(IllegalStateException.class, () -> Assert.state(false, errorMsg));
@@ -39,6 +46,11 @@ public class AssertTest {
 	@Test
 	public void isFalse() {
 		Assert.isFalse(false);
+		Assert.isFalse(false, errorMsg);
+		Assert.isFalse(false, nullMsg);
+		Assert.isFalse(false, errorMsgSupplier);
+		Assert.isFalse(false, nullSupplier);
+
 		assertThrows(AssertException.class, () -> Assert.isFalse(true));
 		assertThrows(AssertException.class, () -> Assert.isFalse(true, nullMsg));
 		assertThrows(AssertException.class, () -> Assert.isFalse(true, errorMsg));
@@ -51,7 +63,9 @@ public class AssertTest {
 		Object obj = new Object();
 		assertSame(obj, Assert.notNull(obj));
 		assertSame(obj, Assert.notNull(obj, errorMsg));
+		assertSame(obj, Assert.notNull(obj, nullMsg));
 		assertSame(obj, Assert.notNull(obj, errorMsgSupplier));
+		assertSame(obj, Assert.notNull(obj, nullSupplier));
 
 		assertThrows(NullPointerException.class, () -> Assert.notNull(null));
 		assertThrows(NullPointerException.class, () -> Assert.notNull(null, nullMsg));
@@ -63,7 +77,10 @@ public class AssertTest {
 	@Test
 	public void isEmpty() {
 		Assert.isEmpty(null);
-		Assert.isEmpty("");
+		Assert.isEmpty("", errorMsg);
+		Assert.isEmpty("", nullMsg);
+		Assert.isEmpty("", errorMsgSupplier);
+		Assert.isEmpty("", nullSupplier);
 
 		assertThrows(AssertException.class, () -> Assert.isEmpty("null"));
 		assertThrows(AssertException.class, () -> Assert.isEmpty(" "));
@@ -81,6 +98,8 @@ public class AssertTest {
 		assertSame("null", Assert.notEmpty("null"));
 		assertSame("null", Assert.notEmpty("null", errorMsg));
 		assertSame("null", Assert.notEmpty("null", errorMsgSupplier));
+		assertSame("null", Assert.notEmpty("null", nullMsg));
+		assertSame("null", Assert.notEmpty("null", nullSupplier));
 
 		assertThrows(AssertException.class, () -> Assert.notEmpty(null));
 		assertThrows(AssertException.class, () -> Assert.notEmpty(""));
@@ -95,6 +114,8 @@ public class AssertTest {
 		assertSame("not empty", Assert.notBlank("not empty"));
 		assertSame("null", Assert.notBlank("null", errorMsg));
 		assertSame(" not blank", Assert.notBlank(" not blank", errorMsgSupplier));
+		assertSame(" not blank", Assert.notBlank(" not blank", nullMsg));
+		assertSame(" not blank", Assert.notBlank(" not blank", nullSupplier));
 
 		assertThrows(AssertException.class, () -> Assert.notBlank(null));
 		assertThrows(AssertException.class, () -> Assert.notBlank(" "));
