@@ -556,7 +556,7 @@ public abstract class ArrayX {
 				return false;
 			}
 		}
-		return true;
+		return values.length > 0;
 	}
 
 }
