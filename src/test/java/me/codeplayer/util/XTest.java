@@ -19,8 +19,6 @@ public class XTest implements WithAssertions {
 	public void isValid() {
 		// Boolean
 		assertTrue(X.isValid(true));
-
-		assertFalse(X.isValid((Boolean) null));
 		assertFalse(X.isValid(false));
 
 		// Number
@@ -102,6 +100,17 @@ public class XTest implements WithAssertions {
 		assertTrue(X.isValid(new AssertException((Throwable) null)));
 		assertTrue(X.isValid(new AssertException("errorMsg", null, false, false)));
 		assertFalse(X.isValid((Object) null));
+		assertFalse(X.isValid((Integer) null));
+		assertFalse(X.isValid((Long) null));
+		assertFalse(X.isValid((BigDecimal) null));
+		assertFalse(X.isValid((String) null));
+		assertFalse(X.isValid((byte[]) null));
+		assertFalse(X.isValid((Boolean) null));
+		assertFalse(X.isValid((int[]) null));
+		assertFalse(X.isValid((long[]) null));
+		assertFalse(X.isValid((double[]) null));
+		assertFalse(X.isValid((float[]) null));
+		assertFalse(X.isValid((short[]) null));
 	}
 
 	@Test
@@ -383,6 +392,40 @@ public class XTest implements WithAssertions {
 		StringBuilder sb = new StringBuilder();
 		X.with("test", obj -> false, obj -> sb.append("executed"));
 		assertEquals("", sb.toString());
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void decode_NullExpressions_ThrowsException() {
+		X.decode("1", (Object[]) null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void decode_EmptyExpressions_ThrowsException() {
+		X.decode("1");
+	}
+
+	@Test
+	public void decode_MatchingKey_ReturnsCorrespondingValue() {
+		Object result = X.decode("1", "1", "男", "0", "女");
+		assertEquals("男", result);
+	}
+
+	@Test
+	public void decode_NoMatchingKey_ReturnsDefaultValue() {
+		Object result = X.decode("2", "1", "男", "0", "女", "未知");
+		assertEquals("未知", result);
+	}
+
+	@Test
+	public void decode_OddNumberOfExpressions_ReturnsLastValueAsDefault() {
+		Object result = X.decode("3", 6, "星期六", 7, "星期天", "工作日");
+		assertEquals("工作日", result);
+	}
+
+	@Test
+	public void decode_MatchingKeyInOddExpressions_ReturnsCorrespondingValue() {
+		Object result = X.decode(6, 6, "星期六", 7, "星期天", "工作日");
+		assertEquals("星期六", result);
 	}
 
 }
