@@ -250,18 +250,18 @@ public class Validator<T, R> implements PropertyAccessor<T, R> {
 	public static void tryThrow(@Nullable Object toThrow, @Nullable Object result) {
 		toThrow = X.tryUnwrap(toThrow);
 		if (toThrow instanceof Throwable) {
-			throw X.wrapException(null, (Throwable) toThrow);
+			throw X.sneakyThrow((Throwable) toThrow);
 		}
 		String message = toThrow == null ? null : toThrow.toString();
 		if (result != null) {
 			result = X.tryUnwrap(result);
 			if (result instanceof Throwable) {
-				throw X.wrapException(message, (Throwable) result);
+				throw new IllegalArgumentException(message, (Throwable) result);
 			} else if (message == null) {
 				message = result.toString();
 			}
 		}
-		throw X.wrapException(message, null);
+		throw new IllegalArgumentException(message);
 	}
 
 	public boolean isOK() {

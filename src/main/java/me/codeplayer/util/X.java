@@ -432,52 +432,20 @@ public abstract class X {
 	}
 
 	/**
-	 * 将指定的异常信息封装为运行时异常
+	 * 将指定的异常伪装成运行时异常（实际还是抛出指定的异常，只不过底层会通过泛型擦除避免编译时检查）
 	 *
-	 * @param forceUseMsg 如果指定的异常是运行时异常，且 {@code msg } 不为null；此时是否还需要包装一个 {@link IllegalArgumentException } 来确保强制使用传入的 {@code msg } 作为异常信息
-	 * @return 如果异常 {@code ex } 为 null，或者不是运行时异常，则自动将其封装为 {@link IllegalArgumentException }；否则返回对应的运行时异常
-	 * @since 2.3.0
+	 * @param t 指定的异常
 	 */
-	public static RuntimeException wrapException(final @Nullable String msg, final boolean forceUseMsg, final @Nullable Throwable ex, final @Nullable Throwable cause) {
-		if (ex == null) {
-			return new IllegalArgumentException(msg, cause);
-		} else if (ex instanceof RuntimeException) {
-			return forceUseMsg && msg != null ? new IllegalArgumentException(msg, ex) : (RuntimeException) ex;
+	public static RuntimeException sneakyThrow(Throwable t) {
+		if (t == null) {
+			throw new NullPointerException("t");
 		}
-		return msg == null ? new IllegalArgumentException(ex) : new IllegalArgumentException(msg, ex);
+		return sneakyThrow0(t);
 	}
 
-	/**
-	 * 将指定的异常信息封装为运行时异常
-	 * <p>
-	 * 注意：如果指定的异常是运行时异常；此时不会使用传入的 {@code msg }
-	 *
-	 * @return 如果异常 {@code ex } 为 null，或者不是运行时异常，则自动将其封装为 {@link IllegalArgumentException }；否则返回对应的运行时异常
-	 * @since 2.3.0
-	 */
-	public static RuntimeException wrapException(final @Nullable String msg, final @Nullable Throwable ex, final @Nullable Throwable cause) {
-		return wrapException(msg, false, ex, cause);
-	}
-
-	/**
-	 * 将指定的异常信息封装为运行时异常
-	 *
-	 * @param forceUseMsg 如果指定的异常是运行时异常，且 {@code msg } 不为null；此时是否还需要包装一个 {@link IllegalArgumentException } 来确保强制使用传入的 {@code msg } 作为异常信息
-	 * @return 如果异常 {@code ex } 为 null，或者不是运行时异常，则自动将其封装为 {@link IllegalArgumentException }；否则返回对应的运行时异常
-	 * @since 2.3.0
-	 */
-	public static RuntimeException wrapException(final @Nullable String msg, final boolean forceUseMsg, final @Nullable Throwable ex) {
-		return wrapException(msg, forceUseMsg, ex, null);
-	}
-
-	/**
-	 * 将指定的异常信息封装为运行时异常
-	 *
-	 * @return 如果异常 {@code ex } 为 null，或者不是运行时异常，则自动将其封装为 {@link IllegalArgumentException }；否则返回对应的运行时异常
-	 * @since 2.3.0
-	 */
-	public static RuntimeException wrapException(final @Nullable String msg, final @Nullable Throwable ex) {
-		return wrapException(msg, false, ex, null);
+	@SuppressWarnings("unchecked")
+	private static <T extends Throwable> T sneakyThrow0(Throwable t) throws T {
+		throw (T) t;
 	}
 
 	/**

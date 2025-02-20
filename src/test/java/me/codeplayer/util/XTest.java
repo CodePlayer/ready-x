@@ -1,7 +1,7 @@
 package me.codeplayer.util;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
+import java.io.IOException;
+import java.math.*;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -426,6 +426,39 @@ public class XTest implements WithAssertions {
 	public void decode_MatchingKeyInOddExpressions_ReturnsCorrespondingValue() {
 		Object result = X.decode(6, 6, "星期六", 7, "星期天", "工作日");
 		assertEquals("星期六", result);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void sneakyThrow_NullInput_ThrowsNullPointerException() {
+		X.sneakyThrow(null);
+	}
+
+	@Test(expected = IOException.class)
+	public void sneakyThrow_IOExceptionInput_ThrowsSameException() {
+		try {
+			FileX.readContent("/file/not/found.txt", false);
+		} catch (IOException e) {
+			throw X.sneakyThrow(e);
+		}
+	}
+
+	@Test(expected = ArithmeticException.class)
+	public void sneakyThrow_ExceptionInput_ThrowsRuntimeExceptionWithSameCause() {
+		try {
+			BigDecimal divided = BigDecimal.TEN.divide(BigDecimal.ZERO, 2, RoundingMode.HALF_UP);
+			System.out.println(divided);
+		} catch (Throwable e) {
+			throw X.sneakyThrow(e);
+		}
+	}
+
+	@Test(expected = AssertionError.class)
+	public void sneakyThrow_ErrorInput_ThrowsSameError() {
+		try {
+			throw new AssertionError("Test");
+		} catch (Error e) {
+			throw X.sneakyThrow(e);
+		}
 	}
 
 }
