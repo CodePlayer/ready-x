@@ -7,18 +7,29 @@ import java.nio.file.*;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FileXTest {
 
 	static final String fileInClasspath = "test-data.json";
 
-	@Rule
-	public TemporaryFolder tempDir = new TemporaryFolder();
+	@TempDir
+	Path tempDir;
+
+	Path subdir(String dirname) throws IOException {
+		Path subdir = tempDir.resolve(dirname);
+		Files.createDirectory(subdir);
+		return subdir;
+	}
+
+	static File createFile(Path dir, String filename) throws IOException {
+		File file = dir.resolve(filename).toFile();
+		file.createNewFile();
+		return file;
+	}
 
 	@Test
 	public void close() throws IOException {
@@ -30,12 +41,12 @@ public class FileXTest {
 	public void copyFile() throws IOException {
 		// prepare
 		final String filename = "hello.txt";
-		File file = tempDir.newFolder("test-copyFile").toPath().resolve(filename).toFile();
+		File file = subdir("test-copyFile").resolve(filename).toFile();
 
 		final String content = "Hello World";
 		FileX.writeContent(file, content, false);
 
-		File target = tempDir.newFolder("target-copyFile").toPath().resolve("copyFile.zip").toFile();
+		File target = subdir("target-copyFile").resolve("copyFile.zip").toFile();
 
 		// execute
 		FileX.copyFile(file.getPath(), target.getPath(), true);
@@ -78,15 +89,15 @@ public class FileXTest {
 	public void moveFile() throws IOException {
 		// prepare
 		final String filename = "hello.txt";
-		File file = tempDir.newFolder("test-moveFile").toPath().resolve(filename).toFile();
+		File file = subdir("test-moveFile").resolve(filename).toFile();
 
 		final String content = "Hello World";
 		FileX.writeContent(file, content, false);
-		File dir = tempDir.newFolder("target");
-		File target = dir.toPath().resolve(filename).toFile();
+		Path dir = subdir("target");
+		File target = dir.resolve(filename).toFile();
 
 		// execute
-		FileX.moveFileToDirectory(file, dir, true);
+		FileX.moveFileToDirectory(file, dir.toFile(), true);
 
 		// verify
 		assertTrue(target.exists());
@@ -238,14 +249,15 @@ public class FileXTest {
 	public void copyFile_InputStreamToFile_Success() throws IOException {
 		// 准备
 		final String filename = "hello.txt";
-		File file = tempDir.newFolder("test-copyFile").toPath().resolve(filename).toFile();
+		Path source = subdir("test-copyFile").resolve(filename);
+		File file = source.toFile();
 
 		final String content = "Hello World";
 		FileX.writeContent(file, content, false);
 
-		File target = tempDir.newFolder("target-copyFile").toPath().resolve("copyFile.txt").toFile();
+		File target = subdir("target-copyFile").resolve("copyFile.txt").toFile();
 
-		try (InputStream is = Files.newInputStream(file.toPath())) {
+		try (InputStream is = Files.newInputStream(source)) {
 			// 执行
 			FileX.copyFile(is, target, true);
 
@@ -260,12 +272,12 @@ public class FileXTest {
 	public void copyFile_TargetFileExistsAndWritable_OverrideTrue_Success() throws IOException {
 		// 准备
 		final String filename = "hello.txt";
-		File file = tempDir.newFolder("test-copyFile").toPath().resolve(filename).toFile();
+		File file = subdir("test-copyFile").resolve(filename).toFile();
 
 		final String content = "Hello World";
 		FileX.writeContent(file, content, false);
 
-		File target = tempDir.newFolder("target-copyFile").toPath().resolve("copyFile.txt").toFile();
+		File target = subdir("target-copyFile").resolve("copyFile.txt").toFile();
 		FileX.writeContent(target, "Old Content", false);
 
 		try (InputStream is = Files.newInputStream(file.toPath())) {
@@ -279,97 +291,99 @@ public class FileXTest {
 		}
 	}
 
-	@Test(expected = FileAlreadyExistsException.class)
+	@Test
 	public void copyFile_TargetFileExistsAndWritable_OverrideFalse_ThrowsException() throws IOException {
 		// 准备
 		final String filename = "hello.txt";
-		File file = tempDir.newFolder("test-copyFile").toPath().resolve(filename).toFile();
+		File file = subdir("test-copyFile").resolve(filename).toFile();
 
 		final String content = "Hello World";
 		FileX.writeContent(file, content, false);
 
-		File target = tempDir.newFolder("target-copyFile").toPath().resolve("copyFile.txt").toFile();
+		File target = subdir("target-copyFile").resolve("copyFile.txt").toFile();
 		FileX.writeContent(target, "Old Content", false);
-
-		try (InputStream is = Files.newInputStream(file.toPath())) {
-			// 执行
-			FileX.copyFile(is, target, false);
-		}
+		assertThrows(FileAlreadyExistsException.class, () -> {
+			try (InputStream is = Files.newInputStream(file.toPath())) {
+				// 执行
+				FileX.copyFile(is, target, false);
+			}
+		});
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	public void copyFile_TargetIsDirectory_ThrowsException() throws IOException {
 		// 准备
 		final String filename = "hello.txt";
-		File file = tempDir.newFolder("test-copyFile").toPath().resolve(filename).toFile();
+		Path filePath = subdir("test-copyFile");
+		File file = filePath.resolve(filename).toFile();
 
 		final String content = "Hello World";
 		FileX.writeContent(file, content, false);
 
-		File target = tempDir.newFolder("target-copyFile");
-
-		try (InputStream is = Files.newInputStream(file.toPath())) {
-			// 执行
-			FileX.copyFile(is, target, true);
-		}
+		assertThrows(AccessDeniedException.class, () -> {
+			Path targetPath = subdir("target-copyFile");
+			File target = targetPath.toFile();
+			try (InputStream is = Files.newInputStream(filePath)) {
+				// 执行
+				FileX.copyFile(is, target, true);
+			}
+		});
 
 		// 准备
-		File source = tempDir.newFile("source.txt");
-		target = tempDir.newFolder("targetDir");
+		File source = createFile(tempDir, "source.txt");
+		Path target = subdir("targetDir");
 
 		// 执行并验证
-		try {
-			FileX.copyFile(source.getPath(), target.getPath());
-			fail("Expected IllegalArgumentException");
-		} catch (IllegalArgumentException e) {
-			assertEquals("File is a directory:" + target, e.getMessage());
-		}
+		assertThrows(AccessDeniedException.class, () -> FileX.copyFile(source.getPath(), target.toString()));
 	}
 
-	@Test(expected = UncheckedIOException.class)
+	@Test
 	public void copyFile_IOExceptionDuringWrite_ThrowsUncheckedIOException() throws IOException {
 		// 准备
 		final String filename = "hello.txt";
-		File file = tempDir.newFolder("test-copyFile").toPath().resolve(filename).toFile();
+		File file = subdir("test-copyFile").resolve(filename).toFile();
 
 		final String content = "Hello World";
 		FileX.writeContent(file, content, false);
 
-		File target = tempDir.newFolder("target-copyFile").toPath().resolve("copyFile.txt").toFile();
+		File target = subdir("target-copyFile").resolve("copyFile.txt").toFile();
 
 		// 模拟 IOException
-		try (InputStream is = new InputStream() {
-			@Override
-			public int read() throws IOException {
-				throw new IOException("Simulated IOException");
+		assertThrows(UncheckedIOException.class, () -> {
+			try (InputStream is = new InputStream() {
+				@Override
+				public int read() throws IOException {
+					throw new IOException("Simulated IOException");
+				}
+			}) {
+				// 执行
+				FileX.copyFile(is, target, true);
 			}
-		}) {
-			// 执行
-			FileX.copyFile(is, target, true);
-		}
+		});
 	}
 
 	@Test
 	public void copyFile_FileExistsAndWritable_FileCopied() throws IOException {
 		// 准备
-		File folder = tempDir.newFolder("file-exists");
-		File source = tempDir.newFile("file-exists/source.txt");
+		Path folder = subdir("file-exists");
+		File source = createFile(tempDir, "file-exists/source.txt");
 		Files.write(source.toPath(), "Hello World".getBytes());
 
-		File target = new File(folder, "target.txt");
+		Path targetPath = folder.resolve("target.txt");
+		File target = targetPath.toFile();
 		// 执行
 		FileX.copyFile(source.getPath(), target.getPath());
 
 		// 验证
 		assertTrue(target.exists());
-		assertEquals("Hello World", new String(Files.readAllBytes(target.toPath())));
+		assertEquals("Hello World", new String(Files.readAllBytes(targetPath)));
 	}
 
 	@Test
 	public void copyFile_FileExistsAndNotWritable_ThrowsException() throws IOException {
 		// 准备
-		File source = tempDir.newFile("source.txt");
-		File target = tempDir.newFile("target.txt");
+		File source = createFile(tempDir, "source.txt");
+		File target = createFile(tempDir, "target.txt");
 		target.setWritable(false);
 		Files.write(source.toPath(), "Hello World".getBytes());
 
@@ -380,21 +394,21 @@ public class FileXTest {
 	@Test
 	public void copyFile_FileDoesNotExist_ThrowsException() throws IOException {
 		// 准备
-		File source = new File(tempDir.getRoot(), "nonexistent.txt");
-		File target = tempDir.newFile("target.txt");
+		File source = tempDir.resolve("nonexistent.txt").toFile();
+		File target = createFile(tempDir, "target.txt");
 
 		// 执行并验证
 		assertThrows(NoSuchFileException.class, () -> FileX.copyFile(source.getPath(), target.getPath()));
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	public void copyFile_SourceIsDirectory_ThrowsException() throws IOException {
 		// 准备
-		File source = tempDir.newFolder("sourceDir");
-		File target = tempDir.newFile("target.txt");
+		File source = subdir("sourceDir").toFile();
+		File target = createFile(tempDir, "target.txt");
 
 		// 执行并验证
-		FileX.copyFile(source.getPath(), target.getPath());
+		assertThrows(AccessDeniedException.class, () -> FileX.copyFile(source.getPath(), target.getPath()));
 	}
 
 	@Test
@@ -408,89 +422,87 @@ public class FileXTest {
 		assertNull(FileX.parseClassPathFile("/$notFound/usr/local"));
 	}
 
-	@Test(expected = NoSuchFileException.class)
+	@Test
 	public void moveFileToDirectory_FileDoesNotExist_ThrowsException() throws IOException {
 		File source = new File("nonexistentfile.txt");
-		File destDir = tempDir.newFolder("dest");
-		FileX.moveFileToDirectory(source, destDir);
+		File destDir = subdir("dest").toFile();
+		assertThrows(NoSuchFileException.class, () -> FileX.moveFileToDirectory(source, destDir));
 	}
 
-	@Test(expected = IOException.class)
+	@Test
 	public void moveFileToDirectory_SourceIsDirectory_ThrowsException() throws IOException {
-		File source = tempDir.newFolder("source");
-		File destDir = tempDir.newFolder("dest");
-		FileX.moveFileToDirectory(source.getPath(), destDir.getPath());
+		File source = subdir("source").toFile();
+		File destDir = subdir("dest").toFile();
+		assertThrows(IOException.class, () -> FileX.moveFileToDirectory(source.getPath(), destDir.getPath()));
 	}
 
 	@Test
 	public void moveFileToDirectory_FileNotReadable_ThrowsException() throws IOException {
-		File source = tempDir.newFile("source.txt");
-		File destDir = tempDir.newFolder("dest");
+		File source = createFile(tempDir, "source.txt");
+		File destDir = subdir("dest").toFile();
 		FileX.moveFileToDirectory(source, destDir);
 	}
 
-	@Test(expected = FileAlreadyExistsException.class)
+	@Test
 	public void moveFileToDirectory_TargetFileExistsAndOverrideFalse_ThrowsException() throws IOException {
-		File source = tempDir.newFile("source.txt");
-		File destDir = tempDir.newFolder("dest");
+		File source = createFile(tempDir, "source.txt");
+		File destDir = subdir("dest").toFile();
 		File destFile = new File(destDir, source.getName());
 		destFile.createNewFile();
-		FileX.moveFileToDirectory(source, destDir);
+		assertThrows(FileAlreadyExistsException.class, () -> FileX.moveFileToDirectory(source, destDir));
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	public void moveFileToDirectory_TargetIsDirectory_ThrowsException() throws IOException {
-		File source = tempDir.newFile("source.txt");
-		File destDir = tempDir.newFolder("dest");
+		File source = createFile(tempDir, "source.txt");
+		File destDir = subdir("dest").toFile();
 		File destFile = new File(destDir, source.getName());
 		destFile.mkdir();
-		FileX.moveFileToDirectory(source, destDir, true);
+		assertThrows(AccessDeniedException.class, () -> FileX.moveFileToDirectory(source, destDir, true));
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	public void moveFileToDirectory_TargetFileNotWritable_ThrowsException() throws IOException {
-		File source = tempDir.newFile("source.txt");
-		File destDir = tempDir.newFolder("dest");
+		File source = createFile(tempDir, "source.txt");
+		File destDir = subdir("dest").toFile();
 		File destFile = new File(destDir, source.getName());
 		destFile.createNewFile();
 		destFile.setWritable(false);
-		FileX.moveFileToDirectory(source, destDir, true);
+		assertThrows(AccessDeniedException.class, () -> FileX.moveFileToDirectory(source, destDir, true));
 	}
 
 	@Test
 	public void moveFileToDirectory_CannotCreateDestDirectory_ThrowsException() throws IOException {
-		File source = tempDir.newFile("source.txt");
-		File destDir = new File(tempDir.getRoot(), "nonexistent/dest");
+		File source = createFile(tempDir, "source.txt");
+		File destDir = tempDir.resolve("nonexistent/dest").toFile();
 		destDir.getParentFile().setWritable(false);
 		FileX.moveFileToDirectory(source, destDir, true);
 	}
 
 	@Test
 	public void moveFileToDirectory_FileMovedSuccessfully() throws IOException {
-		File source = tempDir.newFile("source.txt");
-		File destDir = tempDir.newFolder("dest");
+		File source = createFile(tempDir, "source.txt");
+		File destDir = subdir("dest").toFile();
 		File destFile = new File(destDir, source.getName());
 		FileX.moveFileToDirectory(source.getPath(), destDir.getPath(), false);
 		assertTrue(destFile.exists());
 		assertFalse(source.exists());
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	public void moveFileToDirectory_FileRenamedFailedAndOverrideTrue_FileCopiedAndDeleted() throws IOException {
-		File source = tempDir.newFile("source.txt");
-		File destDir = tempDir.newFolder("dest");
+		File source = createFile(tempDir, "source.txt");
+		File destDir = subdir("dest").toFile();
 		File destFile = new File(destDir, source.getName());
 		destFile.createNewFile();
 		destFile.setWritable(false);
-		FileX.moveFileToDirectory(source, destDir, true);
-		assertTrue(destFile.exists());
-		assertFalse(source.exists());
+		assertThrows(AccessDeniedException.class, () -> FileX.moveFileToDirectory(source, destDir, true));
 	}
 
 	@Test
 	public void copyFileToDirectory_DirectoryDoesNotExist_ShouldCreateAndCopy() throws IOException {
-		File sourceFile = tempDir.newFile("source.txt");
-		File destDir = new File(tempDir.getRoot(), "newDir");
+		File sourceFile = createFile(tempDir, "source.txt");
+		File destDir = tempDir.resolve("newDir").toFile();
 		File destFile = new File(destDir, sourceFile.getName());
 
 		FileX.copyFileToDirectory(sourceFile, destDir);
@@ -502,8 +514,8 @@ public class FileXTest {
 
 	@Test
 	public void copyFileToDirectory_DirectoryExistsAndWritable_ShouldCopy() throws IOException {
-		File sourceFile = tempDir.newFile("source.txt");
-		File destDir = tempDir.newFolder("existingDir");
+		File sourceFile = createFile(tempDir, "source.txt");
+		File destDir = subdir("existingDir").toFile();
 		File destFile = new File(destDir, sourceFile.getName());
 
 		FileX.copyFileToDirectory(sourceFile.getPath(), destDir.getPath());
@@ -514,28 +526,28 @@ public class FileXTest {
 		assertFalse(sourceFile.exists());
 	}
 
-	@Test(expected = NotDirectoryException.class)
+	@Test
 	public void copyFileToDirectory_DestinationIsFile_ShouldThrowException() throws IOException {
-		File sourceFile = tempDir.newFile("source.txt");
-		File destFile = tempDir.newFile("existingFile.txt");
+		File sourceFile = createFile(tempDir, "source.txt");
+		File destFile = createFile(tempDir, "existingFile.txt");
 
-		FileX.copyFileToDirectory(sourceFile, destFile);
+		assertThrows(NotDirectoryException.class, () -> FileX.copyFileToDirectory(sourceFile, destFile));
 	}
 
-	@Test(expected = FileAlreadyExistsException.class)
+	@Test
 	public void copyFileToDirectory_FileExistsAndOverrideFalse_ShouldThrowException() throws IOException {
-		File sourceFile = tempDir.newFile("source.txt");
-		File destDir = tempDir.newFolder("existingDir");
+		File sourceFile = createFile(tempDir, "source.txt");
+		File destDir = subdir("existingDir").toFile();
 		File destFile = new File(destDir, sourceFile.getName());
 		destFile.createNewFile();
 
-		FileX.copyFileToDirectory(sourceFile, destDir);
+		assertThrows(FileAlreadyExistsException.class, () -> FileX.copyFileToDirectory(sourceFile, destDir));
 	}
 
 	@Test
 	public void copyFileToDirectory_FileExistsAndOverrideTrue_ShouldCopyAndOverride() throws IOException {
-		File sourceFile = tempDir.newFile("source.txt");
-		File destDir = tempDir.newFolder("existingDir");
+		File sourceFile = createFile(tempDir, "source.txt");
+		File destDir = subdir("existingDir").toFile();
 		File destFile = new File(destDir, sourceFile.getName());
 		destFile.createNewFile();
 
@@ -545,39 +557,39 @@ public class FileXTest {
 		FileX.copyFileToDirectoryWithRandomFileName(sourceFile, destDir.getPath(), ".txt");
 	}
 
-	@Test(expected = NoSuchFileException.class)
+	@Test
 	public void moveFile_SourceFileDoesNotExist_ThrowsException() throws IOException {
-		File src = tempDir.newFile("source.txt");
-		File dest = tempDir.newFile("destination.txt");
+		File src = createFile(tempDir, "source.txt");
+		File dest = createFile(tempDir, "destination.txt");
 		src.delete(); // 删除源文件以模拟不存在的情况
-		FileX.moveFile(src, dest, false);
+		assertThrows(NoSuchFileException.class, () -> FileX.moveFile(src, dest, false));
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	public void moveFile_SourceFileIsDirectory_ThrowsException() throws IOException {
-		File src = tempDir.newFolder("sourceDir");
-		File dest = tempDir.newFile("destination.txt");
-		FileX.moveFile(src, dest);
+		File src = subdir("sourceDir").toFile();
+		File dest = createFile(tempDir, "destination.txt");
+		assertThrows(AccessDeniedException.class, () -> FileX.moveFile(src, dest));
 	}
 
 	@Test
 	public void moveFile_SourceFileNotReadable_ThrowsException() throws IOException {
-		File src = tempDir.newFile("source.txt");
+		File src = createFile(tempDir, "source.txt");
 		File dest = new File(src.getParent(), "destination.txt");
 		FileX.moveFile(src.getPath(), dest.getPath(), false);
 	}
 
-	@Test(expected = FileAlreadyExistsException.class)
+	@Test
 	public void moveFile_DestinationExistsAndNotOverridable_ThrowsException() throws IOException {
-		File src = tempDir.newFile("source.txt");
-		File dest = tempDir.newFile("destination.txt");
-		FileX.moveFile(src.getPath(), dest.getPath());
+		File src = createFile(tempDir, "source.txt");
+		File dest = createFile(tempDir, "destination.txt");
+		assertThrows(FileAlreadyExistsException.class, () -> FileX.moveFile(src.getPath(), dest.getPath()));
 	}
 
 	@Test
 	public void moveFile_DestinationExistsAndOverridable_FileMoved() throws IOException {
-		File src = tempDir.newFile("source.txt");
-		File dest = tempDir.newFile("destination.txt");
+		File src = createFile(tempDir, "source.txt");
+		File dest = createFile(tempDir, "destination.txt");
 		FileX.moveFile(src, dest, true);
 		assertTrue(dest.exists());
 		assertFalse(src.exists());
@@ -585,28 +597,26 @@ public class FileXTest {
 
 	@Test
 	public void moveFile_DestinationDoesNotExist_FileMoved() throws IOException {
-		File src = tempDir.newFile("source.txt");
-		File dest = new File(tempDir.getRoot(), "destination.txt");
+		File src = createFile(tempDir, "source.txt");
+		File dest = tempDir.resolve("destination.txt").toFile();
 		FileX.moveFile(src, dest);
 		assertTrue(dest.exists());
 		assertFalse(src.exists());
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	public void moveFile_DestIsDirectory_ThrowsException() throws IOException {
-		File src = tempDir.newFile("source.txt");
-		File dest = tempDir.newFolder("destinationDir");
-		FileX.moveFile(src, dest, true);
-		assertTrue(dest.exists());
-		assertFalse(src.exists());
+		File src = createFile(tempDir, "source.txt");
+		File dest = subdir("destinationDir").toFile();
+		assertThrows(AccessDeniedException.class, () -> FileX.moveFile(src, dest, true));
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	public void moveFile_MoveFailsAndNotOverridable_ThrowsException() throws IOException {
-		File src = tempDir.newFile("source.txt");
-		File dest = tempDir.newFile("destination.txt");
+		File src = createFile(tempDir, "source.txt");
+		File dest = createFile(tempDir, "destination.txt");
 		dest.setWritable(false); // 设置目标文件不可写以模拟移动失败
-		FileX.moveFile(src, dest, true);
+		assertThrows(AccessDeniedException.class, () -> FileX.moveFile(src, dest, true));
 	}
 
 }

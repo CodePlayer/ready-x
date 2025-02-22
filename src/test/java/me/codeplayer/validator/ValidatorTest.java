@@ -2,8 +2,9 @@ package me.codeplayer.validator;
 
 import java.math.BigDecimal;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ValidatorTest {
 
@@ -11,8 +12,8 @@ public class ValidatorTest {
 
 	@Test
 	public void misc() {
-		Assert.assertNotNull(id.getGetter());
-		Assert.assertNotNull(id.getSetter());
+		assertNotNull(id.getGetter());
+		assertNotNull(id.getSetter());
 	}
 
 	@Test
@@ -39,33 +40,35 @@ public class ValidatorTest {
 				.begin(Book::getPrice)
 				.asserts(Validators.assertRange(BigDecimal.ZERO, null))
 				.isOK();
-		Assert.assertTrue(result);
-		Assert.assertEquals("978-3-16-148410-0", book.getISBN());
+		assertTrue(result);
+		assertEquals("978-3-16-148410-0", book.getISBN());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void validate_ThrowException() {
-		Book book = new Book(123L, "The Old Man and the Sea", "12345", "978-3-16-148410-0  ", 88, BigDecimal.ZERO);
-		Validator<Book, ?> validator = Validator.of(book, Book::getName, Book::setName)
-				.asserts(Validators.assertNotEmpty)
-				.apply(Validators.upper)
+		assertThrows(IllegalArgumentException.class, () -> {
+			Book book = new Book(123L, "The Old Man and the Sea", "12345", "978-3-16-148410-0  ", 88, BigDecimal.ZERO);
+			Validator<Book, ?> validator = Validator.of(book, Book::getName, Book::setName)
+					.asserts(Validators.assertNotEmpty)
+					.apply(Validators.upper)
 
-				.begin(Book::getId)
-				.asserts(Validators.assertPositive)
+					.begin(Book::getId)
+					.asserts(Validators.assertPositive)
 
-				.begin(Book::getCode)
-				.asserts(Validators.assertNotBlank)
-				.asserts(Validators.assertIsNonNegative)
+					.begin(Book::getCode)
+					.asserts(Validators.assertNotBlank)
+					.asserts(Validators.assertIsNonNegative)
 
-				.begin(Book::getStock)
-				.asserts(Validators.assertNotNull)
-				.asserts(Validators.assertNonNegative, "请输入有效的库存数量")
-				.asserts(val -> val % 10 == 0, () -> "库存数量必须是 10 的整倍数");
+					.begin(Book::getStock)
+					.asserts(Validators.assertNotNull)
+					.asserts(Validators.assertNonNegative, "请输入有效的库存数量")
+					.asserts(val -> val % 10 == 0, () -> "库存数量必须是 10 的整倍数");
 
-		Assert.assertEquals("THE OLD MAN AND THE SEA", book.getName());
-		Assert.assertEquals("库存数量必须是 10 的整倍数", validator.getResult());
+			assertEquals("THE OLD MAN AND THE SEA", book.getName());
+			assertEquals("库存数量必须是 10 的整倍数", validator.getResult());
 
-		validator.tryThrow();
+			validator.tryThrow();
+		});
 	}
 
 	@Test
@@ -80,9 +83,9 @@ public class ValidatorTest {
 				.begin(Book::getName)
 				.asserts(Validators.assertLength(1, 20), errorMsg);
 
-		Assert.assertFalse(validator.isOK());
-		Assert.assertEquals(errorMsg, validator.getResult());
-		Assert.assertEquals(errorMsg, validator.getResult(String.class));
+		assertFalse(validator.isOK());
+		assertEquals(errorMsg, validator.getResult());
+		assertEquals(errorMsg, validator.getResult(String.class));
 	}
 
 	@Test
@@ -100,16 +103,18 @@ public class ValidatorTest {
 				.begin(Book::getName)
 				.asserts(Validators.assertLength(1, 20), errorMsg);
 
-		Assert.assertFalse(validator.isOK());
-		Assert.assertEquals(errorMsg, validator.getResult());
-		Assert.assertEquals(errorMsg, validator.getResult(String.class));
+		assertFalse(validator.isOK());
+		assertEquals(errorMsg, validator.getResult());
+		assertEquals(errorMsg, validator.getResult(String.class));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void validatePropertyAccessor_ErrorMsg() {
-		Book book = new Book(null, "The Old Man and the Sea", "12345", "978-3-16-148410-0  ", 100, BigDecimal.valueOf(28.8));
-		Validator.of(book, id)
-				.asserts(Validators.assertNotNull);
+		assertThrows(IllegalArgumentException.class, () -> {
+			Book book = new Book(null, "The Old Man and the Sea", "12345", "978-3-16-148410-0  ", 100, BigDecimal.valueOf(28.8));
+			Validator.of(book, id)
+					.asserts(Validators.assertNotNull);
+		});
 	}
 
 	interface Entity {

@@ -1,9 +1,8 @@
 package me.codeplayer.util;
 
-import org.assertj.core.api.*;
-import org.junit.*;
-
-import me.codeplayer.util.ChineseNumber.*;
+import me.codeplayer.util.ChineseNumber.FormatStyle;
+import org.assertj.core.api.WithAssertions;
+import org.junit.jupiter.api.Test;
 
 public class ChineseNumberTest implements WithAssertions {
 
@@ -36,4 +35,5 @@ public class ChineseNumberTest implements WithAssertions {
 		assertThat(ChineseNumber.formatNumber(100200.01, false, FormatStyle.MONEY))
 				.isEqualTo("壹拾万零贰佰圆零壹分");
 	}
+
 }

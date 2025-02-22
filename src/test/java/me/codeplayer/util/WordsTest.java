@@ -1,12 +1,11 @@
 package me.codeplayer.util;
 
-import static org.junit.Assert.*;
+import me.codeplayer.util.CharConverter.CharCase;
+import me.codeplayer.util.Words.WordCaseDescriptor;
+import org.assertj.core.api.WithAssertions;
+import org.junit.jupiter.api.Test;
 
-import org.assertj.core.api.*;
-import org.junit.*;
-
-import me.codeplayer.util.CharConverter.*;
-import me.codeplayer.util.Words.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class WordsTest implements WithAssertions {
 
@@ -50,4 +49,5 @@ public class WordsTest implements WithAssertions {
 
 		assertEquals("hello_world_not_word", Words.from("hello", "World", null, "NOT", "worD").to(Words.SNAKE_CASE));
 	}
+
 }

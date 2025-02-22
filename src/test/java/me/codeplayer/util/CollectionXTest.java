@@ -7,8 +7,9 @@ import java.util.function.Predicate;
 
 import org.assertj.core.api.WithAssertions;
 import org.assertj.core.data.Index;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CollectionXTest implements WithAssertions {
 
@@ -109,7 +110,7 @@ public class CollectionXTest implements WithAssertions {
 	public void addAll_WithoutFilter_AddsAllElements() {
 		List<String> target = CollectionX.asArrayList("a");
 		Collection<String> result = CollectionX.addAll(target, "a", "abc", "de");
-		Assert.assertSame(result, target);
+		assertSame(result, target);
 		assertThat(target).containsExactly("a", "a", "abc", "de");
 	}
 
@@ -117,7 +118,7 @@ public class CollectionXTest implements WithAssertions {
 	public void addAll_MapWithKeyValuePairs_AddsCorrectly() {
 		Map<String, Integer> map = new HashMap<>();
 		Map<String, Integer> result = CollectionX.addAll(map, "key1", 1, "key2", 2);
-		Assert.assertSame(result, map);
+		assertSame(result, map);
 		assertThat(map).containsEntry("key1", 1).containsEntry("key2", 2);
 	}
 
@@ -396,15 +397,10 @@ public class CollectionXTest implements WithAssertions {
 				.containsEntry("age", 18);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void asLinkedHashMap_OddNumberOfElements_IgnoresLastElement() {
-		Map<String, Object> map = CollectionX.asLinkedHashMap("name", "Tom", "age");
-		assertThat(map)
-				.isInstanceOf(LinkedHashMap.class)
-				.hasSize(2)
-				.containsEntry("name", "Tom")
-				.containsEntry("age", 18)
-		;
+		assertThrows(IllegalArgumentException.class, () -> CollectionX.asLinkedHashMap("name"));
+		assertThrows(IllegalArgumentException.class, () -> CollectionX.asLinkedHashMap("name", "Tom", "age"));
 	}
 
 	@Test
@@ -413,11 +409,6 @@ public class CollectionXTest implements WithAssertions {
 		assertThat(map)
 				.isInstanceOf(LinkedHashMap.class)
 				.isEmpty();
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void asLinkedHashMap_SingleElement_ReturnsEmptyMap() {
-		Map<String, Object> map = CollectionX.asLinkedHashMap("name");
 	}
 
 	@Test
@@ -466,68 +457,68 @@ public class CollectionXTest implements WithAssertions {
 	@Test
 	public void toHashMap_NullItems_ReturnsEmptyMap() {
 		HashMap<String, Integer> map = CollectionX.toHashMap(null, Object::toString);
-		Assert.assertTrue(map.isEmpty());
+		assertTrue(map.isEmpty());
 	}
 
 	@Test
 	public void toHashMap_EmptyIterable_ReturnsEmptyMap() {
 		Iterable<Integer> items = Collections.emptyList();
 		HashMap<String, Integer> map = CollectionX.toHashMap(items, Object::toString);
-		Assert.assertTrue(map.isEmpty());
+		assertTrue(map.isEmpty());
 	}
 
 	@Test
 	public void toHashMap_SingleElement_CorrectlyMapsToMap() {
 		Iterable<Integer> items = Collections.singletonList(1);
 		HashMap<String, Integer> map = CollectionX.toHashMap(items, Object::toString);
-		Assert.assertEquals(1, map.size());
-		Assert.assertEquals(Integer.valueOf(1), map.get("1"));
+		assertEquals(1, map.size());
+		assertEquals(Integer.valueOf(1), map.get("1"));
 	}
 
 	@Test
 	public void toHashMap_MultipleElements_CorrectlyMapsToMap() {
 		Iterable<Integer> items = Arrays.asList(1, 2, 3);
 		HashMap<String, Integer> map = CollectionX.toHashMap(items, Object::toString);
-		Assert.assertEquals(3, map.size());
-		Assert.assertEquals(Integer.valueOf(1), map.get("1"));
-		Assert.assertEquals(Integer.valueOf(2), map.get("2"));
-		Assert.assertEquals(Integer.valueOf(3), map.get("3"));
+		assertEquals(3, map.size());
+		assertEquals(Integer.valueOf(1), map.get("1"));
+		assertEquals(Integer.valueOf(2), map.get("2"));
+		assertEquals(Integer.valueOf(3), map.get("3"));
 	}
 
 	@Test
 	public void toHashMap_DuplicateKeys_LastValueOverwrites() {
 		Iterable<Integer> items = Arrays.asList(1, 2, 1);
 		HashMap<String, Integer> map = CollectionX.toHashMap(items, Object::toString);
-		Assert.assertEquals(2, map.size());
-		Assert.assertEquals(Integer.valueOf(2), map.get("2"));
-		Assert.assertEquals(Integer.valueOf(1), map.get("1"));
+		assertEquals(2, map.size());
+		assertEquals(Integer.valueOf(2), map.get("2"));
+		assertEquals(Integer.valueOf(1), map.get("1"));
 	}
 
 	@Test
 	public void mapValues_NullMap_ReturnsNullArray() {
 		Object[] values = CollectionX.mapValues(null, Object.class, "k1", "k2");
-		Assert.assertArrayEquals(new Object[2], values);
+		assertArrayEquals(new Object[2], values);
 	}
 
 	@Test
 	public void mapValues_EmptyMap_ReturnsNullArray() {
 		Map<String, Object> map = new HashMap<>();
 		Object[] values = CollectionX.mapValues(map, Object.class, "k1", "k2");
-		Assert.assertArrayEquals(new Object[2], values);
+		assertArrayEquals(new Object[2], values);
 	}
 
 	@Test
 	public void mapValues_KeysNotExist_ReturnsNullArray() {
 		Map<String, Object> map = CollectionX.asHashMap("k3", "v3");
 		Object[] values = CollectionX.mapValues(map, Object.class, "k1", "k2");
-		Assert.assertArrayEquals(new Object[2], values);
+		assertArrayEquals(new Object[2], values);
 	}
 
 	@Test
 	public void mapValues_KeysExist_ReturnsArray() {
 		Map<String, String> map = CollectionX.asHashMap("k1", "v1", "k2", "v2", "k3", "v3");
 		String[] values = CollectionX.mapValues(map, String.class, "k1", "k3", "k4");
-		Assert.assertArrayEquals(new String[] { "v1", "v3", null }, values);
+		assertArrayEquals(new String[] { "v1", "v3", null }, values);
 	}
 
 	@Test
@@ -749,25 +740,25 @@ public class CollectionXTest implements WithAssertions {
 	@Test
 	public void mapToParams_NullParams_ReturnsNull() {
 		StringBuilder sb = CollectionX.mapToParams(null, null, null);
-		Assert.assertNull(sb);
+		assertNull(sb);
 	}
 
 	@Test
 	public void mapToParams_EmptyParams_ReturnsNull() {
 		StringBuilder sb = CollectionX.mapToParams(null, null, new HashMap<>());
-		Assert.assertNull(sb);
+		assertNull(sb);
 	}
 
 	@Test
 	public void mapToParams_NullStringBuilder_CreatesNew() {
 		Map<String, Object> params = CollectionX.asLinkedHashMap("key", "value", "age", 18);
 		StringBuilder sb = CollectionX.mapToParams(null, null, params, false, null);
-		Assert.assertEquals("key=value&age=18", sb.toString());
+		assertEquals("key=value&age=18", sb.toString());
 
-		Assert.assertEquals("key=value&age=18", CollectionX.mapToParams(params));
+		assertEquals("key=value&age=18", CollectionX.mapToParams(params));
 		params.put("name", "中文");
 		params.put("price", BigDecimal.valueOf(12345678.91));
-		Assert.assertEquals("key=value&age=18&name=%E4%B8%AD%E6%96%87&price=12345678.91", CollectionX.mapToParams(params));
+		assertEquals("key=value&age=18&name=%E4%B8%AD%E6%96%87&price=12345678.91", CollectionX.mapToParams(params));
 	}
 
 	@Test
@@ -775,7 +766,7 @@ public class CollectionXTest implements WithAssertions {
 		Map<String, Object> params = CollectionX.asHashMap("key", "value");
 		StringBuilder sb = StringX.getBuilder(10, "k1=v1");
 		sb = CollectionX.mapToParams(sb, null, params);
-		Assert.assertEquals("k1=v1&key=value", sb.toString());
+		assertEquals("k1=v1&key=value", sb.toString());
 	}
 
 	@Test
@@ -783,7 +774,7 @@ public class CollectionXTest implements WithAssertions {
 		Map<String, Object> params = CollectionX.asHashMap("k1", "v1", "k2", "v2");
 		Function<Map.Entry<String, Object>, Map.Entry<String, Object>> converter = entry -> null;
 		StringBuilder sb = CollectionX.mapToParams(null, null, params, false, converter);
-		Assert.assertEquals(0, sb.length());
+		assertEquals(0, sb.length());
 	}
 
 	@Test
@@ -791,21 +782,21 @@ public class CollectionXTest implements WithAssertions {
 		Map<String, Object> params = CollectionX.asHashMap("key", "value");
 		Function<Map.Entry<String, Object>, Map.Entry<String, Object>> converter = entry -> new HashMap.SimpleEntry<>("newKey", "newValue");
 		StringBuilder sb = CollectionX.mapToParams(null, null, params, false, converter);
-		Assert.assertEquals("newKey=newValue", sb.toString());
+		assertEquals("newKey=newValue", sb.toString());
 	}
 
 	@Test
 	public void mapToParams_UrlSafeRequired_EncodesValue() {
 		Map<String, Object> params = CollectionX.asLinkedHashMap("key", "value with spaces", "name", "中文");
 		StringBuilder sb = CollectionX.mapToParams(null, null, true, params);
-		Assert.assertEquals("key=value+with+spaces&name=%E4%B8%AD%E6%96%87", sb.toString());
+		assertEquals("key=value+with+spaces&name=%E4%B8%AD%E6%96%87", sb.toString());
 	}
 
 	@Test
 	public void mapToParams_UrlSafeDisabled_PlainValue() {
 		Map<String, Object> params = CollectionX.asLinkedHashMap("key", "value with spaces", "name", "中文");
 		StringBuilder sb = CollectionX.mapToParams(null, null, params, false, null);
-		Assert.assertEquals("key=value with spaces&name=中文", sb.toString());
+		assertEquals("key=value with spaces&name=中文", sb.toString());
 	}
 
 }

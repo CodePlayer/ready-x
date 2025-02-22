@@ -3,8 +3,9 @@ package me.codeplayer.util;
 import java.math.*;
 
 import org.assertj.core.api.WithAssertions;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ArithTest implements WithAssertions {
 
@@ -57,32 +58,32 @@ public class ArithTest implements WithAssertions {
 
 	@Test
 	public void arith() {
-		Assert.assertEquals(0, new Arith().value().compareTo(BigDecimal.ZERO));
+		assertEquals(0, new Arith().value().compareTo(BigDecimal.ZERO));
 
 		final Arith arith = new Arith(BigInteger.TEN);
 		arith.add(0);
-		Assert.assertEquals(0, arith.toBigInteger().compareTo(BigInteger.TEN));
-		Assert.assertEquals(0, arith.add("90").value().compareTo(Arith.HUNDRED));
+		assertEquals(0, arith.toBigInteger().compareTo(BigInteger.TEN));
+		assertEquals(0, arith.add("90").value().compareTo(Arith.HUNDRED));
 
-		Assert.assertEquals(0, new Arith(123).add(12).add(15.12).toBigDecimal().compareTo(new BigDecimal("150.12")));
+		assertEquals(0, new Arith(123).add(12).add(15.12).toBigDecimal().compareTo(new BigDecimal("150.12")));
 
-		Assert.assertEquals(0, new Arith("12.4").minus(12).minus(0.4).toBigDecimal().compareTo(BigDecimal.ZERO));
+		assertEquals(0, new Arith("12.4").minus(12).minus(0.4).toBigDecimal().compareTo(BigDecimal.ZERO));
 
-		Assert.assertEquals(0, new Arith(BigDecimal.TEN).minus("9.9").multiply(10).divide("1").toBigDecimal().compareTo(BigDecimal.ONE));
+		assertEquals(0, new Arith(BigDecimal.TEN).minus("9.9").multiply(10).divide("1").toBigDecimal().compareTo(BigDecimal.ONE));
 
-		Assert.assertEquals(0, new Arith(true).add(10.3).multiply("10").divide("11.3").toBigDecimal().compareTo(BigDecimal.TEN));
+		assertEquals(0, new Arith(true).add(10.3).multiply("10").divide("11.3").toBigDecimal().compareTo(BigDecimal.TEN));
 
 		assertThat(new Arith(false).add(212.454).add(1245.23).multiply(12.45).value).isEqualByComparingTo(BigDecimal.valueOf(18148.1658));
 	}
 
-	@Test(expected = ArithmeticException.class)
+	@Test
 	public void divide_ZeroDivisor_ThrowsArithmeticException() {
-		new Arith(10).divide(BigDecimal.ZERO, 2, RoundingMode.HALF_UP);
+		assertThrows(ArithmeticException.class, () -> new Arith(10).divide(BigDecimal.ZERO, 2, RoundingMode.HALF_UP));
 	}
 
-	@Test(expected = ArithmeticException.class)
+	@Test
 	public void divide0_ZeroDivisor_ThrowsArithmeticException() {
-		Arith.divide(10.0, 0.0, 2);
+		assertThrows(ArithmeticException.class, () -> Arith.divide(10.0, 0.0, 2));
 	}
 
 	static final BigDecimal d3_33 = new BigDecimal("3.33"), d3 = BigDecimal.valueOf(3);
@@ -90,73 +91,73 @@ public class ArithTest implements WithAssertions {
 	@Test
 	public void divide_DifferentRoundingModes_ProducesExpectedResults() {
 		BigDecimal result = new Arith(10).divide(d3, 2, RoundingMode.UP).toBigDecimal();
-		Assert.assertEquals(new BigDecimal("3.34"), result);
+		assertEquals(new BigDecimal("3.34"), result);
 
 		result = new Arith(10).divide(d3, 2, RoundingMode.DOWN).toBigDecimal();
 
-		Assert.assertEquals(d3_33, result);
+		assertEquals(d3_33, result);
 
 		result = new Arith(10).divide(d3, 2, RoundingMode.HALF_UP).toBigDecimal();
-		Assert.assertEquals(d3_33, result);
+		assertEquals(d3_33, result);
 	}
 
 	@Test
 	public void divide_DifferentScales_ProducesExpectedResults() {
 		BigDecimal result = new Arith(10).divide(d3, 0, RoundingMode.HALF_UP).toBigDecimal();
-		Assert.assertEquals(d3, result);
+		assertEquals(d3, result);
 
 		result = new Arith(10).divide(d3, 1, RoundingMode.HALF_UP).toBigDecimal();
-		Assert.assertEquals(new BigDecimal("3.3"), result);
+		assertEquals(new BigDecimal("3.3"), result);
 
 		result = new Arith(10).divide(d3, 2, RoundingMode.HALF_UP).toBigDecimal();
-		Assert.assertEquals(d3_33, result);
+		assertEquals(d3_33, result);
 	}
 
 	@Test
 	public void divide_DifferentInputTypes_ProducesExpectedResults() {
 		BigDecimal result = new Arith(10).divide("3", 2, RoundingMode.HALF_UP).toBigDecimal();
-		Assert.assertEquals(d3_33, result);
+		assertEquals(d3_33, result);
 
 		result = new Arith(10).divide(3.0, 2, RoundingMode.HALF_UP).toBigDecimal();
-		Assert.assertEquals(d3_33, result);
+		assertEquals(d3_33, result);
 
 		result = new Arith(10).divide(3L, 2, RoundingMode.HALF_UP).toBigDecimal();
-		Assert.assertEquals(d3_33, result);
+		assertEquals(d3_33, result);
 	}
 
-	@Test(expected = ArithmeticException.class)
+	@Test
 	public void divideRound_ZeroDivisor_ThrowsArithmeticException() {
-		new Arith(10).divideRound(BigDecimal.ZERO, 2);
+		assertThrows(ArithmeticException.class, () -> new Arith(10).divideRound(BigDecimal.ZERO, 2));
 	}
 
 	@Test
 	public void divideRound_DifferentScales_ProducesExpectedResults() {
 		BigDecimal result = new Arith(10).divideRound(d3, 0).toBigDecimal();
-		Assert.assertEquals(d3, result);
+		assertEquals(d3, result);
 
 		result = new Arith(10).divideRound(d3, 1).toBigDecimal();
-		Assert.assertEquals(new BigDecimal("3.3"), result);
+		assertEquals(new BigDecimal("3.3"), result);
 
 		result = new Arith(10).divideRound(d3, 2).toBigDecimal();
-		Assert.assertEquals(d3_33, result);
+		assertEquals(d3_33, result);
 	}
 
 	@Test
 	public void divideRound_StringInput_ProducesExpectedResults() {
 		BigDecimal result = new Arith(10).divideRound("3", 2).toBigDecimal();
-		Assert.assertEquals(d3_33, result);
+		assertEquals(d3_33, result);
 	}
 
 	@Test
 	public void divideRound_DoubleInput_ProducesExpectedResults() {
 		BigDecimal result = new Arith(10).divideRound(3.0, 2).toBigDecimal();
-		Assert.assertEquals(d3_33, result);
+		assertEquals(d3_33, result);
 	}
 
 	@Test
 	public void divideRound_LongInput_ProducesExpectedResults() {
 		BigDecimal result = new Arith(10).divideRound(3L, 2).toBigDecimal();
-		Assert.assertEquals(d3_33, result);
+		assertEquals(d3_33, result);
 	}
 
 	@Test
@@ -179,23 +180,23 @@ public class ArithTest implements WithAssertions {
 		assertThat(arith.toBigDecimal()).isEqualByComparingTo(BigDecimal.valueOf(120));
 	}
 
-	@Test(expected = ArithmeticException.class)
+	@Test
 	public void setScale_InvalidScale_ThrowsArithmeticException() {
 		Arith arith = new Arith(123.456);
-		arith.setScale(Integer.MAX_VALUE, RoundingMode.HALF_UP);
+		assertThrows(ArithmeticException.class, () -> arith.setScale(Integer.MAX_VALUE, RoundingMode.HALF_UP));
 	}
 
-	@Test(expected = ArithmeticException.class)
+	@Test
 	public void round_InvalidScale_ThrowsArithmeticException() {
 		Arith arith = new Arith(123.456);
-		arith.round(Integer.MAX_VALUE);
+		assertThrows(ArithmeticException.class, () -> arith.round(Integer.MAX_VALUE));
 	}
 
 	@Test
 	public void compareTo_BigDecimalSameReference_ReturnsZero() {
 		BigDecimal a = BigDecimal.valueOf(10);
 		int result = Arith.compareTo(a, a);
-		Assert.assertEquals(0, result);
+		assertEquals(0, result);
 	}
 
 	@Test
@@ -203,13 +204,13 @@ public class ArithTest implements WithAssertions {
 		BigDecimal a = BigDecimal.valueOf(10);
 		BigDecimal b = BigDecimal.valueOf(20);
 		int result = Arith.compareTo(a, b);
-		Assert.assertEquals(-1, result);
+		assertEquals(-1, result);
 
 		result = Arith.compareTo(b, a);
-		Assert.assertEquals(1, result);
+		assertEquals(1, result);
 
 		result = Arith.compareTo(a, a);
-		Assert.assertEquals(0, result);
+		assertEquals(0, result);
 	}
 
 	@Test
@@ -217,15 +218,15 @@ public class ArithTest implements WithAssertions {
 		BigDecimal a = BigDecimal.valueOf(10);
 		double b = 20.0;
 		int result = Arith.compareTo(a, b);
-		Assert.assertEquals(-1, result);
+		assertEquals(-1, result);
 
 		b = 5.0;
 		result = Arith.compareTo(a, b);
-		Assert.assertEquals(1, result);
+		assertEquals(1, result);
 
 		b = 10.0;
 		result = Arith.compareTo(a, b);
-		Assert.assertEquals(0, result);
+		assertEquals(0, result);
 	}
 
 	@Test
@@ -233,15 +234,15 @@ public class ArithTest implements WithAssertions {
 		BigDecimal a = BigDecimal.valueOf(10);
 		long b = 20;
 		int result = Arith.compareTo(a, b);
-		Assert.assertEquals(-1, result);
+		assertEquals(-1, result);
 
 		b = 5;
 		result = Arith.compareTo(a, b);
-		Assert.assertEquals(1, result);
+		assertEquals(1, result);
 
 		b = 10;
 		result = Arith.compareTo(a, b);
-		Assert.assertEquals(0, result);
+		assertEquals(0, result);
 	}
 
 	@Test
@@ -249,15 +250,15 @@ public class ArithTest implements WithAssertions {
 		BigDecimal a = BigDecimal.valueOf(10);
 		String b = "20";
 		int result = Arith.compareTo(a, b);
-		Assert.assertEquals(-1, result);
+		assertEquals(-1, result);
 
 		b = "5";
 		result = Arith.compareTo(a, b);
-		Assert.assertEquals(1, result);
+		assertEquals(1, result);
 
 		b = "10";
 		result = Arith.compareTo(a, b);
-		Assert.assertEquals(0, result);
+		assertEquals(0, result);
 	}
 
 	@Test
@@ -280,145 +281,145 @@ public class ArithTest implements WithAssertions {
 	@Test
 	public void doubleValue_ShouldReturnCorrectDoubleValue() {
 		Arith arith = new Arith(123.456);
-		Assert.assertEquals(123.456, arith.doubleValue(), delta);
+		assertEquals(123.456, arith.doubleValue(), delta);
 	}
 
 	@Test
 	public void doubleValueWithScale_ShouldReturnRoundedDoubleValue() {
 		Arith arith = new Arith(123.456);
-		Assert.assertEquals(123.46, arith.doubleValue(2), delta);
+		assertEquals(123.46, arith.doubleValue(2), delta);
 	}
 
 	@Test
 	public void intValue_ShouldReturnCorrectIntValue() {
 		Arith arith = new Arith(123.456);
-		Assert.assertEquals(123, arith.intValue());
+		assertEquals(123, arith.intValue());
 	}
 
 	@Test
 	public void longValue_ShouldReturnCorrectLongValue() {
 		Arith arith = new Arith(123456789.123);
-		Assert.assertEquals(123456789L, arith.longValue());
+		assertEquals(123456789L, arith.longValue());
 	}
 
 	@Test
 	public void floatValue_ShouldReturnCorrectFloatValue() {
 		Arith arith = new Arith(123.456);
-		Assert.assertEquals(123.456f, arith.floatValue(), 0.001f);
+		assertEquals(123.456f, arith.floatValue(), 0.001f);
 	}
 
 	@Test
 	public void byteValue_ShouldReturnCorrectByteValue() {
 		Arith arith = new Arith(123);
-		Assert.assertEquals((byte) 123, arith.byteValue());
+		assertEquals((byte) 123, arith.byteValue());
 	}
 
 	@Test
 	public void shortValue_ShouldReturnCorrectShortValue() {
 		Arith arith = new Arith(12345);
-		Assert.assertEquals((short) 12345, arith.shortValue());
+		assertEquals((short) 12345, arith.shortValue());
 	}
 
 	@Test
 	public void doubleValueWithScale_ShouldHandleNegativeValues() {
 		Arith arith = new Arith(-123.456);
-		Assert.assertEquals(-123.46, arith.doubleValue(2), delta);
+		assertEquals(-123.46, arith.doubleValue(2), delta);
 	}
 
 	@Test
 	public void intValue_ShouldHandleNegativeValues() {
 		Arith arith = new Arith(-123.456);
-		Assert.assertEquals(-123, arith.intValue());
+		assertEquals(-123, arith.intValue());
 	}
 
 	@Test
 	public void longValue_ShouldHandleNegativeValues() {
 		Arith arith = new Arith(-123456789.123);
-		Assert.assertEquals(-123456789L, arith.longValue());
+		assertEquals(-123456789L, arith.longValue());
 	}
 
 	@Test
 	public void floatValue_ShouldHandleNegativeValues() {
 		Arith arith = new Arith(-123.456);
-		Assert.assertEquals(-123.456f, arith.floatValue(), 0.001f);
+		assertEquals(-123.456f, arith.floatValue(), 0.001f);
 	}
 
 	@Test
 	public void byteValue_ShouldHandleNegativeValues() {
 		Arith arith = new Arith(-123);
-		Assert.assertEquals((byte) -123, arith.byteValue());
+		assertEquals((byte) -123, arith.byteValue());
 	}
 
 	@Test
 	public void shortValue_ShouldHandleNegativeValues() {
 		Arith arith = new Arith(-12345);
-		Assert.assertEquals((short) -12345, arith.shortValue());
+		assertEquals((short) -12345, arith.shortValue());
 	}
 
 	@Test
 	public void doubleValue_ShouldHandleZero() {
 		Arith arith = new Arith(0);
-		Assert.assertEquals(0.0, arith.doubleValue(), delta);
+		assertEquals(0.0, arith.doubleValue(), delta);
 	}
 
 	@Test
 	public void intValue_ShouldHandleZero() {
 		Arith arith = new Arith(0);
-		Assert.assertEquals(0, arith.intValue());
+		assertEquals(0, arith.intValue());
 	}
 
 	@Test
 	public void longValue_ShouldHandleZero() {
 		Arith arith = new Arith(0);
-		Assert.assertEquals(0L, arith.longValue());
+		assertEquals(0L, arith.longValue());
 	}
 
 	@Test
 	public void floatValue_ShouldHandleZero() {
 		Arith arith = new Arith(0);
-		Assert.assertEquals(0.0f, arith.floatValue(), 0.00001f);
+		assertEquals(0.0f, arith.floatValue(), 0.00001f);
 	}
 
 	@Test
 	public void byteValue_ShouldHandleZero() {
 		Arith arith = new Arith(0);
-		Assert.assertEquals((byte) 0, arith.byteValue());
+		assertEquals((byte) 0, arith.byteValue());
 	}
 
 	@Test
 	public void shortValue_ShouldHandleZero() {
 		Arith arith = new Arith(0);
-		Assert.assertEquals((short) 0, arith.shortValue());
+		assertEquals((short) 0, arith.shortValue());
 	}
 
 	@Test
 	public void add_PositiveNumbers_ReturnsCorrectSum() {
 		double result = Arith.add(12.65656465, 3.34343535);
-		Assert.assertEquals(16.0, result, delta);
+		assertEquals(16.0, result, delta);
 	}
 
 	@Test
 	public void add_NegativeNumbers_ReturnsCorrectSum() {
 		double result = Arith.add(-12.65656465, -3.34343535);
-		Assert.assertEquals(-16.0, result, delta);
+		assertEquals(-16.0, result, delta);
 	}
 
 	@Test
 	public void add_MixedNumbers_ReturnsCorrectSum() {
 		double result = Arith.add(12.65656465, -3.34343535);
-		Assert.assertEquals(9.3131293, result, delta);
+		assertEquals(9.3131293, result, delta);
 	}
 
 	@Test
 	public void add_ZeroValue_ReturnsCorrectSum() {
 		double result = Arith.add(0.0, 12.65656465);
-		Assert.assertEquals(12.65656465, result, delta);
+		assertEquals(12.65656465, result, delta);
 
 		result = Arith.add(12.65656465, 0.0);
-		Assert.assertEquals(12.65656465, result, delta);
+		assertEquals(12.65656465, result, delta);
 
 		result = Arith.add(0.0, 0.0);
-		Assert.assertEquals(0.0, result, delta);
+		assertEquals(0.0, result, delta);
 	}
 
 	@Test
@@ -436,7 +437,7 @@ public class ArithTest implements WithAssertions {
 		// -39.7617704786898225
 		// -39.76
 		double result = Arith.multiply(-12.65656465, 3.14159265, 2);
-		Assert.assertEquals(-39.76, result, delta);
+		assertEquals(-39.76, result, delta);
 	}
 
 	@Test
@@ -468,70 +469,70 @@ public class ArithTest implements WithAssertions {
 	public void multiply_PositiveNumbersWithPositivePrecision_CorrectResult() {
 		// 39.7617704786898225 => 39.762
 		double result = Arith.multiply(12.65656465, 3.14159265, 3);
-		Assert.assertEquals(39.762, result, delta);
+		assertEquals(39.762, result, delta);
 	}
 
 	@Test
 	public void multiply_PositiveNumbersWithZeroPrecision_CorrectResult() {
 		double result = Arith.multiply(12.65656465, 3.14159265, 0);
-		Assert.assertEquals(40, result, delta);
+		assertEquals(40, result, delta);
 	}
 
 	@Test
 	public void multiply_PositiveNumbersWithNegativePrecision_CorrectResult() {
 		double result = Arith.multiply(12.65656465, 3.14159265, -1);
-		Assert.assertEquals(40, result, delta);
+		assertEquals(40, result, delta);
 	}
 
 	@Test
 	public void multiply_ZeroProduct_CorrectResult() {
 		double result = Arith.multiply(0, 3.14159265, 2);
-		Assert.assertEquals(0, result, delta);
+		assertEquals(0, result, delta);
 	}
 
 	@Test
 	public void multiply_NegativePrecision_CorrectResult() {
 		// 123.456789 => 100
 		double result = Arith.multiply(12345.6789, 0.01, -2);
-		Assert.assertEquals(100, result, delta);
+		assertEquals(100, result, delta);
 	}
 
 	@Test
 	public void multiplyInContext_NormalCase_ShouldReturnCorrectResult() {
 		// 83.810205 => 83.8
 		double result = Arith.multiplyInContext(12.345, 6.789, 3);
-		Assert.assertEquals(83.8, result, delta);
+		assertEquals(83.8, result, delta);
 	}
 
 	@Test
 	public void multiplyInContext_ZeroPrecision_ShouldReturnIntegerResult() {
 		double result = Arith.multiplyInContext(12.345, 6.789, 0);
-		Assert.assertEquals(83.810205, result, delta);
+		assertEquals(83.810205, result, delta);
 	}
 
 	@Test
 	public void multiplyInContext_HighPrecision_ShouldReturnExactResult() {
 		double result = Arith.multiplyInContext(12.345, 6.789, 10);
-		Assert.assertEquals(83.810205, result, delta);
+		assertEquals(83.810205, result, delta);
 	}
 
 	@Test
 	public void multiplyInContext_LowPrecision_ShouldRoundCorrectly() {
 		double result = Arith.multiplyInContext(12.345, 6.789, 1);
-		Assert.assertEquals(80.0, result, delta);
+		assertEquals(80.0, result, delta);
 	}
 
 	@Test
 	public void multiplyInContext_NegativeResult_ShouldHandleCorrectly() {
 		// -83.810205 => -83.8
 		double result = Arith.multiplyInContext(-12.345, 6.789, 3);
-		Assert.assertEquals(-83.8, result, delta);
+		assertEquals(-83.8, result, delta);
 	}
 
 	@Test
 	public void multiplyInContext_ZeroProduct_ShouldReturnZero() {
 		double result = Arith.multiplyInContext(0.0, 6.789, 3);
-		Assert.assertEquals(0.0, result, delta);
+		assertEquals(0.0, result, delta);
 	}
 
 	@Test
@@ -581,83 +582,83 @@ public class ArithTest implements WithAssertions {
 
 	@Test
 	public void isIntegral() {
-		Assert.assertFalse(Arith.isIntegral(null));
-		Assert.assertTrue(Arith.isIntegral(BigDecimal.valueOf(100)));
-		Assert.assertTrue(Arith.isIntegral(new BigDecimal("100.00")));
-		Assert.assertFalse(Arith.isIntegral(new BigDecimal("100.5")));
-		Assert.assertFalse(Arith.isIntegral(new BigDecimal("100.001")));
+		assertFalse(Arith.isIntegral(null));
+		assertTrue(Arith.isIntegral(BigDecimal.valueOf(100)));
+		assertTrue(Arith.isIntegral(new BigDecimal("100.00")));
+		assertFalse(Arith.isIntegral(new BigDecimal("100.5")));
+		assertFalse(Arith.isIntegral(new BigDecimal("100.001")));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void canDivideExactly_NullDivisor_ThrowsException() {
-		Arith.canDivideExactly(BigDecimal.TEN, null);
+		assertThrows(NullPointerException.class, () -> Arith.canDivideExactly(BigDecimal.TEN, null));
 	}
 
 	@Test
 	public void canDivideExactly() {
-		Assert.assertFalse(Arith.canDivideExactly(BigDecimal.TEN, BigDecimal.ZERO));
-		Assert.assertTrue(Arith.canDivideExactly(new BigDecimal("100"), BigDecimal.valueOf(10)));
-		Assert.assertFalse(Arith.canDivideExactly(new BigDecimal("100"), BigDecimal.valueOf(3)));
+		assertFalse(Arith.canDivideExactly(BigDecimal.TEN, BigDecimal.ZERO));
+		assertTrue(Arith.canDivideExactly(new BigDecimal("100"), BigDecimal.valueOf(10)));
+		assertFalse(Arith.canDivideExactly(new BigDecimal("100"), BigDecimal.valueOf(3)));
 	}
 
 	@Test
 	public void toString_CorrectStringRepresentation() {
-		Assert.assertEquals("100", new Arith(100).toString());
+		assertEquals("100", new Arith(100).toString());
 	}
 
 	@Test
 	public void toRawString_CorrectStringRepresentation() {
-		Assert.assertEquals("100", new Arith(100).toRawString());
+		assertEquals("100", new Arith(100).toRawString());
 	}
 
 	@Test
 	public void toStringWithScale_CorrectRoundedStringRepresentation() {
-		Assert.assertEquals("100.00", new Arith(100).toString(2));
+		assertEquals("100.00", new Arith(100).toString(2));
 	}
 
 	@Test
 	public void valueOf_BigDecimalInput_ReturnsArith() {
-		Assert.assertEquals(BigDecimal.valueOf(100), Arith.valueOf(BigDecimal.valueOf(100)).value());
+		assertEquals(BigDecimal.valueOf(100), Arith.valueOf(BigDecimal.valueOf(100)).value());
 	}
 
 	@Test
 	public void valueOf_BigIntegerInput_ReturnsArith() {
-		Assert.assertEquals(BigDecimal.valueOf(100), Arith.valueOf(BigInteger.valueOf(100)).value());
+		assertEquals(BigDecimal.valueOf(100), Arith.valueOf(BigInteger.valueOf(100)).value());
 	}
 
 	@Test
 	public void valueOf_NumberInput_ReturnsArith() {
-		Assert.assertEquals(BigDecimal.valueOf(100), Arith.valueOf(100).value());
+		assertEquals(BigDecimal.valueOf(100), Arith.valueOf(100).value());
 	}
 
 	@Test
 	public void valueOf_BooleanInput_ReturnsArith() {
-		Assert.assertEquals(BigDecimal.ONE, Arith.valueOf(true).value());
+		assertEquals(BigDecimal.ONE, Arith.valueOf(true).value());
 	}
 
 	@Test
 	public void valueOf_StringInput_ReturnsArith() {
-		Assert.assertEquals(BigDecimal.valueOf(100), Arith.valueOf("100").value());
+		assertEquals(BigDecimal.valueOf(100), Arith.valueOf("100").value());
 	}
 
 	@Test
 	public void valueOfOrZero_NullInput_ReturnsZeroArith() {
-		Assert.assertEquals(BigDecimal.ZERO, Arith.valueOfOrZero(null).value());
+		assertEquals(BigDecimal.ZERO, Arith.valueOfOrZero(null).value());
 	}
 
 	@Test
 	public void valueOfOrZero_NonNullInput_ReturnsArith() {
-		Assert.assertEquals(BigDecimal.valueOf(100), Arith.valueOfOrZero("100").value());
+		assertEquals(BigDecimal.valueOf(100), Arith.valueOfOrZero("100").value());
 	}
 
 	@Test
 	public void toBigDecimal_DoubleInput_ReturnsBigDecimal() {
-		Assert.assertEquals(new BigDecimal("100.5"), Arith.toBigDecimal(100.5));
+		assertEquals(new BigDecimal("100.5"), Arith.toBigDecimal(100.5));
 	}
 
 	@Test
 	public void toBigDecimal_IntegerInput_ReturnsCachedBigDecimal() {
-		Assert.assertEquals(Arith.HUNDRED, Arith.toBigDecimal(100));
+		assertEquals(Arith.HUNDRED, Arith.toBigDecimal(100));
 	}
 
 }

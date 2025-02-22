@@ -8,7 +8,10 @@
 	<packaging>jar</packaging>
 
 	<name>ready-x</name>
-	<description>Ready-X is a high-performance Java tool library. It contains tool classes for high-performance processing of common text, arrays, collections, files, business calculations, random numbers, parameter validation, dates, etc.</description>
+	<description>Ready-X is a high-performance Java tool library. It contains tool classes for high-performance
+		processing of common text, arrays, collections, files, business calculations, random numbers, parameter
+		validation, dates, etc.
+	</description>
 	<url>https://github.com/CodePlayer/ready-x</url>
 
 	<properties>
@@ -46,23 +49,16 @@
 		</dependency>
 
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.13.2</version>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>5.11.4</version>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>org.powermock</groupId>
-			<artifactId>powermock-module-junit4</artifactId>
-			<version>2.0.9</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.powermock</groupId>
-			<artifactId>powermock-api-mockito2</artifactId>
-			<version>2.0.9</version>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>4.11.0</version>
 			<scope>test</scope>
 		</dependency>
 

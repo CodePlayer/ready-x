@@ -2,8 +2,10 @@ package me.codeplayer.util;
 
 import org.assertj.core.api.Condition;
 import org.assertj.core.api.WithAssertions;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RandomXTest implements WithAssertions {
 
@@ -26,7 +28,7 @@ public class RandomXTest implements WithAssertions {
 		int max = 20;
 		for (int i = 0; i < 1000; i++) {
 			int result = RandomX.getInt(min, max);
-			Assert.assertTrue("Result should be within range", result >= min && result <= max);
+			assertTrue(result >= min && result <= max, "Result should be within range");
 		}
 	}
 
@@ -35,7 +37,7 @@ public class RandomXTest implements WithAssertions {
 		int value = 5;
 		for (int i = 0; i < 1000; i++) {
 			int result = RandomX.getInt(value, value);
-			Assert.assertTrue("Result should be the value itself", result == value);
+			assertTrue(result == value, "Result should be the value itself");
 		}
 	}
 
@@ -45,7 +47,7 @@ public class RandomXTest implements WithAssertions {
 		int max = -10;
 		for (int i = 0; i < 1000; i++) {
 			int result = RandomX.getInt(min, max);
-			Assert.assertTrue("Result should be within negative range", result >= min && result <= max);
+			assertTrue(result >= min && result <= max, "Result should be within negative range");
 		}
 	}
 
@@ -55,7 +57,7 @@ public class RandomXTest implements WithAssertions {
 		int max = 10;
 		for (int i = 0; i < 1000; i++) {
 			int result = RandomX.getInt(min, max);
-			Assert.assertTrue("Result should be within zero and positive range", result >= min && result <= max);
+			assertTrue(result >= min && result <= max, "Result should be within zero and positive range");
 		}
 	}
 
@@ -77,79 +79,79 @@ public class RandomXTest implements WithAssertions {
 				break;
 			}
 		}
-		Assert.assertTrue("Minimum value should be found", minFound);
-		Assert.assertTrue("Maximum value should be found", maxFound);
+		assertTrue(minFound, "Minimum value should be found");
+		assertTrue(maxFound, "Maximum value should be found");
 	}
 
 	@Test
 	public void getChar_EmptyArray_ShouldReturnSpace() {
-		Assert.assertEquals(' ', RandomX.getChar(new char[] {}));
+		assertEquals(' ', RandomX.getChar(new char[] {}));
 	}
 
 	@Test
 	public void getChar_SingleChar_ShouldReturnChar() {
-		Assert.assertEquals('a', RandomX.getChar(new char[] { 'a' }));
+		assertEquals('a', RandomX.getChar(new char[] { 'a' }));
 	}
 
 	@Test
 	public void getChar_MultipleChars_ShouldReturnRandomChar() {
 		char[] chars = { 'a', 'b', 'c' };
 		char result = RandomX.getChar(chars);
-		Assert.assertTrue("Result should be one of the chars in the array", result == 'a' || result == 'b' || result == 'c');
+		assertTrue(result == 'a' || result == 'b' || result == 'c', "Result should be one of the chars in the array");
 	}
 
 	@Test
 	public void getChar_EmptyString_ShouldReturnSpace() {
-		Assert.assertEquals(' ', RandomX.getChar(""));
+		assertEquals(' ', RandomX.getChar(""));
 	}
 
 	@Test
 	public void getChar_SingleCharString_ShouldReturnChar() {
-		Assert.assertEquals('a', RandomX.getChar("a"));
+		assertEquals('a', RandomX.getChar("a"));
 	}
 
 	@Test
 	public void getChar_MultipleCharsString_ShouldReturnRandomChar() {
 		String str = "abc";
 		char result = RandomX.getChar(str);
-		Assert.assertTrue("Result should be one of the chars in the string", result == 'a' || result == 'b' || result == 'c');
+		assertTrue(result == 'a' || result == 'b' || result == 'c', "Result should be one of the chars in the string");
 	}
 
 	@Test
 	public void getString_LengthLessThanOne_ShouldReturnEmptyString() {
-		Assert.assertEquals("", RandomX.getString(new char[] { 'a', 'b', 'c' }, 0));
+		assertEquals("", RandomX.getString(new char[] { 'a', 'b', 'c' }, 0));
 	}
 
 	@Test
 	public void getString_SingleChar_ShouldReturnRepeatedChar() {
-		Assert.assertEquals("aaa", RandomX.getString(new char[] { 'a' }, 3));
+		assertEquals("aaa", RandomX.getString(new char[] { 'a' }, 3));
 	}
 
 	@Test
 	public void getString_MultipleChars_ShouldReturnRandomString() {
 		String result = RandomX.getString(new char[] { 'a', 'b', 'c' }, 5);
-		Assert.assertEquals(5, result.length());
+		assertEquals(5, result.length());
 		for (char c : result.toCharArray()) {
-			Assert.assertTrue("Result should only contain chars from the array", c == 'a' || c == 'b' || c == 'c');
+			assertTrue(c == 'a' || c == 'b' || c == 'c', "Result should only contain chars from the array");
 		}
 	}
 
 	@Test
 	public void getString_LengthLessThanOne_ShouldReturnEmptyStringForString() {
-		Assert.assertEquals("", RandomX.getString("abc", 0));
+		assertEquals("", RandomX.getString("abc", 0));
 	}
 
 	@Test
 	public void getString_SingleCharString_ShouldReturnRepeatedChar() {
-		Assert.assertEquals("aaa", RandomX.getString("a", 3));
+		assertEquals("aaa", RandomX.getString("a", 3));
 	}
 
 	@Test
 	public void getString_MultipleCharsString_ShouldReturnRandomString() {
 		String result = RandomX.getString("abc", 5);
-		Assert.assertEquals(5, result.length());
+		assertEquals(5, result.length());
 		for (char c : result.toCharArray()) {
-			Assert.assertTrue("Result should only contain chars from the string", c == 'a' || c == 'b' || c == 'c');
+			assertTrue(c == 'a' || c == 'b' || c == 'c', "Result should only contain chars from the string");
 		}
 	}
 

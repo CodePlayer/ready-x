@@ -5,8 +5,9 @@ import java.util.*;
 import com.alibaba.fastjson2.*;
 import org.assertj.core.api.WithAssertions;
 import org.assertj.core.data.Index;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JsonXTest implements WithAssertions {
 
@@ -35,7 +36,7 @@ public class JsonXTest implements WithAssertions {
 
 		jsonStr = JsonX.encode(user);
 		User parsed = JsonX.parseObject(jsonStr, User.class);
-		Assert.assertEquals(parsed, user);
+		assertEquals(parsed, user);
 		// array
 		// ["Hello","CodePlayer",true,{"gender":true,"id":1,"name":"张三","password":"123456"}]
 		jsonStr = JsonX.encode(array);
@@ -56,15 +57,14 @@ public class JsonXTest implements WithAssertions {
 		// 由于集合中存在重复的引用，请注意比较它与下面的encodeWithReferenceDetect()的输出区别
 		jsonStr = JsonX.encode(users);
 		List<User> list = JsonX.parseArray(jsonStr, User.class);
-		Assert.assertEquals(users, list);
-
+		assertEquals(users, list);
 	}
 
 	@Test
 	public void encodeWithExclude() {
 		// map
 		String jsonStr = JsonX.encodeWithExclude(map, "age");
-		Assert.assertEquals("{\"name\":\"张三\"}", jsonStr);
+		assertEquals("{\"name\":\"张三\"}", jsonStr);
 
 		jsonStr = JsonX.encodeWithExclude(user, "id", "password");
 		// POJO
@@ -81,7 +81,7 @@ public class JsonXTest implements WithAssertions {
 	public void encodeWithInclude() {
 		// map
 		String jsonStr = JsonX.encodeWithInclude(map, "name");
-		Assert.assertEquals("{\"name\":\"张三\"}", jsonStr);
+		assertEquals("{\"name\":\"张三\"}", jsonStr);
 
 		jsonStr = JsonX.encodeWithInclude(user, "id", "name");
 		// POJO
@@ -100,7 +100,7 @@ public class JsonXTest implements WithAssertions {
 
 		jsonStr = JsonX.encodeRaw(user);
 		User actual = JsonX.parseObject(jsonStr, User.class);
-		Assert.assertEquals(user, actual);
+		assertEquals(user, actual);
 		// array
 		// ["Hello","CodePlayer",true,{"gender":true,"id":1,"name":"张三","password":"123456"}]
 		jsonStr = JsonX.encodeRaw(array);
@@ -121,7 +121,7 @@ public class JsonXTest implements WithAssertions {
 		// 由于集合中存在重复的引用，请注意比较它与下面的encodeWithReferenceDetect()的输出区别
 		jsonStr = JsonX.encodeRaw(users);
 		List<User> list = JsonX.parseArray(jsonStr, User.class);
-		Assert.assertEquals(users, list);
+		assertEquals(users, list);
 
 	}
 

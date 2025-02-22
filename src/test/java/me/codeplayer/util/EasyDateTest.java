@@ -3,20 +3,20 @@ package me.codeplayer.util;
 import java.util.*;
 
 import org.assertj.core.api.WithAssertions;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EasyDateTest implements WithAssertions {
 
 	/** 2009-02-14 07:31:30 GMT+8 星期六 */
-	private Date baseDate;
+	static Date baseDate;
 	/** 2009-02-14 07:31:30 GMT+8 星期六 */
-	private Calendar baseCalendar;
+	static Calendar baseCalendar;
 
-	@Before
-	public void setUp() {
+	@BeforeAll
+	public static void setUp() {
 		TimeZone.setDefault(TimeZone.getTimeZone("GMT+8"));
 		baseDate = new Date(1234567890000L); // 2009-02-14 07:31:30 GMT+8
 		baseCalendar = Calendar.getInstance();
@@ -328,9 +328,9 @@ public class EasyDateTest implements WithAssertions {
 		assertFalse(d.isLeapYear());
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void smartParseDate_NullInput_ThrowsNullPointerException() {
-		EasyDate.smartParseDate(null);
+		assertThrows(NullPointerException.class, () -> EasyDate.smartParseDate(null));
 	}
 
 	@Test
@@ -346,19 +346,19 @@ public class EasyDateTest implements WithAssertions {
 		assertEquals("2012-06-01 00:00:00.000", EasyDate.smartParse("201206").toLongString());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void smartParseDate_UnexpectedLength_ThrowsIllegalArgumentException() {
-		EasyDate.smartParseDate("2012-01");
+		assertThrows(IllegalArgumentException.class, () -> EasyDate.smartParseDate("2012-01"));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void smartParse_NullInput_ThrowsNullPointerException() {
-		EasyDate.smartParse(null);
+		assertThrows(NullPointerException.class, () -> EasyDate.smartParse(null));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void smartParse_UnexpectedLength_ThrowsIllegalArgumentException() {
-		EasyDate.smartParse("2012-01");
+		assertThrows(IllegalArgumentException.class, () -> EasyDate.smartParse("2012-01"));
 	}
 
 	@Test

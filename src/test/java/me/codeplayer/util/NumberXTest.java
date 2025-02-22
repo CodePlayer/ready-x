@@ -3,9 +3,9 @@ package me.codeplayer.util;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NumberXTest {
 
@@ -32,10 +32,10 @@ public class NumberXTest {
 		assertEquals(Byte.parseByte(val), result);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void getByte_InvalidValue_ThrowsException() {
 		Object invalidValue = new Object();
-		NumberX.getByte(invalidValue);
+		assertThrows(IllegalArgumentException.class, () -> NumberX.getByte(invalidValue));
 	}
 
 	@Test
@@ -59,10 +59,10 @@ public class NumberXTest {
 		assertEquals(defaultValue, result);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void getByte_InvalidValueWithDefaultValue_ThrowsException() {
 		Object invalidValue = new Object();
-		NumberX.getByte(invalidValue, (byte) 0);
+		assertThrows(IllegalArgumentException.class, () -> NumberX.getByte(invalidValue, (byte) 0));
 	}
 
 	@Test
@@ -86,10 +86,10 @@ public class NumberXTest {
 		assertEquals(Short.parseShort(val), result);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void getShort_InvalidValue_ThrowsException() {
 		Object invalidValue = new Object();
-		NumberX.getShort(invalidValue);
+		assertThrows(IllegalArgumentException.class, () -> NumberX.getShort(invalidValue));
 	}
 
 	@Test
@@ -111,10 +111,10 @@ public class NumberXTest {
 		assertEquals(Short.valueOf(val), result);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void getShort_InvalidValueWithDefaultValue_ThrowsException() {
 		Object invalidValue = new Object();
-		NumberX.getShort(invalidValue, (short) 0);
+		assertThrows(IllegalArgumentException.class, () -> NumberX.getShort(invalidValue, (short) 0));
 	}
 
 	@Test
@@ -149,15 +149,15 @@ public class NumberXTest {
 		assertEquals(Integer.parseInt(val), result);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void getInt_InvalidValue_ThrowsException() {
 		Object invalidValue = new Object();
-		NumberX.getInt(invalidValue, 0);
+		assertThrows(IllegalArgumentException.class, () -> NumberX.getInt(invalidValue, 0));
 	}
 
-	@Test(expected = NumberFormatException.class)
+	@Test
 	public void getInt_InvalidString_ThrowsException() {
-		NumberX.getInteger("abc", null);
+		assertThrows(NumberFormatException.class, () -> NumberX.getInteger("abc", null));
 	}
 
 	@Test
@@ -174,15 +174,15 @@ public class NumberXTest {
 		assertEquals(Long.parseLong(val), result);
 	}
 
-	@Test(expected = NumberFormatException.class)
+	@Test
 	public void getLong_InvalidCharSequenceValue_ThrowsException() {
 		String invalidVal = "abc";
-		NumberX.getLong(invalidVal, 0);
+		assertThrows(NumberFormatException.class, () -> NumberX.getLong(invalidVal, 0));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void getLong_NullValue_ThrowsException() {
-		NumberX.getLong(null);
+		assertThrows(NullPointerException.class, () -> NumberX.getLong(null));
 	}
 
 	@Test
@@ -192,12 +192,11 @@ public class NumberXTest {
 		assertEquals(defaultValue, result);
 	}
 
-	@Test(expected = NumberFormatException.class)
+	@Test
 	public void getLong_InvalidCharSequenceValueWithDefaultValue_ThrowException() {
 		String invalidVal = "abc";
 		long defaultValue = 1000L;
-		long result = NumberX.getLong(invalidVal, defaultValue);
-		assertEquals(defaultValue, result);
+		assertThrows(NumberFormatException.class, () -> NumberX.getLong(invalidVal, defaultValue));
 	}
 
 	@Test
@@ -223,12 +222,11 @@ public class NumberXTest {
 		assertEquals(defaultValue, result);
 	}
 
-	@Test(expected = NumberFormatException.class)
+	@Test
 	public void getLong_InvalidCharSequenceValueWithLongDefaultValue_ThrowException() {
 		String invalidVal = "abc";
 		Long defaultValue = 1000L;
-		Long result = NumberX.getLong(invalidVal, defaultValue);
-		assertEquals(defaultValue, result);
+		assertThrows(NumberFormatException.class, () -> NumberX.getLong(invalidVal, defaultValue));
 	}
 
 	@Test
@@ -245,10 +243,10 @@ public class NumberXTest {
 		assertEquals(Float.parseFloat(val), result, 0.001f);
 	}
 
-	@Test(expected = NumberFormatException.class)
+	@Test
 	public void getFloat_InvalidValue_ThrowsException() {
 		Object invalidValue = "abc";
-		NumberX.getFloat(invalidValue);
+		assertThrows(NumberFormatException.class, () -> NumberX.getFloat(invalidValue));
 	}
 
 	@Test
@@ -279,10 +277,10 @@ public class NumberXTest {
 		assertEquals(Double.parseDouble(val), result, 0.001);
 	}
 
-	@Test(expected = NumberFormatException.class)
+	@Test
 	public void getDouble_InvalidValue_ThrowsException() {
 		Object invalidValue = "abc";
-		NumberX.getDouble(invalidValue);
+		assertThrows(NumberFormatException.class, () -> NumberX.getDouble(invalidValue));
 	}
 
 	@Test
@@ -313,10 +311,10 @@ public class NumberXTest {
 		assertEquals(new BigDecimal(val), result);
 	}
 
-	@Test(expected = NumberFormatException.class)
+	@Test
 	public void getBigDecimal_InvalidValue_ThrowsException() {
 		Object invalidValue = "abc";
-		NumberX.getBigDecimal(invalidValue, null);
+		assertThrows(NumberFormatException.class, () -> NumberX.getBigDecimal(invalidValue, null));
 	}
 
 	@Test
@@ -403,9 +401,9 @@ public class NumberXTest {
 		assertFalse(NumberX.isNumber("12a", 3));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void isNumber_NegativeLength_ThrowsException() {
-		NumberX.isNumber("123", -1);
+		assertThrows(IllegalArgumentException.class, () -> NumberX.isNumber("123", -1));
 	}
 
 	@Test

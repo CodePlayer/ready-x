@@ -7,10 +7,10 @@ import java.util.function.Consumer;
 
 import me.codeplayer.util.JsonXTest.User;
 import org.assertj.core.api.WithAssertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class XTest implements WithAssertions {
 
@@ -248,9 +248,9 @@ public class XTest implements WithAssertions {
 		assertEquals(3, X.sizeOfArray(array));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void sizeOfArray_NotAnArray_ThrowsException() {
-		X.sizeOfArray("not an array");
+		assertThrows(IllegalArgumentException.class, () -> X.sizeOfArray("not an array"));
 	}
 
 	@Test
@@ -394,14 +394,14 @@ public class XTest implements WithAssertions {
 		assertEquals("", sb.toString());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void decode_NullExpressions_ThrowsException() {
-		X.decode("1", (Object[]) null);
+		assertThrows(IllegalArgumentException.class, () -> X.decode("1", (Object[]) null));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void decode_EmptyExpressions_ThrowsException() {
-		X.decode("1");
+		assertThrows(IllegalArgumentException.class, () -> X.decode("1"));
 	}
 
 	@Test
@@ -428,37 +428,43 @@ public class XTest implements WithAssertions {
 		assertEquals("星期六", result);
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void sneakyThrow_NullInput_ThrowsNullPointerException() {
-		X.sneakyThrow(null);
+		assertThrows(NullPointerException.class, () -> X.sneakyThrow(null));
 	}
 
-	@Test(expected = IOException.class)
+	@Test
 	public void sneakyThrow_IOExceptionInput_ThrowsSameException() {
-		try {
-			FileX.readContent("/file/not/found.txt", false);
-		} catch (IOException e) {
-			throw X.sneakyThrow(e);
-		}
+		assertThrows(IOException.class, () -> {
+			try {
+				FileX.readContent("/file/not/found.txt", false);
+			} catch (IOException e) {
+				throw X.sneakyThrow(e);
+			}
+		});
 	}
 
-	@Test(expected = ArithmeticException.class)
+	@Test
 	public void sneakyThrow_ExceptionInput_ThrowsRuntimeExceptionWithSameCause() {
-		try {
-			BigDecimal divided = BigDecimal.TEN.divide(BigDecimal.ZERO, 2, RoundingMode.HALF_UP);
-			System.out.println(divided);
-		} catch (Throwable e) {
-			throw X.sneakyThrow(e);
-		}
+		assertThrows(ArithmeticException.class, () -> {
+			try {
+				BigDecimal divided = BigDecimal.TEN.divide(BigDecimal.ZERO, 2, RoundingMode.HALF_UP);
+				System.out.println(divided);
+			} catch (Throwable e) {
+				throw X.sneakyThrow(e);
+			}
+		});
 	}
 
-	@Test(expected = AssertionError.class)
+	@Test
 	public void sneakyThrow_ErrorInput_ThrowsSameError() {
-		try {
-			throw new AssertionError("Test");
-		} catch (Error e) {
-			throw X.sneakyThrow(e);
-		}
+		assertThrows(AssertionError.class, () -> {
+			try {
+				throw new AssertionError("Test");
+			} catch (Error e) {
+				throw X.sneakyThrow(e);
+			}
+		});
 	}
 
 }
