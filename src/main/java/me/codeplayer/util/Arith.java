@@ -61,7 +61,7 @@ public class Arith {
 	 * 构造一个指定long值的商业计算数
 	 */
 	public Arith(long d) {
-		value = BigDecimal.valueOf(d);
+		value = toBigDecimal(d);
 	}
 
 	/**
@@ -112,7 +112,7 @@ public class Arith {
 	 * @param d 指定的加数
 	 */
 	public Arith add(long d) {
-		return add(BigDecimal.valueOf(d));
+		return add(toBigDecimal(d));
 	}
 
 	/**
@@ -149,7 +149,7 @@ public class Arith {
 	 * @param d 指定的减数
 	 */
 	public Arith minus(long d) {
-		return minus(BigDecimal.valueOf(d));
+		return minus(toBigDecimal(d));
 	}
 
 	/**
@@ -187,7 +187,7 @@ public class Arith {
 	 * @param d 指定的乘数
 	 */
 	public Arith multiply(long d) {
-		return multiply(BigDecimal.valueOf(d));
+		return multiply(toBigDecimal(d));
 	}
 
 	/**
@@ -232,7 +232,7 @@ public class Arith {
 	 * @deprecated 不建议使用，请使用{@link #divide(long, int, RoundingMode)}替代
 	 */
 	public Arith divide(long d) {
-		return divide(BigDecimal.valueOf(d));
+		return divide(toBigDecimal(d));
 	}
 
 	/**
@@ -277,7 +277,7 @@ public class Arith {
 	 * @param roundingMode 设置应用的舍入模式(四舍五入、向上舍入、向下舍去等)
 	 */
 	public Arith divide(long d, int scale, RoundingMode roundingMode) {
-		return divide(BigDecimal.valueOf(d), scale, roundingMode);
+		return divide(toBigDecimal(d), scale, roundingMode);
 	}
 
 	/**
@@ -317,7 +317,7 @@ public class Arith {
 	 * @param scale 指定的精确位数
 	 */
 	public Arith divideRound(long d, int scale) {
-		return divide(BigDecimal.valueOf(d), scale, RoundingMode.HALF_UP);
+		return divide(toBigDecimal(d), scale, RoundingMode.HALF_UP);
 	}
 
 	/**
@@ -640,7 +640,7 @@ public class Arith {
 	 * </ul>
 	 */
 	public static int compareTo(BigDecimal a, long b) {
-		return a.compareTo(BigDecimal.valueOf(b));
+		return a.compareTo(toBigDecimal(b));
 	}
 
 	/**
@@ -742,7 +742,7 @@ public class Arith {
 	 */
 	public static BigDecimal toBigDecimal(double val) {
 		final long n = (long) val;
-		return n == val ? BigDecimal.valueOf(n) : BigDecimal.valueOf(val);
+		return n == val ? toBigDecimal(n) : BigDecimal.valueOf(val);
 	}
 
 	/**
@@ -769,6 +769,16 @@ public class Arith {
 			default:
 				return BigDecimal.valueOf(n);
 		}
+	}
+
+	/**
+	 * 将指定的整数转换为对应的 BigDecimal（内部对于常用数值进行缓存处理）
+	 *
+	 * @since 4.0
+	 */
+	public static BigDecimal toBigDecimal(long val) {
+		final int intVal = (int) val;
+		return intVal == val ? toBigDecimal(intVal) : BigDecimal.valueOf(val);
 	}
 
 }
