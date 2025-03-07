@@ -183,12 +183,12 @@ Lambda（或 Stream API） 虽然好用，但是也要保持**适当**的理性�
 本项目自 4.x 起拟采用 《约定式提交 1.0.0》来规范代码提交，详情参见：[https://www.conventionalcommits.org/zh-hans/v1.0.0/](https://www.conventionalcommits.org/zh-hans/v1.0.0/)。
 
 ## 使用
-本工具类库已发布至 Maven 中央仓库，当前最新版本为：**3.11.4** ，你可以通过如下 Maven 依赖配置引入本库：
+本工具类库已发布至 Maven 中央仓库，当前最新版本为：**3.12.0** ，你可以通过如下 Maven 依赖配置引入本库：
 
 ```xml
 <dependency>
   <groupId>me.codeplayer</groupId>
   <artifactId>ready-x</artifactId>
-  <version>3.11.4</version>
+  <version>3.12.0</version>
 </dependency>
 ```
