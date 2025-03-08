@@ -343,6 +343,39 @@ public abstract class ArrayX {
 	}
 
 	/**
+	 * 检测指定的数组中是否存在指定的值
+	 *
+	 * @since 4.0.0
+	 */
+	public static <T> boolean ins(T value, T v1, T v2) {
+		return value == null
+				? v1 == null || v2 == null
+				: value.equals(v1) || value.equals(v2);
+	}
+
+	/**
+	 * 检测指定的数组中是否存在指定的值
+	 *
+	 * @since 4.0.0
+	 */
+	public static <T> boolean ins(T value, T v1, T v2, T v3) {
+		return value == null
+				? v1 == null || v2 == null || v3 == null
+				: value.equals(v1) || value.equals(v2) || value.equals(v3);
+	}
+
+	/**
+	 * 检测指定的数组中是否存在指定的值
+	 *
+	 * @since 4.0.0
+	 */
+	public static <T> boolean ins(T value, T v1, T v2, T v3, T v4) {
+		return value == null
+				? v1 == null || v2 == null || v3 == null || v4 == null
+				: value.equals(v1) || value.equals(v2) || value.equals(v3) || value.equals(v4);
+	}
+
+	/**
 	 * 查找指定对象在已经排序好的区间临界值数组中的区间索引。
 	 * <p>
 	 * 数组{@code array }必须预先排序好，可以是升序或降序。例如：{@code [5, 10, 20, 50, 100] }。 此时，如果 {@code toCompare = 4 }，则返回 -1；如果 {@code toCompare = 5 }，则返回 0；如果 {@code toCompare = 12 }，则返回 1。
