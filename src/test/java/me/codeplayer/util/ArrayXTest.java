@@ -427,6 +427,53 @@ public class ArrayXTest {
 	}
 
 	@Test
+	public void ins_ValueIsNull_AllNulls_ReturnsTrue() {
+		assertTrue(ArrayX.ins(null, null, null));
+		assertTrue(ArrayX.ins(null, null, null, null));
+		assertTrue(ArrayX.ins(null, null, null, null, null));
+	}
+
+	@Test
+	public void ins_ValueIsNull_SomeNulls_ReturnsTrue() {
+		assertTrue(ArrayX.ins(null, null, "a"));
+		assertTrue(ArrayX.ins(null, "a", null));
+		assertTrue(ArrayX.ins(null, null, "a", "b"));
+		assertTrue(ArrayX.ins(null, "a", null, "b"));
+		assertTrue(ArrayX.ins(null, "a", "b", null));
+		assertTrue(ArrayX.ins(null, null, "a", "b", "c"));
+		assertTrue(ArrayX.ins(null, "a", null, "b", "c"));
+		assertTrue(ArrayX.ins(null, "a", "b", null, "c"));
+		assertTrue(ArrayX.ins(null, "a", "b", "c", null));
+	}
+
+	@Test
+	public void ins_ValueIsNull_NoNulls_ReturnsFalse() {
+		assertFalse(ArrayX.ins(null, "a", "b"));
+		assertFalse(ArrayX.ins(null, "a", "b", "c"));
+		assertFalse(ArrayX.ins(null, "a", "b", "c", "d"));
+	}
+
+	@Test
+	public void ins_ValueIsNotNull_ValueEqualsOne_ReturnsTrue() {
+		assertTrue(ArrayX.ins("a", "a", "b"));
+		assertTrue(ArrayX.ins("a", "b", "a"));
+		assertTrue(ArrayX.ins("a", "a", "b", "c"));
+		assertTrue(ArrayX.ins("a", "b", "a", "c"));
+		assertTrue(ArrayX.ins("a", "b", "c", "a"));
+		assertTrue(ArrayX.ins("a", "a", "b", "c", "d"));
+		assertTrue(ArrayX.ins("a", "b", "a", "c", "d"));
+		assertTrue(ArrayX.ins("a", "b", "c", "a", "d"));
+		assertTrue(ArrayX.ins("a", "b", "c", "d", "a"));
+	}
+
+	@Test
+	public void ins_ValueIsNotNull_ValueDoesNotEqualAny_ReturnsFalse() {
+		assertFalse(ArrayX.ins("a", "b", "c"));
+		assertFalse(ArrayX.ins("a", "b", "c", "d"));
+		assertFalse(ArrayX.ins("a", "b", "c", "d", "e"));
+	}
+
+	@Test
 	public void indexOfInterval_NullOrEmptyArray_ReturnsMinusOne() {
 		assertEquals(-1, ArrayX.indexOfInterval(null, 5, true));
 		assertEquals(-1, ArrayX.indexOfInterval(new Integer[] {}, 5, true));
