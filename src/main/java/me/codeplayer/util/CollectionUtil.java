@@ -23,7 +23,7 @@ public abstract class CollectionUtil {
 	}
 
 	public static <T> T get(@Nullable List<T> list, int index, T defaultValue) {
-		return list != null && list.size() > index ? list.get(index) : defaultValue;
+		return list != null && list.size() > index && index >= 0 ? list.get(index) : defaultValue;
 	}
 
 	public static <T> T get(@Nullable List<T> list, int index) {
