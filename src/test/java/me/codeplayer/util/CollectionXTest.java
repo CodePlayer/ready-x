@@ -74,6 +74,7 @@ public class CollectionXTest implements WithAssertions {
 	public void get_IndexOutOfBounds_ReturnsDefaultValue() {
 		List<String> list = Arrays.asList("a", "b");
 		assertThat(CollectionX.get(list, 2, "default")).isEqualTo("default");
+		assertThat(CollectionX.get(list, -1, "default")).isEqualTo("default");
 	}
 
 	@Test
