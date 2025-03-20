@@ -13,6 +13,7 @@ import javax.annotation.Nullable;
 import org.apache.commons.lang3.time.FastDateFormat;
 
 import static java.util.Calendar.*;
+import static me.codeplayer.util.NumberX.pickValidChars;
 
 /**
  * 实现常用日期扩展方法的日期工具类(实现Comparable可比较接口、Cloneable可复制接口)
@@ -1167,10 +1168,9 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	}
 
 	static String toString(int year, int month, int day) {
-		// "0000-00-00".toCharArray();
-		char[] chars = { '0', '0', '0', '0', '-', '0', '0', '-', '0', '0' };
+		final StringBuilder chars = new StringBuilder(10).append("0000-00-00");
 		formatNormalDate(chars, 0, year, month, day);
-		return new String(chars);
+		return chars.toString();
 	}
 
 	/**
@@ -1184,10 +1184,9 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 返回"yyyy年MM月dd日"格式的字符串
 	 */
 	public static String toDateString(int year, int month, int day) {
-		// "0000年00月00日".toCharArray();
-		char[] chars = { '0', '0', '0', '0', '年', '0', '0', '月', '0', '0', '日' };
+		final StringBuilder chars = new StringBuilder(11).append("0000年00月00日");
 		formatNormalDate(chars, 0, year, month, day);
-		return new String(chars);
+		return chars.toString();
 	}
 
 	/**
@@ -1232,9 +1231,9 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 返回"yyyy-MM-dd HH:mm:ss"格式的字符串
 	 */
 	public static String toDateTimeString(int year, int month, int day, int hour, int minute, int second) {
-		final char[] chars = "0000-00-00 00:00:00".toCharArray();
+		final StringBuilder chars = new StringBuilder(19).append("0000-00-00 00:00:00");
 		formatNormalDateTime(chars, year, month, day, hour, minute, second);
-		return new String(chars);
+		return chars.toString();
 	}
 
 	/**
@@ -1256,11 +1255,11 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 返回"yyyyMMdd"格式的字符串
 	 */
 	public static String toShortString(int year, int month, int day) {
-		final char[] chars = "00000000".toCharArray();
-		fillNumberToChars(chars, year, 0, 4);
-		fillNumberToChars(chars, month, 4, 2);
-		fillNumberToChars(chars, day, 6, 2);
-		return new String(chars);
+		final StringBuilder chars = new StringBuilder(8).append("00000000");
+		pickValidChars(year, chars, 0, 4);
+		pickValidChars(month, chars, 4, 6);
+		pickValidChars(day, chars, 6, 8);
+		return chars.toString();
 	}
 
 	/**
@@ -1282,27 +1281,29 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 返回"yyyy-MM-dd HH:mm:ss.SSS"格式的字符串
 	 */
 	public static String toLongString(int year, int month, int day, int hour, int minute, int second, int ms) {
-		final char[] chars = "0000-00-00 00:00:00.000".toCharArray();
+		final StringBuilder chars = new StringBuilder(23).append("0000-00-00 00:00:00.000");
 		formatNormalDateTime(chars, year, month, day, hour, minute, second);
-		fillNumberToChars(chars, ms, 20, 3);
-		return new String(chars);
+		pickValidChars(ms, chars, 20, 23);
+		return chars.toString();
 	}
 
-	protected static void formatNormalDateTime(char[] chars, int year, int month, int day, int hour, int minute, int second) {
+	protected static void formatNormalDateTime(final StringBuilder chars, int year, int month, int day, int hour, int minute, int second) {
 		formatNormalDate(chars, 0, year, month, day);
 		formatNormalTime(chars, 11, hour, minute, second);
 	}
 
-	public static void formatNormalDate(char[] chars, final int offset, final int year, final int month, final int day) {
-		fillNumberToChars(chars, year, offset, 4);
-		fillNumberToChars(chars, month, offset + 5, 2);
-		fillNumberToChars(chars, day, offset + 8, 2);
+	/** "...yyyy-MM-dd..." */
+	public static void formatNormalDate(final StringBuilder chars, int offset, final int year, final int month, final int day) {
+		pickValidChars(year, chars, offset, offset + 4);
+		pickValidChars(month, chars, offset + 5, offset + 7);
+		pickValidChars(day, chars, offset + 8, offset + 10);
 	}
 
-	public static void formatNormalTime(char[] chars, final int offset, final int hour, final int minute, final int second) {
-		fillNumberToChars(chars, hour, offset, 2);
-		fillNumberToChars(chars, minute, offset + 3, 2);
-		fillNumberToChars(chars, second, offset + 6, 2);
+	/** "...HH:mm:ss..." */
+	public static void formatNormalTime(final StringBuilder chars, final int offset, final int hour, final int minute, final int second) {
+		pickValidChars(hour, chars, offset, offset + 2);
+		pickValidChars(minute, chars, offset + 3, offset + 5);
+		pickValidChars(second, chars, offset + 6, offset + 8);
 	}
 
 	/**
@@ -1331,38 +1332,6 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 			// ignore exception
 		}
 		return date;
-	}
-
-	/**
-	 * 将指定的数字设置到指定的字符数组中的指定索引处，并填充指定的长度，如果数字的长度不够，则在前面填充0
-	 *
-	 * @param chars 指定的字符数组
-	 * @param number 指定的数字
-	 * @param start 指定的起始索引
-	 * @param length 指定的长度
-	 */
-	public static void setNumberToChars(char[] chars, int number, int start, int length) {
-		int end = start + length;
-		while (length-- > 0) {
-			chars[--end] = (char) ('0' + (number % 10));
-			number /= 10;
-		}
-	}
-
-	/**
-	 * 将指定的数字设置到指定的字符数组中的指定索引处，从右向左依次填充，并最多填充指定的长度
-	 *
-	 * @param chars 指定的字符数组
-	 * @param number 指定的数字
-	 * @param start 指定的起始索引
-	 * @param length 指定的长度
-	 */
-	public static void fillNumberToChars(char[] chars, int number, int start, int length) {
-		int end = start + length;
-		while (number > 0 && length-- > 0) {
-			chars[--end] = (char) ('0' + (number % 10));
-			number /= 10;
-		}
 	}
 
 	/**
