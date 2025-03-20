@@ -537,4 +537,34 @@ public abstract class NumberUtil {
 		return isPositive(val, true);
 	}
 
+	/**
+	 * 将指定的数字设置到指定的字符数组中的指定索引处，并填充指定的长度，如果数字的长度不够，则在前面填充0
+	 *
+	 * @param number 指定的数字
+	 * @param chars 指定的字符序列
+	 * @param start 指定的起始索引
+	 * @param end 结束索引（不包含）
+	 */
+	public static void pickChars(long number, StringBuilder chars, int start, int end) {
+		while (end-- > start) {
+			chars.setCharAt(end, (char) ('0' + (number % 10)));
+			number /= 10;
+		}
+	}
+
+	/**
+	 * 将指定的数字设置到指定的字符数组中的指定索引处，从右向左依次填充，并最多填充指定的长度
+	 *
+	 * @param number 指定的数值，如果 {@code number == 0}，则不填充
+	 * @param chars 指定的字符序列
+	 * @param start 指定的起始索引
+	 * @param end 结束索引（不包含）
+	 */
+	public static void pickValidChars(long number, StringBuilder chars, int start, int end) {
+		while (number > 0 && end-- > start) {
+			chars.setCharAt(end, (char) ('0' + (number % 10)));
+			number /= 10;
+		}
+	}
+
 }
