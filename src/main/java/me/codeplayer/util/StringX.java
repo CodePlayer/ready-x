@@ -482,23 +482,22 @@ public abstract class StringX {
 			throw new IllegalArgumentException("minLength can not be less than 1:" + minLength);
 		}
 		int length = str.length();
-		if (minLength > length) {
-			final char[] chars = new char[minLength]; // 直接采用高效的char数组形式构建字符串
-			if (leftOrRight) {
-				final int offset = minLength - length;
-				for (int i = 0; i < offset; i++) {
-					chars[i] = ch;
-				}
-				str.getChars(0, length, chars, offset);
-			} else {
-				str.getChars(0, length, chars, 0);
-				do {
-					chars[length++] = ch;
-				} while (length < minLength);
-			}
-			str = new String(chars);
+		if (minLength <= length) {
+			return str;
 		}
-		return str;
+		final StringBuilder sb = new StringBuilder(minLength);
+		if (leftOrRight) {
+			for (int i = length; i < minLength; i++) {
+				sb.append(ch);
+			}
+			sb.append(str, 0, length);
+		} else {
+			sb.append(str, 0, length);
+			do {
+				sb.append(ch);
+			} while (++length < minLength);
+		}
+		return sb.toString();
 	}
 
 	/**
@@ -1073,7 +1072,8 @@ public abstract class StringX {
 	 * @throws IndexOutOfBoundsException 索引越界时会抛出该异常。不过请注意：如果 {@code str} 为 null 时，将直接返回 null，而不会抛出 NPE
 	 */
 	public static String replaceChar(@Nullable String str, int charIndex, CharConverter converter) throws IndexOutOfBoundsException {
-		if (str == null || str.isEmpty()) {
+		final int len;
+		if (str == null || (len = str.length()) == 0) {
 			return str;
 		}
 		char ch = str.charAt(charIndex);
@@ -1081,9 +1081,9 @@ public abstract class StringX {
 		if (ch == replaced) {
 			return str;
 		}
-		final char[] chars = str.toCharArray();
-		chars[charIndex] = replaced;
-		return new String(chars);
+		final StringBuilder sb = new StringBuilder(len).append(str);
+		sb.setCharAt(charIndex, replaced);
+		return sb.toString();
 	}
 
 	/**
@@ -1092,18 +1092,43 @@ public abstract class StringX {
 	 * @param delimiter 分隔符
 	 */
 	public static <E> StringBuilder joinAppend(@Nullable StringBuilder sb, Collection<E> items, BiConsumer<StringBuilder, E> itemAppender, String delimiter) {
-		if (X.isValid(items)) {
-			final int size = items.size();
-			sb = initBuilder(sb, size * (6 + delimiter.length()) + 4);
-			boolean appendSep = false;
-			for (E e : items) {
-				if (appendSep) {
-					sb.append(delimiter);
-				} else {
-					appendSep = true;
+		return joinAppend(sb, items, itemAppender, delimiter, 0);
+	}
+
+	/**
+	 * 将集合的指定属性或输出拼接为字符串
+	 *
+	 * @param delimiter 分隔符
+	 */
+	public static <E> StringBuilder joinAppend(@Nullable StringBuilder sb, Collection<E> items, BiConsumer<StringBuilder, E> itemAppender, String delimiter, int itemLength) {
+		final int size = X.size(items);
+		return size == 0 ? sb : doJoinAppend(sb, items, size, itemAppender, delimiter, itemLength);
+	}
+
+	/**
+	 * 将集合的指定属性或输出拼接为字符串
+	 *
+	 * @param delimiter 分隔符
+	 * @param itemLength 集合中每个元素的预期长度，如果不大于 0，则内部会根据第一个元素的长度来确定 itemLength 的值
+	 */
+	static <E> StringBuilder doJoinAppend(@Nullable StringBuilder sb, Collection<E> items, final int size, BiConsumer<StringBuilder, E> itemAppender, String delimiter, int itemLength) {
+		final Iterator<E> it = items.iterator();
+		final E val = it.next();
+		if (itemLength <= 0) {
+			itemLength = 6; // default expect length
+			if (val instanceof Number) {
+				long longValue = ((Number) val).longValue();
+				if (longValue >= 100_0000) {
+					itemLength = stringSize(longValue);
 				}
-				itemAppender.accept(sb, e);
+			} else if (val instanceof CharSequence) {
+				itemLength = Math.max(((CharSequence) val).length(), itemLength);
 			}
+		}
+		sb = initBuilder(sb, size * (itemLength + delimiter.length()) + 4);
+		itemAppender.accept(sb, val);
+		while (it.hasNext()) {
+			itemAppender.accept(sb.append(delimiter), it.next());
 		}
 		return sb;
 	}
@@ -1113,9 +1138,35 @@ public abstract class StringX {
 	 *
 	 * @param delimiter 分隔符
 	 */
+	public static <E> String joinAppend(@Nullable Collection<E> items, BiConsumer<StringBuilder, E> itemAppender, String delimiter, int itemLength) {
+		final int size = items == null ? 0 : items.size();
+		return size == 0 ? "" : doJoinAppend(null, items, size, itemAppender, delimiter, itemLength).toString();
+	}
+
+	/**
+	 * 将集合的指定属性或输出拼接为字符串
+	 *
+	 * @param delimiter 分隔符
+	 */
 	public static <E> String joinAppend(@Nullable Collection<E> items, BiConsumer<StringBuilder, E> itemAppender, String delimiter) {
-		final StringBuilder sb = joinAppend(null, items, itemAppender, delimiter);
-		return sb == null ? "" : sb.toString();
+		return joinAppend(items, itemAppender, delimiter, 0);
+	}
+
+	/**
+	 * 将集合的指定属性或输出拼接为字符串
+	 *
+	 * @param delimiter 分隔符
+	 */
+	public static <E> String joins(@Nullable Collection<E> c, String delimiter, int itemLength) {
+		final int size = c == null ? 0 : c.size();
+		switch (size) {
+			case 0:
+				return "";
+			case 1:
+				return c.iterator().next().toString();
+			default:
+				return doJoinAppend(null, c, size, StringBuilder::append, delimiter, itemLength).toString();
+		}
 	}
 
 	/**
@@ -1124,7 +1175,7 @@ public abstract class StringX {
 	 * @param delimiter 分隔符
 	 */
 	public static <E> String joins(@Nullable Collection<E> c, String delimiter) {
-		return joinAppend(c, StringBuilder::append, delimiter);
+		return joins(c, delimiter, 0);
 	}
 
 	/**
@@ -1141,8 +1192,26 @@ public abstract class StringX {
 	 *
 	 * @param delimiter 分隔符
 	 */
+	public static String join(@Nullable Collection<? extends Number> c, String delimiter, int itemLength) {
+		return joinAppend(c, (sb, t) -> sb.append(t.longValue()), delimiter, itemLength);
+	}
+
+	/**
+	 * 将 整数集合 拼接为字符串
+	 *
+	 * @param delimiter 分隔符
+	 */
 	public static String join(@Nullable Collection<? extends Number> c, String delimiter) {
-		return joinAppend(c, (sb, t) -> sb.append(t.longValue()), delimiter);
+		return join(c, delimiter, 0);
+	}
+
+	/**
+	 * 将集合的指定属性或输出拼接为字符串
+	 *
+	 * @param delimiter 分隔符
+	 */
+	public static <E> String join(@Nullable Collection<E> c, Function<? super E, Object> getter, String delimiter, int itemLength) {
+		return joinAppend(c, (sb, t) -> sb.append(getter.apply(t)), delimiter, itemLength);
 	}
 
 	/**
@@ -1151,7 +1220,7 @@ public abstract class StringX {
 	 * @param delimiter 分隔符
 	 */
 	public static <E> String join(@Nullable Collection<E> c, Function<? super E, Object> getter, String delimiter) {
-		return joinAppend(c, (sb, t) -> sb.append(getter.apply(t)), delimiter);
+		return join(c, getter, delimiter, 0);
 	}
 
 	/**
@@ -1234,9 +1303,9 @@ public abstract class StringX {
 	}
 
 	private static <T> void addPartToList(String str, Function<? super String, T> mapper, @Nullable Predicate<? super String> filter, List<T> toList, int start, int end) {
-		String substr = start == end ? "" : str.substring(start, end);
+		final String substr = start == end ? "" : str.substring(start, end);
 		if (filter == null || filter.test(substr)) {
-			T part = mapper.apply(str.substring(start, end));
+			T part = mapper.apply(substr);
 			toList.add(part);
 		}
 	}
