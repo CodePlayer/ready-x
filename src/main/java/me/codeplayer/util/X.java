@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.function.*;
 import javax.annotation.Nullable;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +18,16 @@ import org.slf4j.LoggerFactory;
  * @author Ready
  */
 public abstract class X {
+
+	public static final int javaVersion = parseJavaVersion(System.getProperty("java.version"));
+
+	public static int parseJavaVersion(String javaVersionProperty) {
+		if (javaVersionProperty.startsWith("1.")) {
+			int pos = javaVersionProperty.indexOf('.', 3);
+			return Integer.parseInt(javaVersionProperty.substring(2, pos));
+		}
+		return Integer.parseInt(StringUtils.substringBefore(javaVersionProperty, '.'));
+	}
 
 	/**
 	 * 获取调用此方法的当前类的日志处理器(Logger)<br>
