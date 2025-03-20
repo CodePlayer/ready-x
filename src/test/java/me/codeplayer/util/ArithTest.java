@@ -1,9 +1,9 @@
 package me.codeplayer.util;
 
-import java.math.*;
+import java.math.BigDecimal;
 
-import org.assertj.core.api.*;
-import org.junit.*;
+import org.assertj.core.api.WithAssertions;
+import org.junit.jupiter.api.Test;
 
 public class ArithTest implements WithAssertions {
 

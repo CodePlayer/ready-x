@@ -1,7 +1,8 @@
 package me.codeplayer.util;
 
-import org.assertj.core.api.*;
-import org.junit.*;
+import org.assertj.core.api.Condition;
+import org.assertj.core.api.WithAssertions;
+import org.junit.jupiter.api.Test;
 
 public class RandomUtilTest implements WithAssertions {
 
@@ -14,4 +15,5 @@ public class RandomUtilTest implements WithAssertions {
 		assertThat(RandomUtil.getString("abcdefghijklmnopqrstuvwxyz", 6))
 				.hasSize(6);
 	}
+
 }

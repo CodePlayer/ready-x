@@ -2,9 +2,9 @@ package me.codeplayer.util;
 
 import java.util.*;
 
-import org.assertj.core.api.*;
-import org.assertj.core.data.*;
-import org.junit.*;
+import org.assertj.core.api.WithAssertions;
+import org.assertj.core.data.Index;
+import org.junit.jupiter.api.Test;
 
 public class CollectionUtilTest implements WithAssertions {
 
@@ -59,4 +59,5 @@ public class CollectionUtilTest implements WithAssertions {
 		assertThat(set).hasSize(5)
 				.contains(1, 2, 3, 4, 5);
 	}
+
 }

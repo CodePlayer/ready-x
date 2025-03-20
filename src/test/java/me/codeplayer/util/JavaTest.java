@@ -1,13 +1,9 @@
 package me.codeplayer.util;
 
-import java.util.function.*;
-
-import org.junit.*;
+import org.junit.jupiter.api.Test;
 
 public class JavaTest {
-	/**
-	 * {@link CollectionUtil#of(Supplier, Object[])}
-	 */
+
 	@Test
 	public void test() {
 		/*
@@ -16,4 +12,5 @@ public class JavaTest {
 		FileUtil.moveFile(src, dest, true);
 		*/
 	}
+
 }

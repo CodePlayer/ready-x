@@ -2,10 +2,9 @@ package me.codeplayer.util;
 
 import java.util.*;
 
-import org.assertj.core.api.*;
-import org.junit.*;
-
-import com.alibaba.fastjson.*;
+import com.alibaba.fastjson2.*;
+import org.assertj.core.api.WithAssertions;
+import org.junit.jupiter.api.Test;
 
 public class JSONUtilTest implements WithAssertions {
 
@@ -48,7 +47,7 @@ public class JSONUtilTest implements WithAssertions {
 	public void encodeWithReferenceDetect() {
 		// ArrayList
 		// [{"gender":true,"id":1,"name":"张三","password":"123456"},{"$ref":"$[0]"}]
-		assertThat(JSONUtil.encodeWithReferenceDetect(users))
+		assertThat(JSON.toJSONString(users, JSONWriter.Feature.ReferenceDetection))
 				.isEqualTo("[{\"gender\":true,\"id\":1,\"name\":\"张三\",\"password\":\"123456\"},{\"$ref\":\"$[0]\"}]");
 	}
 
@@ -129,5 +128,7 @@ public class JSONUtilTest implements WithAssertions {
 		public void setGender(boolean gender) {
 			this.gender = gender;
 		}
+
 	}
+
 }
