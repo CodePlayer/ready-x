@@ -15,7 +15,7 @@ public abstract class NumberUtil {
 	/**
 	 * 将int类型的变量转为二进制字符串
 	 */
-	public static String int2Byte(int i) {
+	public static String toBitString(int i) {
 		int index = 32;
 		char[] chars = new char[index];
 		do {
