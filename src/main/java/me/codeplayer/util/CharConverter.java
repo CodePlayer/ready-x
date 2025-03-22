@@ -22,4 +22,5 @@ public interface CharConverter {
 			return converter.apply(ch);
 		}
 	}
+
 }

@@ -18,20 +18,20 @@ public class ArithTest implements WithAssertions {
 
 	@Test
 	public void ceil() {
-		assertThat(Arith.ceil(12.65656465)).isEqualTo(13);
-		assertThat(Arith.ceil(154.125656465)).isEqualTo(155);
-		assertThat(Arith.ceil(1442.65656465)).isEqualTo(1443);
-		assertThat(Arith.ceil(-1442.65656465)).isEqualTo(-1442);
-		assertThat(Arith.ceil(123)).isEqualTo(123);
+		assertThat(Arith.ceilToLong(12.65656465)).isEqualTo(13);
+		assertThat(Arith.ceilToLong(154.125656465)).isEqualTo(155);
+		assertThat(Arith.ceilToLong(1442.65656465)).isEqualTo(1443);
+		assertThat(Arith.ceilToLong(-1442.65656465)).isEqualTo(-1442);
+		assertThat(Arith.ceilToLong(123)).isEqualTo(123);
 	}
 
 	@Test
 	public void floor() {
-		assertThat(Arith.floor(12.65656465)).isEqualTo(12);
-		assertThat(Arith.floor(154.125656465)).isEqualTo(154);
-		assertThat(Arith.floor(1442.65656465)).isEqualTo(1442);
-		assertThat(Arith.floor(-1442.65656465)).isEqualTo(-1443);
-		assertThat(Arith.floor(123)).isEqualTo(123);
+		assertThat(Arith.floorToLong(12.65656465)).isEqualTo(12);
+		assertThat(Arith.floorToLong(154.125656465)).isEqualTo(154);
+		assertThat(Arith.floorToLong(1442.65656465)).isEqualTo(1442);
+		assertThat(Arith.floorToLong(-1442.65656465)).isEqualTo(-1443);
+		assertThat(Arith.floorToLong(123)).isEqualTo(123);
 	}
 
 	@Test

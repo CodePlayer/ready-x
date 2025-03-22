@@ -5,10 +5,6 @@ import java.util.*;
 import java.util.function.*;
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * 通用公共工具类<br>
  * 此类全为静态方法，请使用静态方法的形式调用<br>
@@ -18,25 +14,6 @@ import org.slf4j.LoggerFactory;
  * @author Ready
  */
 public abstract class X {
-
-	public static final int javaVersion = parseJavaVersion(System.getProperty("java.version"));
-
-	public static int parseJavaVersion(String javaVersionProperty) {
-		if (javaVersionProperty.startsWith("1.")) {
-			int pos = javaVersionProperty.indexOf('.', 3);
-			return Integer.parseInt(javaVersionProperty.substring(2, pos));
-		}
-		return Integer.parseInt(StringUtils.substringBefore(javaVersionProperty, '.'));
-	}
-
-	/**
-	 * 获取调用此方法的当前类的日志处理器(Logger)<br>
-	 * 该 Logger 使用 slf4j API
-	 */
-	public static Logger getLogger() {
-		String className = new Throwable().getStackTrace()[1].getClassName();
-		return LoggerFactory.getLogger(className);
-	}
 
 	/**
 	 * 判断指定的字符串是否为空<br>
@@ -342,37 +319,6 @@ public abstract class X {
 	}
 
 	/**
-	 * 去除字符串两端的空格<br>
-	 * 如果字符串为null、空字符串""、空白字符串，这返回HTML的空格符"&amp;nbsp;"
-	 */
-	public static String trim4Html(String str) {
-		return StringUtil.isBlank(str) ? "&nbsp;" : str.trim();
-	}
-
-	/**
-	 * 根据需要存储的元素个数确定HashMap等Map接口实现类的初始容量(使用默认的负载因子：0.75)
-	 *
-	 * @param capacity 需要存储的元素个数
-	 */
-	public static int getCapacity(int capacity) {
-		return getCapacity(capacity, 0.75f);
-	}
-
-	/**
-	 * 根据需要存储的元素个数确定HashMap等Map接口实现类的初始容量
-	 *
-	 * @param capacity 需要存储的元素个数
-	 * @param loadFactor 负载因子，必须介于0-1之间，如果不在此范围，内部也不检测，后果自负
-	 */
-	public static int getCapacity(int capacity, float loadFactor) {
-		int initCapacity = 16;
-		while (capacity > initCapacity * loadFactor) {
-			initCapacity <<= 1;// 如果默认容量小于指定的期望，则扩大一倍
-		}
-		return initCapacity;
-	}
-
-	/**
 	 * 将指定泛型对象进行泛型擦除，并转换为对应的泛型声明
 	 */
 	@SuppressWarnings("unchecked")
@@ -411,7 +357,6 @@ public abstract class X {
 	 * @param obj 指定的对象，可以为 null
 	 * @param mapper 转换器
 	 * @return 如果 {@code obj == null } 则返回null，否则返回转换后的结果
-	 * @author Ready
 	 * @since 2.3.0
 	 */
 	public static <T, R> R map(@Nullable T obj, Function<? super T, R> mapper) {
@@ -428,7 +373,6 @@ public abstract class X {
 	 * @param mapper 转换器
 	 * @param nestedMapper 嵌套的二次转换器
 	 * @return 如果 {@code obj == null } 则返回 null，否则返回转换后的结果
-	 * @author Ready
 	 * @since 2.6
 	 */
 	public static <T, R, E> E map(@Nullable T obj, Function<? super T, R> mapper, Function<R, E> nestedMapper) {
@@ -440,14 +384,13 @@ public abstract class X {
 	 *
 	 * @param obj 指定的对象，可以为 null
 	 * @param mapper 转换器
-	 * @param other 如果转换后的值为null，则返回该参数值
+	 * @param defaultIfNull 如果转换后的值为null，则返回该参数值
 	 * @return 如果 {@code obj == null } 则返回null，否则返回转换后的结果
-	 * @author Ready
 	 * @since 2.6
 	 */
-	public static <T, R> R mapElse(@Nullable T obj, Function<? super T, R> mapper, R other) {
+	public static <T, R> R mapElse(@Nullable T obj, Function<? super T, R> mapper, R defaultIfNull) {
 		R val = map(obj, mapper);
-		return val == null ? other : val;
+		return val == null ? defaultIfNull : val;
 	}
 
 	/**
@@ -455,21 +398,19 @@ public abstract class X {
 	 *
 	 * @param obj 指定的对象，可以为 null
 	 * @param mapper 转换器
-	 * @param other 如果转换后的值为null，则返回该备用对象的返回值
+	 * @param defaultIfNull 如果转换后的值为null，则返回该备用对象的返回值
 	 * @return 如果 {@code obj == null } 则返回null，否则返回转换后的结果
-	 * @author Ready
 	 * @since 2.6
 	 */
-	public static <T, R> R mapElseGet(@Nullable T obj, Function<? super T, R> mapper, Supplier<R> other) {
+	public static <T, R> R mapElseGet(@Nullable T obj, Function<? super T, R> mapper, Supplier<R> defaultIfNull) {
 		R val = map(obj, mapper);
-		return val == null ? other.get() : val;
+		return val == null ? defaultIfNull.get() : val;
 	}
 
 	/**
 	 * 尝试拆箱可能由 {@link Supplier } 接口包装的实体对象
 	 *
 	 * @return 如果指定参数实现了 {@link Supplier } 接口，则调用 get() 方法 并返回其值；否则直接返回 该对象本身
-	 * @author Ready
 	 * @since 2.3.0
 	 */
 	@SuppressWarnings("unchecked")
@@ -495,7 +436,6 @@ public abstract class X {
 	 * @param bean 指定的对象
 	 * @param mapper 转换器
 	 * @param matcher 条件判断器
-	 * @author Ready
 	 * @since 2.3.0
 	 */
 	public static <T, R> boolean isMatch(@Nullable T bean, final Function<? super T, R> mapper, final Predicate<? super R> matcher) {
@@ -504,52 +444,20 @@ public abstract class X {
 	}
 
 	/**
-	 * 将指定的异常信息封装为运行时异常
+	 * 将指定的异常伪装成运行时异常（实际还是抛出指定的异常，只不过底层会通过泛型擦除避免编译时检查）
 	 *
-	 * @param forceUseMsg 如果指定的异常是运行时异常，且 {@code msg } 不为null；此时是否还需要包装一个 {@link IllegalArgumentException } 来确保强制使用传入的 {@code msg } 作为异常信息
-	 * @return 如果异常 {@code ex } 为 null，或者不是运行时异常，则自动将其封装为 {@link IllegalArgumentException }；否则返回对应的运行时异常
-	 * @since 2.3.0
+	 * @param t 指定的异常
 	 */
-	public static RuntimeException wrapException(final @Nullable String msg, final boolean forceUseMsg, final @Nullable Throwable ex, final @Nullable Throwable cause) {
-		if (ex == null) {
-			return new IllegalArgumentException(msg, cause);
-		} else if (ex instanceof RuntimeException) {
-			return forceUseMsg && msg != null ? new IllegalArgumentException(msg, ex) : (RuntimeException) ex;
+	public static RuntimeException sneakyThrow(Throwable t) {
+		if (t == null) {
+			throw new NullPointerException("t");
 		}
-		return msg == null ? new IllegalArgumentException(ex) : new IllegalArgumentException(msg, ex);
+		return sneakyThrow0(t);
 	}
 
-	/**
-	 * 将指定的异常信息封装为运行时异常
-	 * <p>
-	 * 注意：如果指定的异常是运行时异常；此时不会使用传入的 {@code msg }
-	 *
-	 * @return 如果异常 {@code ex } 为 null，或者不是运行时异常，则自动将其封装为 {@link IllegalArgumentException }；否则返回对应的运行时异常
-	 * @since 2.3.0
-	 */
-	public static RuntimeException wrapException(final @Nullable String msg, final @Nullable Throwable ex, final @Nullable Throwable cause) {
-		return wrapException(msg, false, ex, cause);
-	}
-
-	/**
-	 * 将指定的异常信息封装为运行时异常
-	 *
-	 * @param forceUseMsg 如果指定的异常是运行时异常，且 {@code msg } 不为null；此时是否还需要包装一个 {@link IllegalArgumentException } 来确保强制使用传入的 {@code msg } 作为异常信息
-	 * @return 如果异常 {@code ex } 为 null，或者不是运行时异常，则自动将其封装为 {@link IllegalArgumentException }；否则返回对应的运行时异常
-	 * @since 2.3.0
-	 */
-	public static RuntimeException wrapException(final @Nullable String msg, final boolean forceUseMsg, final @Nullable Throwable ex) {
-		return wrapException(msg, forceUseMsg, ex, null);
-	}
-
-	/**
-	 * 将指定的异常信息封装为运行时异常
-	 *
-	 * @return 如果异常 {@code ex } 为 null，或者不是运行时异常，则自动将其封装为 {@link IllegalArgumentException }；否则返回对应的运行时异常
-	 * @since 2.3.0
-	 */
-	public static RuntimeException wrapException(final @Nullable String msg, final @Nullable Throwable ex) {
-		return wrapException(msg, false, ex, null);
+	@SuppressWarnings("unchecked")
+	private static <T extends Throwable> T sneakyThrow0(Throwable t) throws T {
+		throw (T) t;
 	}
 
 	/**
@@ -706,55 +614,6 @@ public abstract class X {
 	 */
 	public static int size(final CharSequence cs) {
 		return cs == null ? 0 : cs.length();
-	}
-
-	/**
-	 * 指示两个条件是否都成立，或者都不成立
-	 *
-	 * @return {@code a == b }
-	 */
-	public static boolean matchAllOrNone(final boolean a, final boolean b) {
-		return a == b;
-	}
-
-	/**
-	 * 指示3个等价于 boolean 值的条件要么都成立，要么都不成立
-	 */
-	public static boolean matchAllOrNone(boolean a, boolean b, boolean c) {
-		return a == b && a == c;
-	}
-
-	/**
-	 * 指示两个等价于 boolean 值的条件是否互斥（若一个为 true，则另一个必定为 false）
-	 */
-	public static boolean isMutex(boolean a, boolean b) {
-		return a ^ b;
-	}
-
-	/**
-	 * 指示指定的参数是否至少有一个符合指定的 {@code matcher} 条件
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> boolean matchAny(Predicate<T> matcher, T... values) {
-		for (T val : values) {
-			if (matcher.test(val)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * 指示指定的参数是否都符合指定的 {@code matcher} 条件
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> boolean matchAll(Predicate<T> matcher, T... values) {
-		for (T val : values) {
-			if (!matcher.test(val)) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	/**

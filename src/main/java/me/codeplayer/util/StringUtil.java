@@ -84,23 +84,6 @@ public abstract class StringUtil {
 	}
 
 	/**
-	 * 根据每个元素的平均大小和元素的格式创建一个适用于其容量的StringBuilder<br>
-	 * 内部采用<code>length << shift </code>来获取设置初始容量<br>
-	 * 并且生成的StringBuilder的最小容量为16(StringBuilder的默认容量)
-	 *
-	 * @param size 元素个数
-	 * @param shift 每个元素参与拼接的平均字符数相对于2的位移量
-	 * @since 0.0.1
-	 */
-	public static StringBuilder getBuilder(int size, int shift) {
-		int capacity = size << shift;
-		if (capacity < 16) {
-			capacity = 16;
-		}
-		return new StringBuilder(capacity);
-	}
-
-	/**
 	 * 获取指定字符序列的字符长度
 	 *
 	 * @return 对应的字符长度，如果 {@code cs} 为 {@code null}，则返回 0
@@ -1180,7 +1163,7 @@ public abstract class StringUtil {
 			case 0:
 				return "";
 			case 1:
-				return String.valueOf(c.iterator().next());
+				return c.iterator().next().toString();
 			default:
 				return doJoinAppend(null, c, size, StringBuilder::append, delimiter, itemLength).toString();
 		}

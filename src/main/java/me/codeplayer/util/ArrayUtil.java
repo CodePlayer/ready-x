@@ -17,23 +17,6 @@ import org.apache.commons.lang3.ArrayUtils;
 public abstract class ArrayUtil {
 
 	/**
-	 * 长度为0的对象数组
-	 */
-	public static final Object[] EMPTY_OBJECTS = ArrayUtils.EMPTY_OBJECT_ARRAY;
-	/**
-	 * 长度为0的字符串数组
-	 */
-	public static final String[] EMPTY_STRINGS = ArrayUtils.EMPTY_STRING_ARRAY;
-	/**
-	 * 长度为0的int数组
-	 */
-	public static final int[] EMPTY_INTS = ArrayUtils.EMPTY_INT_ARRAY;
-	/**
-	 * 长度为0的Integer数组
-	 */
-	public static final Integer[] EMPTY_INTEGERS = ArrayUtils.EMPTY_INTEGER_OBJECT_ARRAY;
-
-	/**
 	 * 判断指定对象是否为数组类型
 	 *
 	 * @param obj 指定的对象
@@ -106,15 +89,14 @@ public abstract class ArrayUtil {
 	}
 
 	/**
-	 * 将指定字符串数组拼接为InSQL子句，方法将会根据元素个数来判断内容为“=”语句还是“IN”语句<br>
-	 * 如果数组为空，将会引发异常<br>
-	 * 如果数组元素只有一个，拼接内容为“=1”或“='1'”<br>
-	 * 如果数组元素有多个，拼接内容为“ IN (1, 2, 5)”或“ IN ('1', '2', '5')”
+	 * 将指定字符串数组拼接为 IN SQL子句 <br>
+	 * 如果数组为空，将会引发异常 <br>
+	 * 如果存在数组元素，则拼接内容形如 " IN (1, 2, 5)" 或 " IN ('1', '2', '5')"
 	 *
 	 * @param sb 指定的StringBuilder
 	 * @param array 指定的任意数组
-	 * @param isInclude 指示IN SQL是包含还是排除查询，如果是包含(true)将返回=、IN，如果是排除(false)将返回!=、NOT IN
-	 * @param isString 指示元素是否以字符串形式参与InSQL语句。如果为true，将会在每个元素两侧加上单引号"'"
+	 * @param isInclude 指示IN SQL是包含还是排除查询，如果是包含(true)将返回 IN，如果是排除(false)将返回 NOT IN
+	 * @param isString 指示元素是否以字符串形式参与in SQL语句。如果为true，将会在每个元素两侧加上单引号"'"
 	 */
 	public static StringBuilder getInSQL(StringBuilder sb, Object array, boolean isInclude, boolean isString) {
 		final int length = Array.getLength(array);
@@ -122,27 +104,20 @@ public abstract class ArrayUtil {
 			throw new IllegalArgumentException("Array can not be empty:" + array);
 		}
 		if (sb == null) {
-			sb = StringUtil.getBuilder(length, 3);
-		}
-		if (length == 1) {
-			if (!isInclude) {
-				sb.append('!');
-			}
+			int factor = 8;
 			if (isString) {
-				sb.append("='").append(Array.get(array, 0)).append('\'');
-			} else {
-				sb.append('=').append(Array.get(array, 0));
+				factor += 2;
 			}
-		} else {
-			sb.append(isInclude ? " IN (" : " NOT IN (");
-			if (isString) {// 如果是字符串格式
-				sb.append('\'');
-				join(sb, array, "', '");
-				sb.append("')");
-			} else {// 如果是数字格式
-				join(sb, array, ", ");
-				sb.append(')');
-			}
+			sb = new StringBuilder(length * factor);
+		}
+		sb.append(isInclude ? " IN (" : " NOT IN (");
+		if (isString) {// 如果是字符串格式
+			sb.append('\'');
+			join(sb, array, "', '");
+			sb.append("')");
+		} else {// 如果是数字格式
+			join(sb, array, ", ");
+			sb.append(')');
 		}
 		return sb;
 	}
@@ -365,6 +340,39 @@ public abstract class ArrayUtil {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * 检测指定的数组中是否存在指定的值
+	 *
+	 * @since 4.0.0
+	 */
+	public static <T> boolean ins(T value, T v1, T v2) {
+		return value == null
+				? v1 == null || v2 == null
+				: value.equals(v1) || value.equals(v2);
+	}
+
+	/**
+	 * 检测指定的数组中是否存在指定的值
+	 *
+	 * @since 4.0.0
+	 */
+	public static <T> boolean ins(T value, T v1, T v2, T v3) {
+		return value == null
+				? v1 == null || v2 == null || v3 == null
+				: value.equals(v1) || value.equals(v2) || value.equals(v3);
+	}
+
+	/**
+	 * 检测指定的数组中是否存在指定的值
+	 *
+	 * @since 4.0.0
+	 */
+	public static <T> boolean ins(T value, T v1, T v2, T v3, T v4) {
+		return value == null
+				? v1 == null || v2 == null || v3 == null || v4 == null
+				: value.equals(v1) || value.equals(v2) || value.equals(v3) || value.equals(v4);
 	}
 
 	/**
