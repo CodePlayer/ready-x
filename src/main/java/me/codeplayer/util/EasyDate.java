@@ -1168,8 +1168,8 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	}
 
 	static String toString(int year, int month, int day) {
-		final StringBuilder chars = new StringBuilder(10).append("0000-00-00");
-		formatNormalDate(chars, 0, year, month, day);
+		NumBuffer chars = NumBuffer.of("0000-00-00", true);
+		formatNormalDate(chars, year, 0, month, 5, day, 8);
 		return chars.toString();
 	}
 
@@ -1184,8 +1184,8 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 返回"yyyy年MM月dd日"格式的字符串
 	 */
 	public static String toDateString(int year, int month, int day) {
-		final StringBuilder chars = new StringBuilder(11).append("0000年00月00日");
-		formatNormalDate(chars, 0, year, month, day);
+		NumBuffer chars = NumBuffer.of("0000年00月00日", false);
+		formatNormalDate(chars, year, 0, month, 5, day, 8);
 		return chars.toString();
 	}
 
@@ -1231,8 +1231,13 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 返回"yyyy-MM-dd HH:mm:ss"格式的字符串
 	 */
 	public static String toDateTimeString(int year, int month, int day, int hour, int minute, int second) {
-		final StringBuilder chars = new StringBuilder(19).append("0000-00-00 00:00:00");
-		formatNormalDateTime(chars, year, month, day, hour, minute, second);
+		final NumBuffer chars = NumBuffer.of("0000-00-00 00:00:00", true);
+		chars.pickValidChars(year, 0, 4);
+		chars.pickValidChars(month, 5, 7);
+		chars.pickValidChars(day, 8, 10);
+		chars.pickValidChars(hour, 11, 13);
+		chars.pickValidChars(minute, 14, 16);
+		chars.pickValidChars(second, 17, 19);
 		return chars.toString();
 	}
 
@@ -1255,10 +1260,10 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 返回"yyyyMMdd"格式的字符串
 	 */
 	public static String toShortString(int year, int month, int day) {
-		final StringBuilder chars = new StringBuilder(8).append("00000000");
-		pickValidChars(year, chars, 0, 4);
-		pickValidChars(month, chars, 4, 6);
-		pickValidChars(day, chars, 6, 8);
+		final NumBuffer chars = NumBuffer.of("00000000", true);
+		chars.pickValidChars(year, 0, 4);
+		chars.pickValidChars(month, 4, 6);
+		chars.pickValidChars(day, 6, 8);
 		return chars.toString();
 	}
 
@@ -1281,29 +1286,66 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 返回"yyyy-MM-dd HH:mm:ss.SSS"格式的字符串
 	 */
 	public static String toLongString(int year, int month, int day, int hour, int minute, int second, int ms) {
-		final StringBuilder chars = new StringBuilder(23).append("0000-00-00 00:00:00.000");
-		formatNormalDateTime(chars, year, month, day, hour, minute, second);
-		pickValidChars(ms, chars, 20, 23);
+		final NumBuffer chars = NumBuffer.of("0000-00-00 00:00:00.000", true);
+		formatNormalDate(chars, year, 0, month, 5, day, 8);
+		formatNormalTime(chars, hour, 11, minute, 14, second, 17);
+		chars.pickValidChars(ms, 20, 23);
 		return chars.toString();
 	}
 
 	protected static void formatNormalDateTime(final StringBuilder chars, int year, int month, int day, int hour, int minute, int second) {
-		formatNormalDate(chars, 0, year, month, day);
-		formatNormalTime(chars, 11, hour, minute, second);
+		formatNormalDate(chars, year, 0, month, 5, day, 8);
+		formatNormalTime(chars, hour, 11, minute, 14, second, 17);
+	}
+
+	/** "...yyyy..MM..dd..." */
+	public static void formatNormalDate(final StringBuilder chars,
+	                                    final int year, int yearStart,
+	                                    final int month, int monthStart,
+	                                    final int day, int dayStart) {
+		pickValidChars(year, chars, yearStart, yearStart + 4);
+		pickValidChars(month, chars, monthStart, monthStart + 2);
+		pickValidChars(day, chars, dayStart, dayStart + 2);
 	}
 
 	/** "...yyyy-MM-dd..." */
-	public static void formatNormalDate(final StringBuilder chars, int offset, final int year, final int month, final int day) {
-		pickValidChars(year, chars, offset, offset + 4);
-		pickValidChars(month, chars, offset + 5, offset + 7);
-		pickValidChars(day, chars, offset + 8, offset + 10);
+	public static void formatNormalDate(final StringBuilder chars, final int year, final int month, final int day) {
+		formatNormalDate(chars, year, 0, month, 5, day, 8);
+	}
+
+	/** "...yyyy-MM-dd..." */
+	public static void formatNormalDate(final NumBuffer chars,
+	                                    final int year, int yearStart,
+	                                    final int month, int monthStart,
+	                                    final int day, int dayStart) {
+		chars.pickValidChars(year, yearStart, yearStart + 4);
+		chars.pickValidChars(month, monthStart, monthStart + 2);
+		chars.pickValidChars(day, dayStart, dayStart + 2);
+	}
+
+	/** "...HH..mm..ss..." */
+	public static void formatNormalTime(final StringBuilder chars,
+	                                    final int hour, int hourStart,
+	                                    final int minute, int minStart,
+	                                    final int second, int secStart) {
+		pickValidChars(hour, chars, hourStart, hourStart + 2);
+		pickValidChars(minute, chars, minStart, minStart + 2);
+		pickValidChars(second, chars, secStart, secStart + 2);
 	}
 
 	/** "...HH:mm:ss..." */
-	public static void formatNormalTime(final StringBuilder chars, final int offset, final int hour, final int minute, final int second) {
-		pickValidChars(hour, chars, offset, offset + 2);
-		pickValidChars(minute, chars, offset + 3, offset + 5);
-		pickValidChars(second, chars, offset + 6, offset + 8);
+	public static void formatNormalTime(final StringBuilder chars, final int hour, final int minute, final int second) {
+		formatNormalTime(chars, hour, 11, minute, 14, second, 17);
+	}
+
+	/** "...HH:mm:ss..." */
+	public static void formatNormalTime(final NumBuffer chars,
+	                                    final int hour, int hourStart,
+	                                    final int minute, int minStart,
+	                                    final int second, int secStart) {
+		chars.pickValidChars(hour, hourStart, hourStart + 2);
+		chars.pickValidChars(minute, minStart, minStart + 2);
+		chars.pickValidChars(second, secStart, secStart + 2);
 	}
 
 	/**
