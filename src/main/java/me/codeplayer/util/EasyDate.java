@@ -1185,7 +1185,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 */
 	public static String toDateString(int year, int month, int day) {
 		NumBuffer chars = NumBuffer.of("0000年00月00日", false);
-		formatNormalDate(chars, year, 0, month, 5, day, 7);
+		formatNormalDate(chars, year, 0, month, 5, day, 8);
 		return chars.toString();
 	}
 
