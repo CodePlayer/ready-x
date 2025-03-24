@@ -32,27 +32,22 @@ public abstract class ArrayUtil {
 	 * @param array 指定的数组
 	 * @param delimiter 指定的分隔符
 	 */
-	public static StringBuilder join(StringBuilder sb, Object array, String delimiter) {
+	public static StringBuilder join(@Nullable StringBuilder sb, Object array, String delimiter) {
 		if (array == null) {
 			throw new NullPointerException();
 		}
 		final int length = Array.getLength(array);
-		if (sb == null) {
-			sb = new StringBuilder(length << 4);
-		}
 		if (length == 0) {
 			return sb;
 		}
+		if (sb == null) {
+			sb = new StringBuilder(((length + delimiter.length()) << 3) + 2);
+		}
 		// 如果是 int、long 及其包装类型时，需调用特定的 append 方法，避免循环装箱及调用 String.valueOf 的开销
 		final Class<?> type = array.getClass().getComponentType();
-		boolean appendSep = false;
-		for (int i = 0; i < length; i++) {
-			if (appendSep) {
-				sb.append(delimiter);
-			} else {
-				appendSep = true;
-			}
-			appendElement(sb, type, array, i);
+		appendElement(sb, type, array, 0);
+		for (int i = 1; i < length; i++) {
+			appendElement(sb.append(delimiter), type, array, i);
 		}
 		return sb;
 	}
@@ -85,7 +80,8 @@ public abstract class ArrayUtil {
 	 * @param delimiter 指定的分隔符
 	 */
 	public static String join(Object array, String delimiter) {
-		return join(null, array, delimiter).toString();
+		StringBuilder sb = join(null, array, delimiter);
+		return sb == null ? "" : sb.toString();
 	}
 
 	/**
@@ -108,7 +104,7 @@ public abstract class ArrayUtil {
 			if (isString) {
 				factor += 2;
 			}
-			sb = new StringBuilder(length * factor);
+			sb = new StringBuilder(length * factor + (isInclude ? 4 : 8));
 		}
 		sb.append(isInclude ? " IN (" : " NOT IN (");
 		if (isString) {// 如果是字符串格式
