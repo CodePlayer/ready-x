@@ -890,17 +890,14 @@ public abstract class FileX {
 		BufferedReader reader = null;
 		long length = (file.length() >>> 3) + 1;
 		final StringBuilder sb = new StringBuilder((int) length);
-		boolean lineBreak = false;
 		try {
 			reader = new BufferedReader(new FileReader(file));
-			String str;
-			while ((str = reader.readLine()) != null) {
-				if (lineBreak) {
-					sb.append('\n');
-				} else {
-					lineBreak = true;
-				}
-				sb.append(str);
+			String line = reader.readLine();
+			if (line != null) {
+				sb.append(line);
+			}
+			while ((line = reader.readLine()) != null) {
+				sb.append('\n').append(line);
 			}
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
