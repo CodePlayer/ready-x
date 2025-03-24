@@ -1,5 +1,7 @@
 package me.codeplayer.util;
 
+import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.assertj.core.api.WithAssertions;
@@ -10,6 +12,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class EasyDateTest implements WithAssertions {
 
+	static final long BASE_TIME = 1234567890000L; // 2009-02-14 07:31:30 GMT+8 星期六
+	static final long EARLIER_TIME = BASE_TIME - 1; // 早于 BASE_TIME 1 ms
+	static final long LATER_TIME = BASE_TIME + 1; // 晚于 BASE_TIME 1 ms
 	/** 2009-02-14 07:31:30 GMT+8 星期六 */
 	static Date baseDate;
 	/** 2009-02-14 07:31:30 GMT+8 星期六 */
@@ -18,7 +23,7 @@ public class EasyDateTest implements WithAssertions {
 	@BeforeAll
 	public static void setUp() {
 		TimeZone.setDefault(TimeZone.getTimeZone("GMT+8"));
-		baseDate = new Date(1234567890000L); // 2009-02-14 07:31:30 GMT+8
+		baseDate = new Date(BASE_TIME); // 2009-02-14 07:31:30 GMT+8
 		baseCalendar = Calendar.getInstance();
 		baseCalendar.setTime(baseDate);
 	}
@@ -140,8 +145,7 @@ public class EasyDateTest implements WithAssertions {
 
 		assertThat(d.getTimeZoneOffset()).isEqualTo(localTimeZoneOffset);
 
-		d.setTimeZoneOffset(0);
-		assertEquals(0, d.getTimeZoneOffset());
+		assertEquals(0, d.setTimeZoneOffset(0).getTimeZoneOffset());
 
 		assertEquals("2013-02-05 15:12:55", d.toDateTimeString());
 		assertEquals("20130205", d.toShortString());
@@ -154,10 +158,21 @@ public class EasyDateTest implements WithAssertions {
 	@Test
 	public void isSameAs() {
 		EasyDate a = new EasyDate(2015, 2, 28, 0, 0, 0);
-		EasyDate b = new EasyDate(2015, 3, 28, 22, 59, 59);
+		EasyDate b = new EasyDate(2015, 2, 28, 23, 59, 59);
 		assertTrue(a.isSameAs(b, Calendar.YEAR));
+		assertTrue(EasyDate.isSameAs(a.getTime(), b.getTime(), Calendar.DATE));
 
+		assertFalse(EasyDate.isSameAs(a, b, Calendar.SECOND));
 		assertFalse(a.isSameAs(b, Calendar.HOUR));
+		assertTrue(EasyDate.isSameAs(a, b, Calendar.MONTH));
+		a.set(2015, 3, 29);
+		assertFalse(EasyDate.isSameAs(a, b, Calendar.DATE));
+		assertFalse(EasyDate.isSameAs(a, b.toDate(), Calendar.MONTH));
+		assertFalse(EasyDate.isSameAs(a, b.getCalendar(), Calendar.SECOND));
+		b.setMonth(3);
+		// 2015-03-29 00:00:00 GMT+8 VS 2015-03-28 23:59:59 GMT+8:00
+		// 2015-03-28 21:30:00 GMT+5:30 VS 2015-03-28 21:29:59 GMT+5:30
+		assertTrue(EasyDate.isSameAs(a.getTime(), b.getTime(), Calendar.HOUR, TimeZone.getTimeZone("GMT+5:30")));
 	}
 
 	@Test
@@ -168,6 +183,7 @@ public class EasyDateTest implements WithAssertions {
 
 		b = new EasyDate(2015, 3, 29).toDate();
 		assertFalse(EasyDate.isSameDay(a, b));
+
 	}
 
 	@Test
@@ -391,4 +407,271 @@ public class EasyDateTest implements WithAssertions {
 		assertEqualsYmdHms(result, 2009, 2, 7, 7, 31, 30);
 	}
 
+	private static SimpleDateFormat dateFormat = new SimpleDateFormat(EasyDate.DATE);
+
+	@Test
+	public void parse_ValidDateString_ReturnsEasyDate() {
+		String validDate = "2023-10-05";
+		EasyDate result = EasyDate.parse(dateFormat, validDate);
+		assertEquals(validDate, result.toString());
+
+		EasyDate result2 = EasyDate.parse(EasyDate.DATE, validDate);
+		assertEquals(validDate, result2.toString());
+	}
+
+	@Test
+	public void parse_InvalidDateString_ThrowsIllegalArgumentException() {
+		String invalidDate = "invalid-date";
+		assertThrows(IllegalArgumentException.class, () -> EasyDate.parse(dateFormat, invalidDate));
+	}
+
+	public static StringBuilder tempateFor(String pattern) {
+		return new StringBuilder(pattern.length()).append(pattern);
+	}
+
+	@Test
+	public void formatNormalDateTime_ValidInputs_FormatsCorrectly() {
+		final StringBuilder chars = tempateFor("0000-00-00 00:00:00");
+		EasyDate.formatNormalDateTime(chars, 2023, 10, 5, 14, 30, 45);
+		assertEquals("2023-10-05 14:30:45", chars.toString());
+	}
+
+	@Test
+	public void formatNormalDateTime_MinimumValues_FormatsCorrectly() {
+		final StringBuilder chars = tempateFor("0000-00-00 00:00:00");
+		EasyDate.formatNormalDateTime(chars, 0, 1, 1, 0, 0, 0);
+		assertEquals("0000-01-01 00:00:00", chars.toString());
+	}
+
+	@Test
+	public void formatNormalDateTime_MaximumValues_FormatsCorrectly() {
+		final StringBuilder chars = tempateFor("0000-00-00 00:00:00");
+		EasyDate.formatNormalDateTime(chars, 9999, 12, 31, 23, 59, 59);
+		assertEquals("9999-12-31 23:59:59", chars.toString());
+	}
+
+	@Test
+	public void formatNormalDateTime_SingleDigitMonthDay_FormatsCorrectly() {
+		final StringBuilder chars = tempateFor("0000-00-00 00:00:00");
+		EasyDate.formatNormalDateTime(chars, 2023, 1, 1, 1, 1, 1);
+		assertEquals("2023-01-01 01:01:01", chars.toString());
+	}
+
+	@Test
+	public void before() {
+		final EasyDate base = new EasyDate(baseDate);
+		assertFalse(base.before(base)); // ==
+
+		EasyDate earlierDate = new EasyDate(EARLIER_TIME);
+		assertTrue(earlierDate.before(base)); // <
+
+		EasyDate laterDate = new EasyDate(LATER_TIME);
+		assertFalse(laterDate.before(base)); // >
+
+		assertThrows(NullPointerException.class, () -> base.before(null));
+	}
+
+	@Test
+	public void after() {
+		final EasyDate baseDate = new EasyDate(BASE_TIME);
+		assertFalse(baseDate.after(baseDate)); // ==
+
+		EasyDate earlierDate = new EasyDate(EARLIER_TIME);
+		assertFalse(earlierDate.after(baseDate)); // <
+
+		EasyDate laterDate = new EasyDate(LATER_TIME);
+		assertTrue(laterDate.after(baseDate)); // >
+
+		assertThrows(NullPointerException.class, () -> baseDate.after(null));
+	}
+
+	@Test
+	public void calcDifference_SameDate_ShouldReturnZero() {
+		EasyDate date = new EasyDate(BASE_TIME);
+		assertEquals(0, date.calcDifference(new EasyDate(BASE_TIME)));
+		assertEquals(0, date.calcDifference(baseDate, Calendar.YEAR));
+		assertEquals(0, date.calcDifference(baseCalendar, Calendar.MONTH));
+		assertEquals(0, date.calcDifference(baseCalendar, Calendar.HOUR));
+		assertEquals(0, date.calcDifference(baseCalendar, Calendar.MINUTE));
+		assertEquals(0, date.calcDifference(baseCalendar, Calendar.SECOND));
+	}
+
+	@Test
+	public void calcDifference_DifferentYears_ShouldReturnYearDifference() {
+		EasyDate a = new EasyDate(2013, 1, 1);
+		EasyDate b = new EasyDate(2012, 1, 1);
+
+		// = 1年
+		assertEquals(1, a.calcDifference(b, Calendar.YEAR)); // RoundingMode.UP
+		assertEquals(1, a.calcDifference(b, Calendar.YEAR, RoundingMode.DOWN));
+
+		b.addSecond(1); // 刚刚 < 1年  "2012-01-01 00:00:01.000"
+
+		assertEquals(1, a.calcDifference(b, Calendar.YEAR)); // RoundingMode.UP
+		assertEquals(-1, b.calcDifference(a, Calendar.YEAR, RoundingMode.UP));
+
+		assertEquals(0, a.calcDifference(b, Calendar.YEAR, RoundingMode.FLOOR));
+		assertEquals(-1, b.calcDifference(a, Calendar.YEAR, RoundingMode.FLOOR));
+
+		assertEquals(1, a.calcDifference(b, Calendar.YEAR, RoundingMode.CEILING));
+		assertEquals(0, b.calcDifference(a, Calendar.YEAR, RoundingMode.CEILING));
+
+		assertEquals(0, a.calcDifference(b, Calendar.YEAR, RoundingMode.DOWN));
+		assertEquals(0, b.calcDifference(a, Calendar.YEAR, RoundingMode.DOWN));
+
+		assertEquals(366, a.calcDifference(b, Calendar.DATE)); // RoundingMode.UP
+		assertEquals(-366, b.calcDifference(a, Calendar.DATE, RoundingMode.UP));
+
+		assertEquals(365, a.calcDifference(b, Calendar.DATE, RoundingMode.FLOOR));
+		assertEquals(-366, b.calcDifference(a, Calendar.DATE, RoundingMode.FLOOR));
+
+		assertEquals(366, a.calcDifference(b, Calendar.DATE, RoundingMode.CEILING));
+		assertEquals(-365, b.calcDifference(a, Calendar.DATE, RoundingMode.CEILING));
+
+		assertEquals(365, a.calcDifference(b, Calendar.DATE, RoundingMode.DOWN));
+		assertEquals(-365, b.calcDifference(a, Calendar.DATE, RoundingMode.DOWN));
+
+		b.setSecond(0); // "2012-01-01 00:00:00.000"
+		a.addDay(-183).addSecond(1); // > 刚刚 一半  "2012-07-02 00:00:01.000"
+
+		assertEquals(1, a.calcDifference(b, Calendar.YEAR, RoundingMode.HALF_UP));
+		assertEquals(-1, b.calcDifference(a, Calendar.YEAR, RoundingMode.HALF_UP));
+
+		assertEquals(1, a.calcDifference(b, Calendar.YEAR, RoundingMode.HALF_DOWN));
+		assertEquals(-1, b.calcDifference(a, Calendar.YEAR, RoundingMode.HALF_DOWN));
+
+		assertEquals(1, a.calcDifference(b, Calendar.YEAR, RoundingMode.HALF_EVEN));
+		assertEquals(-1, b.calcDifference(a, Calendar.YEAR, RoundingMode.HALF_EVEN));
+
+		a.setSecond(0); // == 一半  "2012-07-02 00:00:00.000"
+
+		assertEquals(1, a.calcDifference(b, Calendar.YEAR, RoundingMode.HALF_UP));
+		assertEquals(-1, b.calcDifference(a, Calendar.YEAR, RoundingMode.HALF_UP));
+
+		assertEquals(0, a.calcDifference(b, Calendar.YEAR, RoundingMode.HALF_DOWN));
+		assertEquals(0, b.calcDifference(a, Calendar.YEAR, RoundingMode.HALF_DOWN));
+
+		assertEquals(0, a.calcDifference(b, Calendar.YEAR, RoundingMode.HALF_EVEN));
+		assertEquals(0, b.calcDifference(a, Calendar.YEAR, RoundingMode.HALF_EVEN));
+
+		a.addSecond(-1); // < 一半  "2012-07-01 23:59:59.000"
+
+		assertEquals(0, a.calcDifference(b, Calendar.YEAR, RoundingMode.HALF_UP));
+		assertEquals(0, b.calcDifference(a, Calendar.YEAR, RoundingMode.HALF_UP));
+
+		assertEquals(0, a.calcDifference(b, Calendar.YEAR, RoundingMode.HALF_DOWN));
+		assertEquals(0, b.calcDifference(a, Calendar.YEAR, RoundingMode.HALF_DOWN));
+
+		assertEquals(0, a.calcDifference(b, Calendar.YEAR, RoundingMode.HALF_EVEN));
+		assertEquals(0, b.calcDifference(a, Calendar.YEAR, RoundingMode.HALF_EVEN));
+
+		a.addSecond(1); // "2012-07-02 00:00:00.000"
+		b.addYear(-1); // "2011-01-01 00:00:00.000"
+		assertEquals(2, a.calcDifference(b, Calendar.YEAR, RoundingMode.HALF_EVEN));
+		assertEquals(-2, b.calcDifference(a, Calendar.YEAR, RoundingMode.HALF_EVEN));
+	}
+
+	@Test
+	public void calcDifference_DifferentMonths_ShouldReturnMonthDifference() {
+		EasyDate a = new EasyDate(2015, 2, 1);
+		EasyDate b = new EasyDate(2015, 1, 1);
+		assertEquals(1, a.calcDifference(b, Calendar.MONTH));
+		assertEquals(-1, b.calcDifference(a, Calendar.MONTH));
+	}
+
+	@Test
+	public void calcDifference_DifferentDays_ShouldReturnDayDifference() {
+		EasyDate a = new EasyDate(2015, 1, 6);
+		EasyDate b = new EasyDate(2015, 1, 1);
+		assertEquals(5, a.calcDifference(b, Calendar.DATE));
+
+		b.addHour(12);
+
+		assertEquals(5, a.calcDifference(b, Calendar.DATE, RoundingMode.HALF_UP));
+		assertEquals(-5, b.calcDifference(a, Calendar.DATE, RoundingMode.HALF_UP));
+
+		assertEquals(4, a.calcDifference(b, Calendar.DATE, RoundingMode.HALF_DOWN));
+		assertEquals(-4, b.calcDifference(a, Calendar.DATE, RoundingMode.HALF_DOWN));
+
+		assertEquals(4, a.calcDifference(b, Calendar.DATE, RoundingMode.HALF_EVEN));
+		assertEquals(-4, b.calcDifference(a, Calendar.DATE, RoundingMode.HALF_EVEN));
+
+		a.addDay(1);
+		assertEquals(6, a.calcDifference(b, Calendar.DATE, RoundingMode.HALF_EVEN));
+		assertEquals(-6, b.calcDifference(a, Calendar.DATE, RoundingMode.HALF_EVEN));
+	}
+
+	@Test
+	public void calcDifference_DifferentHours_ShouldReturnHourDifference() {
+		EasyDate a = new EasyDate(2015, 1, 1, 1, 0, 0);
+		EasyDate b = new EasyDate(2015, 1, 1, 0, 0, 0);
+		assertEquals(1, a.calcDifference(b, Calendar.HOUR_OF_DAY));
+	}
+
+	@Test
+	public void calcDifference_DifferentMinutes_ShouldReturnMinuteDifference() {
+		EasyDate a = new EasyDate(2015, 1, 1, 0, 1, 0);
+		EasyDate b = new EasyDate(2015, 1, 1, 0, 0, 0);
+		assertEquals(1, a.calcDifference(b, Calendar.MINUTE));
+	}
+
+	@Test
+	public void calcDifference_DifferentSeconds_ShouldReturnSecondDifference() {
+		EasyDate a = new EasyDate(2015, 1, 1, 0, 0, 1);
+		EasyDate b = new EasyDate(2015, 1, 1, 0, 0, 0);
+		assertEquals(1, a.calcDifference(b, Calendar.SECOND));
+	}
+
+	@Test
+	public void calcDifference_DifferentMillis_ShouldReturnMillisecondDifference() {
+		EasyDate a = new EasyDate(BASE_TIME);
+		EasyDate b = new EasyDate(EARLIER_TIME);
+		assertEquals(1, a.calcDifference(b, Calendar.MILLISECOND));
+	}
+
+	@Test
+	public void calcDifference_InvalidField_ShouldThrowIllegalArgumentException() {
+		EasyDate a = new EasyDate(BASE_TIME);
+		assertThrows(IllegalArgumentException.class, () -> a.calcDifference(new EasyDate(EARLIER_TIME), 999));
+	}
+
+	@Test
+	public void toTime_WithCurrentTime_ShouldReturnCorrectTime() {
+		final long nowInMs = System.currentTimeMillis();
+		EasyDate easyDate = new EasyDate(nowInMs);
+		assertEquals(new java.sql.Time(nowInMs), easyDate.toTime());
+	}
+
+	@Test
+	public void toTime_WithSpecificDate_ShouldReturnCorrectTime() {
+		EasyDate easyDate = new EasyDate(2009, 2, 14, 7, 31, 30);
+		java.sql.Time time = easyDate.toTime();
+		assertEquals(new java.sql.Time(7, 31, 30).toString(), time.toString());
+	}
+
+	@Test
+	public void toTime_WithSpecificMillis_ShouldReturnCorrectTime() {
+		EasyDate easyDate = new EasyDate(BASE_TIME);
+		java.sql.Time time = easyDate.toTime();
+		assertEquals(new java.sql.Time(BASE_TIME), time);
+	}
+
+	@Test
+	public void formatNormalDateTime() {
+		StringBuilder sb = new StringBuilder("0000-00-00 00:00:00");
+		EasyDate.formatNormalDateTime(sb, 2023, 10, 5, 14, 30, 45);
+		assertEquals("2023-10-05 14:30:45", sb.toString());
+
+		EasyDate.formatNormalDate(sb, 2023, 10, 5);
+		EasyDate.formatNormalTime(sb, 14, 30, 45);
+		assertEquals("2023-10-05 14:30:45", sb.toString());
+
+		sb = new StringBuilder("0000年00月00日 00时00分00秒");
+		EasyDate.formatNormalDate(sb, 2023, 10, 5);
+		EasyDate.formatNormalTime(sb, 14, 12, 30, 15, 45, 18);
+		assertEquals("2023年10月05日 14时30分45秒", sb.toString());
+	}
+	public  void pickChars() {
+		StringBuilder sb = new StringBuilder();
+	}
 }
