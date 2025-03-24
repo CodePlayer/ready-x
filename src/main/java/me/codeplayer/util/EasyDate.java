@@ -626,7 +626,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	}
 
 	/**
-	 * 转为java.sql.Time
+	 * 转为 {@link java.sql.Time}
 	 */
 	public Time toTime() {
 		return new Time(calendar.getTimeInMillis());
@@ -657,7 +657,8 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * @param roundingMode 舍入模式
 	 */
 	public long calcDifference(Object date, int field, RoundingMode roundingMode) {
-		long theMillis = getTimeOfDate(date), diff = getTime() - theMillis; // 毫秒值差距
+		final long thisMs = getTime(), theMs = getTimeOfDate(date);
+		long diff = thisMs - theMs; // 毫秒值差距
 
 		if (diff == 0) {
 			return 0;
@@ -665,65 +666,93 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 		switch (field) {
 			case YEAR:
 			case MONTH:
-				boolean isMax = diff > 0;
-				EasyDate me = new EasyDate(getTime());
-				EasyDate other = new EasyDate(theMillis);
-				EasyDate min = isMax ? other : me, max = isMax ? me : other;
-				int diffOfYear = max.getYear() - min.getYear();
-				if (diffOfYear > 0) {
+				final boolean thisIsMax = diff > 0;
+				EasyDate me = clone().setTime(thisMs);
+				EasyDate other = new EasyDate(theMs, me.getTimeZone());
+				final EasyDate min = thisIsMax ? other : me, max = thisIsMax ? me : other;
+				final int diffOfYear = max.getYear() - min.getYear();
+				if (diffOfYear > 0) { // 将 min 调增，对齐到同一年
 					min.addYear(diffOfYear);
 				}
 				if (field == MONTH) {
 					int diffOfMonth = max.getMonth() - min.getMonth();
-					if (diffOfMonth != 0) {
+					if (diffOfMonth != 0) {  // 将 min 调整，对齐到同一月
 						min.addMonth(diffOfMonth);
 					}
-					diff = diffOfYear * 12L + diffOfMonth;
+					diff = diffOfYear * 12L + diffOfMonth; // 月份差距
 				} else {
-					diff = diffOfYear;
+					diff = diffOfYear;  // 年份差距
 				}
-				long prefix = max.getTime() - min.getTime();
-				if (prefix == 0) {
-					return diff;
+				final long maxTime = max.getTime();
+				long partDiff = maxTime - min.getTime();
+				if (partDiff == 0) { // 如果对齐后刚好相等，就返回计算好的差距数值
+					return thisIsMax ? diff : -diff;
+				} else if (partDiff < 0) {  // 如果对齐到相同年月时，min 反而较大
+					diff--; // 整数部分要 -1
 				}
-				long suffix;
-				if (prefix > 0) {
-					min.calendar.add(field, 1);
-					suffix = min.getTime() - max.getTime();
-				} else {
-					suffix = -prefix;
-					diff--;
-					min.calendar.add(field, -1);
-					prefix = max.getTime() - min.getTime();
+				switch (roundingMode) {
+					case CEILING: // 向【正无穷】的方向舍入
+						return thisIsMax ? diff + 1 : -diff;
+					case UP: // 向【远离 0】 的方向舍入
+						return thisIsMax ? diff + 1 : -diff - 1;
+					case DOWN: // 向【靠近 0】 的方向舍去
+						return thisIsMax ? diff : -diff;
+					case FLOOR: // 向【负无穷】的方向舍去
+						return thisIsMax ? diff : -diff - 1;
+					case HALF_UP:
+					case HALF_DOWN:
+					case HALF_EVEN: {
+						final long innerPartDiff, outerPartDiff;
+						if (partDiff < 0) { // 如果对齐到相同年月时，min 反而较大
+							outerPartDiff = -partDiff;
+							min.calendar.add(field, -1);
+							innerPartDiff = maxTime - min.getTime();
+						} else {  // 如果对齐到相同年月时，max 反而较大
+							innerPartDiff = partDiff;
+							min.calendar.add(field, 1);
+							outerPartDiff = min.getTime() - maxTime;
+						}
+						final int incr;
+						if (roundingMode == RoundingMode.HALF_UP) {
+							incr = innerPartDiff >= outerPartDiff ? 1 : 0;
+						} else if (roundingMode == RoundingMode.HALF_DOWN) {
+							incr = innerPartDiff > outerPartDiff ? 1 : 0;
+						} else /* if (roundingMode == RoundingMode.HALF_EVEN) */ { // 满 0.5 时向邻近的【偶数】舍入
+							incr = innerPartDiff == outerPartDiff
+									// 4.5 => 4  |  5.5 => 6  | -1.5 => -2 | -2.5 => -2
+									? ((diff & 1) == 1 ? 1 : 0)
+									: innerPartDiff > outerPartDiff ? 1 : 0;
+						}
+						return thisIsMax ? diff + incr : -diff - incr;
+					}
+					case UNNECESSARY:
+						throw new IllegalArgumentException("Cannot round to " + diff + " because rounding mode " + roundingMode + " is not supported");
 				}
-				double base = suffix > prefix ? 0.1 : 0.9;
-				diff = new BigDecimal(diff + base).setScale(0, roundingMode).longValue();
-				return isMax ? diff : -diff;
 			default:
 				long unit = getMillisOfUnit(field);
-				return BigDecimal.valueOf(diff).divide(BigDecimal.valueOf(unit), roundingMode).longValue();
+				return Arith.toBigDecimal(diff).divide(Arith.toBigDecimal(unit), 0, roundingMode).longValue();
 		}
 	}
 
 	/**
-	 * 计算并返回当前日期与指定日期之间基于指定单位和向上取整模式的差值<br>
+	 * 计算并返回当前日期与指定日期之间基于指定单位和向上取整模式（{@link RoundingMode#UP}）的差值<br>
 	 * 如果当前日期大于等于指定日期，则返回正数，否则返回负数
 	 *
 	 * @param date 与当前日期进行比较的日期
 	 * @param field 指定的日期字段，返回值将以此为单位返回两个日期的差距值
 	 */
 	public long calcDifference(Object date, int field) {
-		return calcDifference(date, field, RoundingMode.CEILING);
+		return calcDifference(date, field, RoundingMode.UP);
 	}
 
 	/**
-	 * 计算并返回当前日期与指定日期之间基于向上取整模式的天数差值<br>
+	 * 计算并返回当前日期与指定日期之间基于向上取整模式（{@link RoundingMode#UP}）的天数差值<br>
 	 * 如果当前日期大于等于指定日期，则返回正数，否则返回负数
 	 *
 	 * @param dateObj 与当前日期进行比较的日期
 	 */
 	public int calcDifference(Object dateObj) {
-		return (int) calcDifference(dateObj, Calendar.DATE, RoundingMode.CEILING);
+		return (int) calcDifference(dateObj, Calendar.DATE, RoundingMode.UP);
 	}
 
 	/**
@@ -802,7 +831,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 		if (a == b) {
 			return true;
 		}
-		if (inField > WEEK_OF_MONTH) {
+		if (inField > WEEK_OF_MONTH) { // DATE、HOUR、HOUR_OF_DAY、MINUTE、SECOND、MILLISECOND
 			long unit = getMillisOfUnit(inField);
 			long diff = a - b;
 			if (diff > -unit && diff < unit) {
@@ -1293,7 +1322,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 		return chars.toString();
 	}
 
-	protected static void formatNormalDateTime(final StringBuilder chars, int year, int month, int day, int hour, int minute, int second) {
+	public static void formatNormalDateTime(final StringBuilder chars, int year, int month, int day, int hour, int minute, int second) {
 		formatNormalDate(chars, year, 0, month, 5, day, 8);
 		formatNormalTime(chars, hour, 11, minute, 14, second, 17);
 	}
@@ -1363,7 +1392,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	}
 
 	@Override
-	public Object clone() {
+	public EasyDate clone() {
 		EasyDate date = null;
 		try {
 			date = (EasyDate) super.clone();
