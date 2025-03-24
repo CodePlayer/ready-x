@@ -463,4 +463,16 @@ public class NumberXTest {
 		assertFalse(NumberX.isDecimal("123abc"));
 	}
 
+	@Test
+	public void formatNormalDateTime() {
+		StringBuilder chars = new StringBuilder("yyyy-MM-dd HH:mm:ss");
+		NumberX.pickChars(2023, chars, 0, 4);
+		NumberX.pickChars(10, chars, 5, 7);
+		NumberX.pickChars(5, chars, 8, 10);
+		NumberX.pickChars(14, chars, 11, 13);
+		NumberX.pickChars(30, chars, 14, 16);
+		NumberX.pickChars(45, chars, 17, 19);
+		assertEquals("2023-10-05 14:30:45", chars.toString());
+	}
+
 }
