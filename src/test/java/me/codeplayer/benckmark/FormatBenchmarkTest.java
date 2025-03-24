@@ -43,10 +43,10 @@ public class FormatBenchmarkTest {
 
 	/**
 	 * 使用 StringBuilder 主要是在 JDK9+ 能够节省接近一半的内存
-	 * 【JDK 8】 50755.632 ops/ms VS 61089.169 ops/ms => 性能降低了 ≈17%
-	 * 【JDK 17】 79165.469 ops/ms VS 68021.803 ops/ms => 性能提高了 ≈16%
-	 * 【JDK 21】 61123.802 ops/ms VS 69271.851 ops/ms => 性能降低了 ≈12%
-	 * 【JDK 24】 64356.656 ops/ms VS 69623.470 ops/ms => 性能降低了 ≈8%
+	 * 【JDK 8】 114559.991 ops/ms VS 66209.994 ops/ms => 性能提高了 ≈73%
+	 * 【JDK 17】 141212.062 ops/ms VS 74008.098 ops/ms => 性能提高了 ≈90.8%
+	 * 【JDK 21】 142029.569 ops/ms VS 74945.456 ops/ms => 性能提高了 ≈89.5%
+	 * 【JDK 24】 139549.562 ops/ms VS 73122.943 ops/ms => 性能提高了 ≈90.8%
 	 */
 	@Benchmark
 	public String toDateTimeString1() {
