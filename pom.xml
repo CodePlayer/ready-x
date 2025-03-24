@@ -19,6 +19,7 @@
 		<java.version>1.8</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
+		<surefire.argline></surefire.argline>
 	</properties>
 
 	<dependencies>
@@ -193,6 +194,16 @@
 
 		</profile>
 
+		<profile>
+			<id>jdk9above</id>
+			<activation>
+				<jdk>[9,)</jdk>
+			</activation>
+			<properties>
+				<surefire.argline>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/sun.misc=ALL-UNNAMED</surefire.argline>
+			</properties>
+		</profile>
+
 	</profiles>
 
 	<build>
@@ -211,7 +222,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.5.2</version>
 				<configuration>
-					<argLine>@{argLine} -Dfile.encoding=UTF-8</argLine>
+					<argLine>@{argLine} -Dfile.encoding=UTF-8 ${surefire.argline}</argLine>
 					<includes>
 						<include>me.codeplayer/**/*.java</include>
 					</includes>
