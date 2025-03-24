@@ -1,5 +1,6 @@
 package me.codeplayer.util;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import org.assertj.core.api.WithAssertions;
@@ -337,6 +338,9 @@ public class StringXTest implements WithAssertions {
 		assertThat(StringX.joinLong(longs, FunctionX.identity(), ",")).isEqualTo("");
 		assertThat(StringX.joinLong(Collections.singletonList(1L), FunctionX.identity(), ",")).isEqualTo("1");
 		assertThat(StringX.joinLong(Arrays.asList(1, 2, 3), FunctionX.identity(), ",")).isEqualTo("1,2,3");
+
+		String str = StringX.joinLongValue(Arrays.asList(1, 2, 3), Number::longValue, ",");
+		assertEquals("1,2,3", str);
 	}
 
 	@Test
@@ -344,6 +348,124 @@ public class StringXTest implements WithAssertions {
 		assertThat(StringX.joinIntValue(Collections.emptyList(), Integer::intValue, ",")).isEqualTo("");
 		assertThat(StringX.joinIntValue(Collections.singletonList(1), Integer::intValue, ",")).isEqualTo("1");
 		assertThat(StringX.joinIntValue(Arrays.asList(1, 2, 3), Integer::intValue, ",")).isEqualTo("1,2,3");
+	}
+
+	@Test
+	public void leftPad() {
+		assertEquals("", StringX.leftPad(null, '0', 5));
+
+		assertThrows(IllegalArgumentException.class, () -> StringX.leftPad("abc", '0', 0));
+
+		assertEquals("abcdef", StringX.leftPad("abcdef", '0', 3));
+
+		assertEquals("000abc", StringX.leftPad("abc", '0', 6));
+	}
+
+	@Test
+	public void rightPad() {
+		assertEquals("", StringX.rightPad(null, '0', 5));
+
+		assertThrows(IllegalArgumentException.class, () -> StringX.rightPad("abc", '0', 0));
+
+		assertEquals("abcdef", StringX.rightPad("abcdef", '0', 3));
+
+		assertEquals("abc000", StringX.rightPad("abc", '0', 6));
+	}
+
+	@Test
+	public void hasEmpty() {
+		assertFalse(StringX.hasEmpty());
+
+		assertFalse(StringX.hasEmpty("a", "b", "c"));
+
+		assertTrue(StringX.hasEmpty("a", "", "c"));
+
+		assertTrue(StringX.hasEmpty("a", null, "c"));
+
+		assertTrue(StringX.hasEmpty("a", null, "", "c"));
+	}
+
+	@Test
+	public void isAnyNotEmpty() {
+		assertFalse(StringX.isAnyNotEmpty());
+
+		assertTrue(StringX.isAnyNotEmpty("a", "b", "c"));
+
+		assertTrue(StringX.isAnyNotEmpty("a", "", "c"));
+
+		assertTrue(StringX.isAnyNotEmpty("a", null, "c"));
+
+		assertTrue(StringX.isAnyNotEmpty("a", null, "", "c"));
+
+		assertFalse(StringX.isAnyNotEmpty("", null));
+
+		assertTrue(StringX.isAnyNotEmpty(" ", null));
+	}
+
+	@Test
+	public void hasBlank() {
+		assertFalse(StringX.hasBlank());
+
+		assertFalse(StringX.hasBlank("a", "b ", "c"));
+
+		assertFalse(StringX.hasBlank("a", "b ", "c c"));
+
+		assertTrue(StringX.hasBlank("a", " ", "c"));
+
+		assertTrue(StringX.hasBlank("a", null, "c"));
+
+		assertTrue(StringX.hasBlank("a", null, " ", "c"));
+	}
+
+	@Test
+	public void joinAppend() {
+		StringBuilder builder = StringX.joinAppend(null, Arrays.asList(1, 2, 3), (sb, t) -> sb.append(t.intValue()), ",", 1);
+		assertEquals((1 + 1) * 3 + 4, builder.capacity());
+		assertEquals("1,2,3", builder.toString());
+
+		builder = StringX.joinAppend(null, Arrays.asList(1, 2, 3), (sb, t) -> sb.append(t.intValue()), ",");
+		assertEquals((6 + 1) * 3 + 4, builder.capacity());
+		assertEquals("1,2,3", builder.toString());
+	}
+
+	@Test
+	public void split() {
+		List<Integer> vals = StringX.split("1,2,3", ",", Integer::valueOf);
+		assertThat(vals)
+				.hasSize(3)
+				.containsExactly(1, 2, 3);
+	}
+
+	@Test
+	public void convertCharset_ValidInput_ConvertsCorrectly() {
+		final String source = "测试";
+		String input = new String(source.getBytes(StandardCharsets.UTF_16), StandardCharsets.ISO_8859_1);
+		String result = StringX.convertCharset(input, StandardCharsets.ISO_8859_1, StandardCharsets.UTF_16);
+		assertNotNull(result);
+		assertEquals(source, result);
+	}
+
+	@Test
+	public void convertCharsetForURI_ValidInput_ConvertsCorrectly() {
+		final String source = "测试";
+		String input = new String(source.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
+		String result = StringX.convertCharsetForURI(input, StandardCharsets.UTF_8);
+		assertNotNull(result);
+		assertEquals(source, result);
+	}
+
+	@Test
+	public void convertCharset_EmptyString_ReturnsEmptyString() {
+		final String input = "";
+		String result = StringX.convertCharset(input, StandardCharsets.UTF_8, StandardCharsets.ISO_8859_1);
+		assertEquals(input, result);
+	}
+
+	@Test
+	public void convertCharsetForURI_EmptyString_ReturnsEmptyString() {
+		final String input = "";
+		String result = StringX.convertCharsetForURI(input, StandardCharsets.UTF_8);
+		assertEquals(input, result);
 	}
 
 }
