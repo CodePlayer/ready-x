@@ -240,24 +240,23 @@ public class ArrayXTest {
 	@Test
 	public void toFinalString_NonEmptyArray_ReturnsArrayString() {
 		StringBuilder sb = new StringBuilder();
-		StringBuilder result = ArrayX.toFinalString(sb, new int[] { 1, 2, 3 });
+		final int[] array = { 1, 2, 3 };
+		StringBuilder result = ArrayX.toFinalString(sb, array);
 		assertEquals("[1, 2, 3]", result.toString());
 	}
 
 	@Test
 	public void toFinalString_MultiDimensionalArray_ReturnsNestedArrayString() {
-		StringBuilder sb = new StringBuilder();
 		Object[] array = { 1, new int[] { 2, 3 }, new Object[] { 4, new int[] { 5, 6 } } };
-		StringBuilder result = ArrayX.toFinalString(sb, array);
-		assertEquals("[1, [2, 3], [4, [5, 6]]]", result.toString());
+		String result = ArrayX.toFinalString(array);
+		assertEquals("[1, [2, 3], [4, [5, 6]]]", result);
 	}
 
 	@Test
 	public void toFinalString_MixedTypeArray_ReturnsMixedArrayString() {
-		StringBuilder sb = new StringBuilder();
 		Object[] array = { 1, "string", 3.14 };
-		StringBuilder result = ArrayX.toFinalString(sb, array);
-		assertEquals("[1, string, 3.14]", result.toString());
+		String result = ArrayX.toFinalString(array);
+		assertEquals("[1, string, 3.14]", result);
 	}
 
 	@Test
