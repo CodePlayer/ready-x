@@ -8,8 +8,13 @@ import static me.codeplayer.util.StringX.nullSafeGet;
 
 /**
  * 项目中的通用断言类，用于处理异常，如果断言失败将会抛出异常<br>
- * 断言方法均以is开头，相反的方法均以not开头<br>
- * 例如：isTrue和notTrue、isNull和notNull、isEmpty和notEmpty、isBlank和notBlank
+ * 断言方法均以 <code>is</code> 开头，相反的方法均以 <code>not</code> 开头（ <code>isFalse()</code> 除外 ）。例如：
+ * <pre><code>
+ * isTrue 和 isFalse
+ * isNull 和 notNull
+ * isEmpty 和 notEmpty
+ * isBlank 和 notBlank
+ * </code></pre>
  *
  * @author Ready
  * @since 2012-4-23
