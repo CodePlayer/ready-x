@@ -2,8 +2,6 @@ package me.codeplayer.util;
 
 import java.lang.invoke.*;
 import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.function.*;
 
 import org.apache.commons.lang3.StringUtils;
@@ -26,12 +24,8 @@ public class JavaX {
 	public static final Byte LATIN1 = 0;
 	public static final Byte UTF16 = 1;
 
-	public static final Field FIELD_STRING_VALUE;
 	public static final long FIELD_STRING_VALUE_OFFSET;
 	public static volatile boolean FIELD_STRING_VALUE_ERROR;
-
-	public static final long FIELD_DECIMAL_INT_COMPACT_OFFSET;
-	public static final long FIELD_BIGINTEGER_MAG_OFFSET;
 
 	public static final boolean ANDROID;
 	public static final boolean GRAAL;
@@ -43,10 +37,6 @@ public class JavaX {
 	public static final BiFunction<byte[], Byte, String> STRING_CREATOR_JDK11;
 	public static final ToIntFunction<String> STRING_CODER;
 	public static final Function<String, byte[]> STRING_VALUE;
-
-	public static final MethodHandle METHOD_HANDLE_HAS_NEGATIVE;
-	public static final Predicate<byte[]> PREDICATE_IS_ASCII;
-	public static final MethodHandle INDEX_OF_CHAR_LATIN1;
 
 	static final MethodHandles.Lookup IMPL_LOOKUP;
 	static volatile MethodHandle CONSTRUCTOR_LOOKUP;
@@ -100,7 +90,7 @@ public class JavaX {
 		JVM_VERSION = jvmVersion;
 
 		if (JVM_VERSION == 8) {
-			Field field = null;
+			Field field;
 			long fieldOffset = -1;
 			if (!ANDROID) {
 				try {
@@ -112,11 +102,10 @@ public class JavaX {
 				}
 			}
 
-			FIELD_STRING_VALUE = field;
 			FIELD_STRING_VALUE_OFFSET = fieldOffset;
 
 		} else {
-			Field fieldValue = null;
+			Field fieldValue;
 			long fieldValueOffset = -1;
 			if (!ANDROID) {
 				try {
@@ -127,33 +116,6 @@ public class JavaX {
 				}
 			}
 			FIELD_STRING_VALUE_OFFSET = fieldValueOffset;
-			FIELD_STRING_VALUE = fieldValue;
-		}
-
-		{
-			long fieldOffset = -1;
-			for (Field field : BigDecimal.class.getDeclaredFields()) {
-				String fieldName = field.getName();
-				if (fieldName.equals("intCompact")
-						|| fieldName.equals("smallValue") // android
-				) {
-					fieldOffset = UNSAFE.objectFieldOffset(field);
-					break;
-				}
-			}
-
-			FIELD_DECIMAL_INT_COMPACT_OFFSET = fieldOffset;
-		}
-
-		{
-			long fieldOffset = -1;
-			try {
-				Field field = BigInteger.class.getDeclaredField("mag");
-				fieldOffset = UNSAFE.objectFieldOffset(field);
-			} catch (Throwable ignored) {
-				// ignored
-			}
-			FIELD_BIGINTEGER_MAG_OFFSET = fieldOffset;
 		}
 
 		BiFunction<char[], Boolean, String> stringCreatorJDK8 = null;
@@ -176,88 +138,6 @@ public class JavaX {
 			}
 		}
 		IMPL_LOOKUP = trustedLookup;
-
-		{
-			Predicate<byte[]> isAscii = null;
-			// isASCII
-			MethodHandle handle = null;
-			Class<?> classStringCoding = null;
-			if (JVM_VERSION >= 17) {
-				try {
-					handle = trustedLookup.findStatic(
-							classStringCoding = String.class,
-							"isASCII",
-							MethodType.methodType(boolean.class, byte[].class)
-					);
-				} catch (Throwable e) {
-					initErrorLast = e;
-				}
-			}
-
-			if (handle == null && JVM_VERSION >= 11) {
-				try {
-					classStringCoding = Class.forName("java.lang.StringCoding");
-					handle = trustedLookup.findStatic(
-							classStringCoding,
-							"isASCII",
-							MethodType.methodType(boolean.class, byte[].class)
-					);
-				} catch (Throwable e) {
-					initErrorLast = e;
-				}
-			}
-
-			if (handle != null) {
-				try {
-					MethodHandles.Lookup lookup = trustedLookup(classStringCoding);
-					CallSite callSite = LambdaMetafactory.metafactory(
-							lookup,
-							"test",
-							methodType(Predicate.class),
-							methodType(boolean.class, Object.class),
-							handle,
-							methodType(boolean.class, byte[].class)
-					);
-					isAscii = (Predicate<byte[]>) callSite.getTarget().invokeExact();
-				} catch (Throwable e) {
-					initErrorLast = e;
-				}
-			}
-
-			PREDICATE_IS_ASCII = isAscii;
-		}
-
-		{
-			MethodHandle handle = null;
-			if (JVM_VERSION >= 11) {
-				try {
-					Class<?> classStringCoding = Class.forName("java.lang.StringCoding");
-					handle = trustedLookup.findStatic(
-							classStringCoding,
-							"hasNegatives",
-							MethodType.methodType(boolean.class, byte[].class, int.class, int.class)
-					);
-				} catch (Throwable e) {
-					initErrorLast = e;
-				}
-			}
-			METHOD_HANDLE_HAS_NEGATIVE = handle;
-		}
-
-		MethodHandle indexOfCharLatin1 = null;
-		if (JVM_VERSION > 9) {
-			try {
-				Class<?> cStringLatin1 = Class.forName("java.lang.StringLatin1");
-				MethodHandles.Lookup lookup = trustedLookup(cStringLatin1);
-				indexOfCharLatin1 = lookup.findStatic(
-						cStringLatin1,
-						"indexOfChar",
-						MethodType.methodType(int.class, byte[].class, int.class, int.class, int.class));
-			} catch (Throwable ignored) {
-				// ignore
-			}
-		}
-		INDEX_OF_CHAR_LATIN1 = indexOfCharLatin1;
 
 		Boolean compact_strings = null;
 		try {
