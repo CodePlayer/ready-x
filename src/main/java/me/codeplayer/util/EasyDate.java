@@ -1,7 +1,6 @@
 package me.codeplayer.util;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -649,8 +648,9 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	}
 
 	/**
-	 * 计算并返回当前日期与指定日期之间基于指定单位和舍入模式的差值<br>
-	 * 如果当前日期大于等于指定日期，则返回正数，否则返回负数
+	 * 计算并返回当前日期与指定日期之间基于指定单位和舍入模式的差值
+	 * <p>如果当前日期大于等于指定日期，则返回正数，否则返回负数
+	 * <p><b>注意：</b>如果两个时间对象的时区不一致，则以 {@code this } 的时区 为准
 	 *
 	 * @param date 与当前日期进行比较的日期
 	 * @param field 指定的日期字段，返回值将以此为单位返回两个日期的差距值
@@ -667,7 +667,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 			case YEAR:
 			case MONTH:
 				final boolean thisIsMax = diff > 0;
-				EasyDate me = clone().setTime(thisMs);
+				EasyDate me = this;
 				EasyDate other = new EasyDate(theMs, me.getTimeZone());
 				final EasyDate min = thisIsMax ? other : me, max = thisIsMax ? me : other;
 				final int diffOfYear = max.getYear() - min.getYear();
@@ -686,18 +686,23 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 				final long maxTime = max.getTime();
 				long partDiff = maxTime - min.getTime();
 				if (partDiff == 0) { // 如果对齐后刚好相等，就返回计算好的差距数值
+					resetMeIfNeed(min, me, thisMs);
 					return thisIsMax ? diff : -diff;
 				} else if (partDiff < 0) {  // 如果对齐到相同年月时，min 反而较大
 					diff--; // 整数部分要 -1
 				}
 				switch (roundingMode) {
 					case CEILING: // 向【正无穷】的方向舍入
+						resetMeIfNeed(min, me, thisMs);
 						return thisIsMax ? diff + 1 : -diff;
 					case UP: // 向【远离 0】 的方向舍入
+						resetMeIfNeed(min, me, thisMs);
 						return thisIsMax ? diff + 1 : -diff - 1;
 					case DOWN: // 向【靠近 0】 的方向舍去
+						resetMeIfNeed(min, me, thisMs);
 						return thisIsMax ? diff : -diff;
 					case FLOOR: // 向【负无穷】的方向舍去
+						resetMeIfNeed(min, me, thisMs);
 						return thisIsMax ? diff : -diff - 1;
 					case HALF_UP:
 					case HALF_DOWN:
@@ -723,6 +728,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 									? ((diff & 1) == 1 ? 1 : 0)
 									: innerPartDiff > outerPartDiff ? 1 : 0;
 						}
+						resetMeIfNeed(min, me, thisMs);
 						return thisIsMax ? diff + incr : -diff - incr;
 					}
 					case UNNECESSARY:
@@ -734,9 +740,16 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 		}
 	}
 
+	static void resetMeIfNeed(EasyDate min, EasyDate me, final long thisMs) {
+		if (min == me) {
+			me.setTime(thisMs); // reset
+		}
+	}
+
 	/**
-	 * 计算并返回当前日期与指定日期之间基于指定单位和向上取整模式（{@link RoundingMode#UP}）的差值<br>
-	 * 如果当前日期大于等于指定日期，则返回正数，否则返回负数
+	 * 计算并返回当前日期与指定日期之间基于指定单位和向上取整模式（{@link RoundingMode#UP}）的差值
+	 * <p>如果当前日期大于等于指定日期，则返回正数，否则返回负数
+	 * <p><b>注意：</b>如果两个时间对象的时区不一致，则以 {@code this } 的时区 为准
 	 *
 	 * @param date 与当前日期进行比较的日期
 	 * @param field 指定的日期字段，返回值将以此为单位返回两个日期的差距值
@@ -746,8 +759,9 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	}
 
 	/**
-	 * 计算并返回当前日期与指定日期之间基于向上取整模式（{@link RoundingMode#UP}）的天数差值<br>
-	 * 如果当前日期大于等于指定日期，则返回正数，否则返回负数
+	 * 计算并返回当前日期与指定日期之间基于向上取整模式（{@link RoundingMode#UP}）的天数差值
+	 * <p>如果当前日期大于等于指定日期，则返回正数，否则返回负数
+	 * <p><b>注意：</b>如果两个时间对象的时区不一致，则以 {@code this } 的时区 为准
 	 *
 	 * @param dateObj 与当前日期进行比较的日期
 	 */
@@ -865,6 +879,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 
 	/**
 	 * 比较两个以毫秒数表示的时间值是否处于同一年/月/天/小时/分钟/秒/毫秒
+	 * <p><b>注意：</b>基于系统默认时区进行比较
 	 *
 	 * @param a 时间 a
 	 * @param b 时间 b
@@ -908,8 +923,9 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	}
 
 	/**
-	 * 比较两个时间值是否处于同一年/月/天/小时/分钟/秒/毫秒<br>
-	 * 时间对象可以为：{@link Date}、{@link EasyDate}、{@link Calendar}
+	 * 比较两个时间值是否处于同一年/月/天/小时/分钟/秒/毫秒
+	 * <p>时间对象可以为：{@link Date}、{@link EasyDate}、{@link Calendar}
+	 * <p><b>注意：</b>如果两个时间对象的时区不一致，则以 {@code a } 或 系统默认时区 为准
 	 *
 	 * @param a 时间 a
 	 * @param b 时间 b
@@ -926,7 +942,25 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * @since 0.3.6
 	 */
 	public static boolean isSameAs(Object a, Object b, int inField) {
-		return isSameAs(getTimeOfDate(a), getTimeOfDate(b), inField, TimeZone.getDefault());
+		final long time;
+		final TimeZone timeZone;
+		if (a == null) {
+			throw new NullPointerException();
+		} else if (a instanceof Date) {
+			time = ((Date) a).getTime();
+			timeZone = TimeZone.getDefault();
+		} else if (a instanceof EasyDate) {
+			final EasyDate ed = (EasyDate) a;
+			time = (ed).getTime();
+			timeZone = (ed).getTimeZone();
+		} else if (a instanceof Calendar) {
+			final Calendar c = ((Calendar) a);
+			time = c.getTimeInMillis();
+			timeZone = c.getTimeZone();
+		} else {
+			throw new ClassCastException(a.getClass().getName());
+		}
+		return isSameAs(time, getTimeOfDate(b), inField, timeZone);
 	}
 
 	/**
