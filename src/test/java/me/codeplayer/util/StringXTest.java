@@ -351,6 +351,59 @@ public class StringXTest implements WithAssertions {
 	}
 
 	@Test
+	public void getInSQL_Empty_ThrowsException() {
+		assertThrows(IllegalArgumentException.class, () -> StringX.getInSQL(Collections.emptyList(), true, true));
+	}
+
+	@Test
+	public void getInSQL_SingleElementIncludeString_ReturnsEquals() {
+		String result = StringX.getInSQL(Collections.singletonList("1"), true, true);
+		assertEquals(" IN ('1')", result);
+	}
+
+	@Test
+	public void getInSQL_SingleElementIncludeNumeric_ReturnsEquals() {
+		String result = StringX.getInSQL(Collections.singletonList(1), true, false);
+		assertEquals(" IN (1)", result);
+	}
+
+	@Test
+	public void getInSQL_SingleElementExcludeString_ReturnsNotEquals() {
+		String result = StringX.getInSQL(Collections.singletonList("1"), false, true);
+		assertEquals(" NOT IN ('1')", result);
+	}
+
+	@Test
+	public void getInSQL_SingleElementExcludeNumeric_ReturnsNotEquals() {
+		String result = StringX.getInSQL(Collections.singletonList(1), false, false);
+		assertEquals(" NOT IN (1)", result);
+	}
+
+	@Test
+	public void getInSQL_MultipleElementsIncludeString_ReturnsInClause() {
+		String result = StringX.getInSQL(Arrays.asList("1", "2", "3"), true, true);
+		assertEquals(" IN ('1', '2', '3')", result);
+	}
+
+	@Test
+	public void getInSQL_MultipleElementsIncludeNumeric_ReturnsInClause() {
+		String result = StringX.getInSQL(Arrays.asList(1, 2, 3), true, false);
+		assertEquals(" IN (1, 2, 3)", result);
+	}
+
+	@Test
+	public void getInSQL_MultipleElementsExcludeString_ReturnsNotInClause() {
+		String result = StringX.getInSQL(Arrays.asList("1", "2", "3"), false, true);
+		assertEquals(" NOT IN ('1', '2', '3')", result);
+	}
+
+	@Test
+	public void getInSQL_MultipleElementsExcludeNumeric_ReturnsNotInClause() {
+		String result = StringX.getInSQL(Arrays.asList(1, 2, 3), false, false);
+		assertEquals(" NOT IN (1, 2, 3)", result);
+	}
+
+	@Test
 	public void leftPad() {
 		assertEquals("", StringX.leftPad(null, '0', 5));
 
