@@ -1251,6 +1251,89 @@ public abstract class StringX {
 	}
 
 	/**
+	 * 将指定字符串数组拼接为 IN SQL子句 <br>
+	 * 如果数组为空，将会引发异常 <br>
+	 * 如果存在数组元素，则拼接内容形如 " IN (1, 2, 5)" 或 " IN ('1', '2', '5')"
+	 *
+	 * @param sb 指定的StringBuilder
+	 * @param items 指定的任意数组
+	 * @param isInclude 指示IN SQL是包含还是排除查询，如果是包含(true)将返回 IN，如果是排除(false)将返回 NOT IN
+	 * @param isString 指示元素是否以字符串形式参与in SQL语句。如果为true，将会在每个元素两侧加上单引号"'"
+	 */
+	public static StringBuilder getInSQL(StringBuilder sb, Collection<?> items, boolean isInclude, boolean isString) {
+		final int size = X.size(items);
+		if (size == 0) {
+			throw new IllegalArgumentException("Collection can not be empty:" + items);
+		}
+		sb = prepareInSQLBuilder(sb, isInclude, isString, size);
+		if (isString) {// 如果是字符串格式
+			sb.append('\'');
+			doJoin(items, sb, "', '");
+			sb.append("')");
+		} else {// 如果是数字格式
+			doJoin(items, sb, ", ");
+			sb.append(')');
+		}
+		return sb;
+	}
+
+	/**
+	 * @param size 必须 > 0
+	 */
+	static StringBuilder prepareInSQLBuilder(StringBuilder sb, boolean isInclude, boolean isString, int size) {
+		if (sb == null) {
+			final int factor = isString ? 10 : 8;
+			sb = new StringBuilder(size * factor + (isInclude ? 4 : 8));
+		}
+		sb.append(isInclude ? " IN (" : " NOT IN (");
+		return sb;
+	}
+
+	static void doJoin(Iterable<?> items, StringBuilder sb, String delimiter) {
+		final Iterator<?> it = items.iterator();
+		appendValue(sb, it.next());
+		while (it.hasNext()) {
+			appendValue(sb.append(delimiter), it.next());
+		}
+	}
+
+	static void appendValue(final StringBuilder sb, Object val) {
+		if (val instanceof Integer) {
+			sb.append((int) val);
+			return;
+		} else if (val instanceof Long) {
+			sb.append((long) val);
+			return;
+		}
+		sb.append(val);
+	}
+
+	/**
+	 * 将指定的数组拼接为InSQL子句并返回，内部将会根据元素个数来判断返回“=”语句还是“IN”语句<br>
+	 * 如果数组为空，将会引发异常<br>
+	 * 如果存在数组元素，将会返回“ IN (1, 2, 5)”或“ IN ('1', '2', '5')”
+	 *
+	 * @param items 指定的数组
+	 * @param isInclude 指示IN SQL是包含还是排除查询，如果是包含(true)将返回=、IN，如果是排除(false)将返回!=、NOT IN
+	 * @param isString 指示元素是否以字符串形式参与InSQL语句。如果为true，将会在每个元素两侧加上单引号"'"
+	 */
+	public static String getInSQL(Collection<?> items, boolean isInclude, boolean isString) {
+		return getInSQL(null, items, isInclude, isString).toString();
+	}
+
+	/**
+	 * 将指定的数组拼接为InSQL子句并返回，内部将会根据元素个数来判断返回“=”语句还是“IN”语句<br>
+	 * 如果数组为空，将会引发异常<br>
+	 * 如果存在数组元素，将会返回“ IN (1, 2, 5)”或“ IN ('1', '2', '5')”
+	 *
+	 * @param items 指定的数组
+	 * @param isString 指示元素是否以字符串形式参与InSQL语句。如果为true，将会在每个元素两侧加上单引号"'"
+	 */
+	public static String getInSQL(Collection<?> items, boolean isString) {
+		return getInSQL(null, items, true, isString).toString();
+	}
+
+	/**
 	 * 将以指定分隔字符分隔字符串，并将拆分后的每个片段文本使用指定的 {@code mapper} 进行转换，并返回转换后的元素集合
 	 *
 	 * @param str 需要被拆分的字符串
