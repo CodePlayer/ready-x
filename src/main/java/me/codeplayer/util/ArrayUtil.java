@@ -43,13 +43,17 @@ public abstract class ArrayUtil {
 		if (sb == null) {
 			sb = new StringBuilder(((length + delimiter.length()) << 3) + 2);
 		}
+		doJoin(sb, array, delimiter, length);
+		return sb;
+	}
+
+	static void doJoin(StringBuilder sb, Object array, String delimiter, final int length) {
 		// 如果是 int、long 及其包装类型时，需调用特定的 append 方法，避免循环装箱及调用 String.valueOf 的开销
 		final Class<?> type = array.getClass().getComponentType();
 		appendElement(sb, type, array, 0);
 		for (int i = 1; i < length; i++) {
 			appendElement(sb.append(delimiter), type, array, i);
 		}
-		return sb;
 	}
 
 	static void appendElement(final StringBuilder sb, final Class<?> elementType, Object array, int i) {
@@ -99,20 +103,13 @@ public abstract class ArrayUtil {
 		if (length == 0) {
 			throw new IllegalArgumentException("Array can not be empty:" + array);
 		}
-		if (sb == null) {
-			int factor = 8;
-			if (isString) {
-				factor += 2;
-			}
-			sb = new StringBuilder(length * factor + (isInclude ? 4 : 8));
-		}
-		sb.append(isInclude ? " IN (" : " NOT IN (");
+		sb = StringUtil.prepareInSQLBuilder(sb, isInclude, isString, length);
 		if (isString) {// 如果是字符串格式
 			sb.append('\'');
-			join(sb, array, "', '");
+			doJoin(sb, array, "', '", length);
 			sb.append("')");
 		} else {// 如果是数字格式
-			join(sb, array, ", ");
+			doJoin(sb, array, ", ", length);
 			sb.append(')');
 		}
 		return sb;
