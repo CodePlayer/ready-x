@@ -666,7 +666,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 			case YEAR:
 			case MONTH:
 				final boolean thisIsMax = diff > 0;
-				EasyDate me = clone().setTime(thisMs);
+				EasyDate me = this;
 				EasyDate other = new EasyDate(theMs, me.getTimeZone());
 				final EasyDate min = thisIsMax ? other : me, max = thisIsMax ? me : other;
 				final int diffOfYear = max.getYear() - min.getYear();
@@ -685,18 +685,23 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 				final long maxTime = max.getTime();
 				long partDiff = maxTime - min.getTime();
 				if (partDiff == 0) { // 如果对齐后刚好相等，就返回计算好的差距数值
+					resetMeIfNeed(min, me, thisMs);
 					return thisIsMax ? diff : -diff;
 				} else if (partDiff < 0) {  // 如果对齐到相同年月时，min 反而较大
 					diff--; // 整数部分要 -1
 				}
 				switch (roundingMode) {
 					case CEILING: // 向【正无穷】的方向舍入
+						resetMeIfNeed(min, me, thisMs);
 						return thisIsMax ? diff + 1 : -diff;
 					case UP: // 向【远离 0】 的方向舍入
+						resetMeIfNeed(min, me, thisMs);
 						return thisIsMax ? diff + 1 : -diff - 1;
 					case DOWN: // 向【靠近 0】 的方向舍去
+						resetMeIfNeed(min, me, thisMs);
 						return thisIsMax ? diff : -diff;
 					case FLOOR: // 向【负无穷】的方向舍去
+						resetMeIfNeed(min, me, thisMs);
 						return thisIsMax ? diff : -diff - 1;
 					case HALF_UP:
 					case HALF_DOWN:
@@ -722,6 +727,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 									? ((diff & 1) == 1 ? 1 : 0)
 									: innerPartDiff > outerPartDiff ? 1 : 0;
 						}
+						resetMeIfNeed(min, me, thisMs);
 						return thisIsMax ? diff + incr : -diff - incr;
 					}
 					case UNNECESSARY:
@@ -730,6 +736,12 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 			default:
 				long unit = getMillisOfUnit(field);
 				return Arith.toBigDecimal(diff).divide(Arith.toBigDecimal(unit), 0, roundingMode).longValue();
+		}
+	}
+
+	static void resetMeIfNeed(EasyDate min, EasyDate me, final long thisMs) {
+		if (min == me) {
+			me.setTime(thisMs); // reset
 		}
 	}
 
