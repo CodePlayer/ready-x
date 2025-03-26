@@ -38,7 +38,7 @@ public class JavaX {
 	public static final ToIntFunction<String> STRING_CODER;
 	public static final Function<String, byte[]> STRING_VALUE;
 
-	static final MethodHandles.Lookup IMPL_LOOKUP;
+	public static final MethodHandles.Lookup IMPL_LOOKUP;
 	static volatile MethodHandle CONSTRUCTOR_LOOKUP;
 	static volatile boolean CONSTRUCTOR_LOOKUP_ERROR;
 	static volatile Throwable initErrorLast;
