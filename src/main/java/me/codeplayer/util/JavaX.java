@@ -220,7 +220,8 @@ public class JavaX {
 			}
 		} catch (Throwable e) {
 			initErrorLast = e;
-
+		}
+		if (stringValue == null) {
 			stringValue = String::getBytes;
 		}
 		if (stringCreatorJDK8 == null) {
