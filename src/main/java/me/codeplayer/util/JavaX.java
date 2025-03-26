@@ -220,10 +220,11 @@ public class JavaX {
 			}
 		} catch (Throwable e) {
 			initErrorLast = e;
-			if (stringCreatorJDK8 == null) {
-				stringCreatorJDK8 = (chars, share) -> new String(chars);
-			}
+
 			stringValue = String::getBytes;
+		}
+		if (stringCreatorJDK8 == null) {
+			stringCreatorJDK8 = (chars, share) -> new String(chars);
 		}
 		if (stringCreatorJDK11 == null) {
 			stringCreatorJDK11 = (bytes, coder) -> new String(bytes);
