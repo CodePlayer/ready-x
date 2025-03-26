@@ -1,15 +1,20 @@
 package me.codeplayer.util;
 
-class StringBuilderNumBuffer implements NumBuffer {
+class StringBuilderCharReplacer implements CharReplacer {
 
 	final StringBuilder chars;
 
-	public StringBuilderNumBuffer(StringBuilder template) {
+	public StringBuilderCharReplacer(StringBuilder template) {
 		this.chars = template;
 	}
 
-	public StringBuilderNumBuffer(String template) {
+	public StringBuilderCharReplacer(String template) {
 		this.chars = new StringBuilder(template.length()).append(template);
+	}
+
+	@Override
+	public void setCharAt(int index, char ch) {
+		chars.setCharAt(index, ch);
 	}
 
 	@Override
