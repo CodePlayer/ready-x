@@ -2,16 +2,24 @@ package me.codeplayer.util;
 
 import java.nio.charset.StandardCharsets;
 
-class Latin1ByteNumBuffer implements NumBuffer {
+class Latin1ByteCharReplacer implements CharReplacer {
 
 	final byte[] chars;
 
-	public Latin1ByteNumBuffer(byte[] chars) {
+	public Latin1ByteCharReplacer(byte[] chars) {
 		this.chars = chars;
 	}
 
-	public Latin1ByteNumBuffer(String chars) {
+	public Latin1ByteCharReplacer(String chars) {
 		this.chars = chars.getBytes(StandardCharsets.US_ASCII);
+	}
+
+	@Override
+	public void setCharAt(int index, char ch) {
+		if (ch >>> 8 == 0) { // see java.lang.StringLatin1#canEncode
+			throw new IllegalArgumentException("Invalid char: " + ch);
+		}
+		chars[index] = (byte) ch;
 	}
 
 	@Override

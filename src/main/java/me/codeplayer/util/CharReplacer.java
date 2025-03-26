@@ -1,6 +1,11 @@
 package me.codeplayer.util;
 
-public interface NumBuffer {
+public interface CharReplacer {
+
+	/**
+	 * 将指定的字符数组中的指定索引处的字符替换为指定的字符
+	 */
+	void setCharAt(int index, char ch);
 
 	/**
 	 * 将指定的数字设置到指定的字符数组中的指定索引处，并填充指定的长度，如果数字的长度不够，则在前面填充0
@@ -20,27 +25,27 @@ public interface NumBuffer {
 	 */
 	void pickValidChars(long number, int start, int end);
 
-	static NumBuffer of(char[] template) {
-		return new CharNumBuffer(template);
+	static CharReplacer of(char[] template) {
+		return new CharCharReplacer(template);
 	}
 
-	static NumBuffer of(String template, boolean latin1) {
+	static CharReplacer of(String template, boolean latin1) {
 		if (JavaX.isJava9OrHigher) {
-			return latin1 ? new Latin1ByteNumBuffer(template) : new StringBuilderNumBuffer(template);
+			return latin1 ? new Latin1ByteCharReplacer(template) : new StringBuilderCharReplacer(template);
 		}
-		return new CharNumBuffer(template);
+		return new CharCharReplacer(template);
 	}
 
-	static NumBuffer of(String template) {
+	static CharReplacer of(String template) {
 		return of(template, JavaX.STRING_CODER.applyAsInt(template) == JavaX.LATIN1);
 	}
 
-	static NumBuffer of(StringBuilder template) {
-		return new StringBuilderNumBuffer(template);
+	static CharReplacer of(StringBuilder template) {
+		return new StringBuilderCharReplacer(template);
 	}
 
-	static NumBuffer ofBuilder(String template) {
-		return new StringBuilderNumBuffer(template);
+	static CharReplacer ofBuilder(String template) {
+		return new StringBuilderCharReplacer(template);
 	}
 
 }

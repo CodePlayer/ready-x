@@ -1231,7 +1231,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	}
 
 	static String toString(int year, int month, int day) {
-		NumBuffer chars = NumBuffer.of("0000-00-00", true);
+		CharReplacer chars = CharReplacer.of("0000-00-00", true);
 		formatNormalDate(chars, year, 0, month, 5, day, 8);
 		return chars.toString();
 	}
@@ -1247,7 +1247,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 返回"yyyy年MM月dd日"格式的字符串
 	 */
 	public static String toDateString(int year, int month, int day) {
-		NumBuffer chars = NumBuffer.of("0000年00月00日", false);
+		CharReplacer chars = CharReplacer.of("0000年00月00日", false);
 		formatNormalDate(chars, year, 0, month, 5, day, 8);
 		return chars.toString();
 	}
@@ -1294,7 +1294,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 返回"yyyy-MM-dd HH:mm:ss"格式的字符串
 	 */
 	public static String toDateTimeString(int year, int month, int day, int hour, int minute, int second) {
-		final NumBuffer chars = NumBuffer.of("0000-00-00 00:00:00", true);
+		final CharReplacer chars = CharReplacer.of("0000-00-00 00:00:00", true);
 		chars.pickValidChars(year, 0, 4);
 		chars.pickValidChars(month, 5, 7);
 		chars.pickValidChars(day, 8, 10);
@@ -1323,7 +1323,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 返回"yyyyMMdd"格式的字符串
 	 */
 	public static String toShortString(int year, int month, int day) {
-		final NumBuffer chars = NumBuffer.of("00000000", true);
+		final CharReplacer chars = CharReplacer.of("00000000", true);
 		chars.pickValidChars(year, 0, 4);
 		chars.pickValidChars(month, 4, 6);
 		chars.pickValidChars(day, 6, 8);
@@ -1349,7 +1349,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 返回"yyyy-MM-dd HH:mm:ss.SSS"格式的字符串
 	 */
 	public static String toLongString(int year, int month, int day, int hour, int minute, int second, int ms) {
-		final NumBuffer chars = NumBuffer.of("0000-00-00 00:00:00.000", true);
+		final CharReplacer chars = CharReplacer.of("0000-00-00 00:00:00.000", true);
 		formatNormalDate(chars, year, 0, month, 5, day, 8);
 		formatNormalTime(chars, hour, 11, minute, 14, second, 17);
 		chars.pickValidChars(ms, 20, 23);
@@ -1377,7 +1377,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	}
 
 	/** "...yyyy-MM-dd..." */
-	public static void formatNormalDate(final NumBuffer chars,
+	public static void formatNormalDate(final CharReplacer chars,
 	                                    final int year, int yearStart,
 	                                    final int month, int monthStart,
 	                                    final int day, int dayStart) {
@@ -1402,7 +1402,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	}
 
 	/** "...HH:mm:ss..." */
-	public static void formatNormalTime(final NumBuffer chars,
+	public static void formatNormalTime(final CharReplacer chars,
 	                                    final int hour, int hourStart,
 	                                    final int minute, int minStart,
 	                                    final int second, int secStart) {

@@ -1,15 +1,20 @@
 package me.codeplayer.util;
 
-class CharNumBuffer implements NumBuffer {
+class CharCharReplacer implements CharReplacer {
 
 	final char[] chars;
 
-	public CharNumBuffer(char[] chars) {
+	public CharCharReplacer(char[] chars) {
 		this.chars = chars;
 	}
 
-	public CharNumBuffer(String chars) {
+	public CharCharReplacer(String chars) {
 		this.chars = chars.toCharArray();
+	}
+
+	@Override
+	public void setCharAt(int index, char ch) {
+		chars[index] = ch;
 	}
 
 	@Override
