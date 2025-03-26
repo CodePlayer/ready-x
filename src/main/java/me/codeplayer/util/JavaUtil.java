@@ -48,7 +48,7 @@ public class JavaUtil {
 	public static final Predicate<byte[]> PREDICATE_IS_ASCII;
 	public static final MethodHandle INDEX_OF_CHAR_LATIN1;
 
-	static final MethodHandles.Lookup IMPL_LOOKUP;
+	public static final MethodHandles.Lookup IMPL_LOOKUP;
 	static volatile MethodHandle CONSTRUCTOR_LOOKUP;
 	static volatile boolean CONSTRUCTOR_LOOKUP_ERROR;
 	static volatile Throwable initErrorLast;
