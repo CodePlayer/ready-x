@@ -16,7 +16,7 @@ class Latin1ByteCharReplacer implements CharReplacer {
 
 	@Override
 	public void setCharAt(int index, char ch) {
-		if (ch >>> 8 == 0) { // see java.lang.StringLatin1#canEncode
+		if (ch >>> 8 != 0) { // see java.lang.StringLatin1#canEncode
 			throw new IllegalArgumentException("Invalid char: " + ch);
 		}
 		chars[index] = (byte) ch;
