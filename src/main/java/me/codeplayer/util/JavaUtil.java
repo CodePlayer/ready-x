@@ -343,12 +343,11 @@ public class JavaUtil {
 			if (stringCreatorJDK8 == null) {
 				stringCreatorJDK8 = (chars, share) -> new String(chars);
 			}
-			if (stringCreatorJDK11 == null) {
-				stringCreatorJDK11 = (bytes, coder) -> new String(bytes);
-			}
 			stringValue = String::getBytes;
 		}
-
+		if (stringCreatorJDK11 == null) {
+			stringCreatorJDK11 = (bytes, coder) -> new String(bytes);
+		}
 		if (stringCoder == null) {
 			stringCoder = str -> 1;
 		}

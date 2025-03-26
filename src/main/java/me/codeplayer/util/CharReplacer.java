@@ -26,14 +26,14 @@ public interface CharReplacer {
 	void pickValidChars(long number, int start, int end);
 
 	static CharReplacer of(char[] template) {
-		return new CharCharReplacer(template);
+		return new UTF16CharReplacer(template);
 	}
 
 	static CharReplacer of(String template, boolean latin1) {
 		if (JavaUtil.isJava9OrHigher) {
-			return latin1 ? new Latin1ByteCharReplacer(template) : new StringBuilderCharReplacer(template);
+			return latin1 ? new Latin1CharReplacer(template) : new StringBuilderCharReplacer(template);
 		}
-		return new CharCharReplacer(template);
+		return new UTF16CharReplacer(template);
 	}
 
 	static CharReplacer of(String template) {

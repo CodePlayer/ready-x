@@ -2,15 +2,15 @@ package me.codeplayer.util;
 
 import java.nio.charset.StandardCharsets;
 
-class Latin1ByteCharReplacer implements CharReplacer {
+class Latin1CharReplacer implements CharReplacer {
 
 	final byte[] chars;
 
-	public Latin1ByteCharReplacer(byte[] chars) {
+	public Latin1CharReplacer(byte[] chars) {
 		this.chars = chars;
 	}
 
-	public Latin1ByteCharReplacer(String chars) {
+	public Latin1CharReplacer(String chars) {
 		this.chars = chars.getBytes(StandardCharsets.US_ASCII);
 	}
 

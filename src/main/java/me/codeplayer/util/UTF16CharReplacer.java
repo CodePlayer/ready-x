@@ -1,14 +1,14 @@
 package me.codeplayer.util;
 
-class CharCharReplacer implements CharReplacer {
+class UTF16CharReplacer implements CharReplacer {
 
 	final char[] chars;
 
-	public CharCharReplacer(char[] chars) {
+	public UTF16CharReplacer(char[] chars) {
 		this.chars = chars;
 	}
 
-	public CharCharReplacer(String chars) {
+	public UTF16CharReplacer(String chars) {
 		this.chars = chars.toCharArray();
 	}
 
