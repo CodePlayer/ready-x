@@ -79,4 +79,13 @@ public class EnumXTest {
 		assertEquals(TestEnum.VALUE2, result[0]);
 	}
 
+	@Test
+	public void getMatched_Function_ReturnsMatched() {
+		TestEnum result = EnumX.getMatched(TestEnum.values(), TestEnum::ordinal, 1);
+		assertEquals(result, TestEnum.VALUE2);
+
+		TestEnum val2 = EnumX.getMatched(TestEnum.values(), TestEnum::ordinal, 4);
+		assertNull(val2);
+	}
+
 }

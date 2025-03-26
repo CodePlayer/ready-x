@@ -1,5 +1,7 @@
 package me.codeplayer.util;
 
+import java.util.stream.Collectors;
+
 import me.codeplayer.util.CharConverter.CharCase;
 import me.codeplayer.util.Words.WordCaseDescriptor;
 import org.assertj.core.api.WithAssertions;
@@ -22,8 +24,12 @@ public class WordsTest implements WithAssertions {
 
 		assertEquals("java_print_hello_world", words.to(Words.SNAKE_CASE, CharCase.UPPER));
 
-		assertThat(Words.from("javaPrintHelloWorld").join("+"))
+		Words words1 = Words.from("javaPrintHelloWorld");
+		assertEquals(4, words1.count());
+		assertThat(words1.join("+"))
 				.isEqualTo("java+Print+Hello+World");
+
+		assertThat(words1.stream().collect(Collectors.joining("+"))).isEqualTo("java+Print+Hello+World");
 
 		assertThat(Words.from("java_print_hello_world").join("||"))
 				.isEqualTo("java||print||hello||world");

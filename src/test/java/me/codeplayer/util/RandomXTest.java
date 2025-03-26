@@ -155,4 +155,19 @@ public class RandomXTest implements WithAssertions {
 		}
 	}
 
+	@Test
+	public void getFloat_ShouldReturnFloatBetweenZeroAndOne() {
+		int same = 0;
+		float prev = 0f;
+		for (int i = 0; i < 1000; i++) {
+			float result = RandomX.getFloat();
+			assertTrue(result >= 0.0f && result < 1.0f, "Result should be between 0.0 and 1.0");
+			if (result == prev) {
+				same++;
+			}
+			prev = result;
+		}
+		assertTrue(same < 50);
+	}
+
 }
