@@ -663,17 +663,11 @@ public abstract class StringX {
 		if (range == null) {
 			return str;
 		}
-		final StringBuilder sb = new StringBuilder(length);
-		if (range[0] > 0) {
-			sb.append(str, 0, range[0]);
-		}
+		final CharReplacer chars = CharReplacer.of(str, ch >>> 8 == 0);
 		for (int i = range[0]; i < range[1]; i++) {
-			sb.append(ch);
+			chars.setCharAt(i, ch);
 		}
-		if (range[1] < length) {
-			sb.append(str, range[1], length);
-		}
-		return sb.toString();
+		return chars.toString();
 	}
 
 	/**
@@ -1072,8 +1066,7 @@ public abstract class StringX {
 	 * @throws IndexOutOfBoundsException 索引越界时会抛出该异常。不过请注意：如果 {@code str} 为 null 时，将直接返回 null，而不会抛出 NPE
 	 */
 	public static String replaceChar(@Nullable String str, int charIndex, CharConverter converter) throws IndexOutOfBoundsException {
-		final int len;
-		if (str == null || (len = str.length()) == 0) {
+		if (str == null || str.isEmpty()) {
 			return str;
 		}
 		char ch = str.charAt(charIndex);
@@ -1081,9 +1074,9 @@ public abstract class StringX {
 		if (ch == replaced) {
 			return str;
 		}
-		final StringBuilder sb = new StringBuilder(len).append(str);
-		sb.setCharAt(charIndex, replaced);
-		return sb.toString();
+		CharReplacer chars = CharReplacer.of(str, replaced >>> 8 == 0);
+		chars.setCharAt(charIndex, replaced);
+		return chars.toString();
 	}
 
 	/**
@@ -1115,15 +1108,7 @@ public abstract class StringX {
 		final Iterator<E> it = items.iterator();
 		final E val = it.next();
 		if (itemLength <= 0) {
-			itemLength = 6; // default expect length
-			if (val instanceof Number) {
-				long longValue = ((Number) val).longValue();
-				if (longValue >= 100_0000) {
-					itemLength = stringSize(longValue);
-				}
-			} else if (val instanceof CharSequence) {
-				itemLength = Math.max(((CharSequence) val).length(), itemLength);
-			}
+			itemLength = suggestLength(val);
 		}
 		sb = initBuilder(sb, size * (itemLength + delimiter.length()) + 4);
 		itemAppender.accept(sb, val);
@@ -1131,6 +1116,49 @@ public abstract class StringX {
 			itemAppender.accept(sb.append(delimiter), it.next());
 		}
 		return sb;
+	}
+
+	/**
+	 * 将集合的指定属性或输出拼接为字符串
+	 *
+	 * @param delimiter 分隔符
+	 * @param itemLength 集合中每个元素的预期长度，如果不大于 0，则内部会根据第一个元素的长度来确定 itemLength 的值
+	 */
+	static <E> StringBuilder doJoinAppend(@Nullable StringBuilder sb, E[] items, final int size, BiConsumer<StringBuilder, E> itemAppender, String delimiter, int itemLength) {
+		if (itemLength <= 0) {
+			itemLength = suggestLength(items[0]);
+		}
+		sb = initBuilder(sb, size * (itemLength + delimiter.length()) + 4);
+		doJoin(sb, items, size, itemAppender, delimiter);
+		return sb;
+	}
+
+	static <E> void doJoin(StringBuilder sb, E[] items, int size, BiConsumer<StringBuilder, E> itemAppender, String delimiter) {
+		itemAppender.accept(sb, items[0]);
+		for (int i = 1; i < size; i++) {
+			itemAppender.accept(sb.append(delimiter), items[i]);
+		}
+	}
+
+	/**
+	 * 根据给定值建议一个合适的字符长度。
+	 *
+	 * @param val 要评估的对象，可以是数字或字符序列类型。
+	 * 如果为数字类型且数值较大，则根据其实际位数返回长度；
+	 * 如果为字符序列类型，则返回其实际长度与默认长度的最大值。
+	 * @return 返回建议的长度值。
+	 */
+	static int suggestLength(Object val) {
+		int itemLength = 6; // default expect length
+		if (val instanceof Number) {
+			long longValue = ((Number) val).longValue();
+			if (longValue >= 100_0000) {
+				itemLength = stringSize(longValue);
+			}
+		} else if (val instanceof CharSequence) {
+			itemLength = Math.max(((CharSequence) val).length(), itemLength);
+		}
+		return itemLength;
 	}
 
 	/**
@@ -1165,7 +1193,7 @@ public abstract class StringX {
 			case 1:
 				return c.iterator().next().toString();
 			default:
-				return doJoinAppend(null, c, size, StringBuilder::append, delimiter, itemLength).toString();
+				return doJoinAppend(null, c, size, StringX::append, delimiter, itemLength).toString();
 		}
 	}
 
@@ -1183,71 +1211,159 @@ public abstract class StringX {
 	 *
 	 * @param delimiter 分隔符
 	 */
-	public static <E> String join(@Nullable E[] array, String delimiter) {
-		return array == null || array.length == 0 ? "" : joins(Arrays.asList(array), delimiter);
-	}
-
-	/**
-	 * 将 整数集合 拼接为字符串
-	 *
-	 * @param delimiter 分隔符
-	 */
-	public static String join(@Nullable Collection<? extends Number> c, String delimiter, int itemLength) {
-		return joinAppend(c, (sb, t) -> sb.append(t.longValue()), delimiter, itemLength);
-	}
-
-	/**
-	 * 将 整数集合 拼接为字符串
-	 *
-	 * @param delimiter 分隔符
-	 */
-	public static String join(@Nullable Collection<? extends Number> c, String delimiter) {
-		return join(c, delimiter, 0);
+	public static <E> StringBuilder joinAppend(@Nullable StringBuilder sb, E[] items, BiConsumer<StringBuilder, E> itemAppender, String delimiter, int itemLength) {
+		final int size = X.size(items);
+		return size == 0 ? sb : doJoinAppend(sb, items, size, itemAppender, delimiter, itemLength);
 	}
 
 	/**
 	 * 将集合的指定属性或输出拼接为字符串
 	 *
 	 * @param delimiter 分隔符
+	 */
+	public static <E> StringBuilder joinAppend(@Nullable StringBuilder sb, E[] items, String delimiter, int itemLength) {
+		final int size = X.size(items);
+		return size == 0 ? sb : doJoinAppend(sb, items, size, StringX::append, delimiter, itemLength);
+	}
+
+	/**
+	 * 将集合的指定属性或输出拼接为字符串
+	 *
+	 * @param delimiter 分隔符
+	 */
+	public static <E> StringBuilder joinAppend(@Nullable StringBuilder sb, E[] items, String delimiter) {
+		return joinAppend(sb, items, delimiter, 0);
+	}
+
+	/**
+	 * 将集合的指定属性或输出拼接为字符串
+	 *
+	 * @param delimiter 分隔符
+	 */
+	public static <E> String join(@Nullable E[] array, Function<? super E, Object> getter, String delimiter, int itemLength) {
+		final int size = array == null ? 0 : array.length;
+		switch (size) {
+			case 0:
+				return "";
+			case 1:
+				return String.valueOf(getter.apply(array[0]));
+			default:
+				return doJoinAppend(null, array, size, (sb, t) -> append(sb, getter.apply(t)), delimiter, itemLength).toString();
+		}
+	}
+
+	/**
+	 * 将集合的指定属性或输出拼接为字符串
+	 *
+	 * @param delimiter 分隔符
+	 */
+	public static <E> String join(@Nullable E[] array, Function<? super E, Object> getter, String delimiter) {
+		return join(array, getter, delimiter, 0);
+	}
+
+	/**
+	 * 将集合的指定属性或输出拼接为字符串
+	 *
+	 * @param delimiter 分隔符
+	 */
+	@SuppressWarnings("unchecked")
+	public static <E> String join(@Nullable E[] array, String delimiter) {
+		return join(array, FunctionX.identity, delimiter, 0);
+	}
+
+	/**
+	 * 将 整数集合 拼接为字符串
+	 * <p><b>注意</b>：目前仅支持【整型】（例如：{@link Long }、{@link Integer}、{@link Short}、{@link Byte}）集合
+	 *
+	 * @param numbers 整型集合，<b>并且元素不能为 null</b>
+	 * @param delimiter 分隔符，可以为 ""，但不能为 null
+	 * @param itemLength 集合中每个元素的预期长度，如果不大于 0，则内部会根据第一个元素的长度来确定 itemLength 的值
+	 */
+	public static String join(@Nullable Collection<? extends Number> numbers, String delimiter, int itemLength) {
+		final int size = numbers == null ? 0 : numbers.size();
+		switch (size) {
+			case 0:
+				return "";
+			case 1:
+				return numbers.iterator().next().toString();
+			default:
+				return doJoinAppend(null, numbers, size, (sb, t) -> sb.append(t.longValue()), delimiter, itemLength).toString();
+		}
+	}
+
+	/**
+	 * 将 整数集合 拼接为字符串
+	 * <p><b>注意</b>：目前仅支持【整型】（例如：{@link Long }、{@link Integer}、{@link Short}、{@link Byte}）集合
+	 *
+	 * @param numbers 整型集合，集合可以为 null，但如果存在元素，<b>其中的元素不能为 null</b>
+	 * @param delimiter 分隔符，可以为 ""，但不能为 null
+	 */
+	public static String join(@Nullable Collection<? extends Number> numbers, String delimiter) {
+		return join(numbers, delimiter, 0);
+	}
+
+	/**
+	 * 将集合的指定属性或输出拼接为字符串
+	 *
+	 * @param delimiter 分隔符，可以为 ""，但不能为 null
+	 * @param itemLength 集合中每个元素的预期长度，如果不大于 0，则内部会根据第一个元素的长度来确定 itemLength 的值
 	 */
 	public static <E> String join(@Nullable Collection<E> c, Function<? super E, Object> getter, String delimiter, int itemLength) {
-		return joinAppend(c, (sb, t) -> sb.append(getter.apply(t)), delimiter, itemLength);
+		final int size = c == null ? 0 : c.size();
+		switch (size) {
+			case 0:
+				return "";
+			case 1:
+				return String.valueOf(getter.apply(c.iterator().next()));
+			default:
+				return doJoinAppend(null, c, size, (sb, t) -> append(sb, getter.apply(t)), delimiter, itemLength).toString();
+		}
 	}
 
 	/**
 	 * 将集合的指定属性或输出拼接为字符串
 	 *
-	 * @param delimiter 分隔符
+	 * @param delimiter 分隔符，可以为 ""，但不能为 null
 	 */
 	public static <E> String join(@Nullable Collection<E> c, Function<? super E, Object> getter, String delimiter) {
 		return join(c, getter, delimiter, 0);
 	}
 
 	/**
-	 * 将集合的指定整数（Long 或 Integer）属性或输出拼接为字符串
+	 * 将集合的指定 整型 属性或输出拼接为字符串
+	 * <p><b>注意</b>：目前仅支持【整型】（例如：{@link Long }、{@link Integer}、{@link Short}、{@link Byte}）集合
 	 *
-	 * @param delimiter 分隔符
+	 * @param delimiter 分隔符，可以为 ""，但不能为 null
 	 */
 	public static <T> String joinLong(@Nullable Collection<T> c, Function<? super T, Number> mapper, String delimiter) {
-		return joinAppend(c, (sb, t) -> sb.append(mapper.apply(t).longValue()), delimiter);
+		return joinLongValue(c, t -> mapper.apply(t).longValue(), delimiter);
+	}
+
+	/**
+	 * 将集合的指定整型属性或输出拼接为字符串
+	 *
+	 * @param delimiter 分隔符，可以为 ""，但不能为 null
+	 * @param itemLength 集合中每个元素的预期长度，如果不大于 0，则内部会根据第一个元素的长度来确定 itemLength 的值
+	 */
+	public static <T> String joinLongValue(@Nullable Collection<T> c, ToLongFunction<? super T> mapper, String delimiter, int itemLength) {
+		final int size = c == null ? 0 : c.size();
+		switch (size) {
+			case 0:
+				return "";
+			case 1:
+				return Long.toString(mapper.applyAsLong(c instanceof List ? ((List<T>) c).get(0) : c.iterator().next()));
+			default:
+				return doJoinAppend(null, c, size, (sb, t) -> sb.append(mapper.applyAsLong(t)), delimiter, itemLength).toString();
+		}
 	}
 
 	/**
 	 * 将集合的指定整数（Long）属性或输出拼接为字符串
 	 *
-	 * @param delimiter 分隔符
+	 * @param delimiter 分隔符，可以为 ""，但不能为 null
 	 */
 	public static <T> String joinLongValue(@Nullable Collection<T> c, ToLongFunction<? super T> mapper, String delimiter) {
-		return joinAppend(c, (sb, t) -> sb.append(mapper.applyAsLong(t)), delimiter);
-	}
-
-	/**
-	 * 将集合的指定整数（Integer）属性或输出拼接为字符串
-	 *
-	 * @param delimiter 分隔符
-	 */
-	public static <T> String joinIntValue(@Nullable Collection<T> c, ToIntFunction<? super T> mapper, String delimiter) {
-		return joinAppend(c, (sb, t) -> sb.append(mapper.applyAsInt(t)), delimiter);
+		return joinLongValue(c, mapper, delimiter, 0);
 	}
 
 	/**
@@ -1279,6 +1395,7 @@ public abstract class StringX {
 
 	/**
 	 * @param size 必须 > 0
+	 * @return <code>" IN ("</code> 或 <code>" NOT IN ("</code>
 	 */
 	static StringBuilder prepareInSQLBuilder(StringBuilder sb, boolean isInclude, boolean isString, int size) {
 		if (sb == null) {
@@ -1291,21 +1408,36 @@ public abstract class StringX {
 
 	static void doJoin(Iterable<?> items, StringBuilder sb, String delimiter) {
 		final Iterator<?> it = items.iterator();
-		appendValue(sb, it.next());
+		append(sb, it.next());
 		while (it.hasNext()) {
-			appendValue(sb.append(delimiter), it.next());
+			append(sb.append(delimiter), it.next());
 		}
 	}
 
-	static void appendValue(final StringBuilder sb, Object val) {
+	public static void append(final StringBuilder sb, Object val) {
 		if (val instanceof Integer) {
 			sb.append((int) val);
-			return;
 		} else if (val instanceof Long) {
 			sb.append((long) val);
-			return;
+		} else {
+			sb.append(val);
 		}
-		sb.append(val);
+	}
+
+	public static void append(final StringBuilder sb, Integer val) {
+		if (val != null) {
+			sb.append((int) val);
+		} else {
+			sb.append("null");
+		}
+	}
+
+	public static void append(final StringBuilder sb, Long val) {
+		if (val != null) {
+			sb.append((long) val);
+		} else {
+			sb.append("null");
+		}
 	}
 
 	/**
@@ -1330,6 +1462,58 @@ public abstract class StringX {
 	 * @param isString 指示元素是否以字符串形式参与InSQL语句。如果为true，将会在每个元素两侧加上单引号"'"
 	 */
 	public static String getInSQL(Collection<?> items, boolean isString) {
+		return getInSQL(null, items, true, isString).toString();
+	}
+
+	/**
+	 * 将指定字符串数组拼接为 IN SQL子句 <br>
+	 * 如果数组为空，将会引发异常 <br>
+	 * 如果存在数组元素，则拼接内容形如 " IN (1, 2, 5)" 或 " IN ('1', '2', '5')"
+	 *
+	 * @param sb 指定的StringBuilder
+	 * @param array 指定的任意数组
+	 * @param isInclude 指示IN SQL是包含还是排除查询，如果是包含(true)将返回 IN，如果是排除(false)将返回 NOT IN
+	 * @param isString 指示元素是否以字符串形式参与in SQL语句。如果为true，将会在每个元素两侧加上单引号"'"
+	 */
+	public static StringBuilder getInSQL(@Nullable StringBuilder sb, Object[] array, boolean isInclude, boolean isString) {
+		final int length = array == null ? 0 : array.length;
+		if (length == 0) {
+			throw new IllegalArgumentException("Array can not be empty");
+		}
+		sb = prepareInSQLBuilder(sb, isInclude, isString, length);
+		if (isString) {// 如果是字符串格式
+			sb.append('\'');
+			doJoin(sb, array, length, StringX::append, "', '");
+			sb.append("')");
+		} else {// 如果是数字格式
+			doJoin(sb, array, length, StringX::append, ", ");
+			sb.append(')');
+		}
+		return sb;
+	}
+
+	/**
+	 * 将指定的数组拼接为InSQL子句并返回，内部将会根据元素个数来判断返回“=”语句还是“IN”语句<br>
+	 * 如果数组为空，将会引发异常<br>
+	 * 如果存在数组元素，将会返回“ IN (1, 2, 5)”或“ IN ('1', '2', '5')”
+	 *
+	 * @param items 指定的数组
+	 * @param isInclude 指示IN SQL是包含还是排除查询，如果是包含(true)将返回=、IN，如果是排除(false)将返回!=、NOT IN
+	 * @param isString 指示元素是否以字符串形式参与InSQL语句。如果为true，将会在每个元素两侧加上单引号"'"
+	 */
+	public static String getInSQL(Object[] items, boolean isInclude, boolean isString) {
+		return getInSQL(null, items, isInclude, isString).toString();
+	}
+
+	/**
+	 * 将指定的数组拼接为InSQL子句并返回，内部将会根据元素个数来判断返回“=”语句还是“IN”语句<br>
+	 * 如果数组为空，将会引发异常<br>
+	 * 如果存在数组元素，将会返回“ IN (1, 2, 5)”或“ IN ('1', '2', '5')”
+	 *
+	 * @param items 指定的数组
+	 * @param isString 指示元素是否以字符串形式参与InSQL语句。如果为 true，将会在每个元素两侧加上单引号"'"
+	 */
+	public static String getInSQL(Object[] items, boolean isString) {
 		return getInSQL(null, items, true, isString).toString();
 	}
 
