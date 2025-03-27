@@ -29,15 +29,19 @@ public interface CharReplacer {
 		return new UTF16CharReplacer(template);
 	}
 
-	static CharReplacer of(String template, boolean latin1) {
+	static CharReplacer of(String template, boolean targetLatin1) {
+		return of(template, JavaX.STRING_CODER.applyAsInt(template) == JavaX.LATIN1, targetLatin1);
+	}
+
+	static CharReplacer of(String template, boolean sourceLatin1, boolean targetLatin1) {
 		if (JavaX.isJava9OrHigher) {
-			return latin1 ? new Latin1CharReplacer(template) : new StringBuilderCharReplacer(template);
+			return sourceLatin1 && targetLatin1 ? new Latin1CharReplacer(template) : new StringBuilderCharReplacer(template);
 		}
 		return new UTF16CharReplacer(template);
 	}
 
-	static CharReplacer of(String template) {
-		return of(template, JavaX.STRING_CODER.applyAsInt(template) == JavaX.LATIN1);
+	static CharReplacer of(String template, char targetChar) {
+		return of(template, targetChar >>> 8 == 0);
 	}
 
 	static CharReplacer of(StringBuilder template) {
