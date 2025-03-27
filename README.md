@@ -12,12 +12,12 @@ ready-x ***3.x*** 是一个基于Java 8（ ***1.x*** 基于 Java 5） 编写的�
 目前 ready-x 中的工具方法可能并不完备，仅仅基于实际项目的需求驱动。如果其中没有你所需的常用方法，也欢迎提出建议，或自行提交新的方法实现。
 
 # 使用
-本工具类库已发布至 Maven 中央仓库，当前最新版本为：**3.11.4** ，你可以通过如下 Maven 依赖配置引入本库：
+本工具类库已发布至 Maven 中央仓库，当前最新版本为：**3.13.0** ，你可以通过如下 Maven 依赖配置引入本库：
 
 ```xml
 <dependency>
 	<groupId>me.codeplayer</groupId>
 	<artifactId>ready-x</artifactId>
-	<version>3.11.4</version>
+	<version>3.13.0</version>
 </dependency>
 ```
