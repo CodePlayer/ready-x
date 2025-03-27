@@ -10,6 +10,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class StringXTest implements WithAssertions {
 
+	public static Book[] books = {
+			new Book(1L),
+			new Book(2L),
+			new Book(3L)
+	};
+
 	@Test
 	public void unicode() {
 		// 将字符串转为Unicode码
@@ -32,105 +38,77 @@ public class StringXTest implements WithAssertions {
 
 	@Test
 	public void replaceChars() {
-		assertThat(StringX.replaceChars(null, '*', 5))
-				.isNull();
-		assertThat(StringX.replaceChars("", '*', 5))
-				.isEqualTo("");
-		assertThat(StringX.replaceChars("abc", '*', 5))
-				.isEqualTo("abc");
+		assertThat(StringX.replaceChars(null, '*', 5)).isNull();
+		assertThat(StringX.replaceChars("", '*', 5)).isEqualTo("");
+		assertThat(StringX.replaceChars("abc", '*', 5)).isEqualTo("abc");
 		// 将第6个及其后的字符替换为*
-		assertThat(StringX.replaceChars("helloworld", '*', 5))
-				.isEqualTo("hello*****");
+		assertThat(StringX.replaceChars("helloworld", '*', 5)).isEqualTo("hello*****");
 
 		// 将第6~8的字符替换为#
-		assertThat(StringX.replaceChars("helloworld", '#', 5, 8))
-				.isEqualTo("hello###ld");
+		assertThat(StringX.replaceChars("helloworld", '#', 5, 8)).isEqualTo("hello###ld");
 
 		// 将最后六位字符替换为*
-		assertThat(StringX.replaceChars("511622199141566456", '*', -6))
-				.isEqualTo("511622199141******");
+		assertThat(StringX.replaceChars("511622199141566456", '*', -6)).isEqualTo("511622199141******");
 		// 将倒数第3~6的字符替换为*
-		assertThat(StringX.replaceChars("511622199141566456", '*', -6, -2))
-				.isEqualTo("511622199141****56");
+		assertThat(StringX.replaceChars("511622199141566456", '*', -6, -2)).isEqualTo("511622199141****56");
 		// 将倒数第3~7的字符替换为*
-		assertThat(StringX.replaceChars("511622199141566456", '*', -6, -1))
-				.isEqualTo("511622199141*****6");
+		assertThat(StringX.replaceChars("511622199141566456", '*', -6, -1)).isEqualTo("511622199141*****6");
+		assertThat(StringX.replaceChars("12中文45", '*', 1, -1)).isEqualTo("1****5");
+		assertThat(StringX.replaceChars("12345", '中', 1, -1)).isEqualTo("1中中中5");
 	}
 
 	@Test
 	public void replaceSubstring() {
-		assertThat(StringX.replaceSubstring(null, "***", 2))
-				.isNull();
+		assertThat(StringX.replaceSubstring(null, "***", 2)).isNull();
 
-		assertThat(StringX.replaceSubstring("", "***", 2))
-				.isEqualTo("");
+		assertThat(StringX.replaceSubstring("", "***", 2)).isEqualTo("");
 
 		// 将第3个及其后的字符替换为"***"
-		assertThat(StringX.replaceSubstring("helloworld", "***", 2))
-				.isEqualTo("he***");
+		assertThat(StringX.replaceSubstring("helloworld", "***", 2)).isEqualTo("he***");
 
 		// 将第3~5个字符替换为"***"
-		assertThat(StringX.replaceSubstring("helloworld", "***", 2, 5))
-				.isEqualTo("he***world");
+		assertThat(StringX.replaceSubstring("helloworld", "***", 2, 5)).isEqualTo("he***world");
 
 		// 将第3~倒数第二个字符替换为"***"
-		assertThat(StringX.replaceSubstring("helloworld", "***", 2, -1))
-				.isEqualTo("he***d");
+		assertThat(StringX.replaceSubstring("helloworld", "***", 2, -1)).isEqualTo("he***d");
 
 		// 将倒数第二个~倒数第二个字符替换为"***"
-		assertThat(StringX.replaceSubstring("helloworld", "***", -2, -1))
-				.isEqualTo("hellowor***d");
+		assertThat(StringX.replaceSubstring("helloworld", "***", -2, -1)).isEqualTo("hellowor***d");
 	}
 
 	@Test
 	public void limitChars() {
-		assertThat(StringX.limitChars(null, 15))
-				.isEqualTo("");
+		assertThat(StringX.limitChars(null, 15)).isEqualTo("");
 		// 限制字符串的长度最大为15个字符，并默认附加三个句点表示省略(长度不足15，直接返回原字符串)
-		assertThat(StringX.limitChars("张三李四王五", 15))
-				.isEqualTo("张三李四王五");
+		assertThat(StringX.limitChars("张三李四王五", 15)).isEqualTo("张三李四王五");
 		// 限制字符串的长度最大为7个字符，并默认附加三个句点表示省略
-		assertThat(StringX.limitChars("abcdefghijkmln", 7))
-				.isEqualTo("abcdefg...");
+		assertThat(StringX.limitChars("abcdefghijkmln", 7)).isEqualTo("abcdefg...");
 		// 限制字符串的长度最大为7个字符，附加指定的后缀
-		assertThat(StringX.limitChars("abcdefghijkmln", 7, "~~~"))
-				.isEqualTo("abcdefg~~~");
+		assertThat(StringX.limitChars("abcdefghijkmln", 7, "~~~")).isEqualTo("abcdefg~~~");
 		// 限制字符串的长度最大为7个字符，不附加后缀
-		assertThat(StringX.limitChars("abcdefghijkmln", 7, ""))
-				.isEqualTo("abcdefg");
+		assertThat(StringX.limitChars("abcdefghijkmln", 7, "")).isEqualTo("abcdefg");
 	}
 
 	@Test
 	public void zeroFill() {
-		assertThat(StringX.zeroFill(123, 5))
-				.isEqualTo("00123");
-		assertThat(StringX.zeroFill(123456, 5))
-				.isEqualTo("123456");
-		assertThat(StringX.zeroFill(12345, 5))
-				.isEqualTo("12345");
+		assertThat(StringX.zeroFill(123, 5)).isEqualTo("00123");
+		assertThat(StringX.zeroFill(123456, 5)).isEqualTo("123456");
+		assertThat(StringX.zeroFill(12345, 5)).isEqualTo("12345");
 
-		assertThat(StringX.zeroFill("023", 2))
-				.isEqualTo("023");
-		assertThat(StringX.zeroFill("023", 5))
-				.isEqualTo("00023");
+		assertThat(StringX.zeroFill("023", 2)).isEqualTo("023");
+		assertThat(StringX.zeroFill("023", 5)).isEqualTo("00023");
 	}
 
 	@Test
 	public void pad() {
-		assertThat(StringX.pad(null, '*', 5, true))
-				.isEqualTo("");
-		assertThat(StringX.pad("abc", '*', 5, true))
-				.isEqualTo("**abc");
-		assertThat(StringX.pad("abc", '*', 5, false))
-				.isEqualTo("abc**");
+		assertThat(StringX.pad(null, '*', 5, true)).isEqualTo("");
+		assertThat(StringX.pad("abc", '*', 5, true)).isEqualTo("**abc");
+		assertThat(StringX.pad("abc", '*', 5, false)).isEqualTo("abc**");
 
-		assertThat(StringX.pad("", '*', 5, false))
-				.isEqualTo("*****");
+		assertThat(StringX.pad("", '*', 5, false)).isEqualTo("*****");
 
-		assertThat(StringX.pad("abcde", '*', 5, true))
-				.isEqualTo("abcde");
-		assertThat(StringX.pad("abcde", '*', 5, false))
-				.isEqualTo("abcde");
+		assertThat(StringX.pad("abcde", '*', 5, true)).isEqualTo("abcde");
+		assertThat(StringX.pad("abcde", '*', 5, false)).isEqualTo("abcde");
 	}
 
 	@Test
@@ -337,70 +315,85 @@ public class StringXTest implements WithAssertions {
 		List<Long> longs = Collections.emptyList();
 		assertThat(StringX.joinLong(longs, FunctionX.identity(), ",")).isEqualTo("");
 		assertThat(StringX.joinLong(Collections.singletonList(1L), FunctionX.identity(), ",")).isEqualTo("1");
-		assertThat(StringX.joinLong(Arrays.asList(1, 2, 3), FunctionX.identity(), ",")).isEqualTo("1,2,3");
 
-		String str = StringX.joinLongValue(Arrays.asList(1, 2, 3), Number::longValue, ",");
+		final List<Integer> integers = Arrays.asList(1, 2, 3);
+		assertThat(StringX.joinLong(integers, FunctionX.identity(), ",")).isEqualTo("1,2,3");
+
+		String str = StringX.joinLongValue(integers, Number::longValue, ",");
 		assertEquals("1,2,3", str);
+
+		List<User> users = Collections.emptyList();
+		assertThat(StringX.joinLong(users, User::getId, ",")).isEqualTo("");
+
+		List<Book> books = Collections.emptyList();
+		assertThat(StringX.joinLong(books, Entity::getId, ",")).isEqualTo("");
 	}
 
 	@Test
 	public void joinIntValue() {
-		assertThat(StringX.joinIntValue(Collections.emptyList(), Integer::intValue, ",")).isEqualTo("");
-		assertThat(StringX.joinIntValue(Collections.singletonList(1), Integer::intValue, ",")).isEqualTo("1");
-		assertThat(StringX.joinIntValue(Arrays.asList(1, 2, 3), Integer::intValue, ",")).isEqualTo("1,2,3");
+		assertThat(StringX.joinLongValue(Collections.emptyList(), Integer::intValue, ",")).isEqualTo("");
+		assertThat(StringX.joinLongValue(Collections.singletonList(1), Integer::intValue, ",")).isEqualTo("1");
+		assertThat(StringX.joinLongValue(Arrays.asList(1, 2, 3), Integer::intValue, ",")).isEqualTo("1,2,3");
 	}
 
 	@Test
 	public void getInSQL_Empty_ThrowsException() {
 		assertThrows(IllegalArgumentException.class, () -> StringX.getInSQL(Collections.emptyList(), true, true));
+
+		assertThrows(IllegalArgumentException.class, () -> StringX.getInSQL(ArrayX.of(), true, true));
 	}
 
 	@Test
 	public void getInSQL_SingleElementIncludeString_ReturnsEquals() {
-		String result = StringX.getInSQL(Collections.singletonList("1"), true, true);
-		assertEquals(" IN ('1')", result);
+		assertEquals(" IN ('1')", StringX.getInSQL(Collections.singletonList("1"), true, true));
+
+		assertEquals(" IN ('1')", StringX.getInSQL(new String[] { "1" }, true, true));
+
 	}
 
 	@Test
 	public void getInSQL_SingleElementIncludeNumeric_ReturnsEquals() {
-		String result = StringX.getInSQL(Collections.singletonList(1), true, false);
-		assertEquals(" IN (1)", result);
+		assertEquals(" IN (1)", StringX.getInSQL(Collections.singletonList(1), false));
+
+		assertEquals(" IN (1)", StringX.getInSQL(new Integer[] { 1 }, false));
 	}
 
 	@Test
 	public void getInSQL_SingleElementExcludeString_ReturnsNotEquals() {
-		String result = StringX.getInSQL(Collections.singletonList("1"), false, true);
-		assertEquals(" NOT IN ('1')", result);
+		assertEquals(" NOT IN ('1')", StringX.getInSQL(Collections.singletonList("1"), false, true));
+
+		assertEquals(" NOT IN ('1')", StringX.getInSQL(ArrayX.of("1"), false, true));
 	}
 
 	@Test
 	public void getInSQL_SingleElementExcludeNumeric_ReturnsNotEquals() {
-		String result = StringX.getInSQL(Collections.singletonList(1), false, false);
-		assertEquals(" NOT IN (1)", result);
+		assertEquals(" NOT IN (1)", StringX.getInSQL(Collections.singletonList(1), false, false));
+		assertEquals(" NOT IN (1)", StringX.getInSQL(ArrayX.of(1), false, false));
 	}
 
 	@Test
 	public void getInSQL_MultipleElementsIncludeString_ReturnsInClause() {
-		String result = StringX.getInSQL(Arrays.asList("1", "2", "3"), true, true);
-		assertEquals(" IN ('1', '2', '3')", result);
+		assertEquals(" IN ('1', '2', '3')", StringX.getInSQL(Arrays.asList("1", "2", "3"), true, true));
+
+		assertEquals(" IN ('1', '2', '3')", StringX.getInSQL(ArrayX.of("1", "2", "3"), true, true));
 	}
 
 	@Test
 	public void getInSQL_MultipleElementsIncludeNumeric_ReturnsInClause() {
-		String result = StringX.getInSQL(Arrays.asList(1, 2, 3), true, false);
-		assertEquals(" IN (1, 2, 3)", result);
+		assertEquals(" IN (1, 2, 3)", StringX.getInSQL(Arrays.asList(1, 2, 3), true, false));
+		assertEquals(" IN (1, 2, 3)", StringX.getInSQL(ArrayX.of(1, 2, 3), true, false));
 	}
 
 	@Test
 	public void getInSQL_MultipleElementsExcludeString_ReturnsNotInClause() {
-		String result = StringX.getInSQL(Arrays.asList("1", "2", "3"), false, true);
-		assertEquals(" NOT IN ('1', '2', '3')", result);
+		assertEquals(" NOT IN ('1', '2', '3')", StringX.getInSQL(Arrays.asList("1", "2", "3"), false, true));
+		assertEquals(" NOT IN ('1', '2', '3')", StringX.getInSQL(ArrayX.of("1", "2", "3"), false, true));
 	}
 
 	@Test
 	public void getInSQL_MultipleElementsExcludeNumeric_ReturnsNotInClause() {
-		String result = StringX.getInSQL(Arrays.asList(1, 2, 3), false, false);
-		assertEquals(" NOT IN (1, 2, 3)", result);
+		assertEquals(" NOT IN (1, 2, 3)", StringX.getInSQL(Arrays.asList(1, 2, 3), false, false));
+		assertEquals(" NOT IN (1, 2, 3)", StringX.getInSQL(ArrayX.of(1, 2, 3), false, false));
 	}
 
 	@Test
@@ -471,14 +464,46 @@ public class StringXTest implements WithAssertions {
 	}
 
 	@Test
-	public void joinAppend() {
-		StringBuilder builder = StringX.joinAppend(null, Arrays.asList(1, 2, 3), (sb, t) -> sb.append(t.intValue()), ",", 1);
-		assertEquals((1 + 1) * 3 + 4, builder.capacity());
-		assertEquals("1,2,3", builder.toString());
+	public void join() {
+		final Integer[] array = { 1, 2, 3 };
+		final List<Integer> list = Arrays.asList(array);
+		assertEquals("1,2,3", StringX.join(array, ","));
+		assertEquals("1,2,3", StringX.join(array, ","));
+		assertEquals("1,2,3", StringX.join(list, ","));
+		assertEquals("1,2,3", StringX.join(books, Book::getId, ","));
+		assertEquals("1,2,3", StringX.join(Arrays.asList(books), Entity::getId, ","));
+		assertEquals("1,2,3", StringX.joinLong(Arrays.asList(books), Entity::getId, ","));
+		assertEquals("1,2,3", StringX.joinLongValue(Arrays.asList(books), Entity::getId, ","));
 
-		builder = StringX.joinAppend(null, Arrays.asList(1, 2, 3), (sb, t) -> sb.append(t.intValue()), ",");
-		assertEquals((6 + 1) * 3 + 4, builder.capacity());
-		assertEquals("1,2,3", builder.toString());
+		StringBuilder sb = new StringBuilder("Hello ");
+		StringBuilder result = StringX.joinAppend(sb, array, ",");
+		assertSame(sb, result);
+		assertEquals("Hello 1,2,3", result.toString());
+	}
+
+	@Test
+	public void joinAppend() {
+		Integer[] array = { 1, 2, 3 };
+		List<Integer> list = Arrays.asList(array);
+
+		assertEquals("1,2,3", StringX.joinAppend(list, (sb, t) -> sb.append(t.intValue()), ","));
+		assertEquals("1,2,3", StringX.joinAppend(null, array, StringX::append, ",", 0).toString());
+
+		{
+			StringBuilder builder = StringX.joinAppend(null, list, (sb, t) -> sb.append(t.intValue()), ",", 1);
+			assertEquals((1 + 1) * 3 + 4, builder.capacity());
+			assertEquals("1,2,3", builder.toString());
+		}
+		{
+			StringBuilder builder = StringX.joinAppend(null, list, (sb, t) -> sb.append(t.intValue()), ",");
+			assertEquals((6 + 1) * 3 + 4, builder.capacity());
+			assertEquals("1,2,3", builder.toString());
+		}
+		{
+			StringBuilder builder = StringX.joinAppend(null, list, (sb, t) -> sb.append(t.intValue()), ",");
+			assertEquals((6 + 1) * 3 + 4, builder.capacity());
+			assertEquals("1,2,3", builder.toString());
+		}
 	}
 
 	@Test

@@ -5,7 +5,6 @@ import java.math.*;
 import java.util.*;
 import java.util.function.Consumer;
 
-import me.codeplayer.util.JsonXTest.User;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
