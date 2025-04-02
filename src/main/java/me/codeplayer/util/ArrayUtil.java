@@ -101,7 +101,7 @@ public abstract class ArrayUtil {
 	public static StringBuilder getInSQL(StringBuilder sb, Object array, boolean isInclude, boolean isString) {
 		final int length = Array.getLength(array);
 		if (length == 0) {
-			throw new IllegalArgumentException("Array can not be empty:" + array);
+			throw new IllegalArgumentException("Array can not be empty");
 		}
 		sb = StringUtil.prepareInSQLBuilder(sb, isInclude, isString, length);
 		if (isString) {// 如果是字符串格式
@@ -235,7 +235,7 @@ public abstract class ArrayUtil {
 	public static int getLength(Object array, boolean assertNotEmpty) {
 		int length = getLength(array);
 		if (length == 0 && assertNotEmpty) {
-			throw new IllegalArgumentException("Array can not be empty:" + array);
+			throw new IllegalArgumentException("Array can not be empty");
 		}
 		return length;
 	}
