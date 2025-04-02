@@ -235,7 +235,7 @@ public abstract class ArrayUtil {
 	public static int getLength(Object array, boolean assertNotEmpty) {
 		int length = getLength(array);
 		if (length == 0 && assertNotEmpty) {
-			throw new IllegalArgumentException("Array can not be empty");
+			throw new IllegalArgumentException("Array can not be empty:" + array);
 		}
 		return length;
 	}
