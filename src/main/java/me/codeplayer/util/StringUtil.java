@@ -285,7 +285,14 @@ public abstract class StringUtil {
 	 * @since 0.0.1
 	 */
 	public static boolean notEmpty(@Nullable Object obj) {
-		return obj != null && !obj.toString().isEmpty();
+		if (obj == null) {
+			return false;
+		} else if (obj instanceof CharSequence) {
+			return ((CharSequence) obj).length() > 0;
+		} else if (obj instanceof Number) {
+			return true;
+		}
+		return !obj.toString().isEmpty();
 	}
 
 	/**
