@@ -533,7 +533,7 @@ public abstract class StringUtil {
 	 *
 	 * @param sb 用于拼接字符串的 {@code StringBuilder} 对象，如果为 null 则内部自动新建
 	 * @param val 数值
-	 * @param minLength 期望的最小位数，不应小于1
+	 * @param minLength 期望的 val 最小位数，不应小于1
 	 * @since 3.9.0
 	 */
 	public static StringBuilder zeroFill(@Nullable StringBuilder sb, long val, int minLength) {
