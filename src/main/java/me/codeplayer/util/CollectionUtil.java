@@ -58,7 +58,7 @@ public abstract class CollectionUtil {
 	 * @param elements 可变参数形式的元素数组
 	 */
 	@SuppressWarnings("unchecked")
-	public static <E> Collection<E> addAll(Collection<E> target, @Nullable Predicate<? super E> filter, final E... elements) {
+	public static <E, S extends Collection<E>> S addAll(S target, @Nullable Predicate<? super E> filter, final E... elements) {
 		if (filter == null) {
 			Collections.addAll(target, elements);
 			return target;
@@ -78,7 +78,7 @@ public abstract class CollectionUtil {
 	 * @param elements 可变参数形式的元素数组
 	 */
 	@SuppressWarnings("unchecked")
-	public static <E> Collection<E> addAll(Collection<E> target, E... elements) {
+	public static <E, S extends Collection<E>> S addAll(S target, E... elements) {
 		return addAll(target, null, elements);
 	}
 
@@ -88,9 +88,10 @@ public abstract class CollectionUtil {
 	 * @param map 指定的Map集合
 	 * @param kvPairs 可变参数形式的键值数组，必须是K1, V1, K2, V2, K3, V3...这种形式
 	 */
-	public static <K, V> Map<K, V> addAll(final Map<K, V> map, final Object... kvPairs) {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static <K, V, M extends Map<K, V>> M addAll(final M map, final Object... kvPairs) {
 		checkPairs(kvPairs);
-		Map<Object, Object> m = X.castType(map);
+		final Map m = map;
 		for (int i = 0; i < kvPairs.length; ) {
 			m.put(kvPairs[i++], kvPairs[i++]);
 		}
@@ -197,7 +198,8 @@ public abstract class CollectionUtil {
 	 * @param elements 可变参数形式的元素数组
 	 */
 	public static <K, V> HashMap<K, V> asHashMap(Object... elements) {
-		final HashMap<K, V> map = newHashMap(elements.length);
+		checkPairs(elements);
+		final HashMap<K, V> map = newHashMap(elements.length >> 1);
 		addAll(map, elements);
 		return map;
 	}
@@ -208,7 +210,8 @@ public abstract class CollectionUtil {
 	 * @param elements 可变参数形式的元素数组
 	 */
 	public static <K, V> LinkedHashMap<K, V> asLinkedHashMap(Object... elements) {
-		final LinkedHashMap<K, V> map = newLinkedHashMap(elements.length);
+		checkPairs(elements);
+		final LinkedHashMap<K, V> map = newLinkedHashMap(elements.length >> 1);
 		addAll(map, elements);
 		return map;
 	}
