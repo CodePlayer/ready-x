@@ -4,7 +4,7 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.channels.FileChannel;
-import java.nio.file.AccessDeniedException;
+import java.nio.file.*;
 import java.util.*;
 import javax.annotation.Nullable;
 
@@ -16,7 +16,7 @@ import org.apache.commons.lang3.time.FastDateFormat;
  * @author Ready
  * @since 2013-4-9
  */
-public abstract class FileX {
+public abstract class FileUtil {
 
 	/**
 	 * 用于表示文件大小的单位
@@ -980,7 +980,7 @@ public abstract class FileX {
 	 * @since 0.3.1
 	 */
 	public static Map<String, String> readProperties(String pathname, boolean inClassPath) {
-		return readProperties(FileX.getFile(pathname, inClassPath));
+		return readProperties(FileUtil.getFile(pathname, inClassPath));
 	}
 
 }

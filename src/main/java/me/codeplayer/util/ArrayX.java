@@ -13,7 +13,7 @@ import org.apache.commons.lang3.ArrayUtils;
  * @author Ready
  * @since 2012-9-29
  */
-public abstract class ArrayX {
+public abstract class ArrayUtil {
 
 	/**
 	 * 判断指定对象是否为数组类型
@@ -102,7 +102,7 @@ public abstract class ArrayX {
 		if (length == 0) {
 			throw new IllegalArgumentException("Array can not be empty");
 		}
-		sb = StringX.prepareInSQLBuilder(sb, isInclude, isString, length);
+		sb = StringUtil.prepareInSQLBuilder(sb, isInclude, isString, length);
 		if (isString) {// 如果是字符串格式
 			sb.append('\'');
 			doJoin(sb, array, "', '", length);
@@ -429,7 +429,7 @@ public abstract class ArrayX {
 	public static Object unique(Object array, final boolean newArrayRequired) {
 		final int length = Array.getLength(array);
 		if (length > 1) {
-			final Map<Object, Boolean> map = CollectionX.newLinkedHashMap(length);
+			final Map<Object, Boolean> map = CollectionUtil.newLinkedHashMap(length);
 			for (int i = 0; i < length; i++) {
 				map.putIfAbsent(Array.get(array, i), Boolean.TRUE);
 			}
@@ -629,7 +629,7 @@ public abstract class ArrayX {
 	 */
 	@SafeVarargs
 	public static <E, R> ArrayList<R> toList(Function<? super E, R> converter, boolean allowNull, E... items) {
-		return toCollection(CollectionX::newArrayList, converter, allowNull, items);
+		return toCollection(CollectionUtil::newArrayList, converter, allowNull, items);
 	}
 
 	/**
@@ -660,7 +660,7 @@ public abstract class ArrayX {
 	 * @return 只有 {@code c == null}，才会返回 {@code null}
 	 */
 	public static <E, R> HashSet<R> toSet(Function<? super E, R> converter, boolean allowNull, E... items) {
-		return toCollection(CollectionX::newHashSet, converter, allowNull, items);
+		return toCollection(CollectionUtil::newHashSet, converter, allowNull, items);
 	}
 
 	/**

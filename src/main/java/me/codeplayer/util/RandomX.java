@@ -9,14 +9,24 @@ import java.util.concurrent.ThreadLocalRandom;
  * @author Ready
  * @since 2014-10-15
  */
-public abstract class RandomX {
+public abstract class RandomUtil {
+
+	/**
+	 * 返回 min(包括) 和 max(包括) 之间的一个随机整数
+	 *
+	 * @param min 返回的最小值
+	 * @param max 返回的最大值（包括）
+	 * @deprecated 请使用 {@link #nextInt(int, int)}
+	 */
+	public static int getInt(int min, int max) {
+		return nextInt(min, max + 1);
+	}
 
 	/**
 	 * 返回 min(包括) 和 max(不包括) 之间的一个随机整数
 	 *
 	 * @param min 返回的最小值
 	 * @param max 返回的最大值（不包括）
-	 * @throws IllegalArgumentException 如果 min >= max
 	 */
 	public static int nextInt(int min, int max) {
 		return ThreadLocalRandom.current().nextInt(min, max);
@@ -27,7 +37,6 @@ public abstract class RandomX {
 	 *
 	 * @param min 返回的最小值
 	 * @param max 返回的最大值(不包括)
-	 * @throws IllegalArgumentException 如果 min >= max
 	 */
 	public static long nextLong(long min, long max) {
 		return ThreadLocalRandom.current().nextLong(min, max);
@@ -38,7 +47,6 @@ public abstract class RandomX {
 	 *
 	 * @param min 返回的最小值
 	 * @param max 返回的最大值(不包括)
-	 * @throws IllegalArgumentException 如果 min >= max
 	 */
 	public static double nextDouble(double min, double max) {
 		return ThreadLocalRandom.current().nextDouble(min, max);
@@ -53,9 +61,6 @@ public abstract class RandomX {
 
 	/**
 	 * 使用随机数据填充满指定的字节数组
-	 *
-	 * @param bytes 需要填充的数组
-	 * @throws NullPointerException bytes 为 null
 	 */
 	public static void nextBytes(byte[] bytes) {
 		ThreadLocalRandom.current().nextBytes(bytes);
@@ -82,10 +87,28 @@ public abstract class RandomX {
 		do {
 			final int expect = Math.min(batch, remain);
 			final long val = random.nextLong(0L, POWERS_OF_10[expect]);
-			StringX.zeroFill(sb, val, expect);
+			StringUtil.zeroFill(sb, val, expect);
 			remain -= batch;
 		} while (remain > 0);
 		return sb.toString();
+	}
+
+	/**
+	 * 随机返回0 ~ 1之间(不包括1)的双精度浮点数
+	 *
+	 * @deprecated 请使用 {@link #nextDouble()}
+	 */
+	public static double getDouble() {
+		return nextDouble();
+	}
+
+	/**
+	 * 随机返回 0 ~ 1 之间(不包括 1)的单精度浮点数
+	 *
+	 * @deprecated 请使用 {@link #nextFloat()}
+	 */
+	public static float getFloat() {
+		return nextFloat();
 	}
 
 	/**
@@ -97,9 +120,27 @@ public abstract class RandomX {
 
 	/**
 	 * 随机返回一个 long 值
+	 *
+	 * @deprecated 请使用 {@link #nextLong()}
+	 */
+	public static long getLong() {
+		return nextLong();
+	}
+
+	/**
+	 * 随机返回一个 long 值
 	 */
 	public static long nextLong() {
 		return ThreadLocalRandom.current().nextLong();
+	}
+
+	/**
+	 * 随机返回一个 boolean 值
+	 *
+	 * @deprecated 请使用 {@link #nextBoolean()}
+	 */
+	public static boolean getBoolean() {
+		return nextBoolean();
 	}
 
 	/**
@@ -113,14 +154,14 @@ public abstract class RandomX {
 	 * 根据指定的字符数组，随机返回其中的一个字符<br>
 	 * 如果字符数组为空，则默认返回一个空格字符<code>' '</code>
 	 */
-	public static char nextChar(char[] chars) {
+	public static char getChar(char[] chars) {
 		switch (chars.length) {
 			case 0:
 				return ' ';
 			case 1:
 				return chars[0];
 			default:
-				return chars[nextInt(0, chars.length)];
+				return chars[ThreadLocalRandom.current().nextInt(0, chars.length)];
 		}
 	}
 
@@ -128,7 +169,7 @@ public abstract class RandomX {
 	 * 根据指定的字符串，随机返回其中的一个字符<br>
 	 * 如果为空字符串，则默认返回一个空格字符<code>' '</code>
 	 */
-	public static char nextChar(String chars) {
+	public static char getChar(String chars) {
 		final int length = chars.length();
 		switch (length) {
 			case 0:
@@ -145,10 +186,8 @@ public abstract class RandomX {
 	 *
 	 * @param chars 用于提供字符来源的字符数组
 	 * @param length 生成的字符串的长度。如果长度小于1，则返回空字符串
-	 * @throws NullPointerException 如果 chars 为 null
-	 * @throws IllegalArgumentException 如果 chars 为空数组
 	 */
-	public static String nextString(final char[] chars, final int length) {
+	public static String getString(final char[] chars, final int length) {
 		if (length < 1) {
 			return "";
 		}
@@ -167,23 +206,21 @@ public abstract class RandomX {
 	/**
 	 * 随机抽取指定字符串中的字符，生成指定长度的字符串
 	 *
-	 * @param chars 用于提供字符来源的字符串
+	 * @param str 用于提供字符来源的字符串
 	 * @param length 生成的字符串的长度。如果长度小于1，则返回空字符串
-	 * @throws NullPointerException 如果 chars 为 null
-	 * @throws IllegalArgumentException 如果 chars 为空数组
 	 */
-	public static String nextString(final String chars, final int length) {
+	public static String getString(final String str, final int length) {
 		if (length < 1) {
 			return "";
 		}
-		final int max = chars.length();
 		final char[] newChars = new char[length];
+		final int max = str.length();
 		if (max == 1) {
-			Arrays.fill(newChars, chars.charAt(0));
+			Arrays.fill(newChars, str.charAt(0));
 		} else {
 			final ThreadLocalRandom random = ThreadLocalRandom.current();
 			for (int i = 0; i < length; i++) {
-				newChars[i] = chars.charAt(random.nextInt(max));
+				newChars[i] = str.charAt(random.nextInt(max));
 			}
 		}
 		return new String(newChars);

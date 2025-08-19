@@ -55,7 +55,7 @@ public class Words {
 		List<Segment> segments = words instanceof Collection ? new ArrayList<>(((Collection<String>) words).size()) : new ArrayList<>();
 		int i = 0;
 		for (String word : words) {
-			if (StringX.isEmpty(word)) {
+			if (StringUtil.isEmpty(word)) {
 				continue;
 			}
 			segments.add(new Segment(0, word.length(), StringUtils.isAllUpperCase(word)).attach(word, i++));
