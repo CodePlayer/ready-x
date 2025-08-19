@@ -52,23 +52,39 @@
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
-			<version>5.12.0</version>
+			<version>5.13.4</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-params</artifactId>
+			<version>5.13.4</version>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
-			<version>4.11.0</version>
+			<version>5.18.0</version>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>
-			<version>3.27.3</version>
+			<version>3.27.4</version>
 			<scope>test</scope>
 		</dependency>
+
+		<!--
+		<dependency>
+			<groupId>org.jetbrains</groupId>
+			<artifactId>annotations</artifactId>
+			<version>26.0.2</version>
+			<optional>true</optional>
+		</dependency>
+		-->
 
 		<dependency>
 			<groupId>org.openjdk.jmh</groupId>
@@ -145,7 +161,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<version>3.2.7</version>
+						<version>3.2.8</version>
 						<configuration>
 							<executable>gpg</executable>
 						</configuration>
@@ -213,8 +229,47 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.14.0</version>
+				<executions>
+					<execution>
+						<id>compile-java-8</id>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+						<configuration>
+							<source>1.8</source>
+							<target>1.8</target>
+							<debuglevel>lines,vars,source</debuglevel>
+						</configuration>
+					</execution>
+					<!-- compile for Java 9+ -->
+					<execution>
+						<id>compile-java-9</id>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+						<phase>compile</phase>
+						<configuration>
+							<release>9</release>
+							<debuglevel>lines,vars,source</debuglevel>
+							<compileSourceRoots>
+								<compileSourceRoot>${project.basedir}/src/main/java9</compileSourceRoot>
+							</compileSourceRoots>
+							<multiReleaseOutput>true</multiReleaseOutput>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.4.2</version>
 				<configuration>
-					<debuglevel>lines,vars,source</debuglevel>
+					<archive>
+						<manifestEntries>
+							<Multi-Release>true</Multi-Release>
+						</manifestEntries>
+					</archive>
 				</configuration>
 			</plugin>
 
