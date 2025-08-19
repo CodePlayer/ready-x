@@ -1546,7 +1546,7 @@ public abstract class StringX {
 				addPartToList(str, mapper, filter, list, start, pos);
 				start = pos + 1;
 			}
-			if (start <= length) {
+			if (start < length) { // ignore trailing separator, LIKE String.split()
 				addPartToList(str, mapper, filter, list, start, length);
 			}
 		}
@@ -1613,7 +1613,7 @@ public abstract class StringX {
 					list.add(val);
 				}
 			}
-			if (start <= length) {
+			if (start < length) {  // ignore trailing separator, LIKE String.split()
 				final E val = mapper.sliceAs(values, start, length);
 				if (val != null) {
 					list.add(val);

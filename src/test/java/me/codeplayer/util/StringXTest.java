@@ -615,9 +615,8 @@ public class StringXTest implements WithAssertions {
 			// 测试结尾有分隔符
 			List<String> result4 = StringX.split("abc,", ',', Slice::parseString);
 			assertNotNull(result4);
-			assertEquals(2, result4.size());
+			assertEquals(1, result4.size());
 			assertEquals("abc", result4.get(0));
-			assertEquals("", result4.get(1));
 
 			// 测试连续分隔符
 			List<String> result5 = StringX.split("a,,c", ',', Slice::parseString);
@@ -778,7 +777,7 @@ public class StringXTest implements WithAssertions {
 		assertEquals(0, StringX.splitAsLongList("").size());
 
 		// 测试正常情况
-		List<Long> result = StringX.splitAsLongList("1,2,3");
+		List<Long> result = StringX.splitAsLongList("1,2,3,");
 		assertNotNull(result);
 		assertEquals(3, result.size());
 		assertEquals(1L, result.get(0));
@@ -852,7 +851,7 @@ public class StringXTest implements WithAssertions {
 		assertEquals(0, StringX.splitLongAsList("", ',', String::valueOf).size());
 
 		// 测试正常情况
-		List<String> result = StringX.splitLongAsList("1,2,3", ',', String::valueOf);
+		List<String> result = StringX.splitLongAsList("1,2,3,", ',', String::valueOf);
 		assertNotNull(result);
 		assertEquals(3, result.size());
 		assertEquals("1", result.get(0));
