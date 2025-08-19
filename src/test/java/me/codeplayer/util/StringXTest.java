@@ -510,6 +510,10 @@ public class StringXTest implements WithAssertions {
 
 	@Test
 	public void split() {
+		assertNull(StringX.split(null, ",", String::length));
+
+		assertEquals(0, StringX.split("", ",", String::length).size());
+
 		List<Integer> vals = StringX.split("1,22,333", ",", String::length);
 		assertThat(vals)
 				.hasSize(3)

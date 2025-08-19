@@ -1562,11 +1562,11 @@ public abstract class StringX {
 	 * @param ignoreEmpty 是否忽略空子字符串（如果为 true，则忽略空字符串 ）
 	 */
 	public static <T> List<T> split(final String toSplit, final String sep, final Function<? super String, T> mapper, final boolean ignoreEmpty) {
-		if (notEmpty(toSplit)) {
-			final Predicate<String> filter = ignoreEmpty ? StringX::notEmpty : null;
-			return split(toSplit, sep, filter, mapper);
+		if (toSplit == null) {
+			return null;
 		}
-		return null;
+		final Predicate<String> filter = ignoreEmpty ? StringX::notEmpty : null;
+		return split(toSplit, sep, filter, mapper);
 	}
 
 	/**
