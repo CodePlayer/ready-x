@@ -1563,7 +1563,7 @@ public abstract class StringUtil {
 	 */
 	@Nonnull
 	public static <T> List<T> split(final String toSplit, final String sep, final Function<? super String, T> mapper, final boolean ignoreEmpty) {
-		return split(toSplit, sep, ignoreEmpty ? StringX::notEmpty : null, mapper);
+		return split(toSplit, sep, ignoreEmpty ? StringUtil::notEmpty : null, mapper);
 	}
 
 	/**
@@ -1669,39 +1669,6 @@ public abstract class StringUtil {
 			}
 		}
 		return mapper.sliceAs(str, 0, length);
-	}
-
-	/**
-	 * 将以指定分隔字符分隔字符串，并将每个部分转换为数字
-	 */
-	public static <E> List<E> split(@Nullable final String ids, final char sep, Function<? super String, E> mapper, boolean ignoreEmpty) {
-		if (notEmpty(ids)) {
-			final List<E> list = new ArrayList<>();
-			int pos, start = 0;
-			// ",,"
-			while ((pos = ids.indexOf(sep, start)) != -1) {
-				String part = start == pos ? "" : ids.substring(start, pos);
-				start = pos + 1;
-				if (ignoreEmpty && part.isEmpty()) {
-					continue;
-				}
-				final E val = mapper.apply(part);
-				if (val != null || !ignoreEmpty) {
-					list.add(val);
-				}
-			}
-			if (start <= ids.length()) {
-				String part = start == ids.length() ? "" : ids.substring(start);
-				if (!ignoreEmpty || notEmpty(part)) {
-					final E val = mapper.apply(part);
-					if (val != null || !ignoreEmpty) {
-						list.add(val);
-					}
-				}
-			}
-			return list;
-		}
-		return null;
 	}
 
 	/**
