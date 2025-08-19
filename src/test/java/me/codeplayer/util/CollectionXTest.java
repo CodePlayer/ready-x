@@ -110,15 +110,15 @@ public class CollectionXTest implements WithAssertions {
 	@Test
 	public void addAll_WithoutFilter_AddsAllElements() {
 		List<String> target = CollectionX.asArrayList("a");
-		Collection<String> result = CollectionX.addAll(target, "a", "abc", "de");
+		List<String> result = CollectionX.addAll(target, "a", "abc", "de");
 		assertSame(result, target);
 		assertThat(target).containsExactly("a", "a", "abc", "de");
 	}
 
 	@Test
 	public void addAll_MapWithKeyValuePairs_AddsCorrectly() {
-		Map<String, Integer> map = new HashMap<>();
-		Map<String, Integer> result = CollectionX.addAll(map, "key1", 1, "key2", 2);
+		HashMap<String, Integer> map = new HashMap<>();
+		HashMap<String, Integer> result = CollectionX.addAll(map, "key1", 1, "key2", 2);
 		assertSame(result, map);
 		assertThat(map).containsEntry("key1", 1).containsEntry("key2", 2);
 	}
