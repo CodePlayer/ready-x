@@ -268,22 +268,6 @@
 							<debuglevel>lines,vars,source</debuglevel>
 						</configuration>
 					</execution>
-					<!-- compile for Java 9+ -->
-					<execution>
-						<id>compile-java-9</id>
-						<goals>
-							<goal>compile</goal>
-						</goals>
-						<phase>compile</phase>
-						<configuration>
-							<release>9</release>
-							<debuglevel>lines,vars,source</debuglevel>
-							<compileSourceRoots>
-								<compileSourceRoot>${project.basedir}/src/main/java9</compileSourceRoot>
-							</compileSourceRoots>
-							<multiReleaseOutput>true</multiReleaseOutput>
-						</configuration>
-					</execution>
 				</executions>
 			</plugin>
 
