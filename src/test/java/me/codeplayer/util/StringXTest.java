@@ -510,9 +510,9 @@ public class StringXTest implements WithAssertions {
 
 	@Test
 	public void split() {
-		assertNull(StringX.split(null, ",", String::length));
+		assertSame(Collections.emptyList(), StringX.split(null, ",", String::length));
 
-		assertEquals(0, StringX.split("", ",", String::length).size());
+		assertSame(Collections.emptyList(), StringX.split("", ",", String::length));
 
 		List<Integer> vals = StringX.split("1,22,333", ",", String::length);
 		assertThat(vals)
@@ -568,10 +568,10 @@ public class StringXTest implements WithAssertions {
 	@Test
 	void split_withSlice() {
 		// 测试 null 输入
-		assertNull(StringX.split(null, ',', Slice::asString));
+		assertSame(Collections.emptyList(), StringX.split(null, ',', Slice::asString));
 
 		// 测试 空字符串 输入
-		assertEquals(0, StringX.split("", ',', Slice::asString).size());
+		assertSame(Collections.emptyList(), StringX.split("", ',', Slice::asString));
 
 		// 测试无分隔符情况
 		List<String> result1 = StringX.split("abc", ',', Slice::asString);
@@ -755,10 +755,10 @@ public class StringXTest implements WithAssertions {
 	@Test
 	void splitAsLongListWithChar() {
 		// 测试null输入
-		assertNull(StringX.splitAsLongList(null, ','));
+		assertSame(Collections.emptyList(), StringX.splitAsLongList(null, ','));
 
 		// 测试空字符串输入
-		assertEquals(0, StringX.splitAsLongList("", ',').size());
+		assertSame(Collections.emptyList(), StringX.splitAsLongList("", ','));
 
 		// 测试正常情况
 		List<Long> result = StringX.splitAsLongList("1,2,3", ',');
@@ -775,10 +775,10 @@ public class StringXTest implements WithAssertions {
 	@Test
 	void splitAsLongList() {
 		// 测试null输入
-		assertNull(StringX.splitAsLongList(null));
+		assertSame(Collections.emptyList(), StringX.splitAsLongList(null));
 
 		// 测试空字符串输入
-		assertEquals(0, StringX.splitAsLongList("").size());
+		assertSame(Collections.emptyList(), StringX.splitAsLongList(""));
 
 		// 测试正常情况
 		List<Long> result = StringX.splitAsLongList("1,2,3,");
@@ -792,10 +792,10 @@ public class StringXTest implements WithAssertions {
 	@Test
 	void splitAsIntListWithChar() {
 		// 测试 null 输入
-		assertNull(StringX.splitAsIntList(null, ','));
+		assertSame(Collections.emptyList(), StringX.splitAsIntList(null, ','));
 
 		// 测试空字符串输入
-		assertEquals(0, StringX.splitAsIntList("", ',').size());
+		assertSame(Collections.emptyList(), StringX.splitAsIntList("", ','));
 
 		// 测试正常情况
 		List<Integer> result = StringX.splitAsIntList("1,2,3", ',');
@@ -812,10 +812,10 @@ public class StringXTest implements WithAssertions {
 	@Test
 	void splitAsIntList() {
 		// 测试null输入
-		assertNull(StringX.splitAsIntList(null));
+		assertSame(Collections.emptyList(), StringX.splitAsIntList(null));
 
 		// 测试空字符串输入
-		assertEquals(0, StringX.splitAsIntList("").size());
+		assertSame(Collections.emptyList(), StringX.splitAsIntList(""));
 
 		// 测试正常情况
 		List<Integer> result = StringX.splitAsIntList("1,2,3");
@@ -829,10 +829,10 @@ public class StringXTest implements WithAssertions {
 	@Test
 	void splitIntAsList() {
 		// 测试 null 输入
-		assertNull(StringX.splitIntAsList(null, ',', String::valueOf));
+		assertSame(Collections.emptyList(), StringX.splitIntAsList(null, ',', String::valueOf));
 
 		// 测试空字符串输入
-		assertEquals(0, StringX.splitIntAsList("", ',', String::valueOf).size());
+		assertSame(Collections.emptyList(), StringX.splitIntAsList("", ',', String::valueOf));
 
 		// 测试正常情况
 		List<User> result = StringX.splitIntAsList("1,2,3", ',', User::new);
@@ -849,10 +849,10 @@ public class StringXTest implements WithAssertions {
 	@Test
 	void splitLongAsList() {
 		// 测试 null 输入
-		assertNull(StringX.splitLongAsList(null, ',', String::valueOf));
+		assertSame(Collections.emptyList(), StringX.splitLongAsList(null, ',', String::valueOf));
 
 		// 测试空字符串输入
-		assertEquals(0, StringX.splitLongAsList("", ',', String::valueOf).size());
+		assertSame(Collections.emptyList(), StringX.splitLongAsList("", ',', String::valueOf));
 
 		// 测试正常情况
 		List<String> result = StringX.splitLongAsList("1,2,3,", ',', String::valueOf);
@@ -869,10 +869,10 @@ public class StringXTest implements WithAssertions {
 	@Test
 	void splitAsStringList() {
 		// 测试null输入
-		assertNull(StringX.splitAsStringList(null));
+		assertSame(Collections.emptyList(), StringX.splitAsStringList(null));
 
 		// 测试空字符串输入
-		assertEquals(0, StringX.splitAsStringList("").size());
+		assertSame(Collections.emptyList(), StringX.splitAsStringList(""));
 
 		// 测试正常情况
 		List<String> result = StringX.splitAsStringList("a,b,c");
@@ -893,10 +893,10 @@ public class StringXTest implements WithAssertions {
 	@Test
 	void splitAsStringListWithChar() {
 		// 测试null输入
-		assertNull(StringX.splitAsStringList(null, ','));
+		assertSame(Collections.emptyList(), StringX.splitAsStringList(null, ','));
 
 		// 测试空字符串输入
-		assertEquals(0, StringX.splitAsStringList("", ',').size());
+		assertSame(Collections.emptyList(), StringX.splitAsStringList("", ','));
 
 		// 测试正常情况
 		List<String> result = StringX.splitAsStringList("a,b,c", ',');
