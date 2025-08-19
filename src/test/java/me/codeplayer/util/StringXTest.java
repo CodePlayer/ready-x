@@ -5,6 +5,8 @@ import java.util.*;
 
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -544,6 +546,362 @@ public class StringXTest implements WithAssertions {
 		final String input = "";
 		String result = StringX.convertCharsetForURI(input, StandardCharsets.UTF_8);
 		assertEquals(input, result);
+	}
+
+	@ParameterizedTest
+	@CsvSource(delimiter = '|', nullValues = "null", value = {
+			"null  |  ','  |  0",
+			"''  |  ','  |  0",
+			"abc  |  ','  |  1",
+			"'a,b,c'  |  ','  |  3",
+			"'a,,b,,,c'  |  ','  |  6",
+			"',,'  |  ','  |  3"
+	})
+	void splitCount(String values, char sep, int expected) {
+		assertEquals(expected, StringX.splitCount(values, sep));
+	}
+
+	@Test
+	void split_withSlice() {
+		// 测试 null 输入
+		assertNull(StringX.split(null, ',', Slice::asString));
+
+		// 测试 空字符串 输入
+		assertNull(StringX.split("", ',', Slice::asString));
+
+		// 测试无分隔符情况
+		List<String> result1 = StringX.split("abc", ',', Slice::asString);
+		assertNotNull(result1);
+		assertEquals(1, result1.size());
+		assertEquals("abc", result1.get(0));
+
+		// 测试正常拆分情况
+		List<String> result2 = StringX.split("a,b,c", ',', Slice::asString);
+		assertNotNull(result2);
+		assertEquals(3, result2.size());
+		assertEquals("a", result2.get(0));
+		assertEquals("b", result2.get(1));
+		assertEquals("c", result2.get(2));
+
+		{
+			// 测试开头有分隔符
+			List<String> result3 = StringX.split(",abc", ',', Slice::asString);
+			assertNotNull(result3);
+			assertEquals(1, result3.size());
+			assertEquals("abc", result3.get(0));
+
+			// 测试结尾有分隔符
+			List<String> result4 = StringX.split("abc,", ',', Slice::asString);
+			assertNotNull(result4);
+			assertEquals(1, result4.size());
+			assertEquals("abc", result4.get(0));
+
+			// 测试连续分隔符
+			List<String> result5 = StringX.split("a,,c", ',', Slice::asString);
+			assertNotNull(result5);
+			assertEquals(2, result5.size());
+			assertEquals("a", result5.get(0));
+			assertEquals("c", result5.get(1));
+		}
+
+		{
+			// 测试开头有分隔符
+			List<String> result3 = StringX.split(",abc", ',', Slice::parseString);
+			assertNotNull(result3);
+			assertEquals(2, result3.size());
+			assertEquals("", result3.get(0));
+			assertEquals("abc", result3.get(1));
+
+			// 测试结尾有分隔符
+			List<String> result4 = StringX.split("abc,", ',', Slice::parseString);
+			assertNotNull(result4);
+			assertEquals(2, result4.size());
+			assertEquals("abc", result4.get(0));
+			assertEquals("", result4.get(1));
+
+			// 测试连续分隔符
+			List<String> result5 = StringX.split("a,,c", ',', Slice::parseString);
+			assertNotNull(result5);
+			assertEquals(3, result5.size());
+			assertEquals("a", result5.get(0));
+			assertEquals("", result5.get(1));
+			assertEquals("c", result5.get(2));
+		}
+
+		// 测试 mapper 返回 null 的情况
+		Slice<String> nullMapper = (str, start, end) -> {
+			String substring = str.substring(start, end);
+			// 如果是"skip"则返回null
+			return "skip".equals(substring) ? null : substring;
+		};
+		List<String> result6 = StringX.split("a,skip,c", ',', nullMapper);
+		assertNotNull(result6);
+		assertEquals(2, result6.size());
+		assertEquals("a", result6.get(0));
+		assertEquals("c", result6.get(1));
+	}
+
+	@Test
+	void removeStart() {
+		// 测试 str 为null
+		String result1 = StringX.removeStart(null, "pre", Slice::parseString);
+		assertEquals("", result1);
+
+		// 测试str为空
+		String result2 = StringX.removeStart("", "pre", Slice::parseString);
+		assertEquals("", result2);
+
+		// 测试remove为null
+		String result3 = StringX.removeStart("prefix_content", null, Slice::parseString);
+		assertEquals("prefix_content", result3);
+
+		// 测试remove为空
+		String result4 = StringX.removeStart("prefix_content", "", Slice::parseString);
+		assertEquals("prefix_content", result4);
+
+		// 测试不以remove开头
+		String result5 = StringX.removeStart("prefix_content", "post", Slice::parseString);
+		assertEquals("prefix_content", result5);
+
+		// 测试正常移除前缀
+		String result6 = StringX.removeStart("prefix_content", "prefix_", Slice::parseString);
+		assertEquals("content", result6);
+
+		// 测试完全匹配
+		String result7 = StringX.removeStart("prefix", "prefix", Slice::parseString);
+		assertEquals("", result7);
+	}
+
+	@Test
+	void removeEnd() {
+		// 测试str为null
+		String result1 = StringX.removeEnd(null, "post", Slice::parseString);
+		assertEquals("", result1);
+
+		// 测试str为空
+		String result2 = StringX.removeEnd("", "post", Slice::parseString);
+		assertEquals("", result2);
+
+		// 测试remove为null
+		String result3 = StringX.removeEnd("content_postfix", null, Slice::parseString);
+		assertEquals("content_postfix", result3);
+
+		// 测试remove为空
+		String result4 = StringX.removeEnd("content_postfix", "", Slice::parseString);
+		assertEquals("content_postfix", result4);
+
+		// 测试不以remove结尾
+		String result5 = StringX.removeEnd("content_postfix", "pre", Slice::parseString);
+		assertEquals("content_postfix", result5);
+
+		// 测试正常移除后缀
+		String result6 = StringX.removeEnd("content_postfix", "_postfix", Slice::parseString);
+		assertEquals("content", result6);
+
+		// 测试完全匹配
+		String result7 = StringX.removeEnd("postfix", "postfix", Slice::parseString);
+		assertEquals("", result7);
+	}
+
+	@Test
+	void substringBefore() {
+		// 测试str为null
+		String result1 = StringX.substringBefore(null, '_', Slice::parseString);
+		assertEquals("", result1);
+
+		// 测试str为空
+		String result2 = StringX.substringBefore("", '_', Slice::parseString);
+		assertEquals("", result2);
+
+		// 测试找不到分隔符
+		String result3 = StringX.substringBefore("content", '_', Slice::parseString);
+		assertEquals("content", result3);
+
+		// 测试找到分隔符
+		String result4 = StringX.substringBefore("content_before_after", '_', Slice::parseString);
+		assertEquals("content", result4);
+
+		// 测试分隔符在第一个位置
+		String result5 = StringX.substringBefore("_content", '_', Slice::parseString);
+		assertEquals("", result5);
+	}
+
+	@Test
+	void substringAfterLast() {
+		// 测试str为null
+		String result1 = StringX.substringAfterLast(null, '_', Slice::parseString);
+		assertEquals("", result1);
+
+		// 测试str为空
+		String result2 = StringX.substringAfterLast("", '_', Slice::parseString);
+		assertEquals("", result2);
+
+		// 测试找不到分隔符
+		String result3 = StringX.substringAfterLast("content", '_', Slice::parseString);
+		assertEquals("content", result3);
+
+		// 测试找到分隔符
+		String result4 = StringX.substringAfterLast("content_before_after", '_', Slice::parseString);
+		assertEquals("after", result4);
+
+		// 测试分隔符在最后一个位置
+		String result5 = StringX.substringAfterLast("content_", '_', Slice::parseString);
+		assertEquals("", result5);
+	}
+
+	@Test
+	void splitAsLongListWithChar() {
+		// 测试null输入
+		assertNull(StringX.splitAsLongList(null, ','));
+
+		// 测试空字符串输入
+		assertNull(StringX.splitAsLongList("", ','));
+
+		// 测试正常情况
+		List<Long> result = StringX.splitAsLongList("1,2,3", ',');
+		assertNotNull(result);
+		assertEquals(3, result.size());
+		assertEquals(1L, result.get(0));
+		assertEquals(2L, result.get(1));
+		assertEquals(3L, result.get(2));
+
+		// 测试包含无效数字
+		assertThrows(NumberFormatException.class, () -> StringX.splitAsLongList("1,abc,3", ','));
+	}
+
+	@Test
+	void splitAsLongList() {
+		// 测试null输入
+		assertNull(StringX.splitAsLongList(null));
+
+		// 测试空字符串输入
+		assertNull(StringX.splitAsLongList(""));
+
+		// 测试正常情况
+		List<Long> result = StringX.splitAsLongList("1,2,3");
+		assertNotNull(result);
+		assertEquals(3, result.size());
+		assertEquals(1L, result.get(0));
+		assertEquals(2L, result.get(1));
+		assertEquals(3L, result.get(2));
+	}
+
+	@Test
+	void splitAsIntListWithChar() {
+		// 测试 null 输入
+		assertNull(StringX.splitAsIntList(null, ','));
+
+		// 测试空字符串输入
+		assertNull(StringX.splitAsIntList("", ','));
+
+		// 测试正常情况
+		List<Integer> result = StringX.splitAsIntList("1,2,3", ',');
+		assertNotNull(result);
+		assertEquals(3, result.size());
+		assertEquals(1, result.get(0));
+		assertEquals(2, result.get(1));
+		assertEquals(3, result.get(2));
+
+		// 测试包含无效数字
+		assertThrows(NumberFormatException.class, () -> StringX.splitAsIntList("1,abc,3", ','));
+	}
+
+	@Test
+	void splitAsIntList() {
+		// 测试null输入
+		assertNull(StringX.splitAsIntList(null));
+
+		// 测试空字符串输入
+		assertNull(StringX.splitAsIntList(""));
+
+		// 测试正常情况
+		List<Integer> result = StringX.splitAsIntList("1,2,3");
+		assertNotNull(result);
+		assertEquals(3, result.size());
+		assertEquals(1, result.get(0));
+		assertEquals(2, result.get(1));
+		assertEquals(3, result.get(2));
+	}
+
+	@Test
+	void splitIntAsList() {
+		// 测试 null 输入
+		assertNull(StringX.splitIntAsList(null, ',', String::valueOf));
+
+		// 测试空字符串输入
+		assertNull(StringX.splitIntAsList("", ',', String::valueOf));
+
+		// 测试正常情况
+		List<User> result = StringX.splitIntAsList("1,2,3", ',', User::new);
+		assertNotNull(result);
+		assertEquals(3, result.size());
+		assertEquals(1, result.get(0).getId());
+		assertEquals(2, result.get(1).getId());
+		assertEquals(3, result.get(2).getId());
+
+		// 测试包含无效数字
+		assertThrows(NumberFormatException.class, () -> StringX.splitIntAsList("1,abc,3", ',', String::valueOf));
+	}
+
+	@Test
+	void splitLongAsList() {
+		// 测试 null 输入
+		assertNull(StringX.splitLongAsList(null, ',', String::valueOf));
+
+		// 测试空字符串输入
+		assertNull(StringX.splitLongAsList("", ',', String::valueOf));
+
+		// 测试正常情况
+		List<String> result = StringX.splitLongAsList("1,2,3", ',', String::valueOf);
+		assertNotNull(result);
+		assertEquals(3, result.size());
+		assertEquals("1", result.get(0));
+		assertEquals("2", result.get(1));
+		assertEquals("3", result.get(2));
+
+		// 测试包含无效数字
+		assertThrows(NumberFormatException.class, () -> StringX.splitLongAsList("1,abc,3", ',', String::valueOf));
+	}
+
+	@Test
+	void splitAsStringList() {
+		// 测试null输入
+		assertNull(StringX.splitAsStringList(null));
+
+		// 测试空字符串输入
+		assertNull(StringX.splitAsStringList(""));
+
+		// 测试正常情况
+		List<String> result = StringX.splitAsStringList("a,b,c");
+		assertNotNull(result);
+		assertEquals(3, result.size());
+		assertEquals("a", result.get(0));
+		assertEquals("b", result.get(1));
+		assertEquals("c", result.get(2));
+
+		// 测试包含空字符串
+		List<String> result2 = StringX.splitAsStringList("a,,c");
+		assertNotNull(result2);
+		assertEquals(2, result2.size());
+		assertEquals("a", result2.get(0));
+		assertEquals("c", result2.get(1));
+	}
+
+	@Test
+	void splitAsStringListWithChar() {
+		// 测试null输入
+		assertNull(StringX.splitAsStringList(null, ','));
+
+		// 测试空字符串输入
+		assertNull(StringX.splitAsStringList("", ','));
+
+		// 测试正常情况
+		List<String> result = StringX.splitAsStringList("a,b,c", ',');
+		assertNotNull(result);
+		assertEquals(3, result.size());
+		assertEquals("a", result.get(0));
+		assertEquals("b", result.get(1));
+		assertEquals("c", result.get(2));
 	}
 
 }
