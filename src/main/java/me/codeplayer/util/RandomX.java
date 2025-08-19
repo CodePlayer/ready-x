@@ -12,14 +12,61 @@ import java.util.concurrent.ThreadLocalRandom;
 public abstract class RandomX {
 
 	/**
-	 * 返回min(包括)和max(包括)之间的一个随机整数
+	 * 返回 min(包括) 和 max(不包括) 之间的一个随机整数
 	 *
 	 * @param min 返回的最小值
-	 * @param max 返回的最大值
+	 * @param max 返回的最大值（不包括）
+	 * @throws IllegalArgumentException 如果 min >= max
 	 */
-	public static int getInt(int min, int max) {
-		return ThreadLocalRandom.current().nextInt(min, max + 1);
+	public static int nextInt(int min, int max) {
+		return ThreadLocalRandom.current().nextInt(min, max);
 	}
+
+	/**
+	 * 返回 min(包括) 和 max(不包括) 之间的一个随机整数
+	 *
+	 * @param min 返回的最小值
+	 * @param max 返回的最大值(不包括)
+	 * @throws IllegalArgumentException 如果 min >= max
+	 */
+	public static long nextLong(long min, long max) {
+		return ThreadLocalRandom.current().nextLong(min, max);
+	}
+
+	/**
+	 * 返回 <code> [min, max) </code> 之间的一个随机 double 数
+	 *
+	 * @param min 返回的最小值
+	 * @param max 返回的最大值(不包括)
+	 * @throws IllegalArgumentException 如果 min >= max
+	 */
+	public static double nextDouble(double min, double max) {
+		return ThreadLocalRandom.current().nextDouble(min, max);
+	}
+
+	/**
+	 * 返回 <code> [0, 1) </code> 之间的一个随机 double 数
+	 */
+	public static double nextDouble() {
+		return ThreadLocalRandom.current().nextDouble();
+	}
+
+	/**
+	 * 使用随机数据填充满指定的字节数组
+	 *
+	 * @param bytes 需要填充的数组
+	 * @throws NullPointerException bytes 为 null
+	 */
+	public static void nextBytes(byte[] bytes) {
+		ThreadLocalRandom.current().nextBytes(bytes);
+	}
+
+	// 预计算的幂值，避免重复计算Math.pow(10, expect)
+	private static final long[] POWERS_OF_10 = {
+			1L, 10L, 100L, 1000L, 10000L, 100000L, 1000000L, 10000000L,
+			100000000L, 1000000000L, 10000000000L, 100000000000L,
+			1000000000000L, 10000000000000L, 100000000000000L, 1000000000000000L
+	};
 
 	/**
 	 * 随机生成指定长度的数字字符串
@@ -29,12 +76,12 @@ public abstract class RandomX {
 			return "";
 		}
 		final StringBuilder sb = new StringBuilder(length);
-		final int batch = 15; // 不可超过15
+		final int batch = 15; // 不可超过 15
 		int remain = length;
 		final ThreadLocalRandom random = ThreadLocalRandom.current();
 		do {
 			final int expect = Math.min(batch, remain);
-			final long val = random.nextLong(0L, (long) Math.pow(10, expect));
+			final long val = random.nextLong(0L, POWERS_OF_10[expect]);
 			StringX.zeroFill(sb, val, expect);
 			remain -= batch;
 		} while (remain > 0);
@@ -42,31 +89,23 @@ public abstract class RandomX {
 	}
 
 	/**
-	 * 随机返回0 ~ 1之间(不包括1)的双精度浮点数
+	 * 随机返回 0 ~ 1 之间(不包括 1 )的单精度浮点数
 	 */
-	public static double getDouble() {
-		return ThreadLocalRandom.current().nextDouble();
-	}
-
-	/**
-	 * 随机返回0 ~ 1之间(不包括1)的单精度浮点数
-	 */
-	public static float getFloat() {
+	public static float nextFloat() {
 		return ThreadLocalRandom.current().nextFloat();
 	}
 
 	/**
-	 * 随机返回一个long值<br>
-	 * 因为 <code>java.util.Random</code> 类使用只以 48 位表示的种子，所以此算法不会返回所有可能的 long值。
+	 * 随机返回一个 long 值
 	 */
-	public static long getLong() {
+	public static long nextLong() {
 		return ThreadLocalRandom.current().nextLong();
 	}
 
 	/**
-	 * 随机返回一个boolean值
+	 * 随机返回一个 boolean 值
 	 */
-	public static boolean getBoolean() {
+	public static boolean nextBoolean() {
 		return ThreadLocalRandom.current().nextBoolean();
 	}
 
@@ -74,7 +113,7 @@ public abstract class RandomX {
 	 * 根据指定的字符数组，随机返回其中的一个字符<br>
 	 * 如果字符数组为空，则默认返回一个空格字符<code>' '</code>
 	 */
-	public static char getChar(char[] chars) {
+	public static char nextChar(char[] chars) {
 		switch (chars.length) {
 			case 0:
 				return ' ';
@@ -89,15 +128,15 @@ public abstract class RandomX {
 	 * 根据指定的字符串，随机返回其中的一个字符<br>
 	 * 如果为空字符串，则默认返回一个空格字符<code>' '</code>
 	 */
-	public static char getChar(String str) {
-		final int length = str.length();
+	public static char nextChar(String chars) {
+		final int length = chars.length();
 		switch (length) {
 			case 0:
 				return ' ';
 			case 1:
-				return str.charAt(0);
+				return chars.charAt(0);
 			default:
-				return str.charAt(ThreadLocalRandom.current().nextInt(0, length));
+				return chars.charAt(nextInt(0, length));
 		}
 	}
 
@@ -107,7 +146,7 @@ public abstract class RandomX {
 	 * @param chars 用于提供字符来源的字符数组
 	 * @param length 生成的字符串的长度。如果长度小于1，则返回空字符串
 	 */
-	public static String getString(final char[] chars, final int length) {
+	public static String nextString(final char[] chars, final int length) {
 		if (length < 1) {
 			return "";
 		}
@@ -129,12 +168,12 @@ public abstract class RandomX {
 	 * @param str 用于提供字符来源的字符串
 	 * @param length 生成的字符串的长度。如果长度小于1，则返回空字符串
 	 */
-	public static String getString(final String str, final int length) {
+	public static String nextString(final String str, final int length) {
 		if (length < 1) {
 			return "";
 		}
-		final char[] newChars = new char[length];
 		final int max = str.length();
+		final char[] newChars = new char[length];
 		if (max == 1) {
 			Arrays.fill(newChars, str.charAt(0));
 		} else {
