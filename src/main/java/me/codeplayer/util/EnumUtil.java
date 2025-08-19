@@ -1,7 +1,8 @@
 package me.codeplayer.util;
 
 import java.lang.reflect.Array;
-import java.util.function.*;
+import java.util.function.Predicate;
+import java.util.function.ToIntFunction;
 import javax.annotation.Nullable;
 
 /**
@@ -11,7 +12,7 @@ import javax.annotation.Nullable;
  * @since 2019年4月16日
  * @since 1.0
  */
-public abstract class EnumX {
+public abstract class EnumUtil {
 
 	/**
 	 * 根据枚举类型和名称，构建对应的枚举实例
@@ -20,7 +21,7 @@ public abstract class EnumX {
 	 */
 	@Nullable
 	public static <T extends Enum<T>> T of(Class<T> clazz, @Nullable String name, T defaultValue) {
-		if (StringX.notEmpty(name)) {
+		if (StringUtil.notEmpty(name)) {
 			try {
 				return Enum.valueOf(clazz, name);
 			} catch (IllegalArgumentException ignored) {
@@ -67,21 +68,6 @@ public abstract class EnumX {
 	}
 
 	/**
-	 * 返回指定枚举数组中查找其属性为指定值的枚举，如果找不到则返回 null
-	 */
-	@Nullable
-	public static <E extends Enum<?>, R> E getMatched(E[] range, Function<? super E, R> propertyGetter, @Nullable R value) {
-		if (value != null) {
-			for (E e : range) {
-				if (value.equals(propertyGetter.apply(e))) {
-					return e;
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
 	 * 基于 value 值 相对 ordinal 的偏移，获取对应的枚举
 	 * 这要求枚举的 value 必须是连续的整数值
 	 *
@@ -107,22 +93,6 @@ public abstract class EnumX {
 			final int val = value;
 			for (E e : range) {
 				if (propertyGetter.applyAsInt(e) == val) {
-					return e;
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * 返回指定枚举数组中查找其属性为指定值的枚举，如果找不到则返回 null
-	 */
-	@SafeVarargs
-	@Nullable
-	public static <E extends Enum<?>, V> E valueOf(Function<? super E, V> propertyGetter, @Nullable V value, E... range) {
-		if (value != null) {
-			for (E e : range) {
-				if (value.equals(propertyGetter.apply(e))) {
 					return e;
 				}
 			}
