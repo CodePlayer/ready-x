@@ -1595,9 +1595,9 @@ public abstract class StringUtil {
 
 	/**
 	 * 将以指定分隔字符分隔字符串，并将每个部分转换为数字
-	 */
 	 *
 	 * @return 当且仅当 {@code  str == null } 时才返回 null
+	 */
 	public static <E> List<E> split(@Nullable final String values, final char sep, Slice<E> mapper) {
 		if (values == null) {
 			return null;
