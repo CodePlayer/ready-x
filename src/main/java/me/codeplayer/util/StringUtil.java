@@ -1532,12 +1532,15 @@ public abstract class StringUtil {
 	 * @param sep 分隔符
 	 * @param mapper 转换器
 	 * @param filter 过滤器（如果应用到对应的元素返回 false，则返回的集合中不会包含该元素 ）
-	 * @return 如果 str 为空，则返回 null
+	 * @return 当且仅当 {@code  str == null } 时才返回 null
 	 */
 	public static <T> List<T> split(@Nullable final String str, final String sep, @Nullable Predicate<? super String> filter, final Function<? super String, T> mapper) {
-		final int length;
-		if (str != null && (length = str.length()) > 0) {
-			final List<T> list = new ArrayList<>();
+		if (str == null) {
+			return null;
+		}
+		final int length = str.length();
+		final List<T> list = new ArrayList<>();
+		if (length > 0) {
 			int pos, start = 0;
 			// ",,"
 			while ((pos = str.indexOf(sep, start)) != -1) {
@@ -1547,9 +1550,8 @@ public abstract class StringUtil {
 			if (start <= length) {
 				addPartToList(str, mapper, filter, list, start, length);
 			}
-			return list;
 		}
-		return null;
+		return list;
 	}
 
 	/**
@@ -1594,10 +1596,15 @@ public abstract class StringUtil {
 	/**
 	 * 将以指定分隔字符分隔字符串，并将每个部分转换为数字
 	 */
+	 *
+	 * @return 当且仅当 {@code  str == null } 时才返回 null
 	public static <E> List<E> split(@Nullable final String values, final char sep, Slice<E> mapper) {
-		int length;
-		if (values != null && (length = values.length()) > 0) {
-			final List<E> list = new ArrayList<>();
+		if (values == null) {
+			return null;
+		}
+		final int length = values.length();
+		final List<E> list = new ArrayList<>();
+		if (length > 0) {
 			int pos, start = 0;
 			// ",,"
 			while ((pos = values.indexOf(sep, start)) != -1) {
@@ -1613,9 +1620,8 @@ public abstract class StringUtil {
 					list.add(val);
 				}
 			}
-			return list;
 		}
-		return null;
+		return list;
 	}
 
 	/**
@@ -1741,7 +1747,7 @@ public abstract class StringUtil {
 	 * 将以指定分隔字符拆分为整数片段，并将每个部分转换为指定类型的对象
 	 */
 	public static <R> List<R> splitLongAsList(final String parts, final char sep, Function<? super Long, R> mapper) {
-		return split(parts, sep, Slice.mapLongtTo(mapper));
+		return split(parts, sep, Slice.mapLongTo(mapper));
 	}
 
 	/**
