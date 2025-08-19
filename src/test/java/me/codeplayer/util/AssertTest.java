@@ -4,8 +4,7 @@ import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("DataFlowIssue")
 public class AssertTest {
@@ -56,6 +55,45 @@ public class AssertTest {
 		assertThrows(AssertException.class, () -> Assert.isFalse(true, errorMsg));
 		assertThrows(AssertException.class, () -> Assert.isFalse(true, errorMsgSupplier));
 		assertThrows(AssertException.class, () -> Assert.isFalse(true, nullSupplier));
+	}
+
+	/**
+	 * 测试 isNull(Object object) 方法 - 正常情况
+	 */
+	@Test
+	public void isNull() {
+		// 测试用的错误信息
+		final String errorMsg = "object should be null";
+		final Supplier<CharSequence> errorMsgSupplier = () -> errorMsg;
+		// 传入 null，不应抛出异常
+		assertDoesNotThrow(() -> Assert.isNull(null));
+		// 传入非 null 对象，应抛出 AssertException
+		assertThrows(AssertException.class, () -> Assert.isNull(new Object()));
+		// 传入 null 和错误信息，不应抛出异常
+		assertDoesNotThrow(() -> Assert.isNull(null, errorMsg));
+		// 传入 null 和 null 错误信息，不应抛出异常
+		assertDoesNotThrow(() -> Assert.isNull(null, (CharSequence) null));
+		{
+			// 传入非 null 对象和错误信息，应抛出 AssertException
+			AssertException exception = assertThrows(AssertException.class, () -> Assert.isNull(new Object(), errorMsg));
+			// 验证异常消息
+			assert exception.getMessage() != null && exception.getMessage().contains(errorMsg);
+		}
+
+		// 传入非 null 对象和 null 错误信息，应抛出 AssertException
+		assertThrows(AssertException.class, () -> Assert.isNull(new Object(), (CharSequence) null));
+		// 传入 null 和错误信息 Supplier，不应抛出异常
+		assertDoesNotThrow(() -> Assert.isNull(null, errorMsgSupplier));
+		// 传入 null 和 null Supplier，不应抛出异常
+		assertDoesNotThrow(() -> Assert.isNull(null, (Supplier<CharSequence>) null));
+		{
+			// 传入非 null 对象和错误信息 Supplier，应抛出 AssertException
+			AssertException exception = assertThrows(AssertException.class, () -> Assert.isNull(new Object(), errorMsgSupplier));
+			// 验证异常消息
+			assert exception.getMessage() != null && exception.getMessage().contains(errorMsg);
+		}
+		// 传入非 null 对象和 null Supplier，应抛出 AssertException
+		assertThrows(AssertException.class, () -> Assert.isNull(new Object(), (Supplier<CharSequence>) null));
 	}
 
 	@Test
