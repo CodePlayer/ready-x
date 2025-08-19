@@ -91,9 +91,8 @@ public abstract class CollectionUtil {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static <K, V, M extends Map<K, V>> M addAll(final M map, final Object... kvPairs) {
 		checkPairs(kvPairs);
-		final Map m = map;
 		for (int i = 0; i < kvPairs.length; ) {
-			m.put(kvPairs[i++], kvPairs[i++]);
+			((Map) map).put(kvPairs[i++], kvPairs[i++]);
 		}
 		return map;
 	}
@@ -493,7 +492,7 @@ public abstract class CollectionUtil {
 		if (c == null) {
 			return null;
 		}
-		final C values = creator.apply(c.size());
+		final C values = creator.apply(allowNull ? 10 : c.size());
 		for (E t : c) {
 			R val = converter.apply(t);
 			if (allowNull || val != null) {
@@ -525,14 +524,26 @@ public abstract class CollectionUtil {
 	 */
 	@Nonnull
 	public static <K, V> Map<K, List<V>> groupBy(@Nullable final Collection<V> c, final Function<? super V, ? extends K> keyMapper) {
+		return groupBy(c, keyMapper, Function.identity());
+	}
+
+	/**
+	 * 对指定集合进行分组，这相当于
+	 * <pre><code>
+	 *  c.stream().collect(Collectors.groupingBy(keyMapper, Collectors.mapping(valueMapper, Collectors.toList())));
+	 *  </code></pre>
+	 * 但性能更优
+	 */
+	@Nonnull
+	public static <E, K, V> Map<K, List<V>> groupBy(@Nullable final Collection<E> c, final Function<? super E, ? extends K> keyMapper, final Function<? super E, ? extends V> valueMapper) {
 		final int size = c == null ? 0 : c.size();
 		if (size == 0) {
 			return new HashMap<>();
 		}
-		final Map<K, List<V>> map = size <= 16 ? new HashMap<>(size, 1F) : new HashMap<>();
-		final Function<K, List<V>> listBuilder = k -> CollectionUtil.newArrayList(size);
-		for (V t : c) {
-			map.computeIfAbsent(keyMapper.apply(t), listBuilder).add(t);
+		final Map<K, List<V>> map = newHashMap(size);
+		final Function<K, List<V>> listBuilder = k -> newArrayList(size);
+		for (E t : c) {
+			map.computeIfAbsent(keyMapper.apply(t), listBuilder).add(valueMapper.apply(t));
 		}
 		return map;
 	}
@@ -547,21 +558,15 @@ public abstract class CollectionUtil {
 	@Nonnull
 	public static <T, R> List<R> filterAndMap(@Nullable Collection<T> c, final Predicate<? super T> filter, final Function<? super T, R> mapper) {
 		final int size = c == null ? 0 : c.size();
+		final List<R> result = new ArrayList<>();
 		if (size > 0) {
-			List<R> result = null;
 			for (T t : c) {
 				if (filter.test(t)) {
-					if (result == null) {
-						result = size > 10 ? new ArrayList<>() : new ArrayList<>(size);
-					}
 					result.add(mapper.apply(t));
 				}
 			}
-			if (result != null) {
-				return result;
-			}
 		}
-		return new ArrayList<>();
+		return result;
 	}
 
 	/**
