@@ -2,8 +2,7 @@ package me.codeplayer.util;
 
 import java.lang.reflect.Array;
 import java.util.*;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.function.*;
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -483,7 +482,7 @@ public abstract class ArrayUtil {
 	/**
 	 * 将指定的集合中的元素经过 {@code mapper} 转换后，转为对应类型的数组
 	 *
-	 * @return 只有 {@code items} 是 {@code null} 时，才返回 {@code null}
+	 * @return 当前仅当 {@code items} 是 {@code null} 时，才返回 {@code null}
 	 * @since 3.0.0
 	 */
 	public static <T, R> R[] toArray(@Nullable Iterable<T> items, Class<R> type, Function<? super T, R> mapper) {
@@ -508,6 +507,49 @@ public abstract class ArrayUtil {
 	}
 
 	/**
+	 * 将指定的集合中的元素经过 {@code mapper} 转换后，转为对应类型的数组
+	 *
+	 * @return 当前仅当 {@code items} 是 {@code null} 时，才返回 {@code null}
+	 * @since 3.15.0
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T, R> R[] toArray(Class<R> type, Function<? super T, R> mapper, @Nullable T... items) {
+		if (items == null) {
+			return null;
+		}
+		final int size = items.length;
+		final R[] array = (R[]) Array.newInstance(type, size);
+		int i = 0;
+		for (T item : items) {
+			array[i++] = mapper.apply(item);
+		}
+		return array;
+	}
+
+	/**
+	 * 从数组中安全地获取指定索引的元素
+	 *
+	 * @param array 要从中获取元素的数组，可以为 null
+	 * @param index 要获取元素的索引位置
+	 * @return 如果数组不为 null 且索引有效，则返回对应位置的元素；否则返回 null
+	 */
+	public static <E> E get(@Nullable E[] array, int index) {
+		return array != null && index >= 0 && index < array.length ? array[index] : null;
+	}
+
+	/**
+	 * 从数组中安全地获取指定索引的元素
+	 *
+	 * @param array 要从中获取元素的数组，可以为 null
+	 * @param index 要获取元素的索引位置
+	 * @return 如果数组不为 null 且索引有效，则返回对应位置的元素；否则返回 null
+	 */
+	@SuppressWarnings("unchecked")
+	public static <E> E get(@Nullable Object array, int index) {
+		return array != null && index >= 0 && index < Array.getLength(array) ? (E) Array.get(array, index) : null;
+	}
+
+	/**
 	 * 快捷创建 Object 数组
 	 */
 	public static Object[] of(Object... elements) {
@@ -522,6 +564,18 @@ public abstract class ArrayUtil {
 	 * @since 2.0.0
 	 */
 	public static <E> E[] filter(final E[] array, final Predicate<? super E> matcher) {
+		return filter(matcher, array);
+	}
+
+	/**
+	 * 过滤指定的数组，获得符合条件的元素数组
+	 *
+	 * @param array 指定的数组
+	 * @param matcher 只有经过该过滤器后返回 true 的元素才符合条件
+	 * @since 3.15.0
+	 */
+	@SafeVarargs
+	public static <E> E[] filter(final Predicate<? super E> matcher, final E... array) {
 		final E[] newAarray = array.clone();
 		int count = 0;
 		for (E e : newAarray) {
@@ -530,6 +584,96 @@ public abstract class ArrayUtil {
 			}
 		}
 		return count == newAarray.length ? newAarray : Arrays.copyOf(newAarray, count);
+	}
+
+	/**
+	 * 对指定集合进行进行转换，并返回转换后的集合，这相当于
+	 * <pre><code>
+	 *  // allowNull = true
+	 *  Arrays.stream(items).map(converter).collect(Collectors.toList/toSet());
+	 *
+	 *  // allowNull = false
+	 *  Arrays.stream(items).map(converter).filter(Objects::nonNull).collect(Collectors.toList/toSet());
+	 *  </code></pre>
+	 * 但性能更优
+	 *
+	 * @return 如果 {@code c == null}，则返回 {@code null}
+	 */
+	@SafeVarargs
+	public static <E, R, C extends Collection<R>> C toCollection(IntFunction<? extends C> creator, Function<? super E, R> converter, boolean allowNull, E... items) {
+		if (items == null) {
+			return null;
+		}
+		final C values = creator.apply(allowNull ? 10 : items.length);
+		for (E t : items) {
+			R val = converter.apply(t);
+			if (allowNull || val != null) {
+				values.add(val);
+			}
+		}
+		return values;
+	}
+
+	/**
+	 * 对指定集合进行进行转换，并返回转换后的 ArrayList 集合，这相当于
+	 * <pre><code>
+	 *  // allowNull = true
+	 *  Arrays.stream(items).map(converter).collect(Collectors.toList());
+	 *
+	 *  // allowNull = false
+	 *  Arrays.stream(items).map(converter).filter(Objects::nonNull).collect(Collectors.toList());
+	 *  </code></pre>
+	 * 但性能更优
+	 *
+	 * @return 只有 {@code c == null}，才会返回 {@code null}
+	 */
+	@SafeVarargs
+	public static <E, R> ArrayList<R> toList(Function<? super E, R> converter, boolean allowNull, E... items) {
+		return toCollection(CollectionUtil::newArrayList, converter, allowNull, items);
+	}
+
+	/**
+	 * 对指定集合进行进行转换，并返回转换后的 ArrayList 集合，这相当于
+	 * <pre><code>
+	 *  Arrays.stream(items).map(converter).collect(Collectors.toList());
+	 *  </code></pre>
+	 * 但性能更优
+	 *
+	 * @return 只有 {@code c == null}，才会返回 {@code null}
+	 */
+	@SafeVarargs
+	public static <E, R> ArrayList<R> toList(Function<? super E, R> converter, E... items) {
+		return toList(converter, true, items);
+	}
+
+	/**
+	 * 对指定集合进行进行转换，并返回转换后的 HashSet 集合，这相当于
+	 * <pre><code>
+	 *  // allowNull = true
+	 *  Arrays.stream(items).map(converter).collect(Collectors.toSet());
+	 *
+	 *  // allowNull = false
+	 *  Arrays.stream(items).map(converter).filter(Objects::nonNull).collect(Collectors.toSet());
+	 *  </code></pre>
+	 * 但性能更优
+	 *
+	 * @return 只有 {@code c == null}，才会返回 {@code null}
+	 */
+	public static <E, R> HashSet<R> toSet(Function<? super E, R> converter, boolean allowNull, E... items) {
+		return toCollection(CollectionUtil::newHashSet, converter, allowNull, items);
+	}
+
+	/**
+	 * 对指定集合进行进行转换，并返回转换后的 HashSet 集合，这相当于
+	 * <pre><code>
+	 *  Arrays.stream(items).map(converter).collect(Collectors.toSet());
+	 *  </code></pre>
+	 * 但性能更优
+	 *
+	 * @return 只有 {@code c == null}，才会返回 {@code null}
+	 */
+	public static <E, R> HashSet<R> toSet(Function<? super E, R> converter, E... items) {
+		return toSet(converter, true, items);
 	}
 
 	/**
