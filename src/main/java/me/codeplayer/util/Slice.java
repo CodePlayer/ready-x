@@ -69,7 +69,7 @@ public interface Slice<E> {
 		return (String str, int start, int end) -> mapper.apply(asInteger(str, start, end));
 	}
 
-	static <R> Slice<R> mapLongtTo(Function<? super Long, R> mapper) {
+	static <R> Slice<R> mapLongTo(Function<? super Long, R> mapper) {
 		return (String str, int start, int end) -> mapper.apply(asLong(str, start, end));
 	}
 
