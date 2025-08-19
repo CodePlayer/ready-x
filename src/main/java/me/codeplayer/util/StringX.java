@@ -1582,10 +1582,10 @@ public abstract class StringX {
 	 */
 	public static int splitCount(@Nullable String values, final char sep) {
 		final int count = StringUtils.countMatches(values, sep);
-		if (count == 0 && notEmpty(values)) {
-			return count + 1;
+		if (count == 0 && isEmpty(values)) {
+			return count;
 		}
-		return count;
+		return count + 1;
 	}
 
 	/**
