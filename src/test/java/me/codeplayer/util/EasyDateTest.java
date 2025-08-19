@@ -1,6 +1,7 @@
 package me.codeplayer.util;
 
 import java.math.RoundingMode;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -671,7 +672,43 @@ public class EasyDateTest implements WithAssertions {
 		EasyDate.formatNormalTime(sb, 14, 12, 30, 15, 45, 18);
 		assertEquals("2023年10月05日 14时30分45秒", sb.toString());
 	}
-	public  void pickChars() {
-		StringBuilder sb = new StringBuilder();
+
+	@Test
+	public void setTimeZone() throws ParseException {
+		// "2025-07-16 GMT+9"  -> "2025-07-16 23:00:00 GMT+9" => [ "2025-07-15 22:00:00 GMT+8", "2025-07-16 22:00:00 GMT+8" ]
+		testForTimeZone("2025-07-16", "GMT+9");
+		System.out.println("=====================");
+		// "2025-07-16 GMT+7"  -> "2025-07-16 23:00:00 GMT+7"  =>  [ "2025-07-17 00:00:00 GMT+8", "2025-07-17 00:00:00 GMT+8" ]
+		testForTimeZone("2025-07-16", "GMT+7");
 	}
+
+	private static void testForTimeZone(String date, String byTimeZoneID) throws ParseException {
+		Locale.setDefault(Locale.ENGLISH);
+		TimeZone.setDefault(TimeZone.getTimeZone("GMT+8"));
+
+		final TimeZone timeZone = TimeZone.getTimeZone(byTimeZoneID);
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		format.setTimeZone(timeZone);
+
+		final Date baseDate = format.parse(date);
+		System.out.println(baseDate); // "2025-07-15 23:00:00 GMT+8"
+
+		{
+			GregorianCalendar calendar = new GregorianCalendar();
+			calendar.setTimeInMillis(baseDate.getTime());
+			calendar.setTimeZone(timeZone);
+			// calendar.setTime(date);
+			calendar.set(Calendar.HOUR_OF_DAY, 23);  // = "2025-07-15 23:00:00 GMT+9"
+			System.out.println(calendar.getTime());
+		}
+		// 先 setTimeZone( )，再 setTimeInMillis( )，就没问题
+		{
+			GregorianCalendar calendar = new GregorianCalendar();
+			calendar.setTimeZone(timeZone);
+			calendar.setTimeInMillis(baseDate.getTime());
+			calendar.set(Calendar.HOUR_OF_DAY, 23);  // = "2025-07-16 23:00:00 GMT+9"
+			System.out.println(calendar.getTime());
+		}
+	}
+
 }
