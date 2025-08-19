@@ -120,7 +120,7 @@ public abstract class RandomX {
 			case 1:
 				return chars[0];
 			default:
-				return chars[ThreadLocalRandom.current().nextInt(0, chars.length)];
+				return chars[nextInt(0, chars.length)];
 		}
 	}
 
@@ -145,6 +145,8 @@ public abstract class RandomX {
 	 *
 	 * @param chars 用于提供字符来源的字符数组
 	 * @param length 生成的字符串的长度。如果长度小于1，则返回空字符串
+	 * @throws NullPointerException 如果 chars 为 null
+	 * @throws IllegalArgumentException 如果 chars 为空数组
 	 */
 	public static String nextString(final char[] chars, final int length) {
 		if (length < 1) {
@@ -165,21 +167,23 @@ public abstract class RandomX {
 	/**
 	 * 随机抽取指定字符串中的字符，生成指定长度的字符串
 	 *
-	 * @param str 用于提供字符来源的字符串
+	 * @param chars 用于提供字符来源的字符串
 	 * @param length 生成的字符串的长度。如果长度小于1，则返回空字符串
+	 * @throws NullPointerException 如果 chars 为 null
+	 * @throws IllegalArgumentException 如果 chars 为空数组
 	 */
-	public static String nextString(final String str, final int length) {
+	public static String nextString(final String chars, final int length) {
 		if (length < 1) {
 			return "";
 		}
-		final int max = str.length();
+		final int max = chars.length();
 		final char[] newChars = new char[length];
 		if (max == 1) {
-			Arrays.fill(newChars, str.charAt(0));
+			Arrays.fill(newChars, chars.charAt(0));
 		} else {
 			final ThreadLocalRandom random = ThreadLocalRandom.current();
 			for (int i = 0; i < length; i++) {
-				newChars[i] = str.charAt(random.nextInt(max));
+				newChars[i] = chars.charAt(random.nextInt(max));
 			}
 		}
 		return new String(newChars);
