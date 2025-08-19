@@ -218,6 +218,33 @@
 			<properties>
 				<surefire.argline>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/sun.misc=ALL-UNNAMED</surefire.argline>
 			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.14.0</version>
+						<executions>
+							<!-- compile for Java 9+ -->
+							<execution>
+								<id>compile-java-9</id>
+								<goals>
+									<goal>compile</goal>
+								</goals>
+								<phase>compile</phase>
+								<configuration>
+									<release>9</release>
+									<debuglevel>lines,vars,source</debuglevel>
+									<compileSourceRoots>
+										<compileSourceRoot>${project.basedir}/src/main/java9</compileSourceRoot>
+									</compileSourceRoots>
+									<multiReleaseOutput>true</multiReleaseOutput>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 
 	</profiles>
