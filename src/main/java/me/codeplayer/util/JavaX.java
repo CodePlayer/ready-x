@@ -309,9 +309,9 @@ public class JavaX {
 	public static int parseJavaVersion(String javaVersionProperty) {
 		if (javaVersionProperty.startsWith("1.")) {
 			int pos = javaVersionProperty.indexOf('.', 3);
-			return Integer.parseInt(javaVersionProperty.substring(2, pos));
+			return JavaHelper.parseInt(javaVersionProperty, 2, pos);
 		}
-		return Integer.parseInt(StringUtils.substringBefore(javaVersionProperty, '.'));
+		return StringX.substringBefore(javaVersionProperty, '.', Slice::asInteger);
 	}
 
 }
