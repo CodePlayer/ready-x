@@ -510,7 +510,7 @@ public class StringXTest implements WithAssertions {
 
 	@Test
 	public void split() {
-		List<Integer> vals = StringX.split("1,2,3", ",", Integer::valueOf);
+		List<Integer> vals = StringX.split("1,22,333", ",", String::length);
 		assertThat(vals)
 				.hasSize(3)
 				.containsExactly(1, 2, 3);
