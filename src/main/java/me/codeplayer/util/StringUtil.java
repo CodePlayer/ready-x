@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 
 import me.codeplayer.util.CharConverter.CharCase;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 用于对字符串类型的数据进行常用处理操作的工具类
@@ -1531,9 +1532,11 @@ public abstract class StringUtil {
 	 * @param sep 分隔符
 	 * @param mapper 转换器
 	 * @param filter 过滤器（如果应用到对应的元素返回 false，则返回的集合中不会包含该元素 ）
+	 * @return 如果 str 为空，则返回 null
 	 */
 	public static <T> List<T> split(@Nullable final String str, final String sep, @Nullable Predicate<? super String> filter, final Function<? super String, T> mapper) {
-		if (notEmpty(str)) {
+		final int length;
+		if (str != null && (length = str.length()) > 0) {
 			final List<T> list = new ArrayList<>();
 			int pos, start = 0;
 			// ",,"
@@ -1541,8 +1544,8 @@ public abstract class StringUtil {
 				addPartToList(str, mapper, filter, list, start, pos);
 				start = pos + 1;
 			}
-			if (start <= str.length()) {
-				addPartToList(str, mapper, filter, list, start, str.length());
+			if (start <= length) {
+				addPartToList(str, mapper, filter, list, start, length);
 			}
 			return list;
 		}
@@ -1574,6 +1577,185 @@ public abstract class StringUtil {
 	 */
 	public static <T> List<T> split(final String toSplit, final String sep, final Function<String, T> mapper) {
 		return split(toSplit, sep, mapper, true);
+	}
+
+	/**
+	 * 快速统计按照指定分隔符拆分后的片段数组长度。
+	 * <p> 例如：<code> splitCount("12,34,56") == 3 </code>
+	 */
+	public static int splitCount(@Nullable String values, final char sep) {
+		final int count = StringUtils.countMatches(values, sep);
+		if (count == 0 && notEmpty(values)) {
+			return count + 1;
+		}
+		return count;
+	}
+
+	/**
+	 * 将以指定分隔字符分隔字符串，并将每个部分转换为数字
+	 */
+	public static <E> List<E> split(@Nullable final String values, final char sep, Slice<E> mapper) {
+		int length;
+		if (values != null && (length = values.length()) > 0) {
+			final List<E> list = new ArrayList<>();
+			int pos, start = 0;
+			// ",,"
+			while ((pos = values.indexOf(sep, start)) != -1) {
+				final E val = mapper.sliceAs(values, start, pos);
+				start = pos + 1;
+				if (val != null) {
+					list.add(val);
+				}
+			}
+			if (start <= length) {
+				final E val = mapper.sliceAs(values, start, length);
+				if (val != null) {
+					list.add(val);
+				}
+			}
+			return list;
+		}
+		return null;
+	}
+
+	/**
+	 * 移除指定的前缀（如果存在的话），并将剩余片段转换为指定的类型
+	 *
+	 * @see StringUtils#removeStart(String, String)
+	 */
+	public static <E> E removeStart(@Nullable String str, @Nullable String remove, Slice<E> mapper) {
+		final int length = length(str);
+		if (length == 0 || isEmpty(remove) || !str.startsWith(remove)) {
+			return mapper.sliceAs(str, 0, length);
+		}
+		return mapper.sliceAs(str, remove.length(), length);
+	}
+
+	/**
+	 * 移除指定的后缀（如果存在的话），并将剩余片段转换为指定的类型
+	 *
+	 * @see StringUtils#removeEnd(String, String)
+	 */
+	public static <E> E removeEnd(@Nullable String str, @Nullable String remove, Slice<E> mapper) {
+		final int length = length(str);
+		if (length == 0 || isEmpty(remove) || !str.endsWith(remove)) {
+			return mapper.sliceAs(str, 0, length);
+		}
+		return mapper.sliceAs(str, 0, length - remove.length());
+	}
+
+	/**
+	 * @see StringUtils#substringBefore(String, int)
+	 */
+	public static <E> E substringBefore(@Nullable String str, final int separator, Slice<E> mapper) {
+		final int length = length(str);
+		if (length > 0) {
+			final int pos = str.indexOf(separator);
+			if (pos != -1) {
+				return mapper.sliceAs(str, 0, pos);
+			}
+		}
+		return mapper.sliceAs(str, 0, length);
+	}
+
+	public static <E> E substringAfterLast(@Nullable String str, final int separator, Slice<E> mapper) {
+		final int length = length(str);
+		if (length > 0) {
+			final int pos = str.lastIndexOf(separator);
+			if (pos != -1) {
+				return mapper.sliceAs(str, pos + 1, length);
+			}
+		}
+		return mapper.sliceAs(str, 0, length);
+	}
+
+	/**
+	 * 将以指定分隔字符分隔字符串，并将每个部分转换为数字
+	 */
+	public static <E> List<E> split(@Nullable final String ids, final char sep, Function<? super String, E> mapper, boolean ignoreEmpty) {
+		if (notEmpty(ids)) {
+			final List<E> list = new ArrayList<>();
+			int pos, start = 0;
+			// ",,"
+			while ((pos = ids.indexOf(sep, start)) != -1) {
+				String part = start == pos ? "" : ids.substring(start, pos);
+				start = pos + 1;
+				if (ignoreEmpty && part.isEmpty()) {
+					continue;
+				}
+				final E val = mapper.apply(part);
+				if (val != null || !ignoreEmpty) {
+					list.add(val);
+				}
+			}
+			if (start <= ids.length()) {
+				String part = start == ids.length() ? "" : ids.substring(start);
+				if (!ignoreEmpty || notEmpty(part)) {
+					final E val = mapper.apply(part);
+					if (val != null || !ignoreEmpty) {
+						list.add(val);
+					}
+				}
+			}
+			return list;
+		}
+		return null;
+	}
+
+	/**
+	 * 将以指定分隔字符拆分字符串，并将每个部分转换为数字
+	 */
+	public static List<Long> splitAsLongList(final String ids, final char sep) {
+		return split(ids, sep, Slice::asLong);
+	}
+
+	/**
+	 * 将以指定分隔字符','分割字符串，并将每个部分转换为数字
+	 */
+	public static List<Long> splitAsLongList(final String ids) {
+		return splitAsLongList(ids, ',');
+	}
+
+	/**
+	 * 将以指定分隔字符拆分字符串，并将每个部分转换为数字
+	 */
+	public static List<Integer> splitAsIntList(final String parts, final char sep) {
+		return split(parts, sep, Slice::asInteger);
+	}
+
+	/**
+	 * 将以指定分隔字符','分隔字符串，并将每个部分转换为数字
+	 */
+	public static List<Integer> splitAsIntList(final String parts) {
+		return splitAsIntList(parts, ',');
+	}
+
+	/**
+	 * 将以指定分隔字符拆分为整数片段，并将每个部分转换为指定类型的对象
+	 */
+	public static <R> List<R> splitIntAsList(final String parts, final char sep, Function<? super Integer, R> mapper) {
+		return split(parts, sep, Slice.mapIntTo(mapper));
+	}
+
+	/**
+	 * 将以指定分隔字符拆分为整数片段，并将每个部分转换为指定类型的对象
+	 */
+	public static <R> List<R> splitLongAsList(final String parts, final char sep, Function<? super Long, R> mapper) {
+		return split(parts, sep, Slice.mapLongtTo(mapper));
+	}
+
+	/**
+	 * 将以指定分隔字符 ',' 分隔字符串，并返回拆分后的子字符串集合（子字符串为空的将会被忽略）
+	 */
+	public static List<String> splitAsStringList(@Nullable final String parts) {
+		return splitAsStringList(parts, ',');
+	}
+
+	/**
+	 * 将以指定分隔字符拆分字符串，并返回拆分后的子字符串集合（子字符串为空的将会被忽略）
+	 */
+	public static List<String> splitAsStringList(@Nullable final String parts, final char sep) {
+		return split(parts, sep, Slice::asString);
 	}
 
 	private static <T> void addPartToList(String str, Function<? super String, T> mapper, @Nullable Predicate<? super String> filter, List<T> toList, int start, int end) {
