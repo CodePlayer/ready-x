@@ -19,6 +19,7 @@
 		<java.version>1.8</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
+		<surefire.argline></surefire.argline>
 	</properties>
 
 	<dependencies>
@@ -65,7 +66,8 @@
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
-			<version>5.18.0</version>
+			<!-- 5.x requires Java 11 -->
+			<version>4.11.0</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -141,6 +143,29 @@
 
 			<build>
 				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.14.0</version>
+						<executions>
+							<!-- compile for Java 9+ -->
+							<execution>
+								<id>compile-java-9</id>
+								<goals>
+									<goal>compile</goal>
+								</goals>
+								<phase>compile</phase>
+								<configuration>
+									<release>9</release>
+									<debuglevel>lines,vars,source</debuglevel>
+									<compileSourceRoots>
+										<compileSourceRoot>${project.basedir}/src/main/java9</compileSourceRoot>
+									</compileSourceRoots>
+									<multiReleaseOutput>true</multiReleaseOutput>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
 
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
@@ -209,6 +234,43 @@
 
 		</profile>
 
+		<profile>
+			<id>jdk9above</id>
+			<activation>
+				<jdk>[9,)</jdk>
+			</activation>
+			<properties>
+				<surefire.argline>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/sun.misc=ALL-UNNAMED</surefire.argline>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.14.0</version>
+						<executions>
+							<!-- compile for Java 9+ -->
+							<execution>
+								<id>compile-java-9</id>
+								<goals>
+									<goal>compile</goal>
+								</goals>
+								<phase>compile</phase>
+								<configuration>
+									<release>9</release>
+									<debuglevel>lines,vars,source</debuglevel>
+									<compileSourceRoots>
+										<compileSourceRoot>${project.basedir}/src/main/java9</compileSourceRoot>
+									</compileSourceRoots>
+									<multiReleaseOutput>true</multiReleaseOutput>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
 	</profiles>
 
 	<build>
@@ -228,22 +290,6 @@
 							<source>1.8</source>
 							<target>1.8</target>
 							<debuglevel>lines,vars,source</debuglevel>
-						</configuration>
-					</execution>
-					<!-- compile for Java 9+ -->
-					<execution>
-						<id>compile-java-9</id>
-						<goals>
-							<goal>compile</goal>
-						</goals>
-						<phase>compile</phase>
-						<configuration>
-							<release>9</release>
-							<debuglevel>lines,vars,source</debuglevel>
-							<compileSourceRoots>
-								<compileSourceRoot>${project.basedir}/src/main/java9</compileSourceRoot>
-							</compileSourceRoots>
-							<multiReleaseOutput>true</multiReleaseOutput>
 						</configuration>
 					</execution>
 				</executions>
