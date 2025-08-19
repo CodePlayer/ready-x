@@ -1051,8 +1051,10 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * @since 3.0.0
 	 */
 	public EasyDate setTimeZone(TimeZone timeZone) {
-		calendar.getTimeInMillis(); // 强迫更新时间，否则之前的时区设置可能不生效
+		// 目前 JDK 在特殊场景下，存在时间计算错误，示例请参阅 me.codeplayer.util.EasyDateTest.testForTimeZone
+		final long time = calendar.getTimeInMillis(); // 强迫更新时间，否则之前的时区设置可能不生效
 		calendar.setTimeZone(timeZone);
+		calendar.setTimeInMillis(time);
 		return this;
 	}
 

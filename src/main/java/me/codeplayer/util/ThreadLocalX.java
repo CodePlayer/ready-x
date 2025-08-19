@@ -1,6 +1,7 @@
 package me.codeplayer.util;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 提供基于线程的局部缓存工具类，内部采用HashMap实现
@@ -8,7 +9,7 @@ import java.util.*;
  * @author Ready
  * @since 2014-10-23
  */
-public abstract class ThreadLocalUtil {
+public abstract class ThreadLocalX {
 
 	private static final ThreadLocal<Map<Object, Object>> LOCAL_CACHE = new ThreadLocal<>();
 

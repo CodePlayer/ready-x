@@ -18,10 +18,10 @@ public abstract class X {
 	/**
 	 * 判断指定的字符串是否为空<br>
 	 * 如果字符串为null、空字符串,则返回true<br>
-	 * <b>注意：</b>本方法不会去除字符串两边的空格，如果想去除字符串两边的空格后再进行判断，可以使用isBlank()方法
+	 * <b>注意：</b>本方法不会去除字符串两边的空格，如果想去除字符串两边的空格后再进行判断，可以使用 {@link #isBlank(CharSequence)} 方法
 	 */
 	public static boolean isEmpty(CharSequence str) {
-		return StringUtil.isEmpty(str); // 后面的表达式相当于"".equals(str)，但比其性能稍好
+		return StringUtil.isEmpty(str);
 	}
 
 	/**
