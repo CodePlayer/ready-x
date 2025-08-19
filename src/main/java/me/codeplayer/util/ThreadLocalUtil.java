@@ -9,7 +9,7 @@ import java.util.Map;
  * @author Ready
  * @since 2014-10-23
  */
-public abstract class ThreadLocalX {
+public abstract class ThreadLocalUtil {
 
 	private static final ThreadLocal<Map<Object, Object>> LOCAL_CACHE = new ThreadLocal<>();
 

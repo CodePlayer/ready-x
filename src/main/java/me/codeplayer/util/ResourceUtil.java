@@ -7,7 +7,7 @@ package me.codeplayer.util;
  * @since 2019年4月16日
  * @since 1.0
  */
-public abstract class ResourceX {
+public abstract class ResourceUtil {
 
 	/**
 	 * 解析指定资源路径的定位方式
