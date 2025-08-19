@@ -26,6 +26,7 @@ public abstract class Assert {
 	 * 如果断言失败则抛出异常
 	 *
 	 * @param expression boolean表达式
+	 * @throws AssertException 如果断言失败
 	 */
 	public static void isTrue(final boolean expression) {
 		if (!expression) {
@@ -39,6 +40,7 @@ public abstract class Assert {
 	 *
 	 * @param expression boolean表达式
 	 * @param errorMsg 异常消息内容
+	 * @throws AssertException 如果断言失败
 	 */
 	public static void isTrue(final boolean expression, final @Nullable CharSequence errorMsg) {
 		if (!expression) {
@@ -52,6 +54,7 @@ public abstract class Assert {
 	 *
 	 * @param expression boolean表达式
 	 * @param msger 异常消息内容
+	 * @throws AssertException 如果断言失败
 	 */
 	public static void isTrue(final boolean expression, final @Nullable Supplier<? extends CharSequence> msger) {
 		if (!expression) {
@@ -64,6 +67,7 @@ public abstract class Assert {
 	 * 如果断言失败则抛出异常
 	 *
 	 * @param expression boolean表达式
+	 * @throws IllegalStateException 如果断言失败
 	 */
 	public static void state(final boolean expression) {
 		if (!expression) {
@@ -77,6 +81,7 @@ public abstract class Assert {
 	 *
 	 * @param expression boolean表达式
 	 * @param errorMsg 异常消息内容
+	 * @throws IllegalStateException 如果断言失败
 	 */
 	public static void state(final boolean expression, final @Nullable CharSequence errorMsg) {
 		if (!expression) {
@@ -90,6 +95,7 @@ public abstract class Assert {
 	 *
 	 * @param expression boolean表达式
 	 * @param msger 异常消息内容
+	 * @throws IllegalStateException 如果断言失败
 	 */
 	public static void state(final boolean expression, final @Nullable Supplier<? extends CharSequence> msger) {
 		if (!expression) {
@@ -102,6 +108,7 @@ public abstract class Assert {
 	 * 如果断言失败则抛出异常
 	 *
 	 * @param expression boolean表达式
+	 * @throws AssertException 如果断言失败
 	 */
 	public static void isFalse(final boolean expression) {
 		isTrue(!expression);
@@ -113,6 +120,7 @@ public abstract class Assert {
 	 *
 	 * @param expression boolean表达式
 	 * @param errorMsg 异常消息内容
+	 * @throws AssertException 如果断言失败
 	 */
 	public static void isFalse(final boolean expression, final @Nullable CharSequence errorMsg) {
 		isTrue(!expression, errorMsg);
@@ -124,9 +132,45 @@ public abstract class Assert {
 	 *
 	 * @param expression boolean表达式
 	 * @param msger 异常消息内容
+	 * @throws AssertException 如果断言失败
 	 */
 	public static void isFalse(boolean expression, final @Nullable Supplier<? extends CharSequence> msger) {
 		isTrue(!expression, msger);
+	}
+
+	/**
+	 * 断言指定对象为 null<br>
+	 * 如果断言失败则抛出异常
+	 *
+	 * @param object 指定对象
+	 * @throws AssertException 如果断言失败
+	 */
+	public static void isNull(Object object) {
+		isTrue(object == null);
+	}
+
+	/**
+	 * 断言指定对象为 null<br>
+	 * 如果断言失败则抛出异常
+	 *
+	 * @param object 指定对象
+	 * @param errorMsg 异常消息内容
+	 * @throws AssertException 如果断言失败
+	 */
+	public static void isNull(@Nullable Object object, @Nullable CharSequence errorMsg) {
+		isTrue(object == null, errorMsg);
+	}
+
+	/**
+	 * 断言指定对象为 null<br>
+	 * 如果断言失败则抛出异常
+	 *
+	 * @param object 指定对象
+	 * @param errorMsg 异常消息内容
+	 * @throws AssertException 如果断言失败
+	 */
+	public static void isNull(@Nullable Object object, @Nullable Supplier<? extends CharSequence> errorMsg) {
+		isTrue(object == null, errorMsg);
 	}
 
 	/**
@@ -134,6 +178,7 @@ public abstract class Assert {
 	 * 如果断言失败则抛出异常
 	 *
 	 * @param object 指定对象
+	 * @throws NullPointerException 如果对象为 null
 	 */
 	@Nonnull
 	public static <T> T notNull(@Nullable T object) throws NullPointerException {
@@ -149,6 +194,7 @@ public abstract class Assert {
 	 *
 	 * @param obj 指定对象
 	 * @param errorMsg 异常消息内容
+	 * @throws NullPointerException 如果对象为 null
 	 */
 	@Nonnull
 	public static <T> T notNull(final @Nullable T obj, final @Nullable CharSequence errorMsg) throws NullPointerException {
@@ -164,6 +210,7 @@ public abstract class Assert {
 	 *
 	 * @param obj 指定对象
 	 * @param msger 异常消息内容
+	 * @throws NullPointerException 如果对象为 null
 	 */
 	@Nonnull
 	public static <T> T notNull(final @Nullable T obj, final @Nullable Supplier<? extends CharSequence> msger) throws NullPointerException {
@@ -178,6 +225,7 @@ public abstract class Assert {
 	 * 如果断言失败则抛出异常
 	 *
 	 * @param str 指定字符串
+	 * @throws AssertException 如果断言失败
 	 */
 	public static void isEmpty(final @Nullable CharSequence str) {
 		isTrue(StringX.isEmpty(str));
@@ -189,6 +237,7 @@ public abstract class Assert {
 	 *
 	 * @param str 指定字符串
 	 * @param errorMsg 异常消息内容
+	 * @throws AssertException 如果断言失败
 	 */
 	public static void isEmpty(final @Nullable CharSequence str, final @Nullable CharSequence errorMsg) {
 		isTrue(StringX.isEmpty(str), errorMsg);
@@ -200,6 +249,7 @@ public abstract class Assert {
 	 *
 	 * @param str 指定字符串
 	 * @param errorMsger 异常消息内容
+	 * @throws AssertException 如果断言失败
 	 */
 	public static void isEmpty(final @Nullable CharSequence str, final @Nullable Supplier<? extends CharSequence> errorMsger) {
 		isTrue(StringX.isEmpty(str), errorMsger);
@@ -210,6 +260,7 @@ public abstract class Assert {
 	 * 如果断言失败则抛出异常
 	 *
 	 * @param str 指定字符串
+	 * @throws AssertException 如果断言失败
 	 * @see StringX#notEmpty(CharSequence)
 	 */
 	@Nonnull
@@ -224,6 +275,7 @@ public abstract class Assert {
 	 *
 	 * @param str 指定字符串
 	 * @param errorMsg 异常消息内容
+	 * @throws AssertException 如果断言失败
 	 * @see StringX#notEmpty(CharSequence)
 	 */
 	public static <T extends CharSequence> T notEmpty(@Nullable T str, final @Nullable CharSequence errorMsg) {
@@ -237,6 +289,7 @@ public abstract class Assert {
 	 *
 	 * @param str 指定字符串
 	 * @param errorMsg 异常消息内容
+	 * @throws AssertException 如果断言失败
 	 * @see StringX#notEmpty(CharSequence)
 	 */
 	public static <T extends CharSequence> T notEmpty(@Nullable T str, final @Nullable Supplier<? extends CharSequence> errorMsg) {
@@ -251,6 +304,7 @@ public abstract class Assert {
 	 * 2.其他对象==null
 	 *
 	 * @param obj 指定对象
+	 * @throws AssertException 如果断言失败
 	 * @see StringX#notBlank(CharSequence)
 	 */
 	@Nonnull
@@ -267,6 +321,7 @@ public abstract class Assert {
 	 *
 	 * @param cs 指定对象
 	 * @param errorMsg 异常消息内容
+	 * @throws AssertException 如果断言失败
 	 * @see StringX#notBlank(CharSequence)
 	 */
 	@Nonnull
@@ -283,6 +338,7 @@ public abstract class Assert {
 	 *
 	 * @param cs 指定对象
 	 * @param errorMsger 异常消息内容
+	 * @throws AssertException 如果断言失败
 	 * @see StringX#notBlank(CharSequence)
 	 */
 	@Nonnull
