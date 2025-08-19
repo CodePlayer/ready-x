@@ -114,4 +114,20 @@ public abstract class EnumX {
 		return null;
 	}
 
+	/**
+	 * 返回指定枚举数组中查找其属性为指定值的枚举，如果找不到则返回 null
+	 */
+	@SafeVarargs
+	@Nullable
+	public static <E extends Enum<?>, V> E valueOf(Function<? super E, V> propertyGetter, @Nullable V value, E... range) {
+		if (value != null) {
+			for (E e : range) {
+				if (value.equals(propertyGetter.apply(e))) {
+					return e;
+				}
+			}
+		}
+		return null;
+	}
+
 }
