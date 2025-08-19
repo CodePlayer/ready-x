@@ -14,9 +14,6 @@ import javax.annotation.Nullable;
  */
 public abstract class NumberX {
 
-	static final Function<String, Integer> string2Integer = Integer::valueOf;
-	static final Function<String, Long> string2Long = Long::valueOf;
-
 	/**
 	 * 以 byte 形式返回指定的值
 	 *
@@ -140,7 +137,7 @@ public abstract class NumberX {
 		} else if (value instanceof Number) {
 			return ((Number) value).intValue();
 		}
-		return castString2Number(value, string2Integer, defaultIfEmpty);
+		return castString2Number(value, Integer::valueOf, defaultIfEmpty);
 	}
 
 	/**
@@ -195,7 +192,7 @@ public abstract class NumberX {
 		} else if (value instanceof Number) {
 			return ((Number) value).longValue();
 		}
-		return castString2Number(value, string2Long, defaultIfEmpty);
+		return castString2Number(value, Long::valueOf, defaultIfEmpty);
 	}
 
 	/**
