@@ -18,10 +18,10 @@ public abstract class X {
 	/**
 	 * 判断指定的字符串是否为空<br>
 	 * 如果字符串为null、空字符串,则返回true<br>
-	 * <b>注意：</b>本方法不会去除字符串两边的空格，如果想去除字符串两边的空格后再进行判断，可以使用isBlank()方法
+	 * <b>注意：</b>本方法不会去除字符串两边的空格，如果想去除字符串两边的空格后再进行判断，可以使用 {@link #isBlank(CharSequence)} 方法
 	 */
 	public static boolean isEmpty(@Nullable CharSequence str) {
-		return StringX.isEmpty(str); // 后面的表达式相当于"".equals(str)，但比其性能稍好
+		return StringX.isEmpty(str);
 	}
 
 	/**
@@ -34,7 +34,7 @@ public abstract class X {
 	}
 
 	/**
-	 * 从指定的多个值依次检测并选取第一个不为null的值
+	 * 从指定的多个值依次检测并选取第一个不为 null 的值
 	 */
 	public static <T> T expectNotNull(T v1, T v2, T v3, T v4) {
 		if (v1 != null) {
