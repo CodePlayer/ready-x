@@ -291,6 +291,12 @@
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.8.12</version>
+				<configuration>
+					<excludes>
+						<!-- 排除所有 Multi-Release JAR 版本目录 -->
+						<exclude>META-INF/versions/**</exclude>
+					</excludes>
+				</configuration>
 				<executions>
 					<execution>
 						<id>prepare-agent</id>
