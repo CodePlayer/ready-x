@@ -256,7 +256,7 @@ public class RandomUtilTest implements WithAssertions {
 
 	@Test
 	public void getStringFromNullString() {
-		assertThrows(IllegalArgumentException.class, () -> RandomUtil.getString((String) null, 5));
+		assertThrows(NullPointerException.class, () -> RandomUtil.getString((String) null, 5));
 	}
 
 	@Test

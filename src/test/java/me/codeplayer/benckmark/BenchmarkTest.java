@@ -3,7 +3,7 @@ package me.codeplayer.benckmark;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Nullable;
 
-import me.codeplayer.util.NumberX;
+import me.codeplayer.util.NumberUtil;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.results.format.ResultFormatType;
 import org.openjdk.jmh.runner.Runner;
@@ -45,7 +45,7 @@ public class BenchmarkTest {
 	@Benchmark
 	public Integer getInteger() {
 		String str = "123456";
-		return NumberX.getInteger(str, null);
+		return NumberUtil.getInteger(str, null);
 	}
 
 	@Benchmark

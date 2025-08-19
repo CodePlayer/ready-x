@@ -124,7 +124,7 @@ public class EncrypterTest {
 
 	@Test
 	public void bytes2Hex_WithStartEndAndDigits_ShouldReturnCorrectHex() {
-		String result = Encrypter.bytes2Hex(new byte[] { 1, 2, 3, 4 }, 1, 3, StringX.digits);
+		String result = Encrypter.bytes2Hex(new byte[] { 1, 2, 3, 4 }, 1, 3, StringUtil.digits);
 		assertEquals("0203", result);
 	}
 

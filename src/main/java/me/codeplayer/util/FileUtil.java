@@ -167,7 +167,7 @@ public abstract class FileUtil {
 		String destFileName = fileName + suffix;
 		File file = new File(path, destFileName);
 		while (file.exists()) {
-			destFileName = fileName + '-' + RandomX.getIntString(4) + suffix;
+			destFileName = fileName + '-' + RandomUtil.getIntString(4) + suffix;
 			file = new File(path, destFileName);
 		}
 		return file;

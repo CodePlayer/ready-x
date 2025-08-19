@@ -213,8 +213,8 @@ public abstract class RandomUtil {
 		if (length < 1) {
 			return "";
 		}
-		final char[] newChars = new char[length];
 		final int max = str.length();
+		final char[] newChars = new char[length];
 		if (max == 1) {
 			Arrays.fill(newChars, str.charAt(0));
 		} else {

@@ -29,7 +29,7 @@ public interface Validators {
 	 * assert group
 	 */
 	Predicate<Object> assertIsNull = Objects::isNull;
-	Predicate<Object> assertNotNull = FunctionX.nonNull();
+	Predicate<Object> assertNotNull = Objects::nonNull;
 	Predicate<Object> assertNotEmpty = StringUtil::notEmpty;
 	Predicate<Object> assertNotBlank = StringUtil::notBlank;
 	Predicate<Object> assertIsNumber = NumberUtil::isNumber;
