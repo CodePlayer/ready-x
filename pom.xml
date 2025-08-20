@@ -65,8 +65,15 @@
 
 		<dependency>
 			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<!-- 5.x requires Java 11 -->
+			<artifactId>mockito-inline</artifactId>
+			<!-- 5.x merged into mockito-core, requires Java 11 -->
+			<version>4.11.0</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-junit-jupiter</artifactId>
 			<version>4.11.0</version>
 			<scope>test</scope>
 		</dependency>
