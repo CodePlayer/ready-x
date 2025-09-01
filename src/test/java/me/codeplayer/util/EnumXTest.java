@@ -9,12 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class EnumXTest {
 
-	private enum TestEnum {
-		VALUE1,
-		VALUE2,
-		VALUE3
-	}
-
 	@Test
 	public void of_ValidName_ReturnsEnumValue() {
 		TestEnum result = EnumX.of(TestEnum.class, "VALUE1", TestEnum.VALUE3);

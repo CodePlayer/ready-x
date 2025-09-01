@@ -4,7 +4,6 @@ import java.lang.invoke.*;
 import java.lang.reflect.Field;
 import java.util.function.*;
 
-import org.apache.commons.lang3.StringUtils;
 import sun.misc.Unsafe;
 
 import static java.lang.invoke.MethodType.methodType;
