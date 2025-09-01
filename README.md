@@ -161,6 +161,45 @@ Lambda（或 Stream API） 虽然好用，但是也要保持**适当**的理性�
 
 在日常开发中，使用预先封装的工具方法来替代大部分 Lambda，我们也可以实现相同甚至更少的代码量，并且还能获得相对更好的性能。
 
+```java
+public Map<Long, User> toHashMap1(List<User> userList) {
+    return userList.stream().collect(Collectors.toMap(User::getId, Function.identity()));
+}
+
+// 使用封装好的工具方法，不仅代码更简短，在常规使用下还能获得更好的性能
+public Map<Long, User> toHashMap2(List<User> userList) {
+    return CollectionX.toHashMap(userList, User::getId);
+}
+
+
+public List<Long> toUserIdList1(List<User> userList) {
+	return userList.stream().map(User::getId).collect(Collectors.toList());
+}
+
+// 使用封装好的工具方法，不仅代码更简短，在常规使用下还能获得更好的性能
+public List<Long> toUserIdList2(List<User> userList) {
+	return CollectionX.toList(userList, User::getId);
+}
+
+public List<User> filterVIP1(List<User> userList) {
+	return userList.stream().filter(User::isVIP).collect(Collectors.toList());
+}
+
+// 使用封装好的工具方法，不仅代码更简短，在常规使用下还能获得更好的性能
+public List<User> filterVIP2(List<User> userList) {
+    return CollectionUtil.filter(userList, User::isVIP);
+}
+		
+public User findFirstVIP1(List<User> userList) {
+	return userList.stream().filter(User::isVIP).findFirst().orElse(null);
+}
+
+// 使用封装好的工具方法，不仅代码更简短，在常规使用下还能获得更好的性能
+public User findFirstVIP2(List<User> userList) {
+	return CollectionUtil.findFirst(userList, User::isVIP);
+}
+```
+
 ### 4、追求 80+% 的测试覆盖率
 
 1. 不断完善测试用例，努力争取所有分支代码均被覆盖；
