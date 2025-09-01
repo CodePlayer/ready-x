@@ -76,13 +76,6 @@ public static String joinIds(List<User> list) {
 }
 ```
 
-此外，Ready-X **已支持 Java 9+ 的 多版本 JAR 文件机制**（详情参见 [JEP 238: Multi-Release JAR Files]( https://openjdk.org/jeps/238)），如果使用 JDK 9+，Ready-X 会自动利用部分新版 API 来提升性能。
-
-例如，当您编写代码 `List<Integer> ids = StringX.splitAsIntList("123,450,781", ',');` 时：
-
-- 在 Java 8 场景下，一般需要先 `String.substring()` 再 `Integer.valueOf()`。
-- 在 Java 9+ 版本场景下，Ready-X 会自动利用 [新增API](https://docs.oracle.com/javase/9/docs/api/java/lang/Integer.html#parseInt-java.lang.CharSequence-int-int-int-) `java.lang.Integer.parseInt(java.lang.CharSequence, int, int, int)`，以避免 `String.substring()` 每次都要生成新的中间字符串的开销。
-
 **示例二：将 List<User> 转为 Map<Integer, User>**（key是用户ID）
 
 ```java
@@ -144,6 +137,13 @@ public boolean contains(String segments, String part) {
   return StringX.containsWord(segments, part, ",");
 }
 ```
+
+此外，Ready-X **已支持 Java 9+ 的 多版本 JAR 文件机制**（详情参见 [JEP 238: Multi-Release JAR Files]( https://openjdk.org/jeps/238)），如果使用 JDK 9+，Ready-X 会自动利用部分新版 API 来提升性能。
+
+例如，当您编写代码 `List<Integer> ids = StringX.splitAsIntList("123,450,781", ',');` 时：
+
+- 在 Java 8 场景下，一般需要先 `String.substring()` 再 `Integer.valueOf()`。
+- 在 Java 9+ 版本场景下，Ready-X 会自动利用 [新增API](https://docs.oracle.com/javase/9/docs/api/java/lang/Integer.html#parseInt-java.lang.CharSequence-int-int-int-) `java.lang.Integer.parseInt(java.lang.CharSequence, int, int, int)`，以避免 `String.substring()` 每次都要生成新的中间字符串的开销。
 
 ### 3、对 Lambda 的使用保持理性和克制
 
