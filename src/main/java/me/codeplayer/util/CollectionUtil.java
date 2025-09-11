@@ -51,7 +51,7 @@ public abstract class CollectionUtil {
 	}
 
 	/**
-	 * 将可变参数形式的键值数组添加到一个 Map 集合中
+	 * 将可变参数形式的键值数组添加到一个 Collection 集合中
 	 *
 	 * @param target 指定的 Collection 集合
 	 * @param filter 如果指定了该数组元素过滤器，则只有过滤结果为 true 的才会被添加
@@ -72,7 +72,7 @@ public abstract class CollectionUtil {
 	}
 
 	/**
-	 * 将可变参数形式的键值数组添加到一个Map集合中
+	 * 将可变参数形式的键值数组添加到一个 Collection 集合中
 	 *
 	 * @param target 指定的 Collection 集合
 	 * @param elements 可变参数形式的元素数组
@@ -83,17 +83,183 @@ public abstract class CollectionUtil {
 	}
 
 	/**
+	 * 将指定的元素添加到一个 Collection 集合中
+	 *
+	 * @param target 指定的 Collection 集合
+	 */
+	public static <E, S extends Collection<E>> S addAll(S target, E e1) {
+		target.add(e1);
+		return target;
+	}
+
+	/**
+	 * 将指定的元素添加到一个 Collection 集合中
+	 *
+	 * @param target 指定的 Collection 集合
+	 */
+	public static <E, S extends Collection<E>> S addAll(S target, E e1, E e2) {
+		target.add(e1);
+		target.add(e2);
+		return target;
+	}
+
+	/**
+	 * 将指定的元素添加到一个 Collection 集合中
+	 *
+	 * @param target 指定的 Collection 集合
+	 */
+	public static <E, S extends Collection<E>> S addAll(S target, E e1, E e2, E e3) {
+		target.add(e1);
+		target.add(e2);
+		target.add(e3);
+		return target;
+	}
+
+	/**
+	 * 将指定的元素添加到一个 Collection 集合中
+	 *
+	 * @param target 指定的 Collection 集合
+	 */
+	public static <E, S extends Collection<E>> S addAll(S target, E e1, E e2, E e3, E e4) {
+		target.add(e1);
+		target.add(e2);
+		target.add(e3);
+		target.add(e4);
+		return target;
+	}
+
+	/**
+	 * 将指定的元素添加到一个 Collection 集合中
+	 *
+	 * @param target 指定的 Collection 集合
+	 */
+	public static <E, S extends Collection<E>> S addAll(S target, E e1, E e2, E e3, E e4, E e5) {
+		target.add(e1);
+		target.add(e2);
+		target.add(e3);
+		target.add(e4);
+		target.add(e5);
+		return target;
+	}
+
+	/**
+	 * 将指定的元素添加到一个 Collection 集合中
+	 *
+	 * @param target 指定的 Collection 集合
+	 */
+	public static <E, S extends Collection<E>> S addAll(S target, E e1, E e2, E e3, E e4, E e5, E e6) {
+		target.add(e1);
+		target.add(e2);
+		target.add(e3);
+		target.add(e4);
+		target.add(e5);
+		target.add(e6);
+		return target;
+	}
+
+	/**
 	 * 将可变参数形式的键值数组添加到一个 Map 集合中
 	 *
 	 * @param map 指定的Map集合
 	 * @param kvPairs 可变参数形式的键值数组，必须是K1, V1, K2, V2, K3, V3...这种形式
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static <K, V, M extends Map<K, V>> M addAll(final M map, final Object... kvPairs) {
+	public static <K, V, M extends Map<K, V>> M putAllRaw(final M map, final Object... kvPairs) {
 		checkPairs(kvPairs);
+		putPair(map, kvPairs);
+		return map;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	static void putPair(Map map, Object[] kvPairs) {
 		for (int i = 0; i < kvPairs.length; ) {
-			((Map) map).put(kvPairs[i++], kvPairs[i++]);
+			map.put(kvPairs[i++], kvPairs[i++]);
 		}
+	}
+
+	/**
+	 * 将指定的键值对添加到 Map 集合中
+	 *
+	 * @param map 待添加的目标 Map 集合
+	 */
+	public static <K, V, M extends Map<K, V>> M putAll(final M map, K k1, V v1) {
+		map.put(k1, v1);
+		return map;
+	}
+
+	/**
+	 * 将指定的键值对添加到 Map 集合中
+	 *
+	 * @param map 待添加的目标 Map 集合
+	 */
+	public static <K, V, M extends Map<K, V>> M putAll(final M map, K k1, V v1, K k2, V v2) {
+		map.put(k1, v1);
+		map.put(k2, v2);
+		return map;
+	}
+
+	/**
+	 * 将指定的键值对添加到 Map 集合中
+	 *
+	 * @param map 待添加的目标 Map 集合
+	 */
+	public static <K, V, M extends Map<K, V>> M putAll(final M map, K k1, V v1, K k2, V v2, K k3, V v3) {
+		map.put(k1, v1);
+		map.put(k2, v2);
+		map.put(k3, v3);
+		return map;
+	}
+
+	/**
+	 * 将指定的键值对添加到 Map 集合中
+	 *
+	 * @param map 待添加的目标 Map 集合
+	 */
+	public static <K, V, M extends Map<K, V>> M putAll(final M map, K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4) {
+		map.put(k1, v1);
+		map.put(k2, v2);
+		map.put(k3, v3);
+		map.put(k4, v4);
+		return map;
+	}
+
+	/**
+	 * 将指定的键值对添加到 Map 集合中
+	 *
+	 * @param map 待添加的目标 Map 集合
+	 */
+	public static <K, V, M extends Map<K, V>> M putAll(final M map, K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5) {
+		map.put(k1, v1);
+		map.put(k2, v2);
+		map.put(k3, v3);
+		map.put(k4, v4);
+		map.put(k5, v5);
+		return map;
+	}
+
+	/**
+	 * 将指定的键值对添加到 Map 集合中
+	 *
+	 * @param map 待添加的目标 Map 集合
+	 */
+	public static <K, V, M extends Map<K, V>> M putAll(final M map, K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6) {
+		map.put(k1, v1);
+		map.put(k2, v2);
+		map.put(k3, v3);
+		map.put(k4, v4);
+		map.put(k5, v5);
+		map.put(k6, v6);
+		return map;
+	}
+
+	/**
+	 * 将指定的键值对添加到 Map 集合中
+	 *
+	 * @param map 待添加的目标 Map 集合
+	 */
+	public static <K, V, M extends Map<K, V>> M putAll(final M map, K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6, Object... kvPairs) {
+		checkPairs(kvPairs);
+		putAll(map, k1, v1, k2, v2, k3, v3, k4, v4, k5, v5, k6, v6);
+		putPair(map, kvPairs);
 		return map;
 	}
 
@@ -136,6 +302,48 @@ public abstract class CollectionUtil {
 	}
 
 	/**
+	 * 根据指定的参数构造一个 HashSet 集合
+	 */
+	public static <E> HashSet<E> asHashSet(E e1) {
+		return addAll(new HashSet<>(1, 1F), e1);
+	}
+
+	/**
+	 * 根据指定的参数构造一个 HashSet 集合
+	 */
+	public static <E> HashSet<E> asHashSet(E e1, E e2) {
+		return addAll(new HashSet<>(2, 1F), e1, e2);
+	}
+
+	/**
+	 * 根据指定的参数构造一个 HashSet 集合
+	 */
+	public static <E> HashSet<E> asHashSet(E e1, E e2, E e3) {
+		return addAll(new HashSet<>(4, 1F), e1, e2, e3);
+	}
+
+	/**
+	 * 根据指定的参数构造一个 HashSet 集合
+	 */
+	public static <E> HashSet<E> asHashSet(E e1, E e2, E e3, E e4) {
+		return addAll(new HashSet<>(4, 1F), e1, e2, e3, e4);
+	}
+
+	/**
+	 * 根据指定的参数构造一个 HashSet 集合
+	 */
+	public static <E> HashSet<E> asHashSet(E e1, E e2, E e3, E e4, E e5) {
+		return addAll(new HashSet<>(8, 1F), e1, e2, e3, e4, e5);
+	}
+
+	/**
+	 * 根据指定的参数构造一个 HashSet 集合
+	 */
+	public static <E> HashSet<E> asHashSet(E e1, E e2, E e3, E e4, E e5, E e6) {
+		return addAll(new HashSet<>(8, 1F), e1, e2, e3, e4, e5, e6);
+	}
+
+	/**
 	 * 根据可变参数形式的键值数组构造一个 HashSet 集合
 	 *
 	 * @param elements 可变参数形式的元素数组
@@ -148,6 +356,48 @@ public abstract class CollectionUtil {
 	}
 
 	/**
+	 * 根据指定的参数构造一个 LinkedHashSet 集合
+	 */
+	public static <E> LinkedHashSet<E> asLinkedHashSet(E e1) {
+		return addAll(new LinkedHashSet<>(1, 1F), e1);
+	}
+
+	/**
+	 * 根据指定的参数构造一个 LinkedHashSet 集合
+	 */
+	public static <E> LinkedHashSet<E> asLinkedHashSet(E e1, E e2) {
+		return addAll(new LinkedHashSet<>(2, 1F), e1, e2);
+	}
+
+	/**
+	 * 根据指定的参数构造一个 LinkedHashSet 集合
+	 */
+	public static <E> LinkedHashSet<E> asLinkedHashSet(E e1, E e2, E e3) {
+		return addAll(new LinkedHashSet<>(4, 1F), e1, e2, e3);
+	}
+
+	/**
+	 * 根据指定的参数构造一个 LinkedHashSet 集合
+	 */
+	public static <E> LinkedHashSet<E> asLinkedHashSet(E e1, E e2, E e3, E e4) {
+		return addAll(new LinkedHashSet<>(4, 1F), e1, e2, e3, e4);
+	}
+
+	/**
+	 * 根据指定的参数构造一个 LinkedHashSet 集合
+	 */
+	public static <E> LinkedHashSet<E> asLinkedHashSet(E e1, E e2, E e3, E e4, E e5) {
+		return addAll(new LinkedHashSet<>(8, 1F), e1, e2, e3, e4, e5);
+	}
+
+	/**
+	 * 根据指定的参数构造一个 LinkedHashSet 集合
+	 */
+	public static <E> LinkedHashSet<E> asLinkedHashSet(E e1, E e2, E e3, E e4, E e5, E e6) {
+		return addAll(new LinkedHashSet<>(8, 1F), e1, e2, e3, e4, e5, e6);
+	}
+
+	/**
 	 * 根据可变参数形式的键值数组构造一个 ArrayList 集合
 	 *
 	 * @param elements 可变参数形式的元素数组
@@ -157,6 +407,48 @@ public abstract class CollectionUtil {
 		final ArrayList<E> list = newArrayList(elements.length);
 		Collections.addAll(list, elements);
 		return list;
+	}
+
+	/**
+	 * 根据指定的元素构造一个 ArrayList 集合
+	 */
+	public static <E> ArrayList<E> asArrayList(E e1) {
+		return addAll(new ArrayList<>(1), e1);
+	}
+
+	/**
+	 * 根据指定的元素构造一个 ArrayList 集合
+	 */
+	public static <E> ArrayList<E> asArrayList(E e1, E e2) {
+		return addAll(new ArrayList<>(2), e1, e2);
+	}
+
+	/**
+	 * 根据指定的元素构造一个 ArrayList 集合
+	 */
+	public static <E> ArrayList<E> asArrayList(E e1, E e2, E e3) {
+		return addAll(new ArrayList<>(3), e1, e2, e3);
+	}
+
+	/**
+	 * 根据指定的元素构造一个 ArrayList 集合
+	 */
+	public static <E> ArrayList<E> asArrayList(E e1, E e2, E e3, E e4) {
+		return addAll(new ArrayList<>(4), e1, e2, e3, e4);
+	}
+
+	/**
+	 * 根据指定的元素构造一个 ArrayList 集合
+	 */
+	public static <E> ArrayList<E> asArrayList(E e1, E e2, E e3, E e4, E e5) {
+		return addAll(new ArrayList<>(5), e1, e2, e3, e4, e5);
+	}
+
+	/**
+	 * 根据指定的元素构造一个 ArrayList 集合
+	 */
+	public static <E> ArrayList<E> asArrayList(E e1, E e2, E e3, E e4, E e5, E e6) {
+		return addAll(new ArrayList<>(6), e1, e2, e3, e4, e5, e6);
 	}
 
 	/**
@@ -187,7 +479,7 @@ public abstract class CollectionUtil {
 	 */
 	public static <K, V, M extends Map<K, V>> M toMap(IntFunction<M> newMap, Object... elements) {
 		M map = newMap.apply(mapInitialCapacity(elements.length));
-		addAll(map, elements);
+		putAllRaw(map, elements);
 		return map;
 	}
 
@@ -196,10 +488,62 @@ public abstract class CollectionUtil {
 	 *
 	 * @param elements 可变参数形式的元素数组
 	 */
-	public static <K, V> HashMap<K, V> asHashMap(Object... elements) {
+	public static <K, V> HashMap<K, V> asRawHashMap(Object... elements) {
 		checkPairs(elements);
 		final HashMap<K, V> map = newHashMap(elements.length >> 1);
-		addAll(map, elements);
+		putAllRaw(map, elements);
+		return map;
+	}
+
+	/**
+	 * 根据指定键值对构造一个 HashMap 集合
+	 */
+	public static <K, V> HashMap<K, V> asHashMap(K k1, V v1) {
+		return putAll(new HashMap<>(1, 1F), k1, v1);
+	}
+
+	/**
+	 * 根据指定的键值对构造一个 HashMap 集合
+	 */
+	public static <K, V> HashMap<K, V> asHashMap(K k1, V v1, K k2, V v2) {
+		return putAll(new HashMap<>(2, 1F), k1, v1, k2, v2);
+	}
+
+	/**
+	 * 根据指定的键值对构造一个 HashMap 集合
+	 */
+	public static <K, V> HashMap<K, V> asHashMap(K k1, V v1, K k2, V v2, K k3, V v3) {
+		return putAll(new HashMap<>(4, 1F), k1, v1, k2, v2, k3, v3);
+	}
+
+	/**
+	 * 根据指定的键值对构造一个 HashMap 集合
+	 */
+	public static <K, V> HashMap<K, V> asHashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4) {
+		return putAll(new HashMap<>(4, 1F), k1, v1, k2, v2, k3, v3, k4, v4);
+	}
+
+	/**
+	 * 根据指定的键值对构造一个 HashMap 集合
+	 */
+	public static <K, V> HashMap<K, V> asHashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5) {
+		return putAll(new HashMap<>(8, 1F), k1, v1, k2, v2, k3, v3, k4, v4, k5, v5);
+	}
+
+	/**
+	 * 根据指定的键值对构造一个 HashMap 集合
+	 */
+	public static <K, V> HashMap<K, V> asHashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6) {
+		return putAll(new HashMap<>(8, 1F), k1, v1, k2, v2, k3, v3, k4, v4, k5, v5, k6, v6);
+	}
+
+	/**
+	 * 根据指定的键值对构造一个 HashMap 集合
+	 */
+	public static <K, V> HashMap<K, V> asHashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6, Object... kvPairs) {
+		checkPairs(kvPairs);
+		HashMap<K, V> map = putAll(new HashMap<>(6 + (kvPairs.length >> 1), 1F), k1, v1, k2, v2, k3, v3, k4, v4, k5, v5, k6, v6);
+		putPair(map, kvPairs);
 		return map;
 	}
 
@@ -208,10 +552,62 @@ public abstract class CollectionUtil {
 	 *
 	 * @param elements 可变参数形式的元素数组
 	 */
-	public static <K, V> LinkedHashMap<K, V> asLinkedHashMap(Object... elements) {
+	public static <K, V> LinkedHashMap<K, V> asRawLinkedHashMap(Object... elements) {
 		checkPairs(elements);
 		final LinkedHashMap<K, V> map = newLinkedHashMap(elements.length >> 1);
-		addAll(map, elements);
+		putAllRaw(map, elements);
+		return map;
+	}
+
+	/**
+	 * 根据指定键值对构造一个 LinkedHashMap 集合
+	 */
+	public static <K, V> LinkedHashMap<K, V> asLinkedHashMap(K k1, V v1) {
+		return putAll(new LinkedHashMap<>(1, 1F), k1, v1);
+	}
+
+	/**
+	 * 根据指定的键值对构造一个 LinkedHashMap 集合
+	 */
+	public static <K, V> LinkedHashMap<K, V> asLinkedHashMap(K k1, V v1, K k2, V v2) {
+		return putAll(new LinkedHashMap<>(2, 1F), k1, v1, k2, v2);
+	}
+
+	/**
+	 * 根据指定的键值对构造一个 LinkedHashMap 集合
+	 */
+	public static <K, V> LinkedHashMap<K, V> asLinkedHashMap(K k1, V v1, K k2, V v2, K k3, V v3) {
+		return putAll(new LinkedHashMap<>(4, 1F), k1, v1, k2, v2, k3, v3);
+	}
+
+	/**
+	 * 根据指定的键值对构造一个 LinkedHashMap 集合
+	 */
+	public static <K, V> LinkedHashMap<K, V> asLinkedHashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4) {
+		return putAll(new LinkedHashMap<>(4, 1F), k1, v1, k2, v2, k3, v3, k4, v4);
+	}
+
+	/**
+	 * 根据指定的键值对构造一个 LinkedHashMap 集合
+	 */
+	public static <K, V> LinkedHashMap<K, V> asLinkedHashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5) {
+		return putAll(new LinkedHashMap<>(8, 1F), k1, v1, k2, v2, k3, v3, k4, v4, k5, v5);
+	}
+
+	/**
+	 * 根据指定的键值对构造一个 LinkedHashMap 集合
+	 */
+	public static <K, V> LinkedHashMap<K, V> asLinkedHashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6) {
+		return putAll(new LinkedHashMap<>(8, 1F), k1, v1, k2, v2, k3, v3, k4, v4, k5, v5, k6, v6);
+	}
+
+	/**
+	 * 根据指定的键值对构造一个 HashMap 集合
+	 */
+	public static <K, V> LinkedHashMap<K, V> asLinkedHashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6, Object... kvPairs) {
+		checkPairs(kvPairs);
+		LinkedHashMap<K, V> map = putAll(new LinkedHashMap<>(6 + (kvPairs.length >> 1), 1F), k1, v1, k2, v2, k3, v3, k4, v4, k5, v5, k6, v6);
+		putPair(map, kvPairs);
 		return map;
 	}
 
@@ -633,6 +1029,115 @@ public abstract class CollectionUtil {
 	}
 
 	/**
+	 * 从指定的 Map 中获取指定键的值
+	 *
+	 * @param map 要从中获取值的Map，可以为null
+	 * @param key 要获取值的键
+	 * @return 如果Map为 null 或不包含该键则返回 null，否则返回对应的值
+	 */
+	public static <K, V> V get(@Nullable Map<K, V> map, K key) {
+		return getOrDefault(map, key, null);
+	}
+
+	/**
+	 * 从指定的 Map 中获取指定键的值，如果键不存在则返回默认值
+	 *
+	 * @param map 要从中获取值的 Map，可以为 null
+	 * @param key 要获取值的键
+	 * @param defaultValue 当 Map 为 null 或不包含该键时返回的默认值
+	 * @return 如果 Map 为 null 或 不包含该键则返回默认值，否则返回对应的值
+	 */
+	public static <K, V> V getOrDefault(@Nullable Map<K, V> map, K key, V defaultValue) {
+		if (map == null || map.isEmpty()) {
+			return defaultValue;
+		}
+		return map.getOrDefault(key, defaultValue);
+	}
+
+	/**
+	 * 从指定的Map中获取指定键的值，支持两个备选键
+	 *
+	 * @param map 要从中获取值的Map，可以为null
+	 * @param key1 第一个要获取值的键
+	 * @param key2 第二个要获取值的键（备选）
+	 * @return 如果Map为null则返回null，如果第一个键存在则返回其值，否则返回第二个键的值（可能为null）
+	 */
+	public static <K, V> V getNonNull(@Nullable Map<K, V> map, K key1, K key2) {
+		return getOrDefault(map, key1, key2, null);
+	}
+
+	/**
+	 * 从指定的 Map 中获取指定键的值，支持两个备选键，如果都不存在则返回默认值
+	 *
+	 * @param map 要从中获取值的 Map，可以为 null
+	 * @param key1 第一个要获取值的键
+	 * @param key2 第二个要获取值的键（备选）
+	 * @param defaultValue 当 Map 为 null 或两个键都不存在时返回的默认值
+	 * @return 如果 Map 为 null 则返回默认值，如果第一个键存在则返回其值，否则返回第二个键的值或默认值
+	 */
+	public static <K, V> V getOrDefault(@Nullable Map<K, V> map, K key1, K key2, V defaultValue) {
+		if (map == null || map.isEmpty()) {
+			return defaultValue;
+		}
+		V v = map.get(key1);
+		if (v != null) {
+			return v;
+		}
+		return map.getOrDefault(key2, defaultValue);
+	}
+
+	/**
+	 * 从两个 Map 中获取指定键的值，如果第一个 Map 中没有找到 {@code key1} 对应的 non-null 值时，则从第二个 Map 中查找  {@code key2}
+	 *
+	 * @param <K> 键的类型
+	 * @param <V> 值的类型
+	 * @param map1 第一个 Map，优先查找
+	 * @param keyForMap1 第一个 Map 中要查找的键
+	 * @param map2 第二个 Map，当第一个 Map 中未找到时使用
+	 * @param keyForMap2 第二个 Map 中要查找的键
+	 * @param defaultValue 当两个Map中都未找到时返回的默认值
+	 * @return 返回找到的值或默认值
+	 */
+	public static <K, V> V getOrDefault(@Nullable Map<K, V> map1, K keyForMap1, @Nullable Map<K, V> map2, K keyForMap2, V defaultValue) {
+		if (map1 != null && !map1.isEmpty()) {
+			V val = map1.get(keyForMap1);
+			if (val != null) {
+				return val;
+			}
+		}
+		return getOrDefault(map2, keyForMap2, defaultValue);
+	}
+
+	/**
+	 * 从两个 Map 中获取指定键的值，如果第一个 Map 中没有找到 {@code key1} 对应的 non-null 值时，则从第二个 Map 中查找  {@code key2}
+	 *
+	 * @param <K> 键的类型
+	 * @param <V> 值的类型
+	 * @param map1 第一个 Map，优先查找
+	 * @param map2 第二个 Map，当第一个 Map 中未找到时使用
+	 * @param key 要查找的键
+	 * @param defaultValue 当两个 Map 中都未找到时返回的默认值
+	 * @return 返回找到的值或默认值
+	 */
+	public static <K, V> V getOrDefault(@Nullable Map<K, V> map1, @Nullable Map<K, V> map2, K key, V defaultValue) {
+		return getOrDefault(map1, key, map2, key, defaultValue);
+	}
+
+	/**
+	 * 从两个 Map 中获取指定键的值，如果第一个 Map 中没有找到 {@code key1} 对应的 non-null 值时，则从第二个 Map 中查找  {@code key2}
+	 *
+	 * @param <K> 键的类型
+	 * @param <V> 值的类型
+	 * @param map1 第一个 Map，优先查找
+	 * @param map2 第二个 Map，当第一个 Map 中未找到时使用
+	 * @param key 要查找的键
+	 * @return 返回找到的值或默认值
+	 */
+	public static <K, V> V getNonNull(@Nullable Map<K, V> map1, @Nullable Map<K, V> map2, K key) {
+		return getOrDefault(map1, key, map2, key, null);
+	}
+
+	/**
 	 * 将 Map 集合中的键值对转换为 URL 参数格式的字符串，如果参数值中存在不安全的字符，也会预先进行 URL 编码。
 	 * 【注意】如果 {@link Map.Entry#getValue()} 为 {@code null}，则表示该键值对不会被拼接
 	 *
@@ -690,6 +1195,36 @@ public abstract class CollectionUtil {
 	@Nonnull
 	public static String mapToParams(final @Nullable Map<String, ?> params) {
 		return mapToParams(params, true);
+	}
+
+	/**
+	 * 按照指定的处理方式，依次替换掉 List 集合中的所有元素，并返回替换后的 List 集合
+	 * <p>【注意】 返回的 List 与传入的 List 是同一个对象，只是替换掉了内部所有的元素；
+	 * <p> 替换后再通过原 list 获取原值，则可能引发异常！
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static <T, R, L extends List<R>> L replaceValues(@Nullable List<T> list, Function<? super T, ? extends R> converter) {
+		//noinspection UnnecessaryLocalVariable
+		List rawList = list;
+		if (rawList != null && !rawList.isEmpty()) {
+			rawList.replaceAll(o -> converter.apply((T) o));
+		}
+		return (L) rawList;
+	}
+
+	/**
+	 * 按照指定的处理方式，依次替换掉 Map 集合中的所有 {@link Map.Entry#getValue()}，并返回替换后的 Map 集合
+	 * <p>【注意】 返回的 Map 与传入的 Map 是同一个对象，只是替换掉了内部所有的 value 值；
+	 * <p> 替换后再通过原 map 获取原值，则可能引发异常！
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static <K, V, R, M extends Map<K, R>> M replaceValues(@Nullable Map<K, V> map, BiFunction<K, V, ? extends R> converter) {
+		//noinspection UnnecessaryLocalVariable
+		Map rawMap = map;
+		if (rawMap != null && !rawMap.isEmpty()) {
+			rawMap.replaceAll(converter);
+		}
+		return (M) rawMap;
 	}
 
 }
