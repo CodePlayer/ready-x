@@ -1274,7 +1274,6 @@ public abstract class StringUtil {
 	 *
 	 * @param delimiter 分隔符
 	 */
-	@SuppressWarnings("unchecked")
 	public static <E> String join(@Nullable E[] array, String delimiter) {
 		return join(array, Function.identity(), delimiter, 0);
 	}
