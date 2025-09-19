@@ -4,8 +4,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledOnJre;
-import org.junit.jupiter.api.condition.JRE;
+import org.junit.jupiter.api.condition.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -89,7 +88,7 @@ public class JavaXTest {
 	}
 
 	@Test
-	@EnabledOnJre({ JRE.JAVA_11, JRE.JAVA_17, JRE.JAVA_21, JRE.JAVA_24 })
+	@EnabledForJreRange(min = JRE.JAVA_9)
 	public void getUtf8Bytes0() {
 		String str = "ABC_12 3-@";
 		assertSame(JavaX.STRING_VALUE.apply(str), JavaX.getUtf8Bytes(str));
@@ -106,7 +105,7 @@ public class JavaXTest {
 	}
 
 	@Test
-	@EnabledOnJre({ JRE.JAVA_11, JRE.JAVA_17, JRE.JAVA_21, JRE.JAVA_24 })
+	@EnabledForJreRange(min = JRE.JAVA_9)
 	public void newString0() {
 		String str = "ABC_12 3-@";
 		byte[] bytes = JavaX.STRING_VALUE.apply(str);
