@@ -178,6 +178,7 @@ public class XTest implements WithAssertions {
 		assertEquals("", X.expectNotEmpty("", null, ""));
 
 		assertEquals("", X.expectNotEmpty(null, null, null, null));
+		assertEquals("v3", X.expectNotEmpty(null, null, "v3", null));
 		assertEquals("v4", X.expectNotEmpty(null, null, null, "v4"));
 	}
 
@@ -464,6 +465,63 @@ public class XTest implements WithAssertions {
 				throw X.sneakyThrow(e);
 			}
 		});
+	}
+
+	@Test
+	void expectEquals() {
+		final User old = new User();
+		final User input = new User();
+
+		// input.name = null, old.name = null       =>  DO NOTHING
+		X.expectEquals(input, old, User::getName, User::setName);
+		assertNull(input.getName());
+		assertNull(old.getName());
+
+		old.setName("A");
+		// input.name = null, old.name = "A"       =>  input.name = "A", old.name = "A"
+		X.expectEquals(input, old, User::getName, User::setName);
+		assertEquals("A", input.getName());
+		assertEquals("A", old.getName());
+
+		// input.name = "A", old.name = "A"       =>  DO NOTHING
+		X.expectEquals(input, old, User::getName, User::setName);
+		assertEquals("A", input.getName());
+		assertEquals("A", old.getName());
+
+		// input.name = "A", old.name = null       =>  input.name = "A", old.name = "A"
+		old.setName(null);
+		X.expectEquals(input, old, User::getName, User::setName);
+		assertEquals("A", input.getName());
+		assertEquals("A", old.getName());
+
+		// input.name = "B", old.name = "A"       =>  throw IllegalArgumentException
+		input.setName("B");
+		assertThrows(IllegalArgumentException.class, () -> X.expectEquals(input, old, User::getName, User::setName, "Name cannot be modified"));
+	}
+
+	@Test
+	void expectEqualsBasedOld() {
+		final User old = new User();
+		final User input = new User();
+
+		// input.name = null, old.name = null       =>  DO NOTHING
+		X.expectEqualsBasedOld(input, old, User::getName, input::setName);
+		assertNull(input.getName());
+		assertNull(old.getName());
+
+		old.setName("A");
+		// input.name = null, old.name = "A"       =>  input.name = "A", old.name = "A"
+		X.expectEqualsBasedOld(input, old, User::getName, input::setName);
+		assertEquals("A", input.getName());
+		assertEquals("A", old.getName());
+
+		// input.name = "B", old.name = "A"       =>  throw IllegalArgumentException
+		input.setName("B");
+		assertThrows(IllegalArgumentException.class, () -> X.expectEqualsBasedOld(input, old, User::getName, input::setName, "Name cannot be modified"));
+
+		// input.name = "B", old.name = null       =>  throw IllegalArgumentException
+		old.setName(null);
+		assertThrows(IllegalArgumentException.class, () -> X.expectEqualsBasedOld(input, old, User::getName, input::setName, "Name cannot be modified"));
 	}
 
 }
