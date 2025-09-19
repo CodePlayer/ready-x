@@ -288,6 +288,8 @@ public abstract class NumberUtil {
 			return new BigDecimal((BigInteger) value);
 		} else if (value instanceof Integer || value instanceof Long) {
 			return BigDecimal.valueOf(((Number) value).longValue());
+		} else if (value instanceof Double) {
+			return Arith.toBigDecimal((Double) value);
 		}
 		return new BigDecimal(value.toString());
 	}

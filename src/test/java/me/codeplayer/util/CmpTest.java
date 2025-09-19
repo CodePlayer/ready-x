@@ -42,6 +42,19 @@ public class CmpTest {
 	}
 
 	@Test
+	public void eqVal_BigDecimal() {
+		assertTrue(Cmp.eqVal(BigDecimal.valueOf(5), BigDecimal.valueOf(5)));
+		assertTrue(Cmp.eqVal(BigDecimal.valueOf(5), new BigDecimal(5)));
+		assertTrue(Cmp.eqVal(BigDecimal.valueOf(5), BigDecimal.valueOf(5.0)));
+
+		assertFalse(Cmp.eqVal(BigDecimal.valueOf(5), BigDecimal.valueOf(5.000001)));
+		assertFalse(Cmp.eqVal(BigDecimal.valueOf(5), BigDecimal.ZERO));
+
+		assertFalse(Cmp.eqVal(null, BigDecimal.ZERO));
+		assertFalse(Cmp.eqVal(null, (BigDecimal) null));
+	}
+
+	@Test
 	public void eq_Integer() {
 		assertTrue(Cmp.eq(integers[1], 1)); // equals
 		assertFalse(Cmp.eq(integers[_null], 1)); // argument 1 is null
@@ -67,6 +80,20 @@ public class CmpTest {
 		assertFalse(Cmp.eq("abc", null));
 		assertFalse(Cmp.eq("A", "a"));
 		assertFalse(Cmp.eq(0, Boolean.FALSE));
+	}
+
+	@Test
+	public void eqOrNull_Object() {
+		assertTrue(Cmp.eqOrNull("test", "test"));
+		assertTrue(Cmp.eqOrNull(null, "test"));
+		assertTrue(Cmp.eqOrNull(null, null));
+
+		assertFalse(Cmp.eqOrNull("test", "other"));
+		assertFalse(Cmp.eqOrNull("test", "other"));
+		assertFalse(Cmp.eqOrNull("", null));
+		assertFalse(Cmp.eqOrNull("abc", null));
+		assertFalse(Cmp.eqOrNull("A", "a"));
+		assertFalse(Cmp.eqOrNull(0, Boolean.FALSE));
 	}
 
 	@Test
@@ -465,16 +492,21 @@ public class CmpTest {
 		// $val < min
 		int i = 0;
 		assertFalse(Cmp.between(integers[i], 1, 2));
-		assertFalse(Cmp.between(longs[i], 1L, 2L));
+		assertFalse(Cmp.between(i, 1, 2));
 		assertFalse(Cmp.between(bigIntegers[i], bigIntegers[1], bigIntegers[2]));
 		assertFalse(Cmp.between(bigDecimals[i], bigDecimals[1], bigDecimals[2]));
 		assertFalse(Cmp.between(before, now, after));
+		assertFalse(Cmp.between(longs[i], 1L, 2L));
+		assertFalse(Cmp.between(i, 1L, 2L));
 		// $val = min
 		assertTrue(Cmp.between(integers[i], 0, 2));
 		assertTrue(Cmp.between(longs[i], 0L, 2L));
 		assertTrue(Cmp.between(bigIntegers[i], bigIntegers[0], bigIntegers[2]));
 		assertTrue(Cmp.between(bigDecimals[i], bigDecimals[0], bigDecimals[2]));
 		assertTrue(Cmp.between(before, before, after));
+		assertTrue(Cmp.between(i, 0, 2));
+		assertTrue(Cmp.between(i, 0L, 2L));
+
 		// min < $val < max
 		i = 1;
 		assertTrue(Cmp.between(integers[i], 0, 2));
@@ -482,6 +514,8 @@ public class CmpTest {
 		assertTrue(Cmp.between(bigIntegers[i], bigIntegers[0], bigIntegers[2]));
 		assertTrue(Cmp.between(bigDecimals[i], bigDecimals[0], bigDecimals[2]));
 		assertTrue(Cmp.between(now, before, after));
+		assertTrue(Cmp.between(i, 0, 2));
+		assertTrue(Cmp.between(i, 0L, 2L));
 		// $val = max
 		i = 2;
 		assertTrue(Cmp.between(integers[i], 0, 2));
@@ -489,12 +523,16 @@ public class CmpTest {
 		assertTrue(Cmp.between(bigIntegers[i], bigIntegers[0], bigIntegers[2]));
 		assertTrue(Cmp.between(bigDecimals[i], bigDecimals[0], bigDecimals[2]));
 		assertTrue(Cmp.between(after, before, after));
+		assertTrue(Cmp.between(i, 0, 2));
+		assertTrue(Cmp.between(i, 0L, 2L));
 		// $val > max
 		assertFalse(Cmp.between(integers[i], 0, 1));
 		assertFalse(Cmp.between(longs[i], 0L, 1L));
 		assertFalse(Cmp.between(bigIntegers[i], bigIntegers[0], bigIntegers[1]));
 		assertFalse(Cmp.between(bigDecimals[i], bigDecimals[0], bigDecimals[1]));
 		assertFalse(Cmp.between(after, before, now));
+		assertFalse(Cmp.between(i, 0, 1));
+		assertFalse(Cmp.between(i, 0L, 1L));
 		// special
 		assertTrue(Cmp.between(bigDecimals[0], new BigDecimal("0.00"), bigDecimals[1]));
 		assertTrue(Cmp.between(BigDecimal.valueOf(-1), BigDecimal.valueOf(-2), bigDecimals[1]));

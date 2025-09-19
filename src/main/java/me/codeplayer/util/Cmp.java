@@ -11,17 +11,26 @@ import javax.annotation.Nullable;
 public class Cmp {
 
 	/**
-	 * 判断两个整数是否值相等（有参数为 null 时返回 false）
+	 * 判断两个整数是否【值相等】（任一参数为 null 将返回 false）
 	 */
 	public static boolean eqVal(@Nullable Integer n1, @Nullable Integer n2) {
 		return n1 != null && n2 != null && n1.intValue() == n2.intValue();
 	}
 
 	/**
-	 * 判断两个整数是否值相等（有参数为 null 时返回 false）
+	 * 判断两个整数是否【值相等】（任一参数为 null 将返回 false）
 	 */
 	public static boolean eqVal(@Nullable Long n1, @Nullable Long n2) {
 		return n1 != null && n2 != null && n1.longValue() == n2.longValue();
+	}
+
+	/**
+	 * 判断两个对象是否【值相等】（任一参数为 null 将返回 false）
+	 *
+	 * @see Comparable#compareTo(Object)
+	 */
+	public static <E extends Comparable<E>> boolean eqVal(@Nullable E o1, @Nullable E o2) {
+		return o1 != null && o2 != null && o1.compareTo(o2) == 0;
 	}
 
 	/**
@@ -39,10 +48,21 @@ public class Cmp {
 	}
 
 	/**
-	 * 判断两个整数是否值相等（有参数为 null 时返回 false）
+	 * 判断两个整数是否值相等（参数 o1 为 null 时返回 false）
+	 *
+	 * @see Object#equals(Object)
 	 */
-	public static boolean eq(Object o1, Object o2) {
+	public static boolean eq(@Nullable Object o1, @Nullable Object o2) {
 		return o1 != null && o1.equals(o2);
+	}
+
+	/**
+	 * 判断两个整数是否值相等（参数 o1 为 null 时返回 true）
+	 *
+	 * @see Object#equals(Object)
+	 */
+	public static boolean eqOrNull(@Nullable Object o1, @Nullable Object o2) {
+		return o1 == null || o1.equals(o2);
 	}
 
 	/**
@@ -75,6 +95,8 @@ public class Cmp {
 
 	/**
 	 * 指示指定的 val 是否为 null 或 等于 0
+	 *
+	 * @see BigInteger#compareTo(BigInteger)
 	 */
 	public static BigInteger zeroToNull(@Nullable BigInteger val) {
 		return val != null && val.compareTo(BigInteger.ZERO) == 0 ? null : val;
@@ -82,6 +104,8 @@ public class Cmp {
 
 	/**
 	 * 指示指定的 val 是否为 null 或 等于 0
+	 *
+	 * @see BigDecimal#compareTo(BigDecimal)
 	 */
 	public static BigDecimal zeroToNull(@Nullable BigDecimal val) {
 		return val != null && val.compareTo(BigDecimal.ZERO) == 0 ? null : val;
@@ -274,6 +298,8 @@ public class Cmp {
 
 	/**
 	 * 指示 val 是否为 null 或 {@code ＞ min}
+	 *
+	 * @see Comparable#compareTo(Object)
 	 */
 	public static <T extends Comparable<T>> boolean gtOrNull(@Nullable T val, T min) {
 		return val == null || val.compareTo(min) > 0;
@@ -283,6 +309,7 @@ public class Cmp {
 	 * 指示 val 是否 {@code ≥ min}
 	 *
 	 * @return {@code val} 为 null 时，则返回 false
+	 * @see Comparable#compareTo(Object)
 	 */
 	public static <T extends Comparable<T>> boolean ge(@Nullable T val, T min) {
 		return val != null && val.compareTo(min) >= 0;
@@ -290,6 +317,8 @@ public class Cmp {
 
 	/**
 	 * 指示 val 是否为 null 或 ≥ min
+	 *
+	 * @see Comparable#compareTo(Object)
 	 */
 	public static <T extends Comparable<T>> boolean geOrNull(@Nullable T val, T min) {
 		return val == null || val.compareTo(min) >= 0;
@@ -299,6 +328,7 @@ public class Cmp {
 	 * 指示 val 是否 ≤ {@code max}
 	 *
 	 * @return {@code val} 为 null 时，则返回 false
+	 * @see Comparable#compareTo(Object)
 	 */
 	public static <T extends Comparable<T>> boolean le(@Nullable T val, T max) {
 		return val != null && val.compareTo(max) <= 0;
@@ -306,6 +336,8 @@ public class Cmp {
 
 	/**
 	 * 指示 val 是否为 null 或 ≤ max
+	 *
+	 * @see Comparable#compareTo(Object)
 	 */
 	public static <T extends Comparable<T>> boolean leOrNull(@Nullable T val, T max) {
 		return val == null || val.compareTo(max) <= 0;
@@ -315,6 +347,7 @@ public class Cmp {
 	 * 指示 val 是否 ＜ {@code max}
 	 *
 	 * @return {@code val} 为 null 时，则返回 false
+	 * @see Comparable#compareTo(Object)
 	 */
 	public static <T extends Comparable<T>> boolean lt(@Nullable T val, T max) {
 		return val != null && val.compareTo(max) < 0;
@@ -322,6 +355,8 @@ public class Cmp {
 
 	/**
 	 * 指示 val 是否为 null 或 ＜ max
+	 *
+	 * @see Comparable#compareTo(Object)
 	 */
 	public static <T extends Comparable<T>> boolean ltOrNull(@Nullable T val, T max) {
 		return val == null || val.compareTo(max) < 0;
@@ -338,6 +373,13 @@ public class Cmp {
 
 	/**
 	 * 指示 指定的 {@code val} 是否在 {@code min} 和 {@code max} 之间（闭区间）
+	 */
+	public static boolean between(int val, int min, int max) {
+		return val >= min && val <= max;
+	}
+
+	/**
+	 * 指示 指定的 {@code val} 是否在 {@code min} 和 {@code max} 之间（闭区间）
 	 *
 	 * @return 如果 {@code val} 为 null，则返回 false
 	 */
@@ -347,8 +389,16 @@ public class Cmp {
 
 	/**
 	 * 指示 指定的 {@code val} 是否在 {@code min} 和 {@code max} 之间（闭区间）
+	 */
+	public static boolean between(long val, long min, long max) {
+		return val >= min && val <= max;
+	}
+
+	/**
+	 * 指示 指定的 {@code val} 是否在 {@code min} 和 {@code max} 之间（闭区间）
 	 *
 	 * @return 如果 {@code val}、{@code min} 和 {@code max} 任一为 null，则返回 false
+	 * @see Comparable#compareTo(Object)
 	 */
 	public static <T extends Comparable<T>> boolean between(@Nullable T val, @Nullable T min, @Nullable T max) {
 		return val != null && min != null && max != null && val.compareTo(min) >= 0 && val.compareTo(max) <= 0;
