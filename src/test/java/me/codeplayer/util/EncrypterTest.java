@@ -2,8 +2,7 @@ package me.codeplayer.util;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EncrypterTest {
 
@@ -87,6 +86,7 @@ public class EncrypterTest {
 	public void sha1_ByteArray_NormalInput_ShouldReturnCorrectHash() {
 		byte[] result = Encrypter.sha1("hello".getBytes());
 		assertEquals("aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d", Encrypter.bytes2Hex(result));
+		assertEquals("AAF4C61DDCC5E8A2DABEDE0F3B482CD9AEA9434D", Encrypter.bytes2Hex(result, true));
 	}
 
 	@Test
@@ -124,8 +124,54 @@ public class EncrypterTest {
 
 	@Test
 	public void bytes2Hex_WithStartEndAndDigits_ShouldReturnCorrectHex() {
-		String result = Encrypter.bytes2Hex(new byte[] { 1, 2, 3, 4 }, 1, 3, StringX.digits);
+		String result = Encrypter.bytes2Hex(new byte[] { 1, 2, 3, 4 }, 1, 3, StringX.digit_char_table);
 		assertEquals("0203", result);
+	}
+
+	/**
+	 * TC01: 正常输入，使用 MD5 算法加密
+	 */
+	@Test
+	public void encode_NormalInputMD5_ShouldReturnCorrectHash() {
+		String input = "hello";
+		String algorithm = "MD5";
+		String expected = "5d41402abc4b2a76b9719d911017c592";
+		String result = Encrypter.encode(input, algorithm);
+		assertEquals(expected, result);
+	}
+
+	/**
+	 * TC02: 空字符串输入，使用 MD5 算法加密
+	 */
+	@Test
+	public void encode_EmptyStringMD5_ShouldReturnZeroHash() {
+		String input = "";
+		String algorithm = "MD5";
+		String expected = "d41d8cd98f00b204e9800998ecf8427e";
+		String result = Encrypter.encode(input, algorithm);
+		assertEquals(expected, result);
+
+		result = Encrypter.encode(input, algorithm, true);
+		assertEquals("D41D8CD98F00B204E9800998ECF8427E", result);
+	}
+
+	/**
+	 * TC03: 输入为 null，应抛出 NullPointerException
+	 */
+	@Test
+	public void encode_NullInput_ShouldThrowNullPointerException() {
+		assertThrows(NullPointerException.class, () -> Encrypter.encode((String) null, "MD5"));
+	}
+
+	/**
+	 * TC04: 使用非法算法名称，应抛出 IllegalArgumentException
+	 */
+	@Test
+	public void encode_InvalidAlgorithm_ShouldThrowIllegalArgumentException() {
+		String input = "hello";
+		String invalidAlgorithm = "INVALID";
+		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> Encrypter.encode(input, invalidAlgorithm));
+		assertTrue(exception.getMessage().contains("Unexpected algorithm:" + invalidAlgorithm));
 	}
 
 }

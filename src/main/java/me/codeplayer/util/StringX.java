@@ -20,13 +20,13 @@ import org.apache.commons.lang3.StringUtils;
 public abstract class StringX {
 
 	/**
-	 * 用于在2-16进制之间进行转换的【大写形式】映射字符数组
+	 * 用于在 2~36 进制之间进行转换的【大写形式】映射字符数组
 	 */
-	protected static final char[] DIGITS = "0123456789ABCDEF".toCharArray();
+	public static final String DIGIT_CHAR_TABLE = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	/**
-	 * 用于在2-16进制之间进行转换的【小写形式】映射字符数组
+	 * 用于在 2~36 进制之间进行转换的【小写形式】映射字符数组
 	 */
-	protected static final char[] digits = "0123456789abcdef".toCharArray();
+	public static final String digit_char_table = "0123456789abcdefghijklmnopqrstuvwxyz";
 
 	/**
 	 * 获取指定字符串的Unicode编码，例如：“中国”将返回 <code>"\u4E2D\u56FD"</code><br>
@@ -36,23 +36,7 @@ public abstract class StringX {
 	 * @since 0.0.1
 	 */
 	public static String unicode(String source) {
-		byte[] bytes = source.getBytes(StandardCharsets.UTF_16);// 转为UTF-16字节数组
-		int length = bytes.length;
-		if (length > 2) {// 由于转换出来的字节数组前两位属于UNICODE固定标记，因此要过滤掉
-			int i = 2;
-			StringBuilder sb = new StringBuilder((length - i) * 3);
-			boolean isOdd = false;
-			for (; i < length; i++) {
-				//noinspection AssignmentUsedAsCondition
-				if (isOdd = !isOdd) {
-					sb.append("\\u");
-				}
-				sb.append(DIGITS[bytes[i] >> 4 & 0xf]);
-				sb.append(DIGITS[bytes[i] & 0xf]);
-			}
-			return sb.toString();
-		}
-		return source;
+		return JavaHelper.unicode(source, true, StringX.DIGIT_CHAR_TABLE);
 	}
 
 	/**
@@ -63,25 +47,7 @@ public abstract class StringX {
 	 * @since 0.0.1
 	 */
 	public static String fastUnicode(String source) {
-		byte[] bytes = source.getBytes(StandardCharsets.UTF_16); // 转为UTF-16字节数组
-		int length = bytes.length;
-		if (length > 2) {
-			int i = 2;
-			char[] chars = new char[(length - i) * 3];
-			int index = 0;
-			boolean isOdd = false;
-			for (; i < length; i++) {
-				//noinspection AssignmentUsedAsCondition
-				if (isOdd = !isOdd) {
-					chars[index++] = '\\';
-					chars[index++] = 'u';
-				}
-				chars[index++] = DIGITS[bytes[i] >> 4 & 0xf];
-				chars[index++] = DIGITS[bytes[i] & 0xf];
-			}
-			return new String(chars);
-		}
-		return "";
+		return JavaHelper.unicode(source, false, StringX.DIGIT_CHAR_TABLE);
 	}
 
 	/**
@@ -1740,6 +1706,18 @@ public abstract class StringX {
 			T part = mapper.apply(substr);
 			toList.add(part);
 		}
+	}
+
+	public static String toHexString(byte[] bytes, int start, int end, boolean upperCase) {
+		return JavaHelper.toHexString(bytes, start, end, upperCase ? DIGIT_CHAR_TABLE : digit_char_table);
+	}
+
+	public static String toHexString(byte[] bytes, int start, int end) {
+		return JavaHelper.toHexString(bytes, start, end, digit_char_table);
+	}
+
+	public static String toHexString(byte[] bytes) {
+		return toHexString(bytes, 0, bytes.length);
 	}
 
 }

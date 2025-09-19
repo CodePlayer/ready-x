@@ -30,12 +30,15 @@ public class StringXTest implements WithAssertions {
 
 	@Test
 	public void fastUnicode() {
-		// 将字符串转为Unicode码，与unicode()相比，性能更优异
+		// 将字符串转为 Unicode 码，与 unicode() 相比，性能更优异
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> StringX.fastUnicode(null));
 		assertThat(StringX.fastUnicode("中国")).isEqualTo("\\u4E2D\\u56FD");
+		assertThat(StringX.fastUnicode("中国ABC")).isEqualTo("\\u4E2D\\u56FDABC");
 		assertThat(StringX.fastUnicode("张三丰")).isEqualTo("\\u5F20\\u4E09\\u4E30");
-		assertThat(StringX.fastUnicode("ABCD")).isEqualTo("\\u0041\\u0042\\u0043\\u0044");
-		assertThat(StringX.fastUnicode("*/45sfga$")).isEqualTo("\\u002A\\u002F\\u0034\\u0035\\u0073\\u0066\\u0067\\u0061\\u0024");
+		assertThat(StringX.fastUnicode("ABCD")).isEqualTo("ABCD");
+		assertThat(StringX.fastUnicode("ABCDÃé")).isEqualTo("ABCD\\u00C3\\u00E9");
+		assertThat(StringX.fastUnicode("ABCD\uD83D\uDE0A")).isEqualTo("ABCD\\uD83D\\uDE0A");
+		assertThat(StringX.fastUnicode("*/45sfga$")).isEqualTo("*/45sfga$");
 	}
 
 	@Test
