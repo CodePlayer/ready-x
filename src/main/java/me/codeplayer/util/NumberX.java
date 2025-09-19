@@ -291,7 +291,7 @@ public abstract class NumberX {
 		if (!empty && value instanceof CharSequence) {
 			final CharSequence cs = (CharSequence) value;
 			if (cs.length() > 0) {
-				return getBigDecimal(value);
+				return new BigDecimal(cs.toString());
 			}
 			empty = true;
 		}
