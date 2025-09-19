@@ -4,8 +4,7 @@ import java.util.function.Predicate;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EnumXTest {
 
@@ -75,11 +74,40 @@ public class EnumXTest {
 
 	@Test
 	public void getMatched_Function_ReturnsMatched() {
-		TestEnum result = EnumX.getMatched(TestEnum.values(), TestEnum::ordinal, 1);
+		TestEnum result = EnumX.getMatched(TestEnum.VALUES, TestEnum::ordinal, 1);
 		assertEquals(result, TestEnum.VALUE2);
 
-		TestEnum val2 = EnumX.getMatched(TestEnum.values(), TestEnum::ordinal, 4);
+		TestEnum val2 = EnumX.getMatched(TestEnum.VALUES, TestEnum::ordinal, 4);
 		assertNull(val2);
+
+		result = EnumX.getMatched(TestEnum.VALUES, TestEnum::ordinal, null);
+		assertNull(result);
+	}
+
+	@Test
+	public void valueOf() {
+		TestEnum result = EnumX.valueOf(TestEnum.VALUES, TestEnum::ordinal, 1);
+		assertSame(TestEnum.VALUE2, result);
+
+		result = EnumX.valueOf(TestEnum.VALUES, TestEnum::ordinal, null);
+		assertNull(result);
+
+		result = EnumX.valueOf(TestEnum::ordinal, 2, TestEnum.VALUES);
+		assertSame(TestEnum.VALUE3, result);
+
+		result = EnumX.valueOf(TestEnum::ordinal, null, TestEnum.VALUES);
+		assertNull(result);
+
+		result = EnumX.valueOf(TestEnum::ordinal, null);
+		assertNull(result);
+
+		assertThrows(NullPointerException.class, () -> EnumX.valueOf(TestEnum::ordinal, 1, (TestEnum[]) null));
+
+		result = EnumX.valueOf(TestEnum.VALUES, 1, 0);
+		assertSame(TestEnum.VALUE2, result);
+
+		result = EnumX.valueOf(TestEnum.VALUES, 1, 1);
+		assertSame(TestEnum.VALUE1, result);
 	}
 
 }

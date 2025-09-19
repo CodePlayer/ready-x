@@ -95,6 +95,8 @@ public class JavaXTest {
 
 		str = "中国";
 		assertNotSame(JavaX.STRING_VALUE.apply(str), JavaX.getUtf8Bytes(str));
+		str = "ABCÃé";
+		assertNotSame(JavaX.STRING_VALUE.apply(str), JavaX.getUtf8Bytes(str));
 	}
 
 	@Test

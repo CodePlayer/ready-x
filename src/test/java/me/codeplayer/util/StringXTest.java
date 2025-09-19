@@ -910,4 +910,50 @@ public class StringXTest implements WithAssertions {
 		assertEquals("c", result.get(2));
 	}
 
+	@Test
+	void slice_asInt() {
+		assertSame(Collections.emptyList(), StringX.split("", ',', Slice::parseInt));
+		assertSame(Collections.emptyList(), StringX.split(null, ',', Slice::parseInt));
+		assertThat(StringX.split("1,2,3", ',', Slice::parseInt)).containsExactly(1, 2, 3);
+		assertThat(StringX.split("1,2,3,", ',', Slice::parseInt)).containsExactly(1, 2, 3);
+		assertThrows(NumberFormatException.class, () -> assertThat(StringX.split(",1,2,3", ',', Slice::parseInt)));
+		assertThrows(NumberFormatException.class, () -> assertThat(StringX.split("1,2,,3", ',', Slice::parseInt)));
+
+		assertSame(Collections.emptyList(), StringX.split("", ',', Slice::asInteger));
+		assertThat(StringX.split("1,2,3,", ',', Slice::asInteger)).containsExactly(1, 2, 3);
+		assertThat(StringX.split("1,2,,,3", ',', Slice::asInteger)).containsExactly(1, 2, 3);
+
+	}
+
+	@Test
+	void slice_asLong() {
+		assertSame(Collections.emptyList(), StringX.split("", ',', Slice::parseLong));
+		assertSame(Collections.emptyList(), StringX.split(null, ',', Slice::parseLong));
+		assertThat(StringX.split("1,2,3", ',', Slice::parseLong)).containsExactly(1L, 2L, 3L);
+		assertThat(StringX.split("1,2,3,", ',', Slice::parseLong)).containsExactly(1L, 2L, 3L);
+		assertThrows(NumberFormatException.class, () -> assertThat(StringX.split(",1,2,3", ',', Slice::parseLong)));
+		assertThrows(NumberFormatException.class, () -> assertThat(StringX.split("1,2,,3", ',', Slice::parseLong)));
+
+		assertSame(Collections.emptyList(), StringX.split("", ',', Slice::asLong));
+		assertThat(StringX.split("1,2,3,", ',', Slice::asLong)).containsExactly(1L, 2L, 3L);
+		assertThat(StringX.split("1,2,,,3", ',', Slice::asLong)).containsExactly(1L, 2L, 3L);
+
+	}
+
+	@Test
+	void slice_asString() {
+		assertSame(Collections.emptyList(), StringX.split("", ',', Slice::parseString));
+		assertSame(Collections.emptyList(), StringX.split(null, ',', Slice::parseString));
+		assertThat(StringX.split("1,2,3", ',', Slice::parseString)).containsExactly("1", "2", "3");
+		assertThat(StringX.split("1,2,3,", ',', Slice::parseString)).containsExactly("1", "2", "3");
+		assertThat(StringX.split(",1,2,3", ',', Slice::parseString)).containsExactly("", "1", "2", "3");
+		assertThat(StringX.split("1,2,,,3", ',', Slice::parseString)).containsExactly("1", "2", "", "", "3");
+
+		assertThat(StringX.split("1,2,3", ',', Slice::asString)).containsExactly("1", "2", "3");
+		assertThat(StringX.split("1,2,3,", ',', Slice::asString)).containsExactly("1", "2", "3");
+		assertThat(StringX.split(",1,2,3", ',', Slice::asString)).containsExactly("1", "2", "3");
+		assertThat(StringX.split("1,2,,,3", ',', Slice::asString)).containsExactly("1", "2", "3");
+
+	}
+
 }
