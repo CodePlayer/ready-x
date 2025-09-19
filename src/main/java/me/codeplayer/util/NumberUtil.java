@@ -14,15 +14,11 @@ public abstract class NumberUtil {
 
 	/**
 	 * 将int类型的变量转为二进制字符串
+	 *
+	 * @deprecated 改用 {@link Integer#toString(int, int)}
 	 */
 	public static String toBitString(int i) {
-		int index = 32;
-		char[] chars = new char[index];
-		do {
-			chars[--index] = StringUtil.digits[(i & 1)];
-			i >>>= 1;
-		} while (i != 0);
-		return new String(chars, index, 32 - index);
+		return Integer.toString(i, 2);
 	}
 
 	/**
