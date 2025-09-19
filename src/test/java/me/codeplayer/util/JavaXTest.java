@@ -17,6 +17,7 @@ public class JavaXTest {
 		assertEquals(8, JavaX.javaVersion);
 		assertEquals(8, JavaX.JVM_VERSION);
 		assertFalse(JavaX.isJava9OrHigher);
+		assertFalse(JavaX.supportLatin1());
 
 		final String str = "Hello";
 		final char[] chars = JavaX.getCharArray(str);
@@ -25,12 +26,14 @@ public class JavaXTest {
 
 		assertEquals(str, JavaX.asciiStringJDK8(str.getBytes(StandardCharsets.ISO_8859_1), 0, chars.length));
 		assertEquals(str, JavaX.latin1StringJDK8(str.getBytes(StandardCharsets.ISO_8859_1), 0, chars.length));
+		assertFalse(JavaHelper.newFeature());
 	}
 
 	static void java9OrHigher(int majorVersion) {
 		assertEquals(majorVersion, JavaX.javaVersion);
 		assertEquals(majorVersion, JavaX.JVM_VERSION);
 		assertTrue(JavaX.isJava9OrHigher);
+		assertTrue(JavaX.supportLatin1());
 
 		final String str = "Hello";
 		Assert.isTrue(JavaX.STRING_CODER.applyAsInt(str) == JavaX.LATIN1);
@@ -42,6 +45,7 @@ public class JavaXTest {
 		}
 		assertNull(JavaX.initErrorLast);
 		Assert.isTrue(JavaX.STRING_CODER.applyAsInt("中文") == JavaX.UTF16);
+		// assertTrue(JavaHelper.newFeature());
 	}
 
 	@Test
@@ -66,6 +70,49 @@ public class JavaXTest {
 	@EnabledOnJre(JRE.JAVA_24)
 	public void javaVersion24() {
 		java9OrHigher(24);
+	}
+
+	@Test
+	public void isASCII() {
+		assertTrue(JavaX.isASCII("ABC_12 3-@"));
+		assertFalse(JavaX.isASCII("ABCDÃé"));
+		assertFalse(JavaX.isASCII("中国ABCDÃé"));
+		assertFalse(JavaX.isASCII("今日はピザを食べたい！한국 치킨도 맛있어요. Mas eu realmente adoro sushi!"));
+	}
+
+	@Test
+	@EnabledOnJre(JRE.JAVA_8)
+	public void getUtf8Bytes() {
+		String str = "ABC_12 3-@";
+		byte[] bytes = JavaX.getUtf8Bytes(str);
+		assertEquals(str, new String(bytes, StandardCharsets.UTF_8));
+	}
+
+	@Test
+	@EnabledOnJre({ JRE.JAVA_11, JRE.JAVA_17, JRE.JAVA_21, JRE.JAVA_24 })
+	public void getUtf8Bytes0() {
+		String str = "ABC_12 3-@";
+		assertSame(JavaX.STRING_VALUE.apply(str), JavaX.getUtf8Bytes(str));
+
+		str = "中国";
+		assertNotSame(JavaX.STRING_VALUE.apply(str), JavaX.getUtf8Bytes(str));
+	}
+
+	@Test
+	@EnabledOnJre(JRE.JAVA_8)
+	public void newString() {
+		String str = "ABC_12 3-@";
+		assertEquals(str, JavaX.newString(str.getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8));
+	}
+
+	@Test
+	@EnabledOnJre({ JRE.JAVA_11, JRE.JAVA_17, JRE.JAVA_21, JRE.JAVA_24 })
+	public void newString0() {
+		String str = "ABC_12 3-@";
+		byte[] bytes = JavaX.STRING_VALUE.apply(str);
+		String newString = JavaX.newString(bytes, StandardCharsets.ISO_8859_1);
+		assertEquals(str, newString);
+		assertSame(bytes, JavaX.STRING_VALUE.apply(newString));
 	}
 
 }

@@ -2,7 +2,11 @@ package me.codeplayer.util;
 
 import java.lang.invoke.*;
 import java.lang.reflect.Field;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.function.*;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import sun.misc.Unsafe;
 
@@ -36,6 +40,11 @@ public class JavaX {
 	public static final BiFunction<byte[], Byte, String> STRING_CREATOR_JDK11;
 	public static final ToIntFunction<String> STRING_CODER;
 	public static final Function<String, byte[]> STRING_VALUE;
+
+	@Nullable
+	static final MethodHandle METHOD_HANDLE_HAS_NEGATIVE;
+	@Nullable
+	static final Predicate<byte[]> PREDICATE_IS_ASCII;
 
 	public static final MethodHandles.Lookup IMPL_LOOKUP;
 	static volatile MethodHandle CONSTRUCTOR_LOOKUP;
@@ -138,6 +147,73 @@ public class JavaX {
 		}
 		IMPL_LOOKUP = trustedLookup;
 
+		{
+			Predicate<byte[]> isAscii = null;
+			// isASCII
+			MethodHandle handle = null;
+			Class<?> classStringCoding = null;
+			if (JVM_VERSION >= 17) {
+				try {
+					handle = trustedLookup.findStatic(
+							classStringCoding = String.class,
+							"isASCII",
+							MethodType.methodType(boolean.class, byte[].class)
+					);
+				} catch (Throwable e) {
+					initErrorLast = e;
+				}
+			}
+
+			if (handle == null && JVM_VERSION >= 11) {
+				try {
+					classStringCoding = Class.forName("java.lang.StringCoding");
+					handle = trustedLookup.findStatic(
+							classStringCoding,
+							"isASCII",
+							MethodType.methodType(boolean.class, byte[].class)
+					);
+				} catch (Throwable e) {
+					initErrorLast = e;
+				}
+			}
+
+			if (handle != null) {
+				try {
+					MethodHandles.Lookup lookup = trustedLookup(classStringCoding);
+					CallSite callSite = LambdaMetafactory.metafactory(
+							lookup,
+							"test",
+							methodType(Predicate.class),
+							methodType(boolean.class, Object.class),
+							handle,
+							methodType(boolean.class, byte[].class)
+					);
+					isAscii = (Predicate<byte[]>) callSite.getTarget().invokeExact();
+				} catch (Throwable e) {
+					initErrorLast = e;
+				}
+			}
+
+			PREDICATE_IS_ASCII = isAscii;
+		}
+
+		{
+			MethodHandle handle = null;
+			if (JVM_VERSION >= 11) {
+				try {
+					Class<?> classStringCoding = Class.forName("java.lang.StringCoding");
+					handle = trustedLookup.findStatic(
+							classStringCoding,
+							"hasNegatives",
+							MethodType.methodType(boolean.class, byte[].class, int.class, int.class)
+					);
+				} catch (Throwable e) {
+					initErrorLast = e;
+				}
+			}
+			METHOD_HANDLE_HAS_NEGATIVE = handle;
+		}
+
 		Boolean compact_strings = null;
 		try {
 			if (JVM_VERSION == 8) {
@@ -239,7 +315,8 @@ public class JavaX {
 		STRING_VALUE = stringValue;
 	}
 
-	public static char[] getCharArray(String str) {
+	@Nullable
+	static char[] fastGetCharArray(String str) {
 		// GraalVM not support
 		// Android not support
 		if (!FIELD_STRING_VALUE_ERROR) {
@@ -249,7 +326,12 @@ public class JavaX {
 				FIELD_STRING_VALUE_ERROR = true;
 			}
 		}
-		return str.toCharArray();
+		return null;
+	}
+
+	public static char[] getCharArray(String str) {
+		char[] chars = fastGetCharArray(str);
+		return chars == null ? str.toCharArray() : chars;
 	}
 
 	public static MethodHandles.Lookup trustedLookup(Class<?> objectClass) {
@@ -303,6 +385,78 @@ public class JavaX {
 			chars[i] = (char) (bytes[offset + i] & 0xff);
 		}
 		return STRING_CREATOR_JDK8.apply(chars, Boolean.TRUE);
+	}
+
+	public static boolean isASCII(byte[] bytes, int start, int end) {
+		// JVM 底层对该方法有指令集优化，优先使用 JVM 内置方法进行检测
+		if (METHOD_HANDLE_HAS_NEGATIVE != null) {
+			try {
+				return !(boolean) METHOD_HANDLE_HAS_NEGATIVE.invokeExact(bytes, start, end - start);
+			} catch (Throwable ignored) {
+				// ignored
+			}
+		}
+		return isASCII0(bytes, start, end);
+	}
+
+	static boolean isASCII0(byte[] bytes, int start, int end) {
+		while (start < end) {
+			if (bytes[start++] < 0) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public static boolean isASCII(byte[] bytes) {
+		if (PREDICATE_IS_ASCII != null) {
+			return PREDICATE_IS_ASCII.test(bytes);
+		}
+		return isASCII(bytes, 0, bytes.length);
+	}
+
+	static final boolean supportLatin1 = STRING_CODER.applyAsInt("") == LATIN1;
+
+	public static boolean isASCII(String str) {
+		return isJava9OrHigher
+				? (STRING_CODER.applyAsInt(str) == LATIN1 || !supportLatin1) && isASCII(STRING_VALUE.apply(str))
+				: isASCIIOnJdk8(str);
+	}
+
+	private static boolean isASCIIOnJdk8(String str) {
+		final char[] chars = fastGetCharArray(str);
+		if (chars != null) {
+			for (char ch : chars) {
+				if (ch >= 0x80) { // @see sun.nio.cs.US_ASCII.Encoder.canEncode()
+					return false;
+				}
+			}
+			return true;
+		}
+		return StandardCharsets.US_ASCII.newEncoder().canEncode(str);
+	}
+
+	public static byte[] getUtf8Bytes(@Nonnull String str) {
+		if (STRING_CODER.applyAsInt(str) == LATIN1) {
+			final byte[] bytes = STRING_VALUE.apply(str);
+			if (isASCII(bytes)) {
+				return bytes;
+			}
+		}
+		return str.getBytes(StandardCharsets.UTF_8);
+	}
+
+	public static boolean supportLatin1() {
+		return supportLatin1;
+	}
+
+	public static String newString(byte[] bytes, Charset charset) {
+		if (supportLatin1
+				&& (charset == StandardCharsets.UTF_8 || charset == StandardCharsets.ISO_8859_1 || charset == StandardCharsets.US_ASCII)
+				&& isASCII(bytes)) {
+			return STRING_CREATOR_JDK11.apply(bytes, LATIN1);
+		}
+		return new String(bytes, charset);
 	}
 
 	public static int parseJavaVersion(String javaVersionProperty) {
