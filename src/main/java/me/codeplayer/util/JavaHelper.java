@@ -41,7 +41,7 @@ public class JavaHelper {
 			chars[c++] = charTable[bytes[i] >> 4 & 0xf];
 			chars[c++] = charTable[bytes[i] & 0xf];
 		}
-		return JavaX.STRING_CREATOR_JDK8.apply(chars, Boolean.TRUE);
+		return JavaUtil.STRING_CREATOR_JDK8.apply(chars, Boolean.TRUE);
 	}
 
 	/**
@@ -67,7 +67,7 @@ public class JavaHelper {
 			chars[c++] = (char) charTable[bytes[i] >> 4 & 0xf];
 			chars[c++] = (char) charTable[bytes[i] & 0xf];
 		}
-		return JavaX.STRING_CREATOR_JDK8.apply(chars, Boolean.TRUE);
+		return JavaUtil.STRING_CREATOR_JDK8.apply(chars, Boolean.TRUE);
 	}
 
 	/**
@@ -82,7 +82,7 @@ public class JavaHelper {
 	 * @throws ArrayIndexOutOfBoundsException 如果索引超出范围
 	 */
 	public static String toHexString(final byte[] bytes, final int start, final int end, final String charTable) {
-		return toHexString(bytes, start, end, JavaX.getCharArray(charTable));
+		return toHexString(bytes, start, end, JavaUtil.getCharArray(charTable));
 	}
 
 	/**
@@ -95,8 +95,8 @@ public class JavaHelper {
 	 */
 	public static String unicode(String source, final boolean full, String digitTable) {
 		if (!source.isEmpty()) {// 由于转换出来的字节数组前两位属于UNICODE固定标记，因此要过滤掉
-			final char[] sourceChars = JavaX.getCharArray(source),
-					charTable = JavaX.getCharArray(digitTable);
+			final char[] sourceChars = JavaUtil.getCharArray(source),
+					charTable = JavaUtil.getCharArray(digitTable);
 			if (full) {
 				final char[] chars = new char[sourceChars.length * 6];
 				int c = 0;
@@ -108,7 +108,7 @@ public class JavaHelper {
 					chars[c++] = charTable[(ch >> 4) & 0xF];
 					chars[c++] = charTable[ch & 0xF];
 				}
-				return JavaX.STRING_CREATOR_JDK8.apply(chars, Boolean.TRUE);
+				return JavaUtil.STRING_CREATOR_JDK8.apply(chars, Boolean.TRUE);
 			}
 			final StringBuilder sb = new StringBuilder(sourceChars.length * 3);
 			for (char ch : sourceChars) {

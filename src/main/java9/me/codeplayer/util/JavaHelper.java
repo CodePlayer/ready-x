@@ -43,7 +43,7 @@ public class JavaHelper {
 			chars[c++] = (byte) charTable[bytes[i] >> 4 & 0xf];
 			chars[c++] = (byte) charTable[bytes[i] & 0xf];
 		}
-		return JavaX.STRING_CREATOR_JDK11.apply(chars, JavaX.LATIN1);
+		return JavaUtil.STRING_CREATOR_JDK11.apply(chars, JavaUtil.LATIN1);
 	}
 
 	/**
@@ -69,7 +69,7 @@ public class JavaHelper {
 			chars[c++] = charTable[bytes[i] >> 4 & 0xf];
 			chars[c++] = charTable[bytes[i] & 0xf];
 		}
-		return JavaX.STRING_CREATOR_JDK11.apply(chars, JavaX.LATIN1);
+		return JavaUtil.STRING_CREATOR_JDK11.apply(chars, JavaUtil.LATIN1);
 	}
 
 	/**
@@ -84,7 +84,7 @@ public class JavaHelper {
 	 * @throws ArrayIndexOutOfBoundsException 如果索引超出范围
 	 */
 	public static String toHexString(final byte[] bytes, final int start, final int end, final String charTable) {
-		return toHexString(bytes, start, end, JavaX.STRING_VALUE.apply(charTable));
+		return toHexString(bytes, start, end, JavaUtil.STRING_VALUE.apply(charTable));
 	}
 
 	/**
@@ -98,12 +98,12 @@ public class JavaHelper {
 	public static String unicode(String source, final boolean full, String digitTable) {
 		System.out.println("Java 9 unicode");
 		if (!source.isEmpty()) {
-			final boolean latin1 = JavaX.STRING_CODER.applyAsInt(source) == JavaX.LATIN1;
-			final byte[] bytes = JavaX.STRING_VALUE.apply(source);
-			if (!full && latin1 && JavaX.isASCII(bytes)) {
+			final boolean latin1 = JavaUtil.STRING_CODER.applyAsInt(source) == JavaUtil.LATIN1;
+			final byte[] bytes = JavaUtil.STRING_VALUE.apply(source);
+			if (!full && latin1 && JavaUtil.isASCII(bytes)) {
 				return source;
 			}
-			final byte[] charTable = JavaX.STRING_VALUE.apply(digitTable);
+			final byte[] charTable = JavaUtil.STRING_VALUE.apply(digitTable);
 			final int length = source.length();
 			int pos = 0;
 			byte[] chars = new byte[length * 6];
@@ -124,7 +124,7 @@ public class JavaHelper {
 			if (pos < chars.length) {
 				chars = Arrays.copyOfRange(chars, 0, pos);
 			}
-			return JavaX.STRING_CREATOR_JDK11.apply(chars, JavaX.LATIN1);
+			return JavaUtil.STRING_CREATOR_JDK11.apply(chars, JavaUtil.LATIN1);
 		}
 		return "";
 	}

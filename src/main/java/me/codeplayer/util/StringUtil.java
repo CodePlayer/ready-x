@@ -36,7 +36,7 @@ public abstract class StringUtil {
 	 * @since 0.0.1
 	 */
 	public static String unicode(String source) {
-		return JavaHelper.unicode(source, true, StringX.DIGIT_CHAR_TABLE);
+		return JavaHelper.unicode(source, true, StringUtil.DIGIT_CHAR_TABLE);
 	}
 
 	/**
@@ -47,7 +47,7 @@ public abstract class StringUtil {
 	 * @since 0.0.1
 	 */
 	public static String fastUnicode(String source) {
-		return JavaHelper.unicode(source, false, StringX.DIGIT_CHAR_TABLE);
+		return JavaHelper.unicode(source, false, StringUtil.DIGIT_CHAR_TABLE);
 	}
 
 	/**

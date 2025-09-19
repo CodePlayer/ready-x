@@ -32,7 +32,7 @@ public interface CharReplacer {
 	 * @param latin1Only 是否只包含 Latin1 字符
 	 */
 	static CharReplacer ofChars(int length, boolean latin1Only) {
-		if (JavaX.supportLatin1) {
+		if (JavaUtil.supportLatin1) {
 			if (latin1Only) {
 				return new Latin1CharReplacer(new byte[length]);
 			}
