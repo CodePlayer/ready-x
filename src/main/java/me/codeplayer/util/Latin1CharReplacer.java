@@ -11,7 +11,7 @@ class Latin1CharReplacer implements CharReplacer {
 	}
 
 	public Latin1CharReplacer(String chars) {
-		this.chars = chars.getBytes(StandardCharsets.US_ASCII);
+		this.chars = chars.getBytes(StandardCharsets.ISO_8859_1);
 	}
 
 	@Override

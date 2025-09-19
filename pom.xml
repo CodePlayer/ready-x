@@ -247,7 +247,7 @@
 				<jdk>[9,)</jdk>
 			</activation>
 			<properties>
-				<surefire.argline>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/sun.misc=ALL-UNNAMED</surefire.argline>
+				<surefire.argline>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/jdk.internal.misc=ALL-UNNAMED</surefire.argline>
 			</properties>
 			<build>
 				<plugins>

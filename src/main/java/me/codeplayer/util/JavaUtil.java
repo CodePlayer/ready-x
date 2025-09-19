@@ -2,9 +2,13 @@ package me.codeplayer.util;
 
 import java.lang.invoke.*;
 import java.lang.reflect.Field;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.function.*;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.StringUtils;
 import sun.misc.Unsafe;
@@ -44,8 +48,10 @@ public class JavaUtil {
 	public static final ToIntFunction<String> STRING_CODER;
 	public static final Function<String, byte[]> STRING_VALUE;
 
-	public static final MethodHandle METHOD_HANDLE_HAS_NEGATIVE;
-	public static final Predicate<byte[]> PREDICATE_IS_ASCII;
+	@Nullable
+	static final MethodHandle METHOD_HANDLE_HAS_NEGATIVE;
+	@Nullable
+	static final Predicate<byte[]> PREDICATE_IS_ASCII;
 	public static final MethodHandle INDEX_OF_CHAR_LATIN1;
 
 	public static final MethodHandles.Lookup IMPL_LOOKUP;
@@ -67,7 +73,7 @@ public class JavaUtil {
 		UNSAFE = unsafe;
 
 		if (offset == -1) {
-			throw new UnsupportedOperationException("init JavaX error", initErrorLast);
+			throw new UnsupportedOperationException("init JavaUtil error", initErrorLast);
 		}
 
 		int jvmVersion = -1;
@@ -361,7 +367,8 @@ public class JavaUtil {
 		STRING_VALUE = stringValue;
 	}
 
-	public static char[] getCharArray(String str) {
+	@Nullable
+	static char[] fastGetCharArray(String str) {
 		// GraalVM not support
 		// Android not support
 		if (!FIELD_STRING_VALUE_ERROR) {
@@ -371,7 +378,12 @@ public class JavaUtil {
 				FIELD_STRING_VALUE_ERROR = true;
 			}
 		}
-		return str.toCharArray();
+		return null;
+	}
+
+	public static char[] getCharArray(String str) {
+		char[] chars = fastGetCharArray(str);
+		return chars == null ? str.toCharArray() : chars;
 	}
 
 	public static MethodHandles.Lookup trustedLookup(Class<?> objectClass) {
@@ -425,6 +437,78 @@ public class JavaUtil {
 			chars[i] = (char) (bytes[offset + i] & 0xff);
 		}
 		return STRING_CREATOR_JDK8.apply(chars, Boolean.TRUE);
+	}
+
+	public static boolean isASCII(byte[] bytes, int start, int end) {
+		// JVM 底层对该方法有指令集优化，优先使用 JVM 内置方法进行检测
+		if (METHOD_HANDLE_HAS_NEGATIVE != null) {
+			try {
+				return !(boolean) METHOD_HANDLE_HAS_NEGATIVE.invokeExact(bytes, start, end - start);
+			} catch (Throwable ignored) {
+				// ignored
+			}
+		}
+		return isASCII0(bytes, start, end);
+	}
+
+	static boolean isASCII0(byte[] bytes, int start, int end) {
+		while (start < end) {
+			if (bytes[start++] < 0) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public static boolean isASCII(byte[] bytes) {
+		if (PREDICATE_IS_ASCII != null) {
+			return PREDICATE_IS_ASCII.test(bytes);
+		}
+		return isASCII(bytes, 0, bytes.length);
+	}
+
+	static final boolean supportLatin1 = STRING_CODER.applyAsInt("") == LATIN1;
+
+	public static boolean isASCII(String str) {
+		return isJava9OrHigher
+				? (STRING_CODER.applyAsInt(str) == LATIN1 || !supportLatin1) && isASCII(STRING_VALUE.apply(str))
+				: isASCIIOnJdk8(str);
+	}
+
+	private static boolean isASCIIOnJdk8(String str) {
+		final char[] chars = fastGetCharArray(str);
+		if (chars != null) {
+			for (char ch : chars) {
+				if (ch >= 0x80) { // @see sun.nio.cs.US_ASCII.Encoder.canEncode()
+					return false;
+				}
+			}
+			return true;
+		}
+		return StandardCharsets.US_ASCII.newEncoder().canEncode(str);
+	}
+
+	public static byte[] getUtf8Bytes(@Nonnull String str) {
+		if (STRING_CODER.applyAsInt(str) == LATIN1) {
+			final byte[] bytes = STRING_VALUE.apply(str);
+			if (isASCII(bytes)) {
+				return bytes;
+			}
+		}
+		return str.getBytes(StandardCharsets.UTF_8);
+	}
+
+	public static boolean supportLatin1() {
+		return supportLatin1;
+	}
+
+	public static String newString(byte[] bytes, Charset charset) {
+		if (supportLatin1
+				&& (charset == StandardCharsets.UTF_8 || charset == StandardCharsets.ISO_8859_1 || charset == StandardCharsets.US_ASCII)
+				&& isASCII(bytes)) {
+			return STRING_CREATOR_JDK11.apply(bytes, LATIN1);
+		}
+		return new String(bytes, charset);
 	}
 
 	public static int parseJavaVersion(String javaVersionProperty) {

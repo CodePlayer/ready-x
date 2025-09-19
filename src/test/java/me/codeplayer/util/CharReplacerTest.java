@@ -34,4 +34,19 @@ public class CharReplacerTest {
 		assertEquals("Hi中文，今天是2025-03-26", replacer.toString());
 	}
 
+	@Test
+	public void ofChars() {
+		CharReplacer replacer = CharReplacer.ofChars(4, true);
+		replacer.setCharAt(0, 'J');
+		replacer.setCharAt(1, 'a');
+		replacer.setCharAt(2, 'v');
+		replacer.setCharAt(3, 'a');
+		assertEquals("Java", replacer.toString());
+
+		replacer = CharReplacer.ofChars(2, false);
+		replacer.setCharAt(0, '你');
+		replacer.setCharAt(1, '好');
+		assertEquals("你好", replacer.toString());
+	}
+
 }
