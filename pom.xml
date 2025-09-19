@@ -4,7 +4,7 @@
 
 	<groupId>me.codeplayer</groupId>
 	<artifactId>ready-x</artifactId>
-	<version>4.0.0</version>
+	<version>4.1.0</version>
 	<packaging>jar</packaging>
 
 	<name>ready-x</name>
@@ -150,6 +150,29 @@
 
 			<build>
 				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.14.0</version>
+						<executions>
+							<!-- compile for Java 9+ -->
+							<execution>
+								<id>compile-java-9</id>
+								<goals>
+									<goal>compile</goal>
+								</goals>
+								<phase>compile</phase>
+								<configuration>
+									<release>9</release>
+									<debuglevel>lines,vars,source</debuglevel>
+									<compileSourceRoots>
+										<compileSourceRoot>${project.basedir}/src/main/java9</compileSourceRoot>
+									</compileSourceRoots>
+									<multiReleaseOutput>true</multiReleaseOutput>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
 
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
@@ -185,14 +208,14 @@
 					</plugin>
 
 					<plugin>
-						<groupId>org.sonatype.plugins</groupId>
-						<artifactId>nexus-staging-maven-plugin</artifactId>
-						<version>1.7.0</version>
+						<groupId>org.sonatype.central</groupId>
+						<artifactId>central-publishing-maven-plugin</artifactId>
+						<version>0.8.0</version>
 						<extensions>true</extensions>
 						<configuration>
-							<serverId>ossrh</serverId>
-							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-							<autoReleaseAfterClose>true</autoReleaseAfterClose>
+							<publishingServerId>central</publishingServerId>
+							<autoPublish>true</autoPublish>
+							<waitUntil>published</waitUntil>
 						</configuration>
 					</plugin>
 
@@ -347,7 +370,6 @@
 				</executions>
 			</plugin>
 
-			<!--
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
@@ -367,7 +389,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			-->
 
 		</plugins>
 	</build>
