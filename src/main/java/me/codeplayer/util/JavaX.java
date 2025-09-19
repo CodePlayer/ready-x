@@ -387,6 +387,14 @@ public class JavaX {
 		return STRING_CREATOR_JDK8.apply(chars, Boolean.TRUE);
 	}
 
+	/**
+	 * 检查给定字节数组是否只包含 ASCII 字符
+	 *
+	 * @param bytes 待检查的字节数组，不能为 null
+	 * @param start 检查的起始位置（包含）
+	 * @param end 检查的结束位置（不包含）
+	 * @return 如果只包含 ASCII 字符则返回 true，否则返回 false
+	 */
 	public static boolean isASCII(byte[] bytes, int start, int end) {
 		// JVM 底层对该方法有指令集优化，优先使用 JVM 内置方法进行检测
 		if (METHOD_HANDLE_HAS_NEGATIVE != null) {
@@ -408,6 +416,12 @@ public class JavaX {
 		return true;
 	}
 
+	/**
+	 * 检查给定字节数组是否只包含 ASCII 字符
+	 *
+	 * @param bytes 待检查的字节数组，不能为 null
+	 * @return 如果只包含 ASCII 字符则返回 true，否则返回 false
+	 */
 	public static boolean isASCII(byte[] bytes) {
 		if (PREDICATE_IS_ASCII != null) {
 			return PREDICATE_IS_ASCII.test(bytes);
@@ -415,8 +429,15 @@ public class JavaX {
 		return isASCII(bytes, 0, bytes.length);
 	}
 
+	/** JDK 9+时，此值与 <code> String.COMPACT_STRINGS </code> 保持一致 */
 	static final boolean supportLatin1 = STRING_CODER.applyAsInt("") == LATIN1;
 
+	/**
+	 * 检查给定字符串是否只包含 ASCII 字符
+	 *
+	 * @param str 待检查的字符串，不能为 null
+	 * @return 如果字符串只包含 ASCII 字符则返回 true，否则返回 false
+	 */
 	public static boolean isASCII(String str) {
 		return isJava9OrHigher
 				? (STRING_CODER.applyAsInt(str) == LATIN1 || !supportLatin1) && isASCII(STRING_VALUE.apply(str))
@@ -436,6 +457,13 @@ public class JavaX {
 		return StandardCharsets.US_ASCII.newEncoder().canEncode(str);
 	}
 
+	/**
+	 * 将字符串转换为 UTF-8 编码的字节数组
+	 * <p> 【注意】：在 JDK 9+，返回的字节数组可能是字符串底层数组的引用，只能读取、不可修改，否则可能引发错误！！！
+	 *
+	 * @param str 待转换的字符串，不能为空
+	 * @return UTF-8编码的字节数组
+	 */
 	public static byte[] getUtf8Bytes(@Nonnull String str) {
 		if (STRING_CODER.applyAsInt(str) == LATIN1) {
 			final byte[] bytes = STRING_VALUE.apply(str);
@@ -446,14 +474,28 @@ public class JavaX {
 		return str.getBytes(StandardCharsets.UTF_8);
 	}
 
+	/**
+	 * JDK 9+时，此值与 <code> String.COMPACT_STRINGS </code> 保持一致。
+	 * <p> JDK 8值，此值恒为 false
+	 */
 	public static boolean supportLatin1() {
 		return supportLatin1;
 	}
 
-	public static String newString(byte[] bytes, Charset charset) {
-		if (supportLatin1
-				&& (charset == StandardCharsets.UTF_8 || charset == StandardCharsets.ISO_8859_1 || charset == StandardCharsets.US_ASCII)
-				&& isASCII(bytes)) {
+	/**
+	 * 根据指定的字符集创建新的字符串
+	 *
+	 * @param bytes 字节数组
+	 * @param charset 字符集
+	 * @return 使用指定字符集解码字节数组后得到的字符串
+	 */
+	public static String newString(final byte[] bytes, Charset charset) {
+		// 如果字节数组是 ISO_8859_1(Latin1) => Latin1，则无需检查字符
+		// 如果是 UTF-8、US_ASCII => Latin1，则只有全部是 ASCII 才兼容
+		// 此处的逻辑参考了 JDK 代码 new String( byte[] bytes, Charset charset  ) 的实现
+		if (supportLatin1 && (charset == StandardCharsets.ISO_8859_1 ||
+				((charset == StandardCharsets.UTF_8 || charset == StandardCharsets.US_ASCII) && isASCII(bytes))
+		)) {
 			return STRING_CREATOR_JDK11.apply(bytes, LATIN1);
 		}
 		return new String(bytes, charset);

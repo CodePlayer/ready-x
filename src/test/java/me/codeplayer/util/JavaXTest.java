@@ -109,11 +109,38 @@ public class JavaXTest {
 	@Test
 	@EnabledForJreRange(min = JRE.JAVA_9)
 	public void newString0() {
-		String str = "ABC_12 3-@";
-		byte[] bytes = JavaX.STRING_VALUE.apply(str);
-		String newString = JavaX.newString(bytes, StandardCharsets.ISO_8859_1);
-		assertEquals(str, newString);
-		assertSame(bytes, JavaX.STRING_VALUE.apply(newString));
+		{
+			String str = "ABC_12 3-@";
+			byte[] bytes = JavaX.STRING_VALUE.apply(str);
+			String newString = JavaX.newString(bytes, StandardCharsets.ISO_8859_1);
+			assertEquals(str, newString);
+			assertSame(bytes, JavaX.STRING_VALUE.apply(newString));
+		}
+
+		{
+			String str = "ABCÃé";
+			byte[] bytes = JavaX.STRING_VALUE.apply(str);
+			String newString = JavaX.newString(bytes, StandardCharsets.ISO_8859_1);
+			assertEquals(str, newString);
+			assertSame(bytes, JavaX.STRING_VALUE.apply(newString));
+		}
+
+		{
+			String str = "中国";
+			byte[] bytes = JavaX.getUtf8Bytes(str);
+			String newString = JavaX.newString(bytes, StandardCharsets.UTF_8);
+			assertEquals(str, newString);
+			assertNotSame(JavaX.STRING_VALUE.apply(str), JavaX.STRING_VALUE.apply(newString));
+		}
+
+		{
+			String str = "ABC123";
+			byte[] bytes = JavaX.getUtf8Bytes(str); // str.getBytes(StandardCharsets.US_ASCII);
+			String newString = JavaX.newString(bytes, StandardCharsets.US_ASCII);
+			assertEquals(str, newString);
+			assertSame(bytes, JavaX.STRING_VALUE.apply(newString));
+		}
+
 	}
 
 }
