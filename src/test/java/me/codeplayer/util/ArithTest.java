@@ -652,13 +652,17 @@ public class ArithTest implements WithAssertions {
 	}
 
 	@Test
-	public void toBigDecimal_DoubleInput_ReturnsBigDecimal() {
+	public void toBigDecimal() {
 		assertEquals(new BigDecimal("100.5"), Arith.toBigDecimal(100.5));
-	}
+		assertSame(BigDecimal.ZERO, Arith.toBigDecimal(0.0));
+		assertSame(BigDecimal.ONE, Arith.toBigDecimal(1.0));
+		assertSame(BigDecimal.TEN, Arith.toBigDecimal(10.0));
+		assertSame(Arith.HUNDRED, Arith.toBigDecimal(100));
+		assertSame(Arith.HUNDRED, Arith.toBigDecimal(100.0));
 
-	@Test
-	public void toBigDecimal_IntegerInput_ReturnsCachedBigDecimal() {
-		assertEquals(Arith.HUNDRED, Arith.toBigDecimal(100));
+		assertSame(Arith.THOUSAND, Arith.toBigDecimal(1000.0));
+		assertSame(Arith.MYRIAD, Arith.toBigDecimal(10000.0));
+		assertSame(Arith.HANDRED_MILLION, Arith.toBigDecimal(10000_0000.0));
 	}
 
 }

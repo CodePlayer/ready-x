@@ -359,7 +359,14 @@ public class NumberXTest {
 	public void getBigDecimal_CharSequenceValue_ReturnsParsedBigDecimal() {
 		String val = "123.45";
 		BigDecimal result = NumberX.getBigDecimal(val);
-		assertEquals(new BigDecimal(val), result);
+		BigDecimal expected = new BigDecimal(val);
+		assertEquals(expected, result);
+
+		result = NumberX.getBigDecimal(123.45);
+		assertEquals(expected, result);
+
+		result = NumberX.getBigDecimal(100.0);
+		assertSame(Arith.HUNDRED, result);
 	}
 
 	@Test
