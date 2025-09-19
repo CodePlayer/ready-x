@@ -1,7 +1,6 @@
 package me.codeplayer.util;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -28,7 +27,7 @@ public class FunctionX {
 	}
 
 	public static <K, T, L extends List<T>> Function<K, L> arrayListBuilder() {
-		return arrayListBuilder(10);
+		return k -> (L) new ArrayList<>();
 	}
 
 }
