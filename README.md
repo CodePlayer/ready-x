@@ -187,7 +187,7 @@ public List<User> filterVIP1(List<User> userList) {
 
 // 使用封装好的工具方法，不仅代码更简短，在常规使用下还能获得更好的性能
 public List<User> filterVIP2(List<User> userList) {
-    return CollectionUtil.filter(userList, User::isVIP);
+    return CollectionX.filter(userList, User::isVIP);
 }
 		
 public User findFirstVIP1(List<User> userList) {
@@ -196,7 +196,7 @@ public User findFirstVIP1(List<User> userList) {
 
 // 使用封装好的工具方法，不仅代码更简短，在常规使用下还能获得更好的性能
 public User findFirstVIP2(List<User> userList) {
-	return CollectionUtil.findFirst(userList, User::isVIP);
+	return CollectionX.findFirst(userList, User::isVIP);
 }
 ```
 
