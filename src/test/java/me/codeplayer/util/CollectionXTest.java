@@ -278,19 +278,19 @@ public class CollectionXTest implements WithAssertions {
 
 	@Test
 	public void asRawHashMap_EmptyInput_ReturnsEmptyMap() {
-		Map<String, Integer> map = CollectionX.asRawHashMap();
+		Map<String, Integer> map = CollectionX.asHashMap(new Object[0]);
 		assertThat(map).isEmpty();
 	}
 
 	@Test
 	public void asRawHashMap_MultipleKeyValuePairs_ReturnsMapWithPairs() {
-		Map<String, Integer> map = CollectionX.asRawHashMap("key1", 1, "key2", 2);
+		Map<String, Integer> map = CollectionX.asHashMap(new Object[] { "key1", 1, "key2", 2 });
 		assertThat(map).containsEntry("key1", 1).containsEntry("key2", 2);
 	}
 
 	@Test
 	public void asRawHashMap_MultipleKeyValuePairs_throwsException() {
-		assertThrows(IllegalArgumentException.class, () -> CollectionX.asRawHashMap("key1", 1, "key2", 2, "key3"));
+		assertThrows(IllegalArgumentException.class, () -> CollectionX.asHashMap(new Object[] { "key1", 1, "key2", 2, "key3" }));
 	}
 
 	@Test
@@ -461,13 +461,13 @@ public class CollectionXTest implements WithAssertions {
 
 	@Test
 	public void asRawLinkedHashMap_OddNumberOfElements_IgnoresLastElement() {
-		assertThrows(IllegalArgumentException.class, () -> CollectionX.asRawLinkedHashMap("name"));
-		assertThrows(IllegalArgumentException.class, () -> CollectionX.asRawLinkedHashMap("name", "Tom", "age"));
+		assertThrows(IllegalArgumentException.class, () -> CollectionX.asLinkedHashMap(new Object[] { "name" }));
+		assertThrows(IllegalArgumentException.class, () -> CollectionX.asLinkedHashMap(new Object[] { "name", "Tom", "age" }));
 	}
 
 	@Test
 	public void asRawLinkedHashMap_EmptyInput_ReturnsEmptyMap() {
-		Map<String, Object> map = CollectionX.asRawLinkedHashMap();
+		Map<String, Object> map = CollectionX.asLinkedHashMap(new Object[0]);
 		assertThat(map).isInstanceOf(LinkedHashMap.class).isEmpty();
 	}
 
@@ -1120,7 +1120,7 @@ public class CollectionXTest implements WithAssertions {
 
 	@Test
 	public void asLinkedHashMap_VarargsOddNumber_ThrowsException() {
-		assertThatThrownBy(() -> CollectionX.asRawLinkedHashMap("a", 1, "b", 2, "c")) // 奇数个参数
+		assertThatThrownBy(() -> CollectionX.asLinkedHashMap(new Object[] { "a", 1, "b", 2, "c" })) // 奇数个参数
 				.isInstanceOf(IllegalArgumentException.class);
 	}
 

@@ -486,12 +486,12 @@ public abstract class CollectionX {
 	/**
 	 * 根据可变参数形式的键值数组构造一个 Map 集合<br/>
 	 *
-	 * @param elements 可变参数形式的元素数组
+	 * @param kvPairs 可变参数形式的元素数组
 	 */
-	public static <K, V> HashMap<K, V> asRawHashMap(Object... elements) {
-		checkPairs(elements);
-		final HashMap<K, V> map = newHashMap(elements.length >> 1);
-		putAllRaw(map, elements);
+	public static <K, V> HashMap<K, V> asHashMap(Object[] kvPairs) {
+		checkPairs(kvPairs);
+		final HashMap<K, V> map = newHashMap(kvPairs.length >> 1);
+		putAllRaw(map, kvPairs);
 		return map;
 	}
 
@@ -550,12 +550,12 @@ public abstract class CollectionX {
 	/**
 	 * 根据可变参数形式的键值数组构造一个 Map 集合<br/>
 	 *
-	 * @param elements 可变参数形式的元素数组
+	 * @param kvPairs 可变参数形式的元素数组
 	 */
-	public static <K, V> LinkedHashMap<K, V> asRawLinkedHashMap(Object... elements) {
-		checkPairs(elements);
-		final LinkedHashMap<K, V> map = newLinkedHashMap(elements.length >> 1);
-		putAllRaw(map, elements);
+	public static <K, V> LinkedHashMap<K, V> asLinkedHashMap(Object[] kvPairs) {
+		checkPairs(kvPairs);
+		final LinkedHashMap<K, V> map = newLinkedHashMap(kvPairs.length >> 1);
+		putAllRaw(map, kvPairs);
 		return map;
 	}
 
