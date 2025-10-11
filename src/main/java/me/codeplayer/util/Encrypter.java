@@ -6,9 +6,9 @@ import java.security.NoSuchAlgorithmException;
 /**
  * 封装常用数据加密算法的加密器<br>
  * 内部主要包含MD5、SHA-1等不可逆算法以及DES可逆算法的常用处理方法<br>
- * <strong>备注</strong>：MD5加密强度是128bit，SHA-1的加密强度是160bit<br>
- * 因此SHA-1比MD5的加密强度更高，并且更不易受密码分析的攻击<br>
- * 相对的，在同样的硬件上，SHA-1比MD5的运行速度要稍慢
+ * <strong>备注</strong>：MD5 加密强度是 128bit，SHA-1 的加密强度是 160bit<br>
+ * 因此 SHA-1 比 MD5 的加密强度更高，并且更不易受密码分析的攻击<br>
+ * 相对的，在同样的硬件上，SHA-1 比 MD5 的运行速度要稍慢
  *
  * @author Ready
  * @since 2012-10-21
