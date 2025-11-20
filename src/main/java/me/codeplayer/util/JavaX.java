@@ -510,6 +510,26 @@ public class JavaX {
 	}
 
 	/**
+	 * 将字符串转换为 UTF-8 编码的字节数组
+	 * <p> 【注意】：在 JDK 9+，返回的字节数组可能是字符串底层数组的<b>引用</b>，只能读取、<b>不可</b>修改，否则可能引发错误！！！
+	 *
+	 * @param str 待转换的字符串，不能为空
+	 * @return UTF-8编码的字节数组
+	 * @see String#getBytes(Charset)
+	 */
+	public static byte[] getBytes(@Nonnull String str, @Nonnull Charset charset) {
+		if (STRING_CODER.applyAsInt(str) == LATIN1) {
+			final byte[] bytes = STRING_VALUE.apply(str);
+			if (charset == StandardCharsets.ISO_8859_1 || charset == StandardCharsets.UTF_8 && isASCII(bytes)) {
+				return bytes;
+			}
+		} else if (isJava9OrHigher && charset == StandardCharsets.UTF_16) {
+			return STRING_VALUE.apply(str);
+		}
+		return str.getBytes(charset);
+	}
+
+	/**
 	 * JDK 9+时，此值与 <code> String.COMPACT_STRINGS </code> 保持一致。
 	 * <p> JDK 8 时，此值恒为 false
 	 */
