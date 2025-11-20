@@ -1720,4 +1720,13 @@ public abstract class StringX {
 		return toHexString(bytes, 0, bytes.length);
 	}
 
+	public static String toHexString(String str, boolean upperCase) {
+		final byte[] bytes = JavaX.getUtf8Bytes(str);
+		return toHexString(bytes, 0, bytes.length, upperCase);
+	}
+
+	public static String toHexString(String str) {
+		return toHexString(str, false);
+	}
+
 }
