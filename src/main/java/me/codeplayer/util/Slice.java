@@ -73,6 +73,10 @@ public interface Slice<E> {
 		return (String str, int start, int end) -> mapper.apply(asLong(str, start, end));
 	}
 
+	static <R> Slice<R> mapStringTo(Function<? super String, R> mapper) {
+		return (String str, int start, int end) -> mapper.apply(parseString(str, start, end));
+	}
+
 	default <R> Slice<R> andThen(Function<? super E, R> after) {
 		return (String str, int start, int end) -> after.apply(sliceAs(str, start, end));
 	}
