@@ -519,9 +519,13 @@ public class JavaX {
 	 */
 	public static byte[] getBytes(@Nonnull String str, @Nonnull Charset charset) {
 		if (STRING_CODER.applyAsInt(str) == LATIN1) {
-			final byte[] bytes = STRING_VALUE.apply(str);
-			if (charset == StandardCharsets.ISO_8859_1 || charset == StandardCharsets.UTF_8 && isASCII(bytes)) {
-				return bytes;
+			if (charset == StandardCharsets.UTF_8) {
+				final byte[] bytes = STRING_VALUE.apply(str);
+				if (isASCII(bytes)) {
+					return bytes;
+				}
+			} else if (charset == StandardCharsets.ISO_8859_1) {
+				return STRING_VALUE.apply(str);
 			}
 		} else if (isJava9OrHigher && charset == StandardCharsets.UTF_16) {
 			return STRING_VALUE.apply(str);
