@@ -800,7 +800,6 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 获取指定日历单位所对应的毫秒值，单位仅支持"天"及其以下的单位
 	 *
 	 * @param field 该方法支持的字段有{@link Calendar#YEAR}、{@link Calendar#MONTH}、 {@link Calendar#DATE}、 {@link Calendar#HOUR_OF_DAY}、 {@link Calendar#MINUTE}、{@link Calendar#SECOND}
-	 * @author Ready
 	 * @since 0.3.6
 	 */
 	public static long getMillisOfUnit(int field) {
@@ -885,7 +884,6 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * @param a 时间 a
 	 * @param b 时间 b
 	 * @param inField 指定用于判断是否为同一值的时间单位字段，可以使用Calendar类的单位常量
-	 * @author Ready
 	 * @see Calendar#YEAR
 	 * @see Calendar#MONTH
 	 * @see Calendar#WEEK_OF_YEAR
@@ -908,7 +906,6 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 时间对象可以为：{@link Date}、{@link EasyDate}、{@link Calendar}
 	 *
 	 * @param inField 指定用于判断是否为同一值的时间单位字段，可以使用Calendar类的单位常量
-	 * @author Ready
 	 * @see Calendar#YEAR
 	 * @see Calendar#MONTH
 	 * @see Calendar#WEEK_OF_MONTH
@@ -931,7 +928,6 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * @param a 时间 a
 	 * @param b 时间 b
 	 * @param inField 指定用于判断是否为同一值的时间单位字段，可以使用Calendar类的单位常量
-	 * @author Ready
 	 * @see Calendar#YEAR
 	 * @see Calendar#MONTH
 	 * @see Calendar#WEEK_OF_MONTH

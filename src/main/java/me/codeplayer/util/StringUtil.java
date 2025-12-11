@@ -655,7 +655,6 @@ public abstract class StringUtil {
 	 * @param endIndex 结束索引
 	 * @param length 指定数组、集合或字符串的长度，不能小于0
 	 * @return 如果范围安全则返回对应的范围数组，否则返回null
-	 * @author Ready
 	 * @since 0.4.2
 	 */
 	public static int[] ensureRangeSafe(int beginIndex, int endIndex, final int length) {
@@ -979,7 +978,6 @@ public abstract class StringUtil {
 	 * @param separatorChars 单词两侧必须是指定的字符之一或位于字符串 {@code container }的首/尾位置
 	 * @param fastFail 是否启用快速失败模式。快速模式：如果在 {@code container} 中第一次检索到该单词，就直接在此处进行周边字符的匹配测试，并立即返回测试结果。 <br>
 	 * 在快速失败模式下，对于类似 {@code containsWord("abc123,123", "123", ",") } 的特殊情况将返回 <code>false</code>。哪怕后面还会再次出现该单词，也不再继续向后检查。
-	 * @author Ready
 	 * @since 2.0.0
 	 */
 	public static boolean containsWord(@Nullable final String container, @Nullable final String search, final String separatorChars, final boolean fastFail) {
