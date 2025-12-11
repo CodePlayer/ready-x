@@ -4,10 +4,10 @@ import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import javax.annotation.Nullable;
 
 import me.codeplayer.util.NumberUtil;
 import me.codeplayer.util.StringUtil;
+import org.jspecify.annotations.Nullable;
 
 /**
  * 用于进行 Pipeline 初始化及附属校验器定义的辅助工具类

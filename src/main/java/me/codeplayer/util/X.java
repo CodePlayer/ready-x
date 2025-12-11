@@ -3,7 +3,8 @@ package me.codeplayer.util;
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.*;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 /**
  * 通用公共工具类<br>

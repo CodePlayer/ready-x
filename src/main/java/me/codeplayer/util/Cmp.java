@@ -2,8 +2,9 @@ package me.codeplayer.util;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * 用于进行数值比较的工具类
@@ -114,7 +115,7 @@ public class Cmp {
 	/**
 	 * 返回指定的 val，如果该参数为 null 时，则返回 0
 	 */
-	@Nonnull
+	@NonNull
 	public static Integer nullToZero(@Nullable Integer val) {
 		return val == null ? 0 : val;
 	}
@@ -122,7 +123,7 @@ public class Cmp {
 	/**
 	 * 返回指定的 val，如果该参数为 null 时，则返回 0
 	 */
-	@Nonnull
+	@NonNull
 	public static Long nullToZero(@Nullable Long val) {
 		return val == null ? 0L : val;
 	}
@@ -130,7 +131,7 @@ public class Cmp {
 	/**
 	 * 返回指定的 val，如果该参数为 null 时，则返回 0
 	 */
-	@Nonnull
+	@NonNull
 	public static Double nullToZero(@Nullable Double val) {
 		// 此处 Double.valueOf(0) 不能简写成 0 或 0D，否则会产生额外的拆箱/装箱开销 */
 		return val == null ? Double.valueOf(0) : val;
@@ -139,7 +140,7 @@ public class Cmp {
 	/**
 	 * 返回指定的 val，如果该参数为 null 时，则返回 0
 	 */
-	@Nonnull
+	@NonNull
 	public static Float nullToZero(@Nullable Float val) {
 		// 此处 Float.valueOf(0) 不能简写成 0 或 0F，否则会产生额外的拆箱/装箱开销 */
 		return val == null ? Float.valueOf(0) : val;
@@ -148,7 +149,7 @@ public class Cmp {
 	/**
 	 * 返回指定的 val，如果该参数为 null 时，则返回 0
 	 */
-	@Nonnull
+	@NonNull
 	public static BigDecimal nullToZero(@Nullable BigDecimal val) {
 		return val == null ? BigDecimal.ZERO : val;
 	}
@@ -156,7 +157,7 @@ public class Cmp {
 	/**
 	 * 返回指定的 val，如果该参数为 null 时，则返回 0
 	 */
-	@Nonnull
+	@NonNull
 	public static BigInteger nullToZero(@Nullable BigInteger val) {
 		return val == null ? BigInteger.ZERO : val;
 	}

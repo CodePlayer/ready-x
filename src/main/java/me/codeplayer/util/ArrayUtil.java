@@ -3,9 +3,9 @@ package me.codeplayer.util;
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.*;
-import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.jspecify.annotations.Nullable;
 
 /**
  * 用于对数组类型的数据(字节数组参见NumberUtil类)进行相应处理的工具类

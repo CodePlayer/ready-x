@@ -4,12 +4,12 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.*;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import me.codeplayer.util.CharConverter.CharCase;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * 用于对字符串类型的数据进行常用处理操作的工具类
@@ -398,7 +398,7 @@ public abstract class StringUtil {
 	 * @param suffix 超出长度时添加的指定后缀,如果不需要，可以为null
 	 * @since 0.0.1
 	 */
-	@Nonnull
+	@NonNull
 	public static String limitChars(@Nullable String str, int maxLength, String suffix) {
 		if (str == null) {
 			return "";
@@ -419,7 +419,7 @@ public abstract class StringUtil {
 	 * @param maxLength 最大限制长度
 	 * @since 0.0.1
 	 */
-	@Nonnull
+	@NonNull
 	public static String limitChars(@Nullable String str, int maxLength) {
 		return limitChars(str, maxLength, "...");
 	}
@@ -1499,7 +1499,7 @@ public abstract class StringUtil {
 	 * @param filter 过滤器（如果应用到对应的元素返回 false，则返回的集合中不会包含该元素 ）
 	 * @return 当且仅当 {@code  isEmpty(str) == true } 时返回 {@link Collections#emptyList()}
 	 */
-	@Nonnull
+	@NonNull
 	public static <T> List<T> split(@Nullable final String str, final String sep, @Nullable Predicate<? super String> filter, final Function<? super String, T> mapper) {
 		final int length;
 		if (str == null || (length = str.length()) == 0) {
@@ -1526,7 +1526,7 @@ public abstract class StringUtil {
 	 * @param mapper 转换器
 	 * @param ignoreEmpty 是否忽略空子字符串（如果为 true，则忽略空字符串 ）
 	 */
-	@Nonnull
+	@NonNull
 	public static <T> List<T> split(final String toSplit, final String sep, final Function<? super String, T> mapper, final boolean ignoreEmpty) {
 		return split(toSplit, sep, ignoreEmpty ? StringUtil::notEmpty : null, mapper);
 	}
@@ -1538,7 +1538,7 @@ public abstract class StringUtil {
 	 * @param sep 分隔符
 	 * @param mapper 转换器
 	 */
-	@Nonnull
+	@NonNull
 	public static <T> List<T> split(final String toSplit, final String sep, final Function<String, T> mapper) {
 		return split(toSplit, sep, mapper, true);
 	}
@@ -1560,7 +1560,7 @@ public abstract class StringUtil {
 	 *
 	 * @return 当且仅当 {@code  isEmpty(values) == true } 时返回 {@link Collections#emptyList()}
 	 */
-	@Nonnull
+	@NonNull
 	public static <E> List<E> split(@Nullable final String values, final char sep, Slice<E> mapper) {
 		final int length;
 		if (values == null || (length = values.length()) == 0) {
@@ -1639,7 +1639,7 @@ public abstract class StringUtil {
 	/**
 	 * 将以指定分隔字符拆分字符串，并将每个部分转换为数字
 	 */
-	@Nonnull
+	@NonNull
 	public static List<Long> splitAsLongList(final String ids, final char sep) {
 		return split(ids, sep, Slice::asLong);
 	}
@@ -1647,7 +1647,7 @@ public abstract class StringUtil {
 	/**
 	 * 将以指定分隔字符','分割字符串，并将每个部分转换为数字
 	 */
-	@Nonnull
+	@NonNull
 	public static List<Long> splitAsLongList(final String ids) {
 		return splitAsLongList(ids, ',');
 	}
@@ -1655,7 +1655,7 @@ public abstract class StringUtil {
 	/**
 	 * 将以指定分隔字符拆分字符串，并将每个部分转换为数字
 	 */
-	@Nonnull
+	@NonNull
 	public static List<Integer> splitAsIntList(final String parts, final char sep) {
 		return split(parts, sep, Slice::asInteger);
 	}
@@ -1663,7 +1663,7 @@ public abstract class StringUtil {
 	/**
 	 * 将以指定分隔字符','分隔字符串，并将每个部分转换为数字
 	 */
-	@Nonnull
+	@NonNull
 	public static List<Integer> splitAsIntList(final String parts) {
 		return splitAsIntList(parts, ',');
 	}
@@ -1671,7 +1671,7 @@ public abstract class StringUtil {
 	/**
 	 * 将以指定分隔字符拆分为整数片段，并将每个部分转换为指定类型的对象
 	 */
-	@Nonnull
+	@NonNull
 	public static <R> List<R> splitIntAsList(final String parts, final char sep, Function<? super Integer, R> mapper) {
 		return split(parts, sep, Slice.mapIntTo(mapper));
 	}
@@ -1679,7 +1679,7 @@ public abstract class StringUtil {
 	/**
 	 * 将以指定分隔字符拆分为整数片段，并将每个部分转换为指定类型的对象
 	 */
-	@Nonnull
+	@NonNull
 	public static <R> List<R> splitLongAsList(final String parts, final char sep, Function<? super Long, R> mapper) {
 		return split(parts, sep, Slice.mapLongTo(mapper));
 	}
@@ -1687,7 +1687,7 @@ public abstract class StringUtil {
 	/**
 	 * 将以指定分隔字符 ',' 分隔字符串，并返回拆分后的子字符串集合（子字符串为空的将会被忽略）
 	 */
-	@Nonnull
+	@NonNull
 	public static List<String> splitAsStringList(@Nullable final String parts) {
 		return splitAsStringList(parts, ',');
 	}
@@ -1695,7 +1695,7 @@ public abstract class StringUtil {
 	/**
 	 * 将以指定分隔字符拆分字符串，并返回拆分后的子字符串集合（子字符串为空的将会被忽略）
 	 */
-	@Nonnull
+	@NonNull
 	public static List<String> splitAsStringList(@Nullable final String parts, final char sep) {
 		return split(parts, sep, Slice::asString);
 	}
@@ -1718,6 +1718,15 @@ public abstract class StringUtil {
 
 	public static String toHexString(byte[] bytes) {
 		return toHexString(bytes, 0, bytes.length);
+	}
+
+	public static String toHexString(String str, boolean upperCase) {
+		final byte[] bytes = JavaUtil.getUtf8Bytes(str);
+		return toHexString(bytes, 0, bytes.length, upperCase);
+	}
+
+	public static String toHexString(String str) {
+		return toHexString(str, false);
 	}
 
 }

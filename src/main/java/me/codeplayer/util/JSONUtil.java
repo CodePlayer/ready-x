@@ -1,10 +1,11 @@
 package me.codeplayer.util;
 
 import java.util.*;
-import javax.annotation.Nullable;
 
 import com.alibaba.fastjson2.*;
+import com.alibaba.fastjson2.JSONWriter.Context;
 import com.alibaba.fastjson2.filter.*;
+import org.jspecify.annotations.Nullable;
 
 /**
  * JSON字符串序列化转换工具类
@@ -22,7 +23,7 @@ public abstract class JSONUtil {
 		init(dateFormat, null);
 	}
 
-	public static void init(@Nullable String dateFormat, @Nullable JSONWriter.Context writerContext) {
+	public static void init(@Nullable String dateFormat, @Nullable Context writerContext) {
 		if (writerContext != null) {
 			encodeContext = writerContext;
 		} else if (encodeContext == null) {

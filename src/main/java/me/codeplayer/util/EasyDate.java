@@ -5,11 +5,12 @@ import java.math.RoundingMode;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.*;
+import java.time.*;
 import java.util.*;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.time.FastDateFormat;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import static java.util.Calendar.*;
 import static me.codeplayer.util.NumberUtil.pickValidChars;
@@ -179,7 +180,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 返回自 1970 年 1 月 1 日 00:00:00 GMT 以来指定日期对象表示的毫秒数。<br>
 	 * 如果为null，则默认为当前时间
 	 */
-	public static long getTimeOfDate(@Nonnull Object date) {
+	public static long getTimeOfDate(@NonNull Object date) {
 		return getTimeOfDate(date, false);
 	}
 
@@ -1227,9 +1228,9 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	/**
 	 * 返回"yyyy-MM-dd"格式的字符串
 	 */
-	@SuppressWarnings("deprecation")
 	public static String toString(Date d) {
-		return toString(d.getYear() + 1900, d.getMonth() + 1, d.getDate());
+		ZonedDateTime zdt = toDatetime(d);
+		return toString(zdt.getYear(), zdt.getMonthValue(), zdt.getDayOfMonth());
 	}
 
 	static String toString(int year, int month, int day) {
@@ -1316,9 +1317,13 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	/**
 	 * 返回"yyyyMMdd"格式的字符串
 	 */
-	@SuppressWarnings("deprecation")
 	public static String toShortString(Date d) {
-		return toShortString(d.getYear() + 1900, d.getMonth() + 1, d.getDate());
+		ZonedDateTime zdt = toDatetime(d);
+		return toShortString(zdt.getYear(), zdt.getMonthValue(), zdt.getDayOfMonth());
+	}
+
+	private static ZonedDateTime toDatetime(Date d) {
+		return ZonedDateTime.ofInstant(Instant.ofEpochMilli(d.getTime()), ZoneId.systemDefault());
 	}
 
 	/**
@@ -1342,9 +1347,9 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	/**
 	 * 返回"yyyy-MM-dd HH:mm:ss.SSS"格式的字符串
 	 */
-	@SuppressWarnings("deprecation")
 	public static String toLongString(Date d) {
-		return toLongString(d.getYear() + 1900, d.getMonth() + 1, d.getDate(), d.getHours(), d.getMinutes(), d.getSeconds(), (int) (d.getTime() % 1000));
+		ZonedDateTime zdt = toDatetime(d);
+		return toLongString(zdt.getYear(), zdt.getMonthValue(), zdt.getDayOfMonth(), zdt.getHour(), zdt.getMinute(), zdt.getSecond(), zdt.getNano() / 1000000);
 	}
 
 	/**

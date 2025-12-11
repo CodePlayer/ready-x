@@ -7,21 +7,26 @@ import java.nio.charset.StandardCharsets;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.function.*;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import sun.misc.Unsafe;
 
 import static java.lang.invoke.MethodType.methodType;
 
 /**
+ * 使用 底层 API 的 Java 高性能 辅助工具类。该工具类具有实验性质。
+ *
+ * <p> 请<b>注意</b>：为了确保高性能，本类中的方法会尽量避免数组的复制开销，因此请务必谨慎使用，后续<b>不要</b>修改传入或返回的 数组数据！
+ *
  * @see com.alibaba.fastjson2.util.JDKUtils
  */
 @SuppressWarnings({ "JavaLangInvokeHandleSignature", "unchecked" })
 public class JavaUtil {
 
 	public static final int javaVersion = parseJavaVersion(System.getProperty("java.version"));
+	/** 指示当前 Java 版本是否为 Java 9+ 版本 */
 	public static final boolean isJava9OrHigher = javaVersion >= 9;
 
 	public static final Unsafe UNSAFE;
@@ -44,8 +49,37 @@ public class JavaUtil {
 	// GraalVM not support
 	// Android not support
 	public static final BiFunction<char[], Boolean, String> STRING_CREATOR_JDK8;
+	/**
+	 * <ul>
+	 * <li>在 JDK 9+ 并且 <code> String.COMPACT_STRINGS = true </code>时，通过 <code> STRING_CREATOR_JDK11.apply( bytes, coder ) </code> 构造字符串可以<b>避免</b> byte[] 的复制开销。
+	 * <p><b>注意</b>：请自行确保 <code> bytes </code> 和 <code> coder </code> 数据的正确性，并且后续<b>不能</b>修改 <code> bytes </code>！
+	 * </li>
+	 * <li>如未满足上述条件， 则 <code> STRING_VALUE.apply( bytes, coder ) </code>  等价于 <code> new String( bytes ) </code>
+	 * </ul>
+	 *
+	 * @see String#String(byte[])
+	 */
 	public static final BiFunction<byte[], Byte, String> STRING_CREATOR_JDK11;
+	/**
+	 * <ul>
+	 * <li>在 JDK 9+ 并且 <code> String.COMPACT_STRINGS = true </code>时，通过 <code> STRING_CODER.applyAsInt( str ) </code> 可以直接获取底层  <code> String.coder </code>。
+	 * <li>如未满足上述条件， 则 <code> STRING_CODER.applyAsInt( str ) </code>  等价于 {@link #UTF16}
+	 * </ul>
+	 *
+	 * @see #LATIN1
+	 * @see #UTF16
+	 */
 	public static final ToIntFunction<String> STRING_CODER;
+	/**
+	 * <ul>
+	 * <li>在 JDK 9+ 并且 <code> String.COMPACT_STRINGS = true </code>时，通过 <code> STRING_VALUE.apply( str ) </code> 可以直接获取底层  <code> String.value </code> 的 <code> byte[] </code> <b>引用</b>。
+	 * <p><b>注意</b>：外部【不能】修改引用的字节数组！！
+	 * </li>
+	 * <li>如未满足上述条件， 则 <code> STRING_VALUE.apply( str ) </code>  等价于 <code> str.getByte() </code>
+	 * </ul>
+	 *
+	 * @see String#getBytes()
+	 */
 	public static final Function<String, byte[]> STRING_VALUE;
 
 	@Nullable
@@ -511,12 +545,13 @@ public class JavaUtil {
 
 	/**
 	 * 将字符串转换为 UTF-8 编码的字节数组
-	 * <p> 【注意】：在 JDK 9+，返回的字节数组可能是字符串底层数组的引用，只能读取、不可修改，否则可能引发错误！！！
+	 * <p> 【注意】：在 JDK 9+，返回的字节数组可能是字符串底层数组的<b>引用</b>，只能读取、<b>不可</b>修改，否则可能引发错误！！！
 	 *
 	 * @param str 待转换的字符串，不能为空
 	 * @return UTF-8编码的字节数组
+	 * @see String#getBytes(Charset)
 	 */
-	public static byte[] getUtf8Bytes(@Nonnull String str) {
+	public static byte[] getUtf8Bytes(@NonNull String str) {
 		if (STRING_CODER.applyAsInt(str) == LATIN1) {
 			final byte[] bytes = STRING_VALUE.apply(str);
 			if (isASCII(bytes)) {
@@ -527,15 +562,40 @@ public class JavaUtil {
 	}
 
 	/**
+	 * 将字符串转换为 UTF-8 编码的字节数组
+	 * <p> 【注意】：在 JDK 9+，返回的字节数组可能是字符串底层数组的<b>引用</b>，只能读取、<b>不可</b>修改，否则可能引发错误！！！
+	 *
+	 * @param str 待转换的字符串，不能为空
+	 * @return UTF-8编码的字节数组
+	 * @see String#getBytes(Charset)
+	 */
+	public static byte[] getBytes(@NonNull String str, @NonNull Charset charset) {
+		if (STRING_CODER.applyAsInt(str) == LATIN1) {
+			if (charset == StandardCharsets.UTF_8) {
+				final byte[] bytes = STRING_VALUE.apply(str);
+				if (isASCII(bytes)) {
+					return bytes;
+				}
+			} else if (charset == StandardCharsets.ISO_8859_1) {
+				return STRING_VALUE.apply(str);
+			}
+		} else if (isJava9OrHigher && charset == StandardCharsets.UTF_16) {
+			return STRING_VALUE.apply(str);
+		}
+		return str.getBytes(charset);
+	}
+
+	/**
 	 * JDK 9+时，此值与 <code> String.COMPACT_STRINGS </code> 保持一致。
-	 * <p> JDK 8值，此值恒为 false
+	 * <p> JDK 8 时，此值恒为 false
 	 */
 	public static boolean supportLatin1() {
 		return supportLatin1;
 	}
 
 	/**
-	 * 根据指定的字符集创建新的字符串
+	 * 将指定字符集的 字节数组 构造为对应的 字符串
+	 * <p> 【注意】：在 JDK 9+ 时，为提高性能，返回的字符串内部可能直接使用传入的 <code> bytes </code> 数组的 <b>引用</b>，请自行确保后续<b>不要</b>修改入参 <code> bytes </code> 的数据！！！
 	 *
 	 * @param bytes 字节数组
 	 * @param charset 字符集

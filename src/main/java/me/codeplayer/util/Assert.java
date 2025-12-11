@@ -2,8 +2,9 @@ package me.codeplayer.util;
 
 import java.util.Objects;
 import java.util.function.Supplier;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import static me.codeplayer.util.StringUtil.nullSafeGet;
 
@@ -207,7 +208,7 @@ public abstract class Assert {
 	 * @param object 指定对象
 	 * @throws NullPointerException 如果对象为 null
 	 */
-	@Nonnull
+	@NonNull
 	public static <T> T notNull(@Nullable T object) throws NullPointerException {
 		if (object == null) {
 			throw new NullPointerException();
@@ -223,7 +224,7 @@ public abstract class Assert {
 	 * @param errorMsg 异常消息内容
 	 * @throws NullPointerException 如果对象为 null
 	 */
-	@Nonnull
+	@NonNull
 	public static <T> T notNull(final @Nullable T obj, final @Nullable CharSequence errorMsg) throws NullPointerException {
 		if (obj == null) {
 			throw new NullPointerException(nullSafeGet(errorMsg));
@@ -239,7 +240,7 @@ public abstract class Assert {
 	 * @param msger 异常消息内容
 	 * @throws NullPointerException 如果对象为 null
 	 */
-	@Nonnull
+	@NonNull
 	public static <T> T notNull(final @Nullable T obj, final @Nullable Supplier<? extends CharSequence> msger) throws NullPointerException {
 		if (obj == null) {
 			throw new NullPointerException(nullSafeGet(msger));
@@ -290,7 +291,7 @@ public abstract class Assert {
 	 * @throws AssertException 如果断言失败
 	 * @see StringUtil#notEmpty(CharSequence)
 	 */
-	@Nonnull
+	@NonNull
 	public static <T extends CharSequence> T notEmpty(@Nullable T str) {
 		isTrue(StringUtil.notEmpty(str));
 		return str;
@@ -335,7 +336,7 @@ public abstract class Assert {
 	 * @throws AssertException 如果断言失败
 	 * @see StringUtil#notBlank(CharSequence)
 	 */
-	@Nonnull
+	@NonNull
 	public static <T extends CharSequence> T notBlank(@Nullable T obj) {
 		isTrue(StringUtil.notBlank(obj));
 		return obj;
@@ -352,7 +353,7 @@ public abstract class Assert {
 	 * @throws AssertException 如果断言失败
 	 * @see StringUtil#notBlank(CharSequence)
 	 */
-	@Nonnull
+	@NonNull
 	public static <T extends CharSequence> T notBlank(@Nullable T cs, @Nullable CharSequence errorMsg) {
 		isTrue(StringUtil.notBlank(cs), errorMsg);
 		return cs;
@@ -368,7 +369,7 @@ public abstract class Assert {
 	 * @param errorMsger 异常消息内容
 	 * @see StringUtil#notBlank(CharSequence)
 	 */
-	@Nonnull
+	@NonNull
 	public static <T extends CharSequence> T notBlank(@Nullable T cs, final @Nullable Supplier<? extends CharSequence> errorMsger) {
 		isTrue(StringUtil.notBlank(cs), errorMsger);
 		return cs;

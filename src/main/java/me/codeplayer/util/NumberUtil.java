@@ -2,7 +2,8 @@ package me.codeplayer.util;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.Nullable;
 
 /**
  * 对数值类型的数据(包含字节)进行相应处理的工具类

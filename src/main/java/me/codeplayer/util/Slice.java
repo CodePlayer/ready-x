@@ -1,8 +1,9 @@
 package me.codeplayer.util;
 
 import java.util.function.Function;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * 对 字符串切片 进行统一转换处理的接口抽象
@@ -16,7 +17,7 @@ public interface Slice<E> {
 	 *
 	 * @return 如果字符串为 null 则返回 ""
 	 */
-	@Nonnull
+	@NonNull
 	static String parseString(String str, int start, int end) {
 		return start == end ? "" : str.substring(start, end);
 	}
@@ -71,6 +72,10 @@ public interface Slice<E> {
 
 	static <R> Slice<R> mapLongTo(Function<? super Long, R> mapper) {
 		return (String str, int start, int end) -> mapper.apply(asLong(str, start, end));
+	}
+
+	static <R> Slice<R> mapStringTo(Function<? super String, R> mapper) {
+		return (String str, int start, int end) -> mapper.apply(parseString(str, start, end));
 	}
 
 	default <R> Slice<R> andThen(Function<? super E, R> after) {

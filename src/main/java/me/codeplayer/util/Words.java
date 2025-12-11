@@ -3,10 +3,10 @@ package me.codeplayer.util;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
-import javax.annotation.Nullable;
 
 import me.codeplayer.util.CharConverter.CharCase;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 
 /**
  * 一组分词（单词）的抽象表示。 其来源于将指定字符串按照特定的断词法进行分词处理。

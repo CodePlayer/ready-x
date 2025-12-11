@@ -5,8 +5,9 @@ import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.*;
 import java.util.function.*;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * List、Set、Map等常见集合数据操作的工具类
@@ -938,7 +939,7 @@ public abstract class CollectionUtil {
 	 *  </code></pre>
 	 * 但性能更优
 	 */
-	@Nonnull
+	@NonNull
 	public static <K, V> Map<K, List<V>> groupBy(@Nullable final Collection<V> c, final Function<? super V, ? extends K> keyMapper) {
 		return groupBy(c, keyMapper, Function.identity());
 	}
@@ -950,7 +951,7 @@ public abstract class CollectionUtil {
 	 *  </code></pre>
 	 * 但性能更优
 	 */
-	@Nonnull
+	@NonNull
 	public static <E, K, V> Map<K, List<V>> groupBy(@Nullable final Collection<E> c, final Function<? super E, ? extends K> keyMapper, final Function<? super E, ? extends V> valueMapper) {
 		final int size = c == null ? 0 : c.size();
 		if (size == 0) {
@@ -971,7 +972,7 @@ public abstract class CollectionUtil {
 	 *  </code></pre>
 	 * 但性能更优
 	 */
-	@Nonnull
+	@NonNull
 	public static <T, R> List<R> filterAndMap(@Nullable Collection<T> c, final Predicate<? super T> filter, final Function<? super T, R> mapper) {
 		final int size = c == null ? 0 : c.size();
 		final List<R> result = new ArrayList<>();
@@ -1200,7 +1201,7 @@ public abstract class CollectionUtil {
 	 *
 	 * @return 如果传入的 {@code params} 为空，则返回 ""
 	 */
-	@Nonnull
+	@NonNull
 	public static String mapToParams(final @Nullable Map<String, ?> params, final boolean urlSafeRequired) {
 		StringBuilder sb = mapToParams(null, Boolean.FALSE, params, urlSafeRequired, null);
 		return sb == null ? "" : sb.toString();
@@ -1212,7 +1213,7 @@ public abstract class CollectionUtil {
 	 *
 	 * @return 如果传入的 {@code params} 为空，则返回 ""
 	 */
-	@Nonnull
+	@NonNull
 	public static String mapToParams(final @Nullable Map<String, ?> params) {
 		return mapToParams(params, true);
 	}
