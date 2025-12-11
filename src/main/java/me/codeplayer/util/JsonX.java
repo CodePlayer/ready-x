@@ -1,10 +1,11 @@
 package me.codeplayer.util;
 
 import java.util.*;
-import javax.annotation.Nullable;
 
 import com.alibaba.fastjson2.*;
+import com.alibaba.fastjson2.JSONWriter.Context;
 import com.alibaba.fastjson2.filter.*;
+import org.jspecify.annotations.Nullable;
 
 /**
  * JSON字符串序列化转换工具类
@@ -15,14 +16,14 @@ import com.alibaba.fastjson2.filter.*;
 public abstract class JsonX {
 
 	static String dateFormat = "millis";   // 日期时间类型默认输出为 毫秒级时间戳
-	static JSONWriter.Context encodeContext, encodeRawContext, serializeContext;
+	static Context encodeContext, encodeRawContext, serializeContext;
 	static JSONReader.Context decodeContext, deserializeContext;
 
 	static {
 		init(dateFormat, null);
 	}
 
-	public static void init(@Nullable String dateFormat, @Nullable JSONWriter.Context writerContext) {
+	public static void init(@Nullable String dateFormat, @Nullable Context writerContext) {
 		if (writerContext != null) {
 			encodeContext = writerContext;
 		} else if (encodeContext == null) {
@@ -39,7 +40,7 @@ public abstract class JsonX {
 		deserializeContext = new JSONReader.Context(JSONReader.Feature.SupportAutoType);
 	}
 
-	public static void setEncodeContext(JSONWriter.Context encodeContext) {
+	public static void setEncodeContext(Context encodeContext) {
 		JsonX.encodeContext = Objects.requireNonNull(encodeContext);
 	}
 
@@ -47,8 +48,8 @@ public abstract class JsonX {
 		init(dateFormat, null);
 	}
 
-	public static JSONWriter.Context defaultEncodeContext(@Nullable ValueFilter valueFilter, JSONWriter.Feature... features) {
-		final JSONWriter.Context context = new JSONWriter.Context(features);
+	public static Context defaultEncodeContext(@Nullable ValueFilter valueFilter, JSONWriter.Feature... features) {
+		final Context context = new Context(features);
 		context.setDateFormat(dateFormat);
 		if (valueFilter != null) {
 			context.setValueFilter(valueFilter);

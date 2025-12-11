@@ -3,8 +3,9 @@ package me.codeplayer.util;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.function.Function;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * 对数值类型的数据(包含字节)进行相应处理的工具类
@@ -25,7 +26,7 @@ public abstract class NumberX {
 		return value instanceof Number ? ((Number) value).byteValue() : Byte.parseByte(value.toString());
 	}
 
-	static <E extends Number> E castString2Number(@Nonnull Object value, Function<? super String, E> converter, @Nullable E defaultIfEmpty) {
+	static <E extends Number> E castString2Number(@NonNull Object value, Function<? super String, E> converter, @Nullable E defaultIfEmpty) {
 		if (value instanceof CharSequence) {
 			final CharSequence cs = (CharSequence) value;
 			if (cs.length() == 0) {

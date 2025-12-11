@@ -5,9 +5,9 @@ import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.function.*;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import sun.misc.Unsafe;
 
 import static java.lang.invoke.MethodType.methodType;
@@ -499,7 +499,7 @@ public class JavaX {
 	 * @return UTF-8编码的字节数组
 	 * @see String#getBytes(Charset)
 	 */
-	public static byte[] getUtf8Bytes(@Nonnull String str) {
+	public static byte[] getUtf8Bytes(@NonNull String str) {
 		if (STRING_CODER.applyAsInt(str) == LATIN1) {
 			final byte[] bytes = STRING_VALUE.apply(str);
 			if (isASCII(bytes)) {
@@ -517,7 +517,7 @@ public class JavaX {
 	 * @return UTF-8编码的字节数组
 	 * @see String#getBytes(Charset)
 	 */
-	public static byte[] getBytes(@Nonnull String str, @Nonnull Charset charset) {
+	public static byte[] getBytes(@NonNull String str, @NonNull Charset charset) {
 		if (STRING_CODER.applyAsInt(str) == LATIN1) {
 			if (charset == StandardCharsets.UTF_8) {
 				final byte[] bytes = STRING_VALUE.apply(str);

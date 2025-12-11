@@ -7,10 +7,10 @@ import java.sql.Timestamp;
 import java.text.*;
 import java.time.*;
 import java.util.*;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.time.FastDateFormat;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import static java.util.Calendar.*;
 import static me.codeplayer.util.NumberX.pickValidChars;
@@ -180,7 +180,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	 * 返回自 1970 年 1 月 1 日 00:00:00 GMT 以来指定日期对象表示的毫秒数。<br>
 	 * 如果为null，则默认为当前时间
 	 */
-	public static long getTimeOfDate(@Nonnull Object date) {
+	public static long getTimeOfDate(@NonNull Object date) {
 		return getTimeOfDate(date, false);
 	}
 

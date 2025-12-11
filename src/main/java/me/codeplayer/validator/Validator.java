@@ -1,9 +1,9 @@
 package me.codeplayer.validator;
 
 import java.util.function.*;
-import javax.annotation.Nullable;
 
 import me.codeplayer.util.X;
+import org.jspecify.annotations.Nullable;
 
 /**
  * 对实体及其属性进行预处理、校验、格式化的流水线处理封装类

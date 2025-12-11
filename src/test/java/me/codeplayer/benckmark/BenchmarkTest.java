@@ -1,9 +1,9 @@
 package me.codeplayer.benckmark;
 
 import java.util.concurrent.TimeUnit;
-import javax.annotation.Nullable;
 
 import me.codeplayer.util.NumberX;
+import org.jspecify.annotations.Nullable;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.results.format.ResultFormatType;
 import org.openjdk.jmh.runner.Runner;
