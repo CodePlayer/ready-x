@@ -938,6 +938,10 @@ public class StringXTest implements WithAssertions {
 		assertThat(StringX.split("1,2,3,", ',', Slice::asLong)).containsExactly(1L, 2L, 3L);
 		assertThat(StringX.split("1,2,,,3", ',', Slice::asLong)).containsExactly(1L, 2L, 3L);
 
+		assertThat(StringX.split("1,2,3", ',', Slice.mapStringTo(Long::valueOf))).containsExactly(1L, 2L, 3L);
+		Slice<String> mapper = Slice::parseString;
+		assertThat(StringX.split("1,2,3", ',', mapper.andThen(Long::valueOf))).containsExactly(1L, 2L, 3L);
+
 	}
 
 	@Test
@@ -954,6 +958,171 @@ public class StringXTest implements WithAssertions {
 		assertThat(StringX.split(",1,2,3", ',', Slice::asString)).containsExactly("1", "2", "3");
 		assertThat(StringX.split("1,2,,,3", ',', Slice::asString)).containsExactly("1", "2", "3");
 
+	}
+
+	/**
+	 * 测试正常字符串转为小写十六进制字符串
+	 */
+	@Test
+	public void toHexString_NormalString_ReturnsLowerCaseHex() {
+		// Given
+		String input = "Hello";
+		String expected = "48656c6c6f"; // UTF-8 编码的小写 hex
+
+		// When
+		String result = StringX.toHexString(input);
+
+		// Then
+		assertThat(result).isEqualTo(expected);
+	}
+
+	/**
+	 * 测试中文字符串转为小写十六进制字符串
+	 */
+	@Test
+	public void toHexString_ChineseString_ReturnsCorrectHex() {
+		// Given
+		String input = "你好";
+		// UTF-8 编码："你" -> E4BDA0, "好" -> E5A5BD
+		String expected = "e4bda0e5a5bd";
+
+		// When
+		String result = StringX.toHexString(input);
+
+		// Then
+		assertThat(result).isEqualTo(expected);
+	}
+
+	/**
+	 * 测试空字符串输入应返回空字符串
+	 */
+	@Test
+	public void toHexString_EmptyString_ReturnsEmptyString() {
+		// Given
+		String input = "";
+
+		// When
+		String result = StringX.toHexString(input);
+
+		// Then
+		assertThat(result).isEmpty();
+	}
+
+	/**
+	 * 测试 null 输入抛出 NullPointerException
+	 */
+	@Test
+	public void toHexString_NullInput_ThrowsNPE() {
+		// Given
+		String input = null;
+
+		// When & Then
+		assertThatExceptionOfType(NullPointerException.class)
+				.isThrownBy(() -> StringX.toHexString(input));
+	}
+
+	/**
+	 * 测试混合中英文字符串
+	 */
+	@Test
+	public void toHexString_MixedChineseAndEnglish_ReturnsCorrectHex() {
+		// Given
+		String input = "A中B国C";
+		// A -> 41, 中 -> E4B8AD, B -> 42, 国 -> E59BBD, C -> 43
+		String expected = "41e4b8ad42e59bbd43";
+
+		// When
+		String result = StringX.toHexString(input);
+
+		// Then
+		assertThat(result).isEqualTo(expected);
+	}
+
+	/**
+	 * 测试正常的字节数组到十六进制字符串的转换
+	 */
+	@Test
+	public void testToHexStringNormal() {
+		// 测试常见字节值的转换
+		byte[] bytes = { (byte) 0xFF, (byte) 0x00, (byte) 0x7F, (byte) 0x80 };
+		String result = StringX.toHexString(bytes, 0, bytes.length);
+		assertThat(result).isEqualTo("ff007f80");
+	}
+
+	/**
+	 * 测试空字节数组的转换
+	 */
+	@Test
+	public void testToHexStringEmptyArray() {
+		byte[] emptyBytes = {};
+		String result = StringX.toHexString(emptyBytes, 0, 0);
+		assertThat(result).isEqualTo("");
+	}
+
+	/**
+	 * 测试单字节转换
+	 */
+	@Test
+	public void testToHexStringSingleByte() {
+		byte[] singleByte = { (byte) 0xAB };
+		String result = StringX.toHexString(singleByte, 0, 1);
+		assertThat(result).isEqualTo("ab");
+	}
+
+	/**
+	 * 测试部分范围转换
+	 */
+	@Test
+	public void testToHexStringPartialRange() {
+		byte[] bytes = { (byte) 0x12, (byte) 0x34, (byte) 0x56, (byte) 0x78 };
+		// 只转换中间两个字节
+		String result = StringX.toHexString(bytes, 1, 3);
+		assertThat(result).isEqualTo("3456");
+	}
+
+	/**
+	 * 测试包含负数值的字节转换
+	 */
+	@Test
+	public void testToHexStringWithNegativeBytes() {
+		byte[] bytes = { (byte) 0xFF, (byte) 0xFE, (byte) 0xFD }; // -1, -2, -3
+		String result = StringX.toHexString(bytes, 0, bytes.length);
+		// 负数在十六进制中应该显示为其补码形式
+		assertThat(result).isEqualTo("fffefd");
+	}
+
+	/**
+	 * 测试全范围转换（从开始到结束）
+	 */
+	@Test
+	public void testToHexStringFullRange() {
+		byte[] bytes = "Hello".getBytes();
+		String result = StringX.toHexString(bytes, 0, bytes.length);
+		// Hello 的 UTF-8 编码对应的十六进制
+		assertThat(result).isEqualTo("48656c6c6f");
+	}
+
+	/**
+	 * 测试零长度范围转换
+	 */
+	@Test
+	public void testToHexStringZeroLength() {
+		byte[] bytes = { (byte) 0xFF, (byte) 0x00 };
+		String result = StringX.toHexString(bytes, 1, 1); // 开始和结束位置相同
+		assertThat(result).isEqualTo("");
+	}
+
+	/**
+	 * 测试使用预定义的小写字符表
+	 */
+	@Test
+	public void testToHexStringUsesLowerCase() {
+		byte[] bytes = { (byte) 0xAB, (byte) 0xCD };
+		String result = StringX.toHexString(bytes, 0, bytes.length);
+		// 验证结果是小写的
+		assertThat(result).isEqualTo("abcd");
+		// 验证不包含任何大写字符
+		assertThat(result).doesNotContainPattern("[A-F]");
 	}
 
 }

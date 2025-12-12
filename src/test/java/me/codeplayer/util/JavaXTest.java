@@ -101,6 +101,41 @@ public class JavaXTest {
 
 	@Test
 	@EnabledOnJre(JRE.JAVA_8)
+	public void getBytes() {
+		String str = "ABC_12 3-@";
+		byte[] bytes = JavaX.getBytes(str, StandardCharsets.UTF_8);
+		assertEquals(str, new String(bytes, StandardCharsets.UTF_8));
+
+		str = "中国";
+		assertArrayEquals(str.getBytes(StandardCharsets.UTF_8), JavaX.getBytes(str, StandardCharsets.UTF_8));
+		str = "ABCÃé";
+		assertArrayEquals(str.getBytes(StandardCharsets.UTF_8), JavaX.getBytes(str, StandardCharsets.UTF_8));
+	}
+
+	@Test
+	@EnabledForJreRange(min = JRE.JAVA_9)
+	public void getBytes0() {
+		String str = "ABC_12 3-@";
+		byte[] bytes1 = JavaX.STRING_VALUE.apply(str);
+		byte[] bytes2 = JavaX.getBytes(str, StandardCharsets.UTF_8);
+		assertSame(bytes1, bytes2);
+
+		str = "中国";
+		bytes1 = JavaX.STRING_VALUE.apply(str);
+		bytes2 = JavaX.getBytes(str, StandardCharsets.UTF_8);
+		assertNotSame(bytes1, bytes2);
+		assertArrayEquals(str.getBytes(StandardCharsets.UTF_8), bytes2);
+
+		str = "ABCÃé";
+		bytes1 = JavaX.STRING_VALUE.apply(str);
+		bytes2 = JavaX.getBytes(str, StandardCharsets.UTF_8);
+		assertNotSame(bytes1, bytes2);
+		assertArrayEquals(str.getBytes(StandardCharsets.UTF_8), bytes2);
+		assertSame(bytes1, JavaX.getBytes(str, StandardCharsets.ISO_8859_1));
+	}
+
+	@Test
+	@EnabledOnJre(JRE.JAVA_8)
 	public void newString() {
 		String str = "ABC_12 3-@";
 		assertEquals(str, JavaX.newString(str.getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8));
