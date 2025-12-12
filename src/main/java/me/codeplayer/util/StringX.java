@@ -1708,23 +1708,59 @@ public abstract class StringX {
 		}
 	}
 
+	/**
+	 * 将字节数组转换为十六进制字符串表示
+	 *
+	 * @param bytes 要转换的字节数组
+	 * @param start 转换的起始位置（包含）
+	 * @param end 转换的结束位置（不包含）
+	 * @param upperCase 是否使用大写字母表示十六进制字符
+	 * @return 十六进制字符串表示
+	 */
 	public static String toHexString(byte[] bytes, int start, int end, boolean upperCase) {
 		return JavaHelper.toHexString(bytes, start, end, upperCase ? DIGIT_CHAR_TABLE : digit_char_table);
 	}
 
+	/**
+	 * 将字节数组转换为【小写形式的】十六进制字符串表示
+	 *
+	 * @param bytes 要转换的字节数组
+	 * @param start 转换的起始位置（包含）
+	 * @param end 转换的结束位置（不包含）
+	 * @return 十六进制字符串表示
+	 */
 	public static String toHexString(byte[] bytes, int start, int end) {
 		return JavaHelper.toHexString(bytes, start, end, digit_char_table);
 	}
 
+	/**
+	 * 将字节数组转换为【小写形式的】十六进制字符串表示
+	 *
+	 * @param bytes 要转换的字节数组
+	 * @return 十六进制字符串表示
+	 */
 	public static String toHexString(byte[] bytes) {
 		return toHexString(bytes, 0, bytes.length);
 	}
 
+	/**
+	 * 将指定字符串的 UTF-8 字节数组 转换为指定大小写形式的十六进制字符串表示
+	 *
+	 * @param str 要转换的字符串
+	 * @param upperCase 是否使用大写字母表示十六进制字符
+	 * @return 十六进制字符串表示
+	 */
 	public static String toHexString(String str, boolean upperCase) {
 		final byte[] bytes = JavaX.getUtf8Bytes(str);
 		return toHexString(bytes, 0, bytes.length, upperCase);
 	}
 
+	/**
+	 * 将指定字符串的 UTF-8 字节数组 转换为【小写形式的】十六进制字符串表示
+	 *
+	 * @param str 要转换的字符串
+	 * @return 十六进制字符串表示
+	 */
 	public static String toHexString(String str) {
 		return toHexString(str, false);
 	}
