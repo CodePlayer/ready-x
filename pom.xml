@@ -294,7 +294,8 @@
 							<goal>compile</goal>
 						</goals>
 						<configuration>
-							<release>8</release>
+							<source>1.8</source>
+							<target>1.8</target>
 							<debuglevel>lines,vars,source</debuglevel>
 						</configuration>
 					</execution>
