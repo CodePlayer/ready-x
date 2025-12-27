@@ -44,7 +44,7 @@ public abstract class EnumUtil {
 	/**
 	 * 获取指定枚举类中 匹配指定条件的枚举数组
 	 *
-	 * @param enumClass 枚举类Class
+	 * @param enumClass 枚举类 Class
 	 * @param values 指定的枚举范围数组，如果为null，内部将会自动获取所有的枚举值
 	 * @param matcher 枚举匹配器接口实现
 	 * @since 2.0.0

@@ -753,10 +753,10 @@ public abstract class StringUtil {
 	}
 
 	/**
-	 * 将指定的URI参数字符串转换为目标字符集编码<br>
+	 * 将指定的 URI 参数字符串转换为目标字符集编码<br>
 	 * 本方法实际上是将字符串从ISO-8859-1编码转换为指定的目标编码
 	 *
-	 * @param str 指定的URI参数字符串
+	 * @param str 指定的 URI 参数字符串
 	 * @param targetCharset 目标字符集编码
 	 * @since 0.3.9
 	 */
@@ -1342,7 +1342,7 @@ public abstract class StringUtil {
 	 * 如果数组为空，将会引发异常 <br>
 	 * 如果存在数组元素，则拼接内容形如 " IN (1, 2, 5)" 或 " IN ('1', '2', '5')"
 	 *
-	 * @param sb 指定的StringBuilder
+	 * @param sb 指定的 StringBuilder
 	 * @param items 指定的任意数组
 	 * @param isInclude 指示IN SQL是包含还是排除查询，如果是包含(true)将返回 IN，如果是排除(false)将返回 NOT IN
 	 * @param isString 指示元素是否以字符串形式参与in SQL语句。如果为true，将会在每个元素两侧加上单引号"'"
@@ -1441,7 +1441,7 @@ public abstract class StringUtil {
 	 * 如果数组为空，将会引发异常 <br>
 	 * 如果存在数组元素，则拼接内容形如 " IN (1, 2, 5)" 或 " IN ('1', '2', '5')"
 	 *
-	 * @param sb 指定的StringBuilder
+	 * @param sb 指定的 StringBuilder
 	 * @param array 指定的任意数组
 	 * @param isInclude 指示IN SQL是包含还是排除查询，如果是包含(true)将返回 IN，如果是排除(false)将返回 NOT IN
 	 * @param isString 指示元素是否以字符串形式参与in SQL语句。如果为true，将会在每个元素两侧加上单引号"'"
@@ -1706,23 +1706,59 @@ public abstract class StringUtil {
 		}
 	}
 
+	/**
+	 * 将字节数组转换为十六进制字符串表示
+	 *
+	 * @param bytes 要转换的字节数组
+	 * @param start 转换的起始位置（包含）
+	 * @param end 转换的结束位置（不包含）
+	 * @param upperCase 是否使用大写字母表示十六进制字符
+	 * @return 十六进制字符串表示
+	 */
 	public static String toHexString(byte[] bytes, int start, int end, boolean upperCase) {
 		return JavaHelper.toHexString(bytes, start, end, upperCase ? DIGIT_CHAR_TABLE : digit_char_table);
 	}
 
+	/**
+	 * 将字节数组转换为【小写形式的】十六进制字符串表示
+	 *
+	 * @param bytes 要转换的字节数组
+	 * @param start 转换的起始位置（包含）
+	 * @param end 转换的结束位置（不包含）
+	 * @return 十六进制字符串表示
+	 */
 	public static String toHexString(byte[] bytes, int start, int end) {
 		return JavaHelper.toHexString(bytes, start, end, digit_char_table);
 	}
 
+	/**
+	 * 将字节数组转换为【小写形式的】十六进制字符串表示
+	 *
+	 * @param bytes 要转换的字节数组
+	 * @return 十六进制字符串表示
+	 */
 	public static String toHexString(byte[] bytes) {
 		return toHexString(bytes, 0, bytes.length);
 	}
 
+	/**
+	 * 将指定字符串的 UTF-8 字节数组 转换为指定大小写形式的十六进制字符串表示
+	 *
+	 * @param str 要转换的字符串
+	 * @param upperCase 是否使用大写字母表示十六进制字符
+	 * @return 十六进制字符串表示
+	 */
 	public static String toHexString(String str, boolean upperCase) {
 		final byte[] bytes = JavaUtil.getUtf8Bytes(str);
 		return toHexString(bytes, 0, bytes.length, upperCase);
 	}
 
+	/**
+	 * 将指定字符串的 UTF-8 字节数组 转换为【小写形式的】十六进制字符串表示
+	 *
+	 * @param str 要转换的字符串
+	 * @return 十六进制字符串表示
+	 */
 	public static String toHexString(String str) {
 		return toHexString(str, false);
 	}

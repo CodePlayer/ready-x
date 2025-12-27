@@ -338,11 +338,11 @@ public abstract class NumberUtil {
 	 * @see Character#isDigit(char)
 	 */
 	public static boolean isNumber(CharSequence cs) {
-		if (cs == null) { // 为空则返回false
+		if (cs == null) { // 为空则返回 false
 			return false;
 		}
 		final int length = cs.length();
-		if (length == 0) { // 为空字符串则返回false
+		if (length == 0) { // 为空字符串则返回 false
 			return false;
 		}
 		for (int i = 0; i < length; i++) {

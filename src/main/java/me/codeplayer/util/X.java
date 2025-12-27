@@ -62,7 +62,7 @@ public abstract class X {
 	}
 
 	/**
-	 * 从指定的多个值依次检测并选取第一个不为null的值
+	 * 从指定的多个值依次检测并选取第一个不为 null 的值
 	 *
 	 * @see X#expectNotNull(Object, Object, Object, Object)
 	 */
@@ -71,7 +71,7 @@ public abstract class X {
 	}
 
 	/**
-	 * 从指定的多个值依次检测并选取第一个不为null的值
+	 * 从指定的多个值依次检测并选取第一个不为 null 的值
 	 *
 	 * @see #expectNotNull(Object, Object, Object, Object)
 	 */
@@ -112,7 +112,7 @@ public abstract class X {
 	/**
 	 * 判断指定Boolean值是否有效。<code>true</code> 即为有效。
 	 *
-	 * @param b 指定的Boolean对象
+	 * @param b 指定的 Boolean 对象
 	 */
 	public static boolean isValid(Boolean b) {
 		return b != null && b;
@@ -175,7 +175,7 @@ public abstract class X {
 	/**
 	 * 判断指定byte数组是否有效。如果参数为 <code>null</code> 或 <code>array.length == 0</code>，则为无效，其他均为有效。
 	 *
-	 * @param array 指定的byte数组
+	 * @param array 指定的 byte 数组
 	 */
 	public static boolean isValid(byte[] array) {
 		return array != null && array.length > 0;
@@ -184,7 +184,7 @@ public abstract class X {
 	/**
 	 * 判断指定int数组是否有效。如果参数为 <code>null</code> 或 <code>array.length == 0</code>，则为无效，其他均为有效。
 	 *
-	 * @param array 指定的int数组
+	 * @param array 指定的 int 数组
 	 */
 	public static boolean isValid(int[] array) {
 		return array != null && array.length > 0;
@@ -193,7 +193,7 @@ public abstract class X {
 	/**
 	 * 判断指定long数组是否有效。如果参数为 <code>null</code> 或 <code>array.length == 0</code>，则为无效，其他均为有效。
 	 *
-	 * @param array 指定的long数组
+	 * @param array 指定的 long 数组
 	 */
 	public static boolean isValid(long[] array) {
 		return array != null && array.length > 0;
@@ -202,7 +202,7 @@ public abstract class X {
 	/**
 	 * 判断指定char数组是否有效。如果参数为 <code>null</code> 或 <code>array.length == 0</code>，则为无效，其他均为有效。
 	 *
-	 * @param array 指定的char数组
+	 * @param array 指定的 char 数组
 	 */
 	public static boolean isValid(char[] array) {
 		return array != null && array.length > 0;
@@ -211,7 +211,7 @@ public abstract class X {
 	/**
 	 * 判断指定float数组是否有效。如果参数为 <code>null</code> 或 <code>array.length == 0</code>，则为无效，其他均为有效。
 	 *
-	 * @param array 指定的float数组
+	 * @param array 指定的 float 数组
 	 */
 	public static boolean isValid(float[] array) {
 		return array != null && array.length > 0;
@@ -220,7 +220,7 @@ public abstract class X {
 	/**
 	 * 判断指定double数组是否有效。如果参数为 <code>null</code> 或 <code>array.length == 0</code>，则为无效，其他均为有效。
 	 *
-	 * @param array 指定的double数组
+	 * @param array 指定的 double 数组
 	 */
 	public static boolean isValid(double[] array) {
 		return array != null && array.length > 0;

@@ -86,6 +86,7 @@ public class EncrypterTest {
 	public void sha1_ByteArray_NormalInput_ShouldReturnCorrectHash() {
 		byte[] result = Encrypter.sha1("hello".getBytes());
 		assertEquals("aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d", Encrypter.bytes2Hex(result));
+		assertEquals("aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d", Encrypter.bytes2Hex(result, false));
 		assertEquals("AAF4C61DDCC5E8A2DABEDE0F3B482CD9AEA9434D", Encrypter.bytes2Hex(result, true));
 	}
 

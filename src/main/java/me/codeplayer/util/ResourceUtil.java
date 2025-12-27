@@ -15,11 +15,11 @@ public abstract class ResourceUtil {
 	 * @return -1=相对（于当前资源路径）定位；0=相对（于当前项目根路径）定位；1=绝对定位
 	 */
 	public static int parseUriLocator(String uri) {
-		// 如果是"/path/of/file" => "${root}/path/of/file"
+		// 如果是 "/path/of/file" => "${root}/path/of/file"
 		final int len = uri.length();
 		if (len > 0) {
 			final char firstChar = uri.charAt(0);
-			// 如果是"${protocol:}//path/of/file"，则直接输出
+			// 如果是 "${protocol:}//path/of/file"，则直接输出
 			if (firstChar == '/') {
 				if (len == 1 || uri.charAt(1) != '/') {
 					return 0;
