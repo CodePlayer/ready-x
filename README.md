@@ -5,36 +5,38 @@
 [![Java support](https://img.shields.io/badge/Java-8+-green?logo=java&logoColor=white)](https://openjdk.java.net/)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-# 关于 Ready-X
+ English | [中文](README_zh.md)
 
-> Ready-X，一个高性能的Java工具类库，致力于成为 Java 工具类库中的瑞士军刀 ！
+# About Ready-X
 
-Ready-X 是一个基于Java 8（ ***1.x*** 基于 Java 5） 编写的基础工具库，其中包含了常见的文本(字符串)、数组、集合、文件、商业计算、随机数、参数验证、日期等方面的处理工具类。
+> Ready-X, a high-performance Java utility library, strives to be the Swiss Army knife of Java utility libraries!
 
-本工具库的定位与 Apache 的 commons-lang3 相似，但 Ready-X 并没有重复实现 commons-lang3 的大部分方法，**仅仅作为该工具库的补充**，建议在实际开发过程中将 common-lang3 和 ready-x 配合使用
-> 由于历史原因，Ready-X 也重复实现了 common-lang3 的部分方法，因为 common-lang3 的部分方法在早期版本中的实现不够理想，例如：使用StringBuffer、没有按照更优的逻辑处理。
+Ready-X is a foundational utility library based on Java 8 (***1.x*** is based on Java 5), which includes common utilities for handling text (strings), arrays, collections, files, business calculations, random numbers, parameter validation, dates, and more.
 
-## 设计理念
+This library is positioned similarly to Apache's commons-lang3, but Ready-X does not reimplement most of the methods in commons-lang3. **It serves merely as a supplement** to that library. We recommend using commons-lang3 and ready-x together in actual development.
+> Due to historical reasons, Ready-X has also reimplemented some methods from commons-lang3, as some methods in early versions of commons-lang3 were not ideally implemented, such as using StringBuffer or not following optimal logic.
 
-### 1、命名多以 "X" 结尾
+## Design Philosophy
 
-众所周知，在 Java 中，大多数工具类的命名一般以 "s" 或 "Util(s)" 结尾。
+### 1. Naming mostly ends with "X"
 
-为了避免类名混淆，我们优先以 "X" 作为工具类的命名后缀，例如：`StringX`、`NumberX`、`CollectionX`、`ArrayX`、`EnumX`、`FileX`、`JsonX`、`X` 等。
+As we all know, in Java, most utility classes are typically named with "s" or "Util(s)" as a suffix.
 
-> "X" 是数学中充满无限可能的魔法变量，它简短易输入，看起来有立体感，本身也像是一把瑞士军刀。
+To avoid class name confusion, we prefer to use "X" as the naming suffix for utility classes, such as: `StringX`, `NumberX`, `CollectionX`, `ArrayX`, `EnumX`, `FileX`, `JsonX`, `X`, etc.
 
-### 2、极致性能
+> "X" is a magical variable full of infinite possibilities in mathematics. It's short and easy to type, has a three-dimensional look, and itself resembles a Swiss Army knife.
 
-技术极客对于性能的追求是无止境的，我们致力于为日常开发提供性能更优的工具方法。
+### 2. Ultimate Performance
 
-作为高频使用的底层基础工具类，Ready-X 尽可能在每个细节上保证最高运行性能和最低的内存占用。
+Tech enthusiasts have an endless pursuit of performance, and we are committed to providing more performant utility methods for daily development.
 
-可以参考如下示例：
+As frequently used underlying foundational utility classes, Ready-X strives to ensure the highest runtime performance and lowest memory footprint in every detail.
 
-**示例一：将多个用户的ID拼接为一个字符串，以","分隔**
+You can refer to the following examples:
+
+**Example 1: Join multiple user IDs into a string, separated by ","**
 ```java
-// 1、常规版本
+// 1. Standard version
 public static String joinIds0(List<User> list) {
   final StringBuilder sb = new StringBuilder();
   for (User user : list) {
@@ -46,9 +48,9 @@ public static String joinIds0(List<User> list) {
   return sb.toString();
 }
 
-// 2、升级版本 1
+// 2. Upgraded version 1
 public static String joinIds1(List<User> list) {
-  final StringBuilder sb = new StringBuilder(list.size() * 8); // 初始化容量
+  final StringBuilder sb = new StringBuilder(list.size() * 8); // Initialize capacity
   for (User user : list) {
     if (sb.length() > 0) {
       sb.append(",");
@@ -58,28 +60,28 @@ public static String joinIds1(List<User> list) {
   return sb.toString();
 }
 
-// 3、升级版本 2
+// 3. Upgraded version 2
 public static String joinIds2(List<User> list) {
-  final StringBuilder sb = new StringBuilder(list.size() * 8); // 初始化容量
+  final StringBuilder sb = new StringBuilder(list.size() * 8); // Initialize capacity
   for (User user : list) {
     if (sb.length() > 0) {
       sb.append(",");
     }
-    sb.append(user.getId().intValue()); // 避免循环中每次 Integer.toString() 生成中间字符串的开销
+    sb.append(user.getId().intValue()); // Avoid the overhead of Integer.toString() generating intermediate strings in each loop
   }
   return sb.toString();
 }
 
-// 4、直接使用封装好的工具方法（且是 null 安全的）
+// 4. Directly use the encapsulated utility method (and it's null-safe)
 public static String joinIds(List<User> list) {
   return StringX.joinIntValue(list, User::getId, ",");
 }
 ```
 
-**示例二：将 List<User> 转为 Map<Integer, User>**（key是用户ID）
+**Example 2: Convert List<User> to Map<Integer, User>** (key is user ID)
 
 ```java
-// 1、常规版本
+// 1. Standard version
 public static Map<Integer, User> toMap0(List<User> list) {
   if (list == null) {
     return new HashMap<>();
@@ -87,7 +89,7 @@ public static Map<Integer, User> toMap0(List<User> list) {
   return list.stream().collect(Collectors.toMap(User::getId, Function.identity()));
 }
 
-// 2、升级版本 1
+// 2. Upgraded version 1
 public static Map<Integer, User> toMap1(List<User> list) {
   Map<Integer, User> map = new HashMap<>();
   if (list != null) {
@@ -98,75 +100,75 @@ public static Map<Integer, User> toMap1(List<User> list) {
   return map;
 }
 
-// 3、升级版本 2
+// 3. Upgraded version 2
 public static Map<Integer, User> toMap2(List<User> list) {
   if (list == null) {
     return new HashMap<>();
   }
-  Map<Integer, User> map = new HashMap<>(list.size(), 1F); // 预初始化容量，避免循环中途的扩容开销
+  Map<Integer, User> map = new HashMap<>(list.size(), 1F); // Pre-initialize capacity to avoid expansion overhead mid-loop
   for (User user : list) {
     map.put(user.getId(), user);
   }
   return map;
 }
 
-// 4、直接使用封装好的工具方法（并且是 null 安全的）
+// 4. Directly use the encapsulated utility method (and it's null-safe)
 public static Map<Integer, User> toMap(List<User> list) {
   return CollectionX.toHashMap(list, User::getId);
 }
 
 ```
 
-**示例三：从 "a,b,c,d"（多个片段以","分隔） 格式的字符串中检测是否存在片段 "a"**
+**Example 3: Detect if segment "a" exists in the string "a,b,c,d" (multiple segments separated by ",")**
 ```java
-// 1、常规版本
+// 1. Standard version
 public boolean contains0(String segments, String part) {
   String[] parts = segments.split(",");
   return Arrays.asList(parts).contains(part);
 }
 
-// 2、升级版本 1
+// 2. Upgraded version 1
 public boolean contains1(String segments, String part) {
   String[] parts = segments.split(",");
-  return org.apache.commons.lang3.ArrayUtils.contains(parts, part); // 避免new ArrayList
+  return org.apache.commons.lang3.ArrayUtils.contains(parts, part); // Avoid new ArrayList
 }
 
-// 3、直接使用封装好的工具方法（并且是 null 安全的）
-// 无需预先 split，直接通过一次性 indexOf + 临界字符判断，避免多次遍历、生成多个中间字符串/集合对象的开销
+// 3. Directly use the encapsulated utility method (and it's null-safe)
+// No need to split first, directly through one-time indexOf + boundary character judgment, avoiding multiple iterations and generation of multiple intermediate string/collection objects
 public boolean contains(String segments, String part) {
   return StringX.containsWord(segments, part, ",");
 }
 ```
 
-此外，Ready-X **已支持 Java 9+ 的 多版本 JAR 文件机制**（详情参见 [JEP 238: Multi-Release JAR Files]( https://openjdk.org/jeps/238)），如果使用 JDK 9+，Ready-X 会自动利用部分新版 API 来提升性能。
+In addition, Ready-X **now supports the Java 9+ Multi-Release JAR Files mechanism** (see [JEP 238: Multi-Release JAR Files](https://openjdk.org/jeps/238) for details). If using JDK 9+, Ready-X will automatically leverage some newer APIs to improve performance.
 
-例如，当您编写代码 `List<Integer> ids = StringX.splitAsIntList("123,450,781", ',');` 时：
+For example, when you write code `List<Integer> ids = StringX.splitAsIntList("123,450,781", ',');`:
 
-- 在 Java 8 场景下，一般需要先 `String.substring()` 再 `Integer.valueOf()`。
-- 在 Java 9+ 版本场景下，Ready-X 会自动利用 [新增API](https://docs.oracle.com/javase/9/docs/api/java/lang/Integer.html#parseInt-java.lang.CharSequence-int-int-int-) `java.lang.Integer.parseInt(java.lang.CharSequence, int, int, int)`，以避免 `String.substring()` 每次都要生成新的中间字符串的开销。
+- In Java 8 scenarios, you typically need to `String.substring()` first, then `Integer.valueOf()`.
+- In Java 9+ scenarios, Ready-X will automatically leverage the [new API](https://docs.oracle.com/javase/9/docs/api/java/lang/Integer.html#parseInt-java.lang.CharSequence-int-int-int-) `java.lang.Integer.parseInt(java.lang.CharSequence, int, int, int)`, to avoid the overhead of `String.substring()` generating new intermediate strings each time.
 
-### 3、对 Lambda 的使用保持理性和克制
+### 3. Rational and Restrained Use of Lambda
 
-Lambda（或 Stream API） 虽然好用，但是也要保持**适当**的理性和克制。
+While Lambda (or Stream API) is useful, we should maintain **appropriate** rationality and restraint.
 
-因为 Lambda 本质是一个匿名类，每调用一次 Lambda，本质上都是 `new` 一个匿名类实例。 比如，你写两个 `User::getId`，它们实际上是不相等（`==`）的。
+Because Lambda is essentially an anonymous class, each Lambda invocation essentially creates (`new`) an anonymous class instance. For example, if you write two `User::getId`, they are actually not equal (`==`).
 
-使用 Lambda（或 Stream ），会带来一定的额外性能损耗。
+Using Lambda (or Stream) incurs some additional performance overhead.
 
-虽然 JVM 在 逃逸分析、栈上分配 等方面为此做了不少优化，但是**在同等开发效率下**，能不增加 字节码、虚拟机、GC 负担的，就不必给它们添麻烦。
+Although the JVM has made many optimizations in escape analysis, stack allocation, etc., **under equal development efficiency**, if we can avoid adding burden to bytecode, virtual machines, and GC, we shouldn't trouble them.
 
-当然，如果确能减少代码量的，**该用还是得用**,，也不必纠结这一点性能开销，开发效率始终是优先的。
+Of course, if it can indeed reduce code volume, **it should still be used**, and there's no need to worry about this performance overhead. Development efficiency is always the priority.
 
-只是，如果代码量差不多的话，那就不必为了 Lambda 而 Lambda，要合理权衡开发效率和性能。
+It's just that if the code volume is similar, there's no need to use Lambda for the sake of Lambda. We need to reasonably balance development efficiency and performance.
 
-在日常开发中，使用预先封装的工具方法来替代大部分 Lambda，我们也可以实现相同甚至更少的代码量，并且还能获得相对更好的性能。
+In daily development, using pre-encapsulated utility methods to replace most Lambdas, we can achieve the same or even less code volume, and also get relatively better performance.
 
 ```java
 public Map<Long, User> toHashMap1(List<User> userList) {
     return userList.stream().collect(Collectors.toMap(User::getId, Function.identity()));
 }
 
-// 使用封装好的工具方法，不仅代码更简短，在常规使用下还能获得更好的性能
+// Using the encapsulated utility method, not only is the code shorter, but it also achieves better performance in regular use
 public Map<Long, User> toHashMap2(List<User> userList) {
     return CollectionX.toHashMap(userList, User::getId);
 }
@@ -176,7 +178,7 @@ public List<Long> toUserIdList1(List<User> userList) {
 	return userList.stream().map(User::getId).collect(Collectors.toList());
 }
 
-// 使用封装好的工具方法，不仅代码更简短，在常规使用下还能获得更好的性能
+// Using the encapsulated utility method, not only is the code shorter, but it also achieves better performance in regular use
 public List<Long> toUserIdList2(List<User> userList) {
 	return CollectionX.toList(userList, User::getId);
 }
@@ -185,7 +187,7 @@ public List<User> filterVIP1(List<User> userList) {
 	return userList.stream().filter(User::isVIP).collect(Collectors.toList());
 }
 
-// 使用封装好的工具方法，不仅代码更简短，在常规使用下还能获得更好的性能
+// Using the encapsulated utility method, not only is the code shorter, but it also achieves better performance in regular use
 public List<User> filterVIP2(List<User> userList) {
     return CollectionX.filter(userList, User::isVIP);
 }
@@ -194,42 +196,42 @@ public User findFirstVIP1(List<User> userList) {
 	return userList.stream().filter(User::isVIP).findFirst().orElse(null);
 }
 
-// 使用封装好的工具方法，不仅代码更简短，在常规使用下还能获得更好的性能
+// Using the encapsulated utility method, not only is the code shorter, but it also achieves better performance in regular use
 public User findFirstVIP2(List<User> userList) {
 	return CollectionX.findFirst(userList, User::isVIP);
 }
 ```
 
-### 4、追求 80+% 的测试覆盖率
+### 4. Pursuing 80+% Test Coverage
 
-1. 不断完善测试用例，努力争取所有分支代码均被覆盖；
-2. 每次提交均自动进行 **多系统**（Windows、Ubuntu、Mac）x **多版本**（JDK 8、11、17、21、25）的交叉单元测试，努力覆盖更多测试场景。
+1. Continuously improve test cases, striving to cover all branch code;
+2. Each commit automatically performs **multi-system** (Windows, Ubuntu, Mac) x **multi-version** (JDK 8, 11, 17, 21, 25) cross unit testing, striving to cover more test scenarios.
 
-### 5、同一大版本内严格向后兼容
+### 5. Strict Backward Compatibility Within the Same Major Version
 
-遵循语义化版本号命名规范。
+Follow semantic versioning conventions.
 
-以 `x.y.z` 为例：
-- `x` 变更，表示主版本号更新（**不一定向后兼容**）；
-- `y` 变更，表示次版本号更新，一般是添加了新的功能或特性 或 进行了大幅重构优化，但尽量确保向后兼容（若因修复bug所需，或调整了少量生僻API，无法向后兼容的，也会在更新中加以解释说明）；
-- `z` 变更，表示版本修订更新，一般是bug修复或内部代码改进。
+Taking `x.y.z` as an example:
+- `x` changes indicate a major version update (**not necessarily backward compatible**);
+- `y` changes indicate a minor version update, generally adding new features or characteristics, or undergoing major refactoring and optimization, but trying to ensure backward compatibility (if backward compatibility cannot be maintained due to bug fixes or adjustments to a few obscure APIs, explanations will be provided in the update);
+- `z` changes indicate a patch update, generally bug fixes or internal code improvements.
 
-> 【注意】
-> - SNAPSHOT、ALPHA、BETA、RC 等非正式版本，不保证一定向后兼容。
-> - `3.x` 及更早版本未严格遵循此规范。
+> 【Note】
+> - SNAPSHOT, ALPHA, BETA, RC, and other unofficial versions are not guaranteed to be backward compatible.
+> - `3.x` and earlier versions did not strictly follow this specification.
 
-### 6、代码注释完备
+### 6. Complete Code Comments
 
-由于源代码中的每个方法都已经注明了非常详细的中文注释，因此暂不另行提供API文档。
+Since each method in the source code is already annotated with very detailed Chinese comments, separate API documentation is not currently provided.
 
-如果你对工具库中的方法实现有更好的建议，欢迎及时反馈或自行修改并提交请求。
+If you have better suggestions for method implementations in the utility library, please feel free to provide feedback or modify and submit a pull request yourself.
 
-目前 Ready-X 中的工具方法可能并不完备，仅仅基于实际项目的需求驱动。如果其中没有你所需的常用方法，也欢迎提出建议，或自行提交新的方法实现。
+Currently, the utility methods in Ready-X may not be complete, and are only driven by the needs of actual projects. If you need common methods that are not included, you are welcome to make suggestions or submit new method implementations yourself.
 
-本项目自 4.x 起拟采用 《约定式提交 1.0.0》来规范代码提交，详情参见：[https://www.conventionalcommits.org/zh-hans/v1.0.0/](https://www.conventionalcommits.org/zh-hans/v1.0.0/)。
+Starting from 4.x, this project intends to adopt "Conventional Commits 1.0.0" to standardize code commits. For details, see: [https://www.conventionalcommits.org/en/v1.0.0/](https://www.conventionalcommits.org/en/v1.0.0/).
 
-## 使用
-本工具类库已发布至 Maven 中央仓库，当前最新版本为：**4.3.0** ，你可以通过如下 Maven 依赖配置引入本库：
+## Usage
+This utility library has been published to the Maven Central Repository. The current latest version is: **4.3.0**. You can include this library through the following Maven dependency configuration:
 
 ```xml
 <dependency>
@@ -239,7 +241,7 @@ public User findFirstVIP2(List<User> userList) {
 </dependency>
 ```
 
-**3.x** 分支最新版本为 **3.18.0** ，你可以通过如下 Maven 依赖配置引入本库：
+The latest version of the **3.x** branch is **3.18.0**. You can include this library through the following Maven dependency configuration:
 
 ```xml
 <dependency>
