@@ -14,7 +14,7 @@ public abstract class ThreadLocalX {
 	private static final ThreadLocal<Map<Object, Object>> LOCAL_CACHE = new ThreadLocal<>();
 
 	/**
-	 * 获取线程局部缓存中存储的Map集合<br>
+	 * 获取线程局部缓存中存储的 Map 集合<br>
 	 * 如果线程局部缓存中不存在任何键值映射，则返回一个空的HashMap。<br>
 	 * <strong>注意：<strong>该方法返回的并不是一个缓存副本，而是缓存的引用，因此你对返回集合进行的更改会反映到线程局部缓存中
 	 */

@@ -1315,7 +1315,7 @@ public class EasyDate implements Comparable<Object>, Cloneable, Serializable {
 	}
 
 	/**
-	 * 返回"yyyyMMdd"格式的字符串
+	 * 返回 "yyyyMMdd" 格式的字符串
 	 */
 	public static String toShortString(Date d) {
 		ZonedDateTime zdt = toDatetime(d);

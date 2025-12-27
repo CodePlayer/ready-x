@@ -161,7 +161,7 @@ public abstract class CollectionX {
 	/**
 	 * 将可变参数形式的键值数组添加到一个 Map 集合中
 	 *
-	 * @param map 指定的Map集合
+	 * @param map 指定的 Map 集合
 	 * @param kvPairs 可变参数形式的键值数组，必须是K1, V1, K2, V2, K3, V3...这种形式
 	 */
 	public static <K, V, M extends Map<K, V>> M putAllRaw(final M map, final Object... kvPairs) {
@@ -752,7 +752,7 @@ public abstract class CollectionX {
 	/**
 	 * 获取Map集合中指定的多个键的值，并以数组的形式依次返回。如果集合中没有指定的键，则数组对应位置的值为null
 	 *
-	 * @param map 指定的Map集合
+	 * @param map 指定的 Map 集合
 	 * @param valueClass 数组的组件类型
 	 * @param keys 指定的键数组
 	 * @since 0.3.1
@@ -1116,7 +1116,7 @@ public abstract class CollectionX {
 	 * @param keyForMap1 第一个 Map 中要查找的键
 	 * @param map2 第二个 Map，当第一个 Map 中未找到时使用
 	 * @param keyForMap2 第二个 Map 中要查找的键
-	 * @param defaultValue 当两个Map中都未找到时返回的默认值
+	 * @param defaultValue 当两个 Map 中都未找到时返回的默认值
 	 * @return 返回找到的值或默认值
 	 */
 	public static <K, V> V getOrDefault(@Nullable Map<K, V> map1, K keyForMap1, @Nullable Map<K, V> map2, K keyForMap2, V defaultValue) {

@@ -662,7 +662,7 @@ public class ArithTest implements WithAssertions {
 
 		assertSame(Arith.THOUSAND, Arith.toBigDecimal(1000.0));
 		assertSame(Arith.MYRIAD, Arith.toBigDecimal(10000.0));
-		assertSame(Arith.HANDRED_MILLION, Arith.toBigDecimal(10000_0000.0));
+		assertSame(Arith.HUNDRED_MILLION, Arith.toBigDecimal(10000_0000.0));
 	}
 
 }

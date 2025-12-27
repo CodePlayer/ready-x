@@ -8,7 +8,7 @@ import com.alibaba.fastjson2.filter.*;
 import org.jspecify.annotations.Nullable;
 
 /**
- * JSON字符串序列化转换工具类
+ * JSON 字符串序列化转换工具类
  *
  * @author Ready
  * @since 2014-10-13
@@ -58,7 +58,7 @@ public abstract class JsonX {
 	}
 
 	/**
-	 * 将Java对象编码为JSON字符串。
+	 * 将Java对象编码为 JSON 字符串。
 	 * <p>
 	 * 如果对象里存在为 null 的属性，则不包含在字符串中。
 	 * <p>
@@ -70,7 +70,7 @@ public abstract class JsonX {
 	}
 
 	/**
-	 * 将Java对象编码为JSON字符串。
+	 * 将Java对象编码为 JSON 字符串。
 	 * <p>
 	 * 如果对象里存在为null的属性，则不包含在字符串中。
 	 * <p>
@@ -83,7 +83,7 @@ public abstract class JsonX {
 	}
 
 	/**
-	 * 将Java对象编码为JSON字符串。<br/>
+	 * 将Java对象编码为 JSON 字符串。<br/>
 	 * 值为null的属性也会保留并输出。
 	 *
 	 * @param obj 指定的任意对象
@@ -93,7 +93,7 @@ public abstract class JsonX {
 	}
 
 	/**
-	 * 将Java对象编码为JSON字符串
+	 * 将 Java 对象编码为 JSON 字符串
 	 *
 	 * @param obj 指定的任意对象
 	 * @param excludeProperties 需要排除的属性数组
@@ -109,7 +109,7 @@ public abstract class JsonX {
 	}
 
 	/**
-	 * 将Java对象编码为JSON字符串
+	 * 将 Java 对象编码为 JSON 字符串
 	 *
 	 * @param obj 指定的任意对象
 	 * @param includeProperties 需要排除的属性数组
@@ -119,7 +119,7 @@ public abstract class JsonX {
 	}
 
 	/**
-	 * 将Java对象编码为JSON字符串，并以指定的格式化模式处理日期类型
+	 * 将Java对象编码为 JSON 字符串，并以指定的格式化模式处理日期类型
 	 *
 	 * @param obj 指定的任意对象
 	 * @param dateFormat 指定的格式化字符串，例如{@code "yyyy-MM-dd"}
@@ -129,18 +129,18 @@ public abstract class JsonX {
 	}
 
 	/**
-	 * 将JSON字符串转为对应的 JSONObject 或 JSONArray 对象
+	 * 将 JSON 字符串转为对应的 JSONObject 或 JSONArray 对象
 	 *
-	 * @param text 指定的JSON字符串
+	 * @param text 指定的 JSON 字符串
 	 */
 	public static Object parse(String text) {
 		return JSON.parse(text, decodeContext);
 	}
 
 	/**
-	 * 将JSON字符串转为指定类型的Java对象
+	 * 将 JSON 字符串转为指定类型的Java对象
 	 *
-	 * @param text 指定的JSON字符串
+	 * @param text 指定的 JSON 字符串
 	 * @param clazz 指定的类型
 	 */
 	public static <T> T parseObject(String text, Class<T> clazz) {
@@ -148,9 +148,9 @@ public abstract class JsonX {
 	}
 
 	/**
-	 * 将JSON字符串转为指定类型的Java对象
+	 * 将 JSON 字符串转为指定类型的Java对象
 	 *
-	 * @param text 指定的JSON字符串
+	 * @param text 指定的 JSON 字符串
 	 * @param typeReference 指定的类型引用
 	 */
 	public static <T> T parseObject(String text, TypeReference<T> typeReference, JSONReader.Feature... features) {
@@ -158,36 +158,36 @@ public abstract class JsonX {
 	}
 
 	/**
-	 * 将JSON字符串转为JSONObject形式的对象(类似于增强型的 LinkedHashMap)
+	 * 将 JSON 字符串转为JSONObject形式的对象(类似于增强型的 LinkedHashMap)
 	 *
-	 * @param text 指定的JSON字符串
+	 * @param text 指定的 JSON 字符串
 	 */
 	public static JSONObject parseObject(String text) {
 		return JSON.parseObject(text, decodeContext);
 	}
 
 	/**
-	 * 将JSON字符串转为JSONObject形式的对象(类似于增强型的 LinkedHashMap)
+	 * 将 JSON 字符串转为JSONObject形式的对象(类似于增强型的 LinkedHashMap)
 	 *
-	 * @param text 指定的JSON字符串
+	 * @param text 指定的 JSON 字符串
 	 */
 	public static JSONObject parseObjectOrdered(String text) {
 		return JSON.parseObject(text, JSONObject.class, JSONReader.Feature.FieldBased);
 	}
 
 	/**
-	 * 将JSON字符串转为JSONArray形式的对象(类似于增强型的ArrayList)
+	 * 将 JSON 字符串转为JSONArray形式的对象(类似于增强型的ArrayList)
 	 *
-	 * @param text 指定的JSON字符串
+	 * @param text 指定的 JSON 字符串
 	 */
 	public static JSONArray parseArray(String text) {
 		return JSON.parseArray(text);
 	}
 
 	/**
-	 * 将JSON字符串转为List形式的指定类型的对象集合
+	 * 将 JSON 字符串转为List形式的指定类型的对象集合
 	 *
-	 * @param text 指定的JSON字符串
+	 * @param text 指定的 JSON 字符串
 	 * @param clazz 指定的类型
 	 */
 	public static <T> List<T> parseArray(String text, Class<T> clazz) {
@@ -195,7 +195,7 @@ public abstract class JsonX {
 	}
 
 	/**
-	 * 将指定的Java对象序列化为JSON字符串
+	 * 将指定的Java对象序列化为 JSON 字符串
 	 *
 	 * @param obj 指定的对象
 	 * @since 0.1
@@ -205,9 +205,9 @@ public abstract class JsonX {
 	}
 
 	/**
-	 * 将指定的JSON字符串反序列化为指定的Java对象
+	 * 将指定的 JSON 字符串反序列化为指定的Java对象
 	 *
-	 * @param text 指定的JSON字符串
+	 * @param text 指定的 JSON 字符串
 	 * @since 0.1
 	 */
 	@SuppressWarnings("unchecked")

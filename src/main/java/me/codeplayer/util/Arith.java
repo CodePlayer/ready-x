@@ -13,20 +13,20 @@ import org.jspecify.annotations.Nullable;
 public class Arith {
 
 	// constant
-	/** 表示数值 0(零) 的BigDecimal */
+	/** 表示数值 0(零) 的 BigDecimal */
 	public static final BigDecimal ZERO = BigDecimal.ZERO;
-	/** 表示数值 1(一) 的BigDecimal */
+	/** 表示数值 1(一) 的 BigDecimal */
 	public static final BigDecimal ONE = BigDecimal.ONE;
-	/** 表示数值 10(一十) 的BigDecimal */
+	/** 表示数值 10(一十) 的 BigDecimal */
 	public static final BigDecimal TEN = BigDecimal.TEN;
-	/** 表示数值 100(一百) 的BigDecimal */
+	/** 表示数值 100(一百) 的 BigDecimal */
 	public static final BigDecimal HUNDRED = new BigDecimal(100);
-	/** 表示数值 1000(一千) 的BigDecimal */
+	/** 表示数值 1000(一千) 的 BigDecimal */
 	public static final BigDecimal THOUSAND = new BigDecimal(1000);
-	/** 表示数值 10 000(一万) 的BigDecimal */
+	/** 表示数值 10 000(一万) 的 BigDecimal */
 	public static final BigDecimal MYRIAD = new BigDecimal(10000);
-	/** 表示数值 100 000 000(一亿) 的BigDecimal */
-	public static final BigDecimal HANDRED_MILLION = new BigDecimal(10000_0000);
+	/** 表示数值 100 000 000(一亿) 的 BigDecimal */
+	public static final BigDecimal HUNDRED_MILLION = new BigDecimal(10000_0000);
 	// property
 	protected BigDecimal value;
 
@@ -59,14 +59,14 @@ public class Arith {
 	}
 
 	/**
-	 * 构造一个指定long值的商业计算数
+	 * 构造一个指定 long 值的商业计算数
 	 */
 	public Arith(long d) {
 		value = toBigDecimal(d);
 	}
 
 	/**
-	 * 构造一个指定boolean值的商业计算数。 boolean值true=1，false=0
+	 * 构造一个指定 boolean 值的商业计算数。 boolean 值 true=1，false=0
 	 */
 	public Arith(boolean b) {
 		this.value = b ? BigDecimal.ONE : BigDecimal.ZERO;
@@ -411,56 +411,56 @@ public class Arith {
 	}
 
 	/**
-	 * 转换为BigInteger
+	 * 转换为 BigInteger
 	 */
 	public BigInteger toBigInteger() {
 		return value.toBigInteger();
 	}
 
 	/**
-	 * 转换为double值
+	 * 转换为 double 值
 	 */
 	public double doubleValue() {
 		return value.doubleValue();
 	}
 
 	/**
-	 * 转换为四舍五入精确到指定小数位的double值
+	 * 转换为四舍五入精确到指定小数位的 double 值
 	 */
 	public double doubleValue(int scale) {
 		return value.setScale(scale, RoundingMode.HALF_UP).doubleValue();
 	}
 
 	/**
-	 * 转换为int值
+	 * 转换为 int 值
 	 */
 	public int intValue() {
 		return value.intValue();
 	}
 
 	/**
-	 * 转换为long值
+	 * 转换为 long 值
 	 */
 	public long longValue() {
 		return value.longValue();
 	}
 
 	/**
-	 * 转换为float值
+	 * 转换为 float 值
 	 */
 	public float floatValue() {
 		return value.floatValue();
 	}
 
 	/**
-	 * 转换为byte值
+	 * 转换为 byte 值
 	 */
 	public byte byteValue() {
 		return value.byteValue();
 	}
 
 	/**
-	 * 转换为short值
+	 * 转换为 short 值
 	 */
 	public short shortValue() {
 		return value.shortValue();
@@ -521,7 +521,7 @@ public class Arith {
 	/**
 	 * 商业乘法运算(四舍五入)<br>
 	 * <strong>注意：</strong>此方法的有效位数包含整数部分在内<br>
-	 * 将precision设为long类型只是为了重载的需要
+	 * 将 precision 设为 long 类型只是为了重载的需要
 	 *
 	 * @param a 乘数1
 	 * @param b 乘数2
@@ -603,7 +603,7 @@ public class Arith {
 	}
 
 	/**
-	 * 判断两个数值a和b的大小
+	 * 判断两个数值 a 和 b 的大小
 	 *
 	 * @return 如果：
 	 * <ul>
@@ -617,7 +617,7 @@ public class Arith {
 	}
 
 	/**
-	 * 判断两个数值a和b的大小
+	 * 判断两个数值 a 和 b 的大小
 	 *
 	 * @return 如果：
 	 * <ul>
@@ -631,7 +631,7 @@ public class Arith {
 	}
 
 	/**
-	 * 判断两个数值a和b的大小
+	 * 判断两个数值 a 和 b 的大小
 	 *
 	 * @return 如果：
 	 * <ul>
@@ -645,7 +645,7 @@ public class Arith {
 	}
 
 	/**
-	 * 判断两个数值a和b的大小
+	 * 判断两个数值 a 和 b 的大小
 	 *
 	 * @return 如果：
 	 * <ul>
@@ -659,7 +659,7 @@ public class Arith {
 	}
 
 	/**
-	 * 检测指定的BigDecimal是否为整数值
+	 * 检测指定的 BigDecimal 是否为整数值
 	 *
 	 * @author Ready
 	 */
@@ -707,7 +707,7 @@ public class Arith {
 	}
 
 	/**
-	 * 构造一个指定Object值的商业计算数
+	 * 构造一个指定 Object 值的商业计算数
 	 */
 	public static Arith valueOf(Object value) throws NullPointerException {
 		if (value instanceof Number) {
@@ -728,7 +728,7 @@ public class Arith {
 	}
 
 	/**
-	 * 构造一个指定Object值的商业计算数
+	 * 构造一个指定 Object 值的商业计算数
 	 */
 	public static Arith valueOfOrZero(@Nullable Object value) {
 		return value == null ? new Arith(BigDecimal.ZERO) : valueOf(value);
@@ -737,7 +737,7 @@ public class Arith {
 	/**
 	 * 将指定的 double 转换为对应的 BigDecimal
 	 * <p>
-	 * 如果是整数，会自动进行优化处理，避免 new BigDedimal(Double.toString(val)) 的字符串转换及解析开销
+	 * 如果是整数，会自动进行优化处理，避免 new BigDecimal(Double.toString(val)) 的字符串转换及解析开销
 	 *
 	 * @since 4.0.0
 	 */
@@ -766,7 +766,7 @@ public class Arith {
 			case 10000:
 				return MYRIAD;
 			case 100000000:
-				return HANDRED_MILLION;
+				return HUNDRED_MILLION;
 			default:
 				return BigDecimal.valueOf(n);
 		}

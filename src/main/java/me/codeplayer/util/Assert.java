@@ -23,10 +23,10 @@ import static me.codeplayer.util.StringX.nullSafeGet;
 public abstract class Assert {
 
 	/**
-	 * 断言布尔表达式结果为true<br>
+	 * 断言布尔表达式结果为 true<br>
 	 * 如果断言失败则抛出异常
 	 *
-	 * @param expression boolean表达式
+	 * @param expression boolean 表达式
 	 * @throws AssertException 如果断言失败
 	 */
 	public static void isTrue(final boolean expression) {
@@ -36,10 +36,10 @@ public abstract class Assert {
 	}
 
 	/**
-	 * 断言布尔表达式结果为true<br>
+	 * 断言布尔表达式结果为 true<br>
 	 * 如果断言失败则抛出异常
 	 *
-	 * @param expression boolean表达式
+	 * @param expression boolean 表达式
 	 * @param errorMsg 异常消息内容
 	 * @throws AssertException 如果断言失败
 	 */
@@ -50,10 +50,10 @@ public abstract class Assert {
 	}
 
 	/**
-	 * 断言布尔表达式结果为true<br>
+	 * 断言布尔表达式结果为 true<br>
 	 * 如果断言失败则抛出异常
 	 *
-	 * @param expression boolean表达式
+	 * @param expression boolean 表达式
 	 * @param msger 异常消息内容
 	 * @throws AssertException 如果断言失败
 	 */
@@ -64,10 +64,10 @@ public abstract class Assert {
 	}
 
 	/**
-	 * 断言布尔表达式结果为true<br>
+	 * 断言布尔表达式结果为 true<br>
 	 * 如果断言失败则抛出异常
 	 *
-	 * @param expression boolean表达式
+	 * @param expression boolean 表达式
 	 * @throws IllegalStateException 如果断言失败
 	 */
 	public static void state(final boolean expression) {
@@ -77,10 +77,10 @@ public abstract class Assert {
 	}
 
 	/**
-	 * 断言布尔表达式结果为true<br>
+	 * 断言布尔表达式结果为 true<br>
 	 * 如果断言失败则抛出异常
 	 *
-	 * @param expression boolean表达式
+	 * @param expression boolean 表达式
 	 * @param errorMsg 异常消息内容
 	 * @throws IllegalStateException 如果断言失败
 	 */
@@ -91,10 +91,10 @@ public abstract class Assert {
 	}
 
 	/**
-	 * 断言布尔表达式结果为true<br>
+	 * 断言布尔表达式结果为 true<br>
 	 * 如果断言失败则抛出异常
 	 *
-	 * @param expression boolean表达式
+	 * @param expression boolean 表达式
 	 * @param msger 异常消息内容
 	 * @throws IllegalStateException 如果断言失败
 	 */
@@ -108,7 +108,7 @@ public abstract class Assert {
 	 * 断言布尔表达式结果为 false
 	 * 如果断言失败则抛出异常
 	 *
-	 * @param expression boolean表达式
+	 * @param expression boolean 表达式
 	 * @throws AssertException 如果断言失败
 	 */
 	public static void isFalse(final boolean expression) {
@@ -116,10 +116,10 @@ public abstract class Assert {
 	}
 
 	/**
-	 * 断言布尔表达式结果为false<br>
+	 * 断言布尔表达式结果为 false<br>
 	 * 如果断言失败则抛出异常
 	 *
-	 * @param expression boolean表达式
+	 * @param expression boolean 表达式
 	 * @param errorMsg 异常消息内容
 	 * @throws AssertException 如果断言失败
 	 */
@@ -128,10 +128,10 @@ public abstract class Assert {
 	}
 
 	/**
-	 * 断言布尔表达式结果为false<br>
+	 * 断言布尔表达式结果为 false<br>
 	 * 如果断言失败则抛出异常
 	 *
-	 * @param expression boolean表达式
+	 * @param expression boolean 表达式
 	 * @param msger 异常消息内容
 	 * @throws AssertException 如果断言失败
 	 */
@@ -175,7 +175,7 @@ public abstract class Assert {
 	}
 
 	/**
-	 * 断言指定对象不为null<br>
+	 * 断言指定对象不为 null<br>
 	 * 如果断言失败则抛出异常
 	 *
 	 * @param object 指定对象
@@ -190,7 +190,7 @@ public abstract class Assert {
 	}
 
 	/**
-	 * 断言指定对象不为null<br>
+	 * 断言指定对象不为 null<br>
 	 * 如果断言失败则抛出异常
 	 *
 	 * @param obj 指定对象
@@ -206,7 +206,7 @@ public abstract class Assert {
 	}
 
 	/**
-	 * 断言指定对象不为null<br>
+	 * 断言指定对象不为 null<br>
 	 * 如果断言失败则抛出异常
 	 *
 	 * @param obj 指定对象

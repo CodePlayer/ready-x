@@ -56,12 +56,12 @@ public class ChineseNumber {
 			return sb.append(style.getNumbersText()[0]);
 		}
 		int length = number.length();
-		// 计算cell的个数
+		// 计算 cell 的个数
 		int size = length >> 2;
 		if (length % 4 != 0) {
 			size++;
 		}
-		// 循环截取4位数字字符串组装成cell，放入List中
+		// 循环截取 4 位数字字符串组装成 cell，放入 List 中
 		List<Cell> cells = new ArrayList<>(size);
 		do {
 			int startIndex = length - 4;

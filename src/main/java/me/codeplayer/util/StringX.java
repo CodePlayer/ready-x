@@ -754,10 +754,10 @@ public abstract class StringX {
 	}
 
 	/**
-	 * 将指定的URI参数字符串转换为目标字符集编码<br>
+	 * 将指定的 URI 参数字符串转换为目标字符集编码<br>
 	 * 本方法实际上是将字符串从ISO-8859-1编码转换为指定的目标编码
 	 *
-	 * @param str 指定的URI参数字符串
+	 * @param str 指定的 URI 参数字符串
 	 * @param targetCharset 目标字符集编码
 	 * @since 0.3.9
 	 */
@@ -1344,7 +1344,7 @@ public abstract class StringX {
 	 * 如果数组为空，将会引发异常 <br>
 	 * 如果存在数组元素，则拼接内容形如 " IN (1, 2, 5)" 或 " IN ('1', '2', '5')"
 	 *
-	 * @param sb 指定的StringBuilder
+	 * @param sb 指定的 StringBuilder
 	 * @param items 指定的任意数组
 	 * @param isInclude 指示IN SQL是包含还是排除查询，如果是包含(true)将返回 IN，如果是排除(false)将返回 NOT IN
 	 * @param isString 指示元素是否以字符串形式参与in SQL语句。如果为true，将会在每个元素两侧加上单引号"'"
@@ -1443,7 +1443,7 @@ public abstract class StringX {
 	 * 如果数组为空，将会引发异常 <br>
 	 * 如果存在数组元素，则拼接内容形如 " IN (1, 2, 5)" 或 " IN ('1', '2', '5')"
 	 *
-	 * @param sb 指定的StringBuilder
+	 * @param sb 指定的 StringBuilder
 	 * @param array 指定的任意数组
 	 * @param isInclude 指示IN SQL是包含还是排除查询，如果是包含(true)将返回 IN，如果是排除(false)将返回 NOT IN
 	 * @param isString 指示元素是否以字符串形式参与in SQL语句。如果为true，将会在每个元素两侧加上单引号"'"

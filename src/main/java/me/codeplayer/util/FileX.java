@@ -473,22 +473,22 @@ public abstract class FileX {
 	 * 将指定的文件复制到指定的目录，保持其原文件名
 	 *
 	 * @param file 指定的文件
-	 * @param destDiretory 指定的目录
+	 * @param destDirectory 指定的目录
 	 * @param override 如果已存在同名的文件，是否允许覆盖
 	 */
-	public static void copyFileToDirectory(File file, File destDiretory, boolean override) throws IOException {
-		if (destDiretory.exists()) {
+	public static void copyFileToDirectory(File file, File destDirectory, boolean override) throws IOException {
+		if (destDirectory.exists()) {
 			// 如果目标文件是一个目录
-			if (!destDiretory.isDirectory()) {
-				throw new NotDirectoryException(destDiretory.getPath());
+			if (!destDirectory.isDirectory()) {
+				throw new NotDirectoryException(destDirectory.getPath());
 			}
 			// 如果目标文件不可写入数据
-			if (!destDiretory.canWrite()) {
-				throw new AccessDeniedException("Unable to write to file：" + destDiretory);
+			if (!destDirectory.canWrite()) {
+				throw new AccessDeniedException("Unable to write to file：" + destDirectory);
 			}
 		}
 		// 如果目标文件不允许被覆盖
-		copyFile(file, new File(destDiretory, file.getName()), override);
+		copyFile(file, new File(destDirectory, file.getName()), override);
 	}
 
 	/**
@@ -496,23 +496,23 @@ public abstract class FileX {
 	 * 如果目标文件夹已存在同名的文件，则引发异常
 	 *
 	 * @param file 指定的文件
-	 * @param diretory 指定的目录
+	 * @param directory 指定的目录
 	 * @since 0.0.1
 	 */
-	public static void copyFileToDirectory(File file, File diretory) throws IOException {
-		copyFileToDirectory(file, diretory, false);
+	public static void copyFileToDirectory(File file, File directory) throws IOException {
+		copyFileToDirectory(file, directory, false);
 	}
 
 	/**
 	 * 将指定的文件复制到指定的目录，保持其原文件名
 	 *
 	 * @param file 指定的文件
-	 * @param destDiretory 指定的目录
+	 * @param destDirectory 指定的目录
 	 * @param override 如果已存在同名的文件，是否允许覆盖
 	 * @since 0.0.1
 	 */
-	public static void copyFileToDirectory(String file, String destDiretory, boolean override) throws IOException {
-		copyFileToDirectory(new File(file), new File(destDiretory), override);
+	public static void copyFileToDirectory(String file, String destDirectory, boolean override) throws IOException {
+		copyFileToDirectory(new File(file), new File(destDirectory), override);
 	}
 
 	/**
@@ -520,11 +520,11 @@ public abstract class FileX {
 	 * 如果目标文件夹已存在同名的文件，则引发异常
 	 *
 	 * @param file 指定的文件
-	 * @param destDiretory 指定的目录
+	 * @param destDirectory 指定的目录
 	 * @since 0.0.1
 	 */
-	public static void copyFileToDirectory(String file, String destDiretory) throws IOException {
-		copyFileToDirectory(file, destDiretory, false);
+	public static void copyFileToDirectory(String file, String destDirectory) throws IOException {
+		copyFileToDirectory(file, destDirectory, false);
 	}
 
 	/**
@@ -853,10 +853,10 @@ public abstract class FileX {
 	}
 
 	/**
-	 * 根据指定的文件路径获取对应的File对象
+	 * 根据指定的文件路径获取对应的 File 对象
 	 *
 	 * @param pathname 指定的文件路径
-	 * @param inClassPath 是否相对于classpath类路径下
+	 * @param inClassPath 是否相对于 classpath 类路径下
 	 * @since 0.3.1
 	 */
 	public static File getFile(String pathname, boolean inClassPath) {
@@ -910,7 +910,7 @@ public abstract class FileX {
 	/**
 	 * 读取指定的文件内容
 	 *
-	 * @param inClassPath 是否相对于classpath类路径下
+	 * @param inClassPath 是否相对于 classpath 类路径下
 	 * @return 返回文件内容字符串，内部换行符为'\n'
 	 * @since 0.3.1
 	 */
@@ -975,7 +975,7 @@ public abstract class FileX {
 	 * 读取指定名称的".properties"文件
 	 *
 	 * @param pathname 指定的文件路径
-	 * @param inClassPath 是否相对于classpath类路径下
+	 * @param inClassPath 是否相对于 classpath 类路径下
 	 * @return 对应的 Properties 对象(出于泛型兼容考虑 ， 以 Map < String, String > 形式返回)。如果指定的文件不存在，则返回 null
 	 * @since 0.3.1
 	 */

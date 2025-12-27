@@ -92,7 +92,7 @@ public abstract class ArrayX {
 	 * 如果数组为空，将会引发异常 <br>
 	 * 如果存在数组元素，则拼接内容形如 " IN (1, 2, 5)" 或 " IN ('1', '2', '5')"
 	 *
-	 * @param sb 指定的StringBuilder
+	 * @param sb 指定的 StringBuilder
 	 * @param array 指定的任意数组
 	 * @param isInclude 指示IN SQL是包含还是排除查询，如果是包含(true)将返回 IN，如果是排除(false)将返回 NOT IN
 	 * @param isString 指示元素是否以字符串形式参与in SQL语句。如果为true，将会在每个元素两侧加上单引号"'"
@@ -173,7 +173,7 @@ public abstract class ArrayX {
 	 * 迭代数组元素并将迭代字符串追加至StringBuilder中,追加字符串形如：“[e1, e2, e3, [e4_1, e4_2, e4_3, e4_4]]<br>
 	 * 本方法可以迭代多维数组，内部采用递归算法
 	 *
-	 * @param sb 指定的StringBuilder
+	 * @param sb 指定的 StringBuilder
 	 * @param array 指定的数组对象
 	 */
 	public static StringBuilder toFinalString(StringBuilder sb, Object array) {
@@ -576,14 +576,14 @@ public abstract class ArrayX {
 	 */
 	@SafeVarargs
 	public static <E> E[] filter(final Predicate<? super E> matcher, final E... array) {
-		final E[] newAarray = array.clone();
+		final E[] newArray = array.clone();
 		int count = 0;
-		for (E e : newAarray) {
+		for (E e : newArray) {
 			if (matcher.test(e)) {
-				newAarray[count++] = e;
+				newArray[count++] = e;
 			}
 		}
-		return count == newAarray.length ? newAarray : Arrays.copyOf(newAarray, count);
+		return count == newArray.length ? newArray : Arrays.copyOf(newArray, count);
 	}
 
 	/**
