@@ -11,10 +11,21 @@ import static org.junit.jupiter.api.Assertions.*;
 public class JavaXTest {
 
 	@Test
+	void parseJavaVersion() {
+		assertEquals(8, JavaX.parseJavaVersion("1.8.0_472"));
+		assertEquals(9, JavaX.parseJavaVersion("9"));
+		assertEquals(21, JavaX.parseJavaVersion("21"));
+		assertEquals(8, JavaX.parseJavaVersion("1.8"));
+		assertEquals(11, JavaX.parseJavaVersion("11"));
+		assertEquals(21, JavaX.parseJavaVersion("21"));
+
+		assertEquals(JavaX.javaVersion, JavaX.parseJavaVersion(System.getProperty("java.version")));
+	}
+
+	@Test
 	@EnabledOnJre(JRE.JAVA_8)
 	public void javaVersion8() throws IllegalAccessException {
 		assertEquals(8, JavaX.javaVersion);
-		assertEquals(8, JavaX.JVM_VERSION);
 		assertFalse(JavaX.isJava9OrHigher);
 		assertFalse(JavaX.supportLatin1());
 
@@ -30,7 +41,6 @@ public class JavaXTest {
 
 	static void java9OrHigher(int majorVersion) {
 		assertEquals(majorVersion, JavaX.javaVersion);
-		assertEquals(majorVersion, JavaX.JVM_VERSION);
 		assertTrue(JavaX.isJava9OrHigher);
 		assertTrue(JavaX.supportLatin1());
 

@@ -22,22 +22,18 @@ import static java.lang.invoke.MethodType.methodType;
 @SuppressWarnings({ "JavaLangInvokeHandleSignature", "unchecked" })
 public class JavaX {
 
-	public static final int javaVersion = parseJavaVersion(System.getProperty("java.version"));
+	public static final int javaVersion = parseJavaVersion(System.getProperty("java.specification.version"));
 	/** 指示当前 Java 版本是否为 Java 9+ 版本 */
 	public static final boolean isJava9OrHigher = javaVersion >= 9;
 
 	public static final Unsafe UNSAFE;
 
-	public static final int JVM_VERSION;
-	public static final Byte LATIN1 = 0;
-	public static final Byte UTF16 = 1;
+	public static final Byte LATIN1 = 0, UTF16 = 1;
 
 	public static final long FIELD_STRING_VALUE_OFFSET;
 	public static volatile boolean FIELD_STRING_VALUE_ERROR;
 
-	public static final boolean ANDROID;
-	public static final boolean GRAAL;
-	public static final boolean OPENJ9;
+	public static final boolean ANDROID, GRAAL, OPENJ9;
 
 	// GraalVM not support
 	// Android not support
@@ -77,7 +73,6 @@ public class JavaX {
 
 	@Nullable
 	static final MethodHandle METHOD_HANDLE_HAS_NEGATIVE;
-	@Nullable
 	static final Predicate<byte[]> PREDICATE_IS_ASCII;
 
 	public static final MethodHandles.Lookup IMPL_LOOKUP;
@@ -102,7 +97,6 @@ public class JavaX {
 			throw new UnsupportedOperationException("init JavaX error", initErrorLast);
 		}
 
-		int jvmVersion = -1;
 		boolean openj9 = false, android = false, graal = false;
 		try {
 			String jmvName = System.getProperty("java.vm.name");
@@ -112,15 +106,6 @@ public class JavaX {
 			if (openj9 || android || graal) {
 				FIELD_STRING_VALUE_ERROR = true;
 			}
-
-			String javaSpecVer = System.getProperty("java.specification.version");
-			// android is 0.9
-			if (javaSpecVer.startsWith("1.")) {
-				javaSpecVer = javaSpecVer.substring(2);
-			}
-			if (javaSpecVer.indexOf('.') == -1) {
-				jvmVersion = Integer.parseInt(javaSpecVer);
-			}
 		} catch (Throwable e) {
 			initErrorLast = e;
 		}
@@ -129,35 +114,21 @@ public class JavaX {
 		ANDROID = android;
 		GRAAL = graal;
 
-		JVM_VERSION = jvmVersion;
-
-		if (JVM_VERSION == 8) {
+		{
 			Field field;
 			long fieldOffset = -1;
 			if (!ANDROID) {
 				try {
 					field = String.class.getDeclaredField("value");
-					field.setAccessible(true);
+					if (javaVersion == 8) {
+						field.setAccessible(true);
+					}
 					fieldOffset = UNSAFE.objectFieldOffset(field);
 				} catch (Exception ignored) {
 					FIELD_STRING_VALUE_ERROR = true;
 				}
 			}
-
 			FIELD_STRING_VALUE_OFFSET = fieldOffset;
-
-		} else {
-			Field fieldValue;
-			long fieldValueOffset = -1;
-			if (!ANDROID) {
-				try {
-					fieldValue = String.class.getDeclaredField("value");
-					fieldValueOffset = UNSAFE.objectFieldOffset(fieldValue);
-				} catch (Exception ignored) {
-					FIELD_STRING_VALUE_ERROR = true;
-				}
-			}
-			FIELD_STRING_VALUE_OFFSET = fieldValueOffset;
 		}
 
 		BiFunction<char[], Boolean, String> stringCreatorJDK8 = null;
@@ -186,26 +157,18 @@ public class JavaX {
 			// isASCII
 			MethodHandle handle = null;
 			Class<?> classStringCoding = null;
-			if (JVM_VERSION >= 17) {
+			if (javaVersion >= 17) {
 				try {
-					handle = trustedLookup.findStatic(
-							classStringCoding = String.class,
-							"isASCII",
-							MethodType.methodType(boolean.class, byte[].class)
-					);
+					handle = trustedLookup.findStatic(classStringCoding = String.class, "isASCII", MethodType.methodType(boolean.class, byte[].class));
 				} catch (Throwable e) {
 					initErrorLast = e;
 				}
 			}
 
-			if (handle == null && JVM_VERSION >= 11) {
+			if (handle == null && javaVersion >= 11) {
 				try {
 					classStringCoding = Class.forName("java.lang.StringCoding");
-					handle = trustedLookup.findStatic(
-							classStringCoding,
-							"isASCII",
-							MethodType.methodType(boolean.class, byte[].class)
-					);
+					handle = trustedLookup.findStatic(classStringCoding, "isASCII", MethodType.methodType(boolean.class, byte[].class));
 				} catch (Throwable e) {
 					initErrorLast = e;
 				}
@@ -228,19 +191,15 @@ public class JavaX {
 				}
 			}
 
-			PREDICATE_IS_ASCII = isAscii;
+			PREDICATE_IS_ASCII = isAscii != null ? isAscii : bytes -> isASCII(bytes, 0, bytes.length);
 		}
 
 		{
 			MethodHandle handle = null;
-			if (JVM_VERSION >= 11) {
+			if (javaVersion >= 11) {
 				try {
 					Class<?> classStringCoding = Class.forName("java.lang.StringCoding");
-					handle = trustedLookup.findStatic(
-							classStringCoding,
-							"hasNegatives",
-							MethodType.methodType(boolean.class, byte[].class, int.class, int.class)
-					);
+					handle = trustedLookup.findStatic(classStringCoding, "hasNegatives", MethodType.methodType(boolean.class, byte[].class, int.class, int.class));
 				} catch (Throwable e) {
 					initErrorLast = e;
 				}
@@ -250,7 +209,7 @@ public class JavaX {
 
 		Boolean compact_strings = null;
 		try {
-			if (JVM_VERSION == 8) {
+			if (javaVersion == 8) {
 				MethodHandles.Lookup lookup = trustedLookup(String.class);
 
 				MethodHandle handle = lookup.findConstructor(
@@ -269,7 +228,7 @@ public class JavaX {
 			}
 
 			boolean lookupLambda = false;
-			if (JVM_VERSION > 8 && !android) {
+			if (javaVersion > 8 && !android) {
 				try {
 					Field compact_strings_field = String.class.getDeclaredField("COMPACT_STRINGS");
 					long fieldOffset = UNSAFE.staticFieldOffset(compact_strings_field);
@@ -349,7 +308,6 @@ public class JavaX {
 		STRING_VALUE = stringValue;
 	}
 
-	@Nullable
 	static char[] fastGetCharArray(String str) {
 		// GraalVM not support
 		// Android not support
@@ -364,8 +322,13 @@ public class JavaX {
 	}
 
 	public static char[] getCharArray(String str) {
-		char[] chars = fastGetCharArray(str);
-		return chars == null ? str.toCharArray() : chars;
+		if (!isJava9OrHigher) {
+			char[] chars = fastGetCharArray(str);
+			if (chars != null) {
+				return chars;
+			}
+		}
+		return str.toCharArray();
 	}
 
 	public static MethodHandles.Lookup trustedLookup(Class<?> objectClass) {
@@ -374,7 +337,7 @@ public class JavaX {
 				int TRUSTED = -1;
 
 				MethodHandle constructor = CONSTRUCTOR_LOOKUP;
-				if (JVM_VERSION < 15) {
+				if (javaVersion < 15) {
 					if (constructor == null) {
 						constructor = IMPL_LOOKUP.findConstructor(
 								MethodHandles.Lookup.class,
@@ -561,12 +524,18 @@ public class JavaX {
 		return new String(bytes, charset);
 	}
 
-	public static int parseJavaVersion(String javaVersionProperty) {
-		if (javaVersionProperty.startsWith("1.")) {
-			int pos = javaVersionProperty.indexOf('.', 3);
-			return JavaHelper.parseInt(javaVersionProperty, 2, pos);
+	/**
+	 * 解析指定的 Java 版本字符串，返回对应的版本号
+	 *
+	 * @param property 兼容 <code> System.getProperty("java.specification.version") </code> （ 形如："1.8"、"9"、"21"）
+	 * <br> 和 <code>System.getProperty("java.version")</code>  （ 形如："1.8.0_472"、"11.0.29"、"21.0.9"）
+	 */
+	public static int parseJavaVersion(String property) {
+		if (property.startsWith("1.")) {
+			int pos = property.indexOf('.', 3);
+			return JavaHelper.parseInt(property, 2, pos == -1 ? property.length() : pos);
 		}
-		return StringX.substringBefore(javaVersionProperty, '.', Slice::asInteger);
+		return StringX.substringBefore(property, '.', Slice::parseInt);
 	}
 
 }
