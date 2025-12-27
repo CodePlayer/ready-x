@@ -4,11 +4,8 @@ import java.lang.invoke.*;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.function.*;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import sun.misc.Unsafe;
@@ -36,9 +33,6 @@ public class JavaUtil {
 	public static final Field FIELD_STRING_VALUE;
 	public static final long FIELD_STRING_VALUE_OFFSET;
 	public static volatile boolean FIELD_STRING_VALUE_ERROR;
-
-	public static final long FIELD_DECIMAL_INT_COMPACT_OFFSET;
-	public static final long FIELD_BIGINTEGER_MAG_OFFSET;
 
 	public static final boolean ANDROID, GRAAL, OPENJ9;
 
@@ -217,7 +211,7 @@ public class JavaUtil {
 		}
 
 		MethodHandle indexOfCharLatin1 = null;
-		if (JVM_VERSION > 9) {
+		if (javaVersion > 9) {
 			try {
 				Class<?> cStringLatin1 = Class.forName("java.lang.StringLatin1");
 				MethodHandles.Lookup lookup = trustedLookup(cStringLatin1);
@@ -560,7 +554,7 @@ public class JavaUtil {
 			int pos = property.indexOf('.', 3);
 			return JavaHelper.parseInt(property, 2, pos == -1 ? property.length() : pos);
 		}
-		return StringX.substringBefore(property, '.', Slice::parseInt);
+		return StringUtil.substringBefore(property, '.', Slice::parseInt);
 	}
 
 }
