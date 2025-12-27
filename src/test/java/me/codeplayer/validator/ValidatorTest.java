@@ -1,9 +1,9 @@
 package me.codeplayer.validator;
 
 import java.math.BigDecimal;
+import java.util.function.Predicate;
 
-import me.codeplayer.util.Book;
-import me.codeplayer.util.Entity;
+import me.codeplayer.util.*;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -108,6 +108,122 @@ public class ValidatorTest {
 		assertFalse(validator.isOK());
 		assertEquals(errorMsg, validator.getResult());
 		assertEquals(errorMsg, validator.getResult(String.class));
+	}
+
+	@Test
+	void assertLength() {
+		{
+			Predicate<CharSequence> matcher = Validators.assertLength(1, 2);
+			assertFalse(matcher.test(null));
+			assertFalse(matcher.test(""));
+			assertTrue(matcher.test("a"));
+			assertTrue(matcher.test("ab"));
+			assertFalse(matcher.test("abc"));
+		}
+		{
+			Predicate<CharSequence> matcher = Validators.assertLength(1, -1);
+			assertFalse(matcher.test(null));
+			assertFalse(matcher.test(""));
+			assertTrue(matcher.test("a"));
+			assertTrue(matcher.test("ab"));
+			assertTrue(matcher.test("HelloWorld"));
+		}
+
+	}
+
+	@Test
+	void assertRange() {
+		{
+			Predicate<Integer> matcher = Validators.assertRange(1, 2);
+			assertFalse(matcher.test(null));
+			assertFalse(matcher.test(0));
+			assertTrue(matcher.test(1));
+			assertTrue(matcher.test(2));
+			assertFalse(matcher.test(3));
+		}
+		{
+			Predicate<Integer> matcher = Validators.assertRange(1, -1);
+			assertFalse(matcher.test(null));
+			assertFalse(matcher.test(-1));
+			assertFalse(matcher.test(0));
+			assertFalse(matcher.test(1));
+			assertFalse(matcher.test(2));
+			assertFalse(matcher.test(3));
+		}
+		{
+			Predicate<Long> matcher = Validators.assertRange(1L, 2L);
+			assertFalse(matcher.test(null));
+			assertFalse(matcher.test(0L));
+			assertTrue(matcher.test(1L));
+			assertTrue(matcher.test(2L));
+			assertFalse(matcher.test(3L));
+		}
+		{
+			Predicate<Long> matcher = Validators.assertRange(1L, -1L);
+			assertFalse(matcher.test(null));
+			assertFalse(matcher.test(-1L));
+			assertFalse(matcher.test(0L));
+			assertFalse(matcher.test(1L));
+			assertFalse(matcher.test(2L));
+			assertFalse(matcher.test(3L));
+		}
+		{
+			Predicate<Double> matcher = Validators.assertRange(1D, 2D);
+			assertFalse(matcher.test(null));
+			assertFalse(matcher.test(0D));
+			assertTrue(matcher.test(1D));
+			assertTrue(matcher.test(2D));
+			assertFalse(matcher.test(3D));
+		}
+		{
+			Predicate<Double> matcher = Validators.assertRange(1D, -1D);
+			assertFalse(matcher.test(null));
+			assertFalse(matcher.test(-1D));
+			assertFalse(matcher.test(0D));
+			assertFalse(matcher.test(1D));
+			assertFalse(matcher.test(2D));
+			assertFalse(matcher.test(3D));
+		}
+		{
+			Predicate<BigDecimal> matcher = Validators.assertRange(Arith.ONE, Arith.TEN);
+			assertFalse(matcher.test(null));
+			assertFalse(matcher.test(Arith.toBigDecimal(0)));
+			assertTrue(matcher.test(Arith.toBigDecimal(1)));
+			assertTrue(matcher.test(Arith.toBigDecimal(2)));
+			assertTrue(matcher.test(Arith.toBigDecimal(3)));
+			assertTrue(matcher.test(Arith.toBigDecimal(10)));
+			assertFalse(matcher.test(Arith.toBigDecimal(11)));
+		}
+		{
+			Predicate<BigDecimal> matcher = Validators.assertRange(null, null);
+			assertFalse(matcher.test(null));
+			assertTrue(matcher.test(Arith.toBigDecimal(0)));
+			assertTrue(matcher.test(Arith.toBigDecimal(1)));
+			assertTrue(matcher.test(Arith.toBigDecimal(2)));
+			assertTrue(matcher.test(Arith.toBigDecimal(3)));
+			assertTrue(matcher.test(Arith.toBigDecimal(10)));
+			assertTrue(matcher.test(Arith.toBigDecimal(11)));
+		}
+		{
+			Predicate<BigDecimal> matcher = Validators.assertRange(Arith.ONE, null);
+			assertFalse(matcher.test(null));
+			assertFalse(matcher.test(Arith.toBigDecimal(0)));
+			assertTrue(matcher.test(Arith.toBigDecimal(1)));
+			assertTrue(matcher.test(Arith.toBigDecimal(2)));
+			assertTrue(matcher.test(Arith.toBigDecimal(3)));
+			assertTrue(matcher.test(Arith.toBigDecimal(10)));
+			assertTrue(matcher.test(Arith.toBigDecimal(11)));
+		}
+		{
+			Predicate<BigDecimal> matcher = Validators.assertRange(null, Arith.TEN);
+			assertFalse(matcher.test(null));
+			assertTrue(matcher.test(Arith.toBigDecimal(0)));
+			assertTrue(matcher.test(Arith.toBigDecimal(1)));
+			assertTrue(matcher.test(Arith.toBigDecimal(2)));
+			assertTrue(matcher.test(Arith.toBigDecimal(3)));
+			assertTrue(matcher.test(Arith.toBigDecimal(10)));
+			assertFalse(matcher.test(Arith.toBigDecimal(11)));
+		}
 	}
 
 	@Test
