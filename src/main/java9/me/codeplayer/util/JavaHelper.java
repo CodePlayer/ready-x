@@ -96,7 +96,6 @@ public class JavaHelper {
 	 * @throws NullPointerException 如果 source 或 digitTable 为 null
 	 */
 	public static String unicode(String source, final boolean full, String digitTable) {
-		System.out.println("Java 9 unicode");
 		if (!source.isEmpty()) {
 			final boolean latin1 = JavaUtil.STRING_CODER.applyAsInt(source) == JavaUtil.LATIN1;
 			final byte[] bytes = JavaUtil.STRING_VALUE.apply(source);
