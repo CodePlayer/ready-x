@@ -525,6 +525,18 @@ public class JavaX {
 	}
 
 	/**
+	 * 将指定的 字符数组 构造为对应的 字符串
+	 * <p> 【注意】：在 JDK 8 时，为提高性能，返回的字符串内部可能直接使用传入的 <code> chars </code> 数组的 <b>引用</b>，请自行确保后续<b>不要</b>修改入参 <code> chars </code> 的数据！！！
+	 *
+	 * @param chars 字符数组
+	 */
+	public static String newString(final char[] chars) {
+		return isJava9OrHigher
+				? new String(chars)
+				: STRING_CREATOR_JDK8.apply(chars, Boolean.TRUE);
+	}
+
+	/**
 	 * 解析指定的 Java 版本字符串，返回对应的版本号
 	 *
 	 * @param property 兼容 <code> System.getProperty("java.specification.version") </code> （ 形如："1.8"、"9"、"21"）
