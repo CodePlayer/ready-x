@@ -26,6 +26,8 @@ public class RandomXTest implements WithAssertions {
 
 		assertThat(RandomX.nextString("abcdefghijklmnopqrstuvwxyz", 6))
 				.hasSize(6);
+		assertThat(RandomX.nextString("123abc", 4)).hasSize(4);
+		assertThat(RandomX.nextString("123abc中文", 4)).hasSize(4);
 	}
 
 	@Test
@@ -149,6 +151,7 @@ public class RandomXTest implements WithAssertions {
 	@Test
 	public void getString_SingleCharString_ShouldReturnRepeatedChar() {
 		assertEquals("aaa", RandomX.nextString("a", 3));
+		assertEquals("中中中", RandomX.nextString("中", 3));
 	}
 
 	@Test
