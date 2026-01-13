@@ -161,7 +161,7 @@ public abstract class RandomX {
 				newChars[i] = chars[random.nextInt(chars.length)];
 			}
 		}
-		return new String(newChars);
+		return JavaX.newString(newChars);
 	}
 
 	/**
@@ -177,16 +177,23 @@ public abstract class RandomX {
 			return "";
 		}
 		final int max = chars.length();
-		final char[] newChars = new char[length];
 		if (max == 1) {
-			Arrays.fill(newChars, chars.charAt(0));
-		} else {
-			final ThreadLocalRandom random = ThreadLocalRandom.current();
-			for (int i = 0; i < length; i++) {
-				newChars[i] = chars.charAt(random.nextInt(max));
-			}
+			return Character.toString(chars.charAt(0));
 		}
-		return new String(newChars);
+		final ThreadLocalRandom random = ThreadLocalRandom.current();
+		if (JavaX.STRING_CODER.applyAsInt(chars) == JavaX.LATIN1) {
+			final byte[] bytes = JavaX.STRING_VALUE.apply(chars);
+			final byte[] newChars = new byte[length];
+			for (int i = 0; i < length; i++) {
+				newChars[i] = bytes[random.nextInt(max)];
+			}
+			return JavaX.STRING_CREATOR_JDK11.apply(newChars, JavaX.LATIN1);
+		}
+		final char[] newChars = new char[length];
+		for (int i = 0; i < length; i++) {
+			newChars[i] = chars.charAt(random.nextInt(max));
+		}
+		return JavaX.newString(newChars);
 	}
 
 }
