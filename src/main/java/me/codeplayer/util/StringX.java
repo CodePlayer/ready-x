@@ -750,7 +750,7 @@ public abstract class StringX {
 	 * @since 0.3.9
 	 */
 	public static String convertCharset(String str, Charset originalCharset, Charset targetCharset) {
-		return new String(str.getBytes(originalCharset), targetCharset);
+		return JavaX.newString(JavaX.getBytes(str, originalCharset), targetCharset);
 	}
 
 	/**
@@ -767,7 +767,7 @@ public abstract class StringX {
 
 	/**
 	 * 颠倒(反转)字符串的字符顺序，并返回颠倒后的字符串<br>
-	 * 如果字符串为null，则返回空字符串""
+	 * 如果字符串为 null，则返回空字符串 ""
 	 *
 	 * @param str 指定的字符串
 	 * @since 0.0.1
