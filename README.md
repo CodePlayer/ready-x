@@ -231,22 +231,22 @@ Currently, the utility methods in Ready-X may not be complete, and are only driv
 Starting from 4.x, this project intends to adopt "Conventional Commits 1.0.0" to standardize code commits. For details, see: [https://www.conventionalcommits.org/en/v1.0.0/](https://www.conventionalcommits.org/en/v1.0.0/).
 
 ## Usage
-This utility library has been published to the Maven Central Repository. The current latest version is: **4.3.1**. You can include this library through the following Maven dependency configuration:
+This utility library has been published to the Maven Central Repository. The current latest version is: **4.3.2**. You can include this library through the following Maven dependency configuration:
 
 ```xml
 <dependency>
   <groupId>me.codeplayer</groupId>
   <artifactId>ready-x</artifactId>
-  <version>4.3.1</version>
+  <version>4.3.2</version>
 </dependency>
 ```
 
-The latest version of the **3.x** branch is **3.18.1**. You can include this library through the following Maven dependency configuration:
+The latest version of the **3.x** branch is **3.18.2**. You can include this library through the following Maven dependency configuration:
 
 ```xml
 <dependency>
   <groupId>me.codeplayer</groupId>
   <artifactId>ready-x</artifactId>
-  <version>3.18.1</version>
+  <version>3.18.2</version>
 </dependency>
 ```
