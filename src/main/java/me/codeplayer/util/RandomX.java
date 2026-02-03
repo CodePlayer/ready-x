@@ -177,9 +177,6 @@ public abstract class RandomX {
 			return "";
 		}
 		final int max = chars.length();
-		if (max == 1) {
-			return Character.toString(chars.charAt(0));
-		}
 		final ThreadLocalRandom random = ThreadLocalRandom.current();
 		if (JavaX.STRING_CODER.applyAsInt(chars) == JavaX.LATIN1) {
 			final byte[] bytes = JavaX.STRING_VALUE.apply(chars);
