@@ -835,12 +835,9 @@ public abstract class CollectionX {
 	 */
 	public static <T> T getAny(@Nullable final Collection<T> range) {
 		if (range != null && !range.isEmpty()) {
-			if (range instanceof List) {
-				return ((List<T>) range).get(0);
-			}
-			for (T t : range) {
-				return t;
-			}
+			return range instanceof List
+					? ((List<T>) range).get(0)
+					: range.iterator().next();
 		}
 		return null;
 	}
